@@ -1,0 +1,12 @@
+<dialog title="The Lip Syncer" buttons="accept, cancel">
+	<vbox>
+		<hbox>
+			<label value="First Frame of Lip Flap:" control="panel_FF"/>
+			<textbox id="panel_FF" size="24" value="" />
+		</hbox>
+		<hbox>
+			<label value="Duration of Lip Flap:" control="panel_dur"/>
+			<textbox id="panel_dur" size="24" value="" />
+		</hbox>
+	</vbox>
+</dialog>

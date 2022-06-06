@@ -1,0 +1,9 @@
+<dialog title="The Shake Maker" buttons="accept, cancel">
+	<label value="Intensity (higher = more shaky):" control="panel_int"/>
+	<textbox id="panel_int" size="24" value="20" />
+	<spacer />
+	<separator />
+
+
+	<checkbox id="panel_taperOff" label="Taper Off?" checked="true">
+</dialog>

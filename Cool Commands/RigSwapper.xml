@@ -1,0 +1,12 @@
+<dialog title="The Rig Swapper" buttons="accept, cancel">
+	<vbox>
+		<hbox>
+			<label value="Name of rig symbol (e.g.: Luna, Twilight, AB):" control="panel_rigName"/>
+			<textbox id="panel_rigName" size="24" value="" />
+		</hbox>
+		<hbox>
+			<label value="Name of rig folder (e.g.: APPLE_BLOOM, Luna, TWILIGHT_SPARKLE):" control="panel_folderName"/>
+			<textbox id="panel_folderName" size="24" value="" />
+		</hbox>
+	</vbox>
+</dialog>

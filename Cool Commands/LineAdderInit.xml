@@ -1,0 +1,8 @@
+<dialog title="Line Adder" buttons="accept, cancel">
+	<vbox>
+		<hbox>
+			<label value="Number of first voice line:" control="panel_first"/>
+			<textbox id="panel_first" size="24" value="" />
+		</hbox>
+	</vbox>
+</dialog>
