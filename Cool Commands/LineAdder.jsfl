@@ -1,3 +1,8 @@
+/******************************************************************************
+LINE ADDER
+Description: 
+******************************************************************************/
+
 var scriptPath = fl.scriptURI;
 var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
 

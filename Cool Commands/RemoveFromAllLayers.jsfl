@@ -1,3 +1,8 @@
+/******************************************************************************
+MAKE SCENE
+Description: 
+******************************************************************************/
+
 var selectedFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames();
 var layer = fl.getDocumentDOM().getTimeline().currentLayer;
 var firstFrame = selectedFrames[1];

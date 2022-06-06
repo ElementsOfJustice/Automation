@@ -1,3 +1,8 @@
+/******************************************************************************
+WRITE FRAME DATA TO TIMELINE
+Description: 
+******************************************************************************/
+
 fl.showIdleMessage(false);
 
 var selectedFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames();

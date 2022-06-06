@@ -1,3 +1,8 @@
+/******************************************************************************
+MAKE FADE
+Description: 
+******************************************************************************/
+
 FIRST_LAYER_INDEX = 3; // indecies of layers for timeline.getSelectedFrames() for multiple selections
 SECOND_LAYER_INDEX = 0;
 FIRST_FRAME_INDEX = 4; // indecies of frames for timeline.getSelectedFrames() for multiple selections

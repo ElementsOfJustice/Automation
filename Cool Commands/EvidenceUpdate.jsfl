@@ -1,3 +1,8 @@
+/******************************************************************************
+EVIDENCE UPDATE
+Description: 
+******************************************************************************/
+
 var doc = fl.getDocumentDOM();
 var timeline = doc.getTimeline();
 var layer = timeline.getSelectedLayers();
