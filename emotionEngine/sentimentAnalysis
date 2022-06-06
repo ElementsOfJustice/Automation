@@ -1,3 +1,14 @@
+/*
+EMOTION ENGINE
+Predictive emotion engine based on pose usage for previous characters in Episode 2-3 onwards.
+This code rates the input string with a polar sentimentality score and then fetches similarly-rated
+lines from previous episodes within the tolerance limit. It then iterates through all the matched
+lines and selects the one with the closest Jaccard distance and returns the pose used.
+
+Less expressive characters need a tight tolerance while more expressive characters need
+a higher tolerance.
+*/
+
 const jaccardDistance = require('@extra-string/jaccard-distance');
 const Sentiment = require('sentiment');
 
@@ -5,12 +16,9 @@ var sentiment = new Sentiment();
 var chkStr = "Jared is a writer. And I love him."
 var tolerance = 1;
 
-//Apollo should have tight tolerance, Rarity wide, Phoenix mid.
-
-const dictionary = require('./apolloDictionary.js')
+const dictionary = require('./databases/phoenixDatabase.js')
 
 var tmpJaccard = new Map();
-var tmpSentiment = [];
 
 for (let [key, value] of dictionary) {
 
@@ -25,4 +33,4 @@ for (let [key, value] of dictionary) {
 }
 
   //console.log(Math.min(... tmpJaccard.keys()))
-console.log(chkStr + " should have the pose " + tmpJaccard.get(Math.min(... tmpJaccard.keys())) + ".")
+  console.log(chkStr + " should have the pose " + tmpJaccard.get(Math.min(... tmpJaccard.keys())) + ".")
