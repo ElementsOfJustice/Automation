@@ -1,15 +1,24 @@
-// HOW TO USE THIS SCRIPT: https://www.youtube.com/watch?v=I-YhWTgXB4E
+/******************************************************************************
+LIP SYNCER
+Description:
 
+HOW TO USE THIS SCRIPT: https://www.youtube.com/watch?v=I-YhWTgXB4E
+******************************************************************************/
+
+// Create Variables
 var scriptPath = fl.scriptURI;
+// set dirURL to the path up to the last / character (i.e. just the path)
 var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
+// Creates a GUI window in Animate using the given XML file
 var guiPanel = fl.xmlPanelFromString("<dialog title=\"The Lip Syncer\" buttons=\"accept, cancel\">vbox><hbox><label value=\"First Frame of Lip Flap:\" control=\"panel_FF\"/><textbox id=\"panel_FF\" size=\"24\" value=\"\" /></hbox><hbox><label value=\"Duration of Lip Flap:\" control=\"panel_dur\"/><textbox id=\"panel_dur\" size=\"24\" value=\"\" /></hbox></vbox></dialog>");
 
-
+// get the adobe animate file and info inside
 var doc = fl.getDocumentDOM();
 var timeline = doc.getTimeline();
 var layer = timeline.getSelectedLayers();
 var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
 
+// Store frames selected by the user
 var frameSelection = timeline.getSelectedFrames();
 var selLayerIndex = frameSelection[0];
 var startingFrame = frameSelection[1];
