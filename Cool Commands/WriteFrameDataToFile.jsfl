@@ -1,3 +1,8 @@
+/******************************************************************************
+WRITE FRAME DATA TO FILE
+Description: 
+******************************************************************************/
+
 var selectedFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames();
 var layer = selectedFrames[0];
 var firstFrame = selectedFrames[1];

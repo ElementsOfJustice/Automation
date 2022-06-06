@@ -1,4 +1,9 @@
-﻿var scriptPath = fl.scriptURI;
+﻿/******************************************************************************
+MASS REPOSITIONER
+Description: 
+******************************************************************************/
+
+var scriptPath = fl.scriptURI;
 var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
 var guiPanel = fl.getDocumentDOM().xmlPanel(dirURL+"/massRepositioner.xml");
 

@@ -1,3 +1,8 @@
+/******************************************************************************
+EVIDENCE SWOOSH
+Description: 
+******************************************************************************/
+
 var doc = fl.getDocumentDOM();
 var scriptPath = fl.scriptURI;
 var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));

@@ -1,4 +1,4 @@
-﻿/*
+﻿/******************************************************************************
 COMPILE EMOTION MAP
 Provided a character's layer index and their library path, generate a JS Map of that character's dialogue
 and their corresponding poses. Use this to automatically generate emotionEngine databases.

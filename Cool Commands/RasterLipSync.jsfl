@@ -1,3 +1,8 @@
+/******************************************************************************
+RASTER LIP SYNC
+Description: 
+******************************************************************************/
+
 var doc = fl.getDocumentDOM();
 var timeline = doc.getTimeline();
 var layer = timeline.getSelectedLayers();

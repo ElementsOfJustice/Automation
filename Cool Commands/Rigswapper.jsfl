@@ -1,3 +1,8 @@
+/******************************************************************************
+RIGSWAPPER
+Description: 
+******************************************************************************/
+
 var scriptPath = fl.scriptURI;
 var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
 var guiPanel = fl.getDocumentDOM().xmlPanel(dirURL+"/RigSwapper.xml");
