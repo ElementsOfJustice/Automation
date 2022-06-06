@@ -1,10 +1,12 @@
 ﻿/******************************************************************************
 COMPILE EMOTION MAP
-Provided a character's layer index and their library path, generate a JS Map of that character's dialogue
-and their corresponding poses. Use this to automatically generate emotionEngine databases.
-Switch this from printing in console to printing to a temp file file. Include options to push tmp file maps to the databases and a purge option
-to cycle through the database files and remove repeat entries.
-*/
+Description: 
+Provided a character's layer index and their library path, generate a JS Map of 
+that character's dialogue and their corresponding poses. Use this to automatically
+generate emotionEngine databases. Switch this from printing in console to printing
+to a temp file file. Include options to push tmp file maps to the databases and 
+a purge option to cycle through the database files and remove repeat entries.
+******************************************************************************/
 
 var doc = fl.getDocumentDOM();
 var timeline = doc.getTimeline();
