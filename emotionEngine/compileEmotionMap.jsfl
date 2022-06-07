@@ -6,6 +6,17 @@ that character's dialogue and their corresponding poses. Use this to automatical
 generate emotionEngine databases. Switch this from printing in console to printing
 to a temp file file. Include options to push tmp file maps to the databases and 
 a purge option to cycle through the database files and remove repeat entries.
+
+Issues:
+iterateLayers k=6 is set to get all layers after the TEXTBOX layer, this may or 
+may not conflict with courtroom environments. The fl.Trace method works good
+right now, but I have no idea how to merge maps in written files. Maps ARE NOT
+A GOOD USE HERE BUT I AM STUCK USING THEM. They require special syntax to 
+initialize and you cannot use Map.set to push values in, it will not let you.
+
+- Find a stable method to merge/add on to the CURRENT MAPS
+- DO NOT CHANGE THE STRUCTURE OF THESE MAPS !!!EVER!!!
+- Find some way to gouge out the last entry into the maps as a map cap.
 ******************************************************************************/
 
 var doc = fl.getDocumentDOM();
@@ -15,15 +26,9 @@ var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
 var frameArray = fl.getDocumentDOM().getTimeline().layers[layer].frames;
 var n = frameArray.length;
 
-//var layerNum = timeline.findLayerIndex("PHOENIX_WRIGHT") //Make resetting this a function? Dump all character layer names into an array and iterate to compile all of them
-//var iOffset = 5 //Really shitty way to avoid selecting movieclip fades instead of graphics, will work 99% of the time(?)
-//var charName = "phoenix"
-
 function iterateLayers() {
 
 	for(k = 6; k < timeline.layerCount; k++) {
-		//fl.trace(timeline.layers[k].name)
-		//fl.trace(k+"   "+timeline.layerCount)
 			if (timeline.layers[k].parentLayer != null) {
 				if ((timeline.layers[k].parentLayer.name == "RASTER_CHARACTERS") || (timeline.layers[k].parentLayer.name == "VECTOR_CHARACTERS")) {
 				compileMap(timeline.layers[k].name, k, 5)
@@ -32,9 +37,10 @@ function iterateLayers() {
 	}
 }
 
-function compileMap(charName, layerNum, iOffset) { //haha what kind of function name is compileMap? - the connor voice in soundman's head
+function compileMap(charName, layerNum, iOffset) {
 
-fl.trace("const " + charName + "Dictionary = new Map([")
+fl.outputPanel.clear(); 
+fl.trace("const " + charName + "_Dictionary = new Map([")
 
 for (i = 0; i < n; i++) {
 	if ((i==frameArray[i].startFrame) && (frameArray[i].isEmpty == false)) {
@@ -53,8 +59,9 @@ for (i = 0; i < n; i++) {
 
 fl.trace("[``, ``]")
 fl.trace("]);")
-fl.trace("module.exports = " + charName + "Dictionary;")
+fl.trace("module.exports = " + charName + "_Dictionary;")
 fl.trace("")
+fl.outputPanel.save(fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/"))+ "/databases/" + charName + "_Dictionary.js", true); 
 
 }
 
