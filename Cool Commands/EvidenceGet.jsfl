@@ -1,6 +1,7 @@
 /******************************************************************************
 EVIDENCE GET
-Description: 
+Description: Creates the animation for when evidence is added to the court
+record. Specifically moving the evidence image on to and off of the screen.
 ******************************************************************************/
 
 // get the adobe animate file and info inside
@@ -36,23 +37,33 @@ an.getDocumentDOM().scaleSelection(1, trueHeight / timeline.layers[layer].frames
 an.getDocumentDOM().align('vertical center', true);
 an.getDocumentDOM().align('right', true);
 
-an.getDocumentDOM().moveSelectionBy({x:918, y:0}); // make the evidence offscren and vertically centered
+an.getDocumentDOM().moveSelectionBy({x:918, y:0}); // make the evidence offscreen and vertically centered
 doc.getTimeline().currentFrame += 10; // advance playhead by 10
 doc.getTimeline().insertKeyframe(); // insert keyframe at current playhead
+// select the current frame and the one after that
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
+// align objects to the horizontal center using document bounds
 an.getDocumentDOM().align('horizontal center', true);
-doc.getTimeline().currentFrame -= 10;
+doc.getTimeline().currentFrame -= 10; // reverse playhead by 10
+// select the current frame and the one after that
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
+// animate the movement of the evidence from one place to another
 doc.getTimeline().createMotionTween();
+// 
 an.getDocumentDOM().getTimeline().setFrameProperty('easeType', 5, 10, 0);
 
+// set the playhead to the saved frame from earlier
 doc.getTimeline().currentFrame = endFrame;
-doc.getTimeline().insertKeyframe();
+doc.getTimeline().insertKeyframe(); // insert keyframe at current playhead
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
 an.getDocumentDOM().moveSelectionBy({x:0, y:536});
-doc.getTimeline().currentFrame -= 10;
-doc.getTimeline().insertKeyframe();
+doc.getTimeline().currentFrame -= 10; // reverse playhead by 10
+doc.getTimeline().insertKeyframe(); // insert keyframe at current playhead
+// select the current frame and the one after that
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
+// animate the movement of the evidence from one place to another
 doc.getTimeline().createMotionTween();
+// 
 an.getDocumentDOM().getTimeline().setFrameProperty('easeType', 5, 9, 0);
+// 
 doc.getTimeline().convertToBlankKeyframes(endFrame + 1);

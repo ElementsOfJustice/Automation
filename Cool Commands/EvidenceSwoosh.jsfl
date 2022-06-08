@@ -3,19 +3,25 @@ EVIDENCE SWOOSH
 Description: 
 ******************************************************************************/
 
+// get the adobe animate doc object
 var doc = fl.getDocumentDOM();
+// set scriptPath to "/path/../EvidenceSwoosh.jsfl"
 var scriptPath = fl.scriptURI;
+// set dirURL to the path up to the last / character (i.e. just the path)
 var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
 
+// store indexes of frames selected by the user
 var frameSelection = doc.getTimeline().getSelectedFrames();
 var selLayerIndex = frameSelection[0];
 var startFrame = frameSelection[1]+1;
 var endFrame = frameSelection[2];
-
-
-var layer = doc.getTimeline().getSelectedLayers();
 var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
+
+// store indexes of layers selected by the user
+var layer = doc.getTimeline().getSelectedLayers();
+// store all frames in the layer
 var frameArray = fl.getDocumentDOM().getTimeline().layers[layer].frames;
+
 alert("Select the evidence image.");
 var imagePath = fl.browseForFileURL("select");
 
