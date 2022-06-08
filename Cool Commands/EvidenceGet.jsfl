@@ -48,6 +48,7 @@ doc.getTimeline().currentFrame -= 10; // reverse playhead by 10
 // select the current frame and the one after that
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
 // animate the movement of the evidence from one place to another
+// (Explanation of Tweening: https://www.youtube.com/watch?v=uVPJ-Nm_Igw)
 doc.getTimeline().createMotionTween();
 // 
 an.getDocumentDOM().getTimeline().setFrameProperty('easeType', 5, 10, 0);
