@@ -72,7 +72,7 @@ if (guiPanel.dismiss == "accept") {
 		var dur = fl.getDocumentDOM().getTimeline().layers[layer].frames[keyFrameArr[i]].duration;
 		// if the keyframe duration is greater than the duration of a lip flap
 		if (dur > lipFlapLength) {
-			// move the playhead forward by the duration of the lip flap
+			// advance playhead by the duration of the lip flap
 			timeline.currentFrame += lipFlapLength;
 			// if we aren't at the beginning of the keyframe anymore 
 			// (?? which honestly should always be the case unless lipFlapLength == 0 ??)

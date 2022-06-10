@@ -69,26 +69,40 @@ doc.getTimeline().layers[layer].frames[doc.getTimeline().currentFrame].elements[
 // select the current frame and the one after
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
 
+//
 doc.setTransformationPoint({x:-115.6, y:-115.6});
 
 // reverse playhead by 4 frames
 doc.getTimeline().currentFrame -=4;
+// select the current frame and the one after
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
+// animate movement between two positions
 doc.getTimeline().createMotionTween();
+// Change how exactly the tween proceeds from one end to the other
 an.getDocumentDOM().getTimeline().setFrameProperty('easeType', 5, 10, 0);
 
 // move playhead to the last frame selected by the user
 doc.getTimeline().currentFrame = endFrame;
+// Make the current frame a key frame
 doc.getTimeline().convertToKeyframes(doc.getTimeline().currentFrame);
+// select the current frame and the one after
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
+// assign the original matrix values to the current frame
 doc.getTimeline().layers[layer].frames[doc.getTimeline().currentFrame].elements[0].matrix = mat;
+//
 doc.setTransformationPoint({x:-115.6, y:-115.6});
 
 // reverse playhead by 4 frames
 doc.getTimeline().currentFrame-=4;
+// Make the current frame a key frame
 doc.getTimeline().convertToKeyframes(doc.getTimeline().currentFrame);
+// select the current frame and the one after
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
+//
 doc.setTransformationPoint({x:-115.6, y:-115.6});
+// animate movement between two positions
 doc.getTimeline().createMotionTween();
+// Change how exactly the tween proceeds from one end to the other
 an.getDocumentDOM().getTimeline().setFrameProperty('easeType', 5, 9, 0);
+// Insert a blank keyframe so the animation stops
 doc.getTimeline().convertToBlankKeyframes(endFrame + 1);
