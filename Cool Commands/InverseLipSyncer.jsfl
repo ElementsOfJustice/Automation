@@ -9,7 +9,7 @@ if (firstFrameOfLipFlap != null) {
     var endFrame = frameSelection[2];
     for (var i = startingFrame; i < endFrame; i++) {
         if(i == fl.getDocumentDOM().getTimeline().layers[selLayerIndex].frames[i].startFrame && fl.getDocumentDOM().getTimeline().layers[selLayerIndex].frames[i].elements[0].firstFrame != (firstFrameOfLipFlap - 1)) { // if i == start of a keyframe and it is not the first frame of a lip flap
-            fl.getDocumentDOM().clearKeyframes(i);
+            fl.getDocumentDOM().getTimeline().clearKeyframes(i);
         }
     }
 }
