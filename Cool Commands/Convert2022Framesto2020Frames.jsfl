@@ -1,3 +1,8 @@
+/******************************************************************************
+CONVERT 2022 FRAMES TO 2020 FRAMES
+Description: 
+******************************************************************************/
+
 var frameSelection = fl.getDocumentDOM().getTimeline().getSelectedFrames();
 var selLayerIndex = frameSelection[0];
 var startFrame = frameSelection[1];
