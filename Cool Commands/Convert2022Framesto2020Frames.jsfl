@@ -1,6 +1,6 @@
 /******************************************************************************
 CONVERT 2022 FRAMES TO 2020 FRAMES
-Description: 
+Description: Animate 2020 doesn't have the Last Frame option for looping, so this converts frames that utilize the Last Frame into 2020-friendly frames that don't.
 ******************************************************************************/
 
 var frameSelection = fl.getDocumentDOM().getTimeline().getSelectedFrames();
