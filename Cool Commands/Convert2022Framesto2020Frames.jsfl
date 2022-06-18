@@ -18,6 +18,7 @@ startFrame = fl.getDocumentDOM().getTimeline().layers[selLayerIndex].frames[star
 var timeline = fl.getDocumentDOM().getTimeline();
 for (var i = startFrame; i < endFrame; i += timeline.layers[selLayerIndex].frames[i].duration) {
     fl.getDocumentDOM().getTimeline().currentFrame = i;
+    // select the frame at the loop's index
     fl.getDocumentDOM().getTimeline().setSelectedFrames(i, i + 1);
     // case 1: play once
     if (fl.getDocumentDOM().getElementProperty("loop") == "play once" && fl.getDocumentDOM().getElementProperty("lastFrame") != -1) {
@@ -25,6 +26,7 @@ for (var i = startFrame; i < endFrame; i += timeline.layers[selLayerIndex].frame
         if (diff < fl.getDocumentDOM().getTimeline().layers[selLayerIndex].frames[i].duration) { // if the duration of a keyframe is longer than the duration of a loop...
             fl.getDocumentDOM().getTimeline().currentFrame += diff;
             fl.getDocumentDOM().getTimeline().insertKeyframe();
+            // select current frame
             fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
             fl.getDocumentDOM().setElementProperty("loop", "single frame");
         }
@@ -39,6 +41,7 @@ for (var i = startFrame; i < endFrame; i += timeline.layers[selLayerIndex].frame
         while (loops > 0 && count < dur) {
             fl.getDocumentDOM().getTimeline().currentFrame += diff;
             fl.getDocumentDOM().getTimeline().insertKeyframe();
+            // select current frame
             fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
             fl.getDocumentDOM().setElementProperty("firstFrame", firstFrame);
             loops--;
@@ -53,6 +56,7 @@ for (var i = startFrame; i < endFrame; i += timeline.layers[selLayerIndex].frame
         for (var j = 0; j < diff && j < (dur - 1); j++) {
             fl.getDocumentDOM().getTimeline().currentFrame += 1;
             fl.getDocumentDOM().getTimeline().insertKeyframe();
+            // select current frame
             fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
             fl.getDocumentDOM().setElementProperty("loop", "single frame");
             fl.getDocumentDOM().setElementProperty("firstFrame", fl.getDocumentDOM().getElementProperty("firstFrame") - 1);

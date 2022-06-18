@@ -8,5 +8,5 @@ and select the starting frame of the next keyframe
 var currentTimelineFrame = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().currentFrame];
 // advance playhead by the amount of frames left until the next keyframe
 fl.getDocumentDOM().getTimeline().currentFrame += currentTimelineFrame.duration - (fl.getDocumentDOM().getTimeline().currentFrame - currentTimelineFrame.startFrame);
-// ?? Select the current frame and the one after ??
+// Select the current frame
 fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);

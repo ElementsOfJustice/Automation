@@ -14,5 +14,5 @@ if (fl.getDocumentDOM().getTimeline().currentFrame == currentTimelineKeyframe) {
 	// ?? otherwise just select the current keyframe's starting frame ??
 	fl.getDocumentDOM().getTimeline().currentFrame = currentTimelineKeyframe;
 }
-// ?? Select the current frame and the one after ??
+// Select the current frame
 fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);

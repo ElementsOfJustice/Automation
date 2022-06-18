@@ -24,5 +24,8 @@ for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
 }
 // 
 fl.getDocumentDOM().getTimeline().setSelectedFrames(selectionArray);
+// The Line that makes this script different from its counterpart - REMOVE from all Layers
+//
 fl.getDocumentDOM().getTimeline().insertFrames();
+// set the selection back to the user's original selection
 fl.getDocumentDOM().getTimeline().setSelectedFrames([layer, firstFrame, lastFrame]);

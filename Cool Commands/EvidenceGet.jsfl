@@ -41,13 +41,13 @@ an.getDocumentDOM().align('right', true);
 an.getDocumentDOM().moveSelectionBy({x:918, y:0}); // move the object the rest of the way off screen
 doc.getTimeline().currentFrame += 10; // advance playhead by 10
 doc.getTimeline().insertKeyframe(); // insert keyframe at current playhead
-// select the current frame and the one after that
+// select the current frame
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
 // align objects to the horizontal center using document bounds
 // (i.e. in 10 frames, the evidence will be onscreen)
 an.getDocumentDOM().align('horizontal center', true);
 doc.getTimeline().currentFrame -= 10; // reverse playhead by 10
-// select the current frame and the one after that
+// select the current frame
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
 // animate the movement of the evidence from right to left
 // (Explanation of Tweening: https://www.youtube.com/watch?v=uVPJ-Nm_Igw)
@@ -59,11 +59,12 @@ an.getDocumentDOM().getTimeline().setFrameProperty('easeType', 5, 10, 0);
 // set the playhead to the saved frame from earlier
 doc.getTimeline().currentFrame = endFrame;
 doc.getTimeline().insertKeyframe(); // insert keyframe at current playhead
+// select current frame
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
 an.getDocumentDOM().moveSelectionBy({x:0, y:536}); // move the selection 536 downward
 doc.getTimeline().currentFrame -= 10; // reverse playhead by 10
 doc.getTimeline().insertKeyframe(); // insert keyframe at current playhead
-// select the current frame and the one after that
+// select the current frame
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
 // animate the movement of the evidence from up to down
 doc.getTimeline().createMotionTween();

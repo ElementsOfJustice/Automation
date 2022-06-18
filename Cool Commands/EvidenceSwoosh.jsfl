@@ -46,7 +46,7 @@ mat.ty = 12.6;
 
 // assign the new matrix values back to the current frame
 doc.getTimeline().layers[layer].frames[doc.getTimeline().currentFrame].elements[0].matrix = mat;
-
+// 
 doc.setTransformationPoint({x:-115.6, y:-115.6});
 
 // advance playhead by 4 frames
