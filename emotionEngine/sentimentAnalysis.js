@@ -16,26 +16,42 @@ Issues:
 
 const jaccardDistance = require('@extra-string/jaccard-distance');
 const Sentiment = require('sentiment');
+var fs = require("fs");
 
 var sentiment = new Sentiment();
 var chkStr = "Some people just want to watch the world burn."
 var tolerance = 1;
+var dictionary = [];
 
-const dictionary = require('./databases/GUARD2_Dictionary.js')
+fs.readFile('./emotionEngine/databases/APOLLO_JUSTICE_Dictionary.txt', function read(err, data) {
+  if (err) {
+      throw err;
+  }
+
+  var allTxt = data.toString()
+  dictionary = allTxt.split("\r\n");
+
+  calculateAnswer(dictionary)
+
+});
+
+function calculateAnswer(dictionary) { //the worst function name fucking ever
 
 var tmpJaccard = new Map();
 
-for (let [key, value] of dictionary) {
+for (var i = 0; i < dictionary.length; i++) {
 
   var chkStrScore = sentiment.analyze(chkStr).score
-  var baseScore = sentiment.analyze(`${key}`).score
+  var baseScore = sentiment.analyze(dictionary[i].split("|||")[0]).score
 
-  //console.log(sentiment.analyze(`${key}`).score +" "+ sentiment.analyze(chkStr).score + " " + jaccardDistance(`${key}`, chkStr) + " " + `${key}`);
+  console.log(sentiment.analyze(dictionary[i].split("|||")[0]).score +" "+ sentiment.analyze(chkStr).score + " " + jaccardDistance(dictionary[i].split("|||")[0], chkStr) + " " + dictionary[i].split("|||")[0]);
   
   if ((baseScore >= chkStrScore - tolerance) && (baseScore <= chkStrScore + tolerance)) {
-    tmpJaccard.set(jaccardDistance(`${key}`, chkStr), `${value}`)
+    tmpJaccard.set(jaccardDistance(dictionary[i].split("|||")[0], chkStr), dictionary[i].split("|||")[1])
   }
 }
 
   //console.log(Math.min(... tmpJaccard.keys()))
   console.log(chkStr + " should have the pose " + tmpJaccard.get(Math.min(... tmpJaccard.keys())) + ".")
+
+}
