@@ -23,6 +23,7 @@ function resetSelection(layer, frame) { // sets selection the desired layer and 
     fl.getDocumentDOM().selectNone();
     fl.getDocumentDOM().getTimeline().setSelectedLayers(layer);
     fl.getDocumentDOM().getTimeline().currentFrame = frame;
+    // select current frame
     fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
 }
 
@@ -31,9 +32,11 @@ function makeFadeSymbol(layer, frame, name) { // creates a fade symbol of the sp
     var originalMat = fl.getDocumentDOM().getElementProperty('matrix'); // get matrix of element on timeline
     fl.getDocumentDOM().enterEditMode('inPlace'); // enter symbol
     fl.getDocumentDOM().getTimeline().setSelectedLayers(SYMBOL_CONTENT_LAYER); // set layer to the layer that character is on (assumed to be SYMBOL_CONTENT_LAYER)
+    // select current frame
     fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
     var isFirstFrameOfFrameSequence = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame; // if the current frame isn't the first frame in a frame sequence, make a note of that
     fl.getDocumentDOM().getTimeline().convertToKeyframes();
+    // select current frame
     fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
     if (isFirstFrameOfFrameSequence) {
         fl.getDocumentDOM().setElementProperty('firstFrame', fl.getDocumentDOM().getElementProperty('firstFrame') - 1); // animate makes the firstframe one more if you insert a keyframe on a keyframe

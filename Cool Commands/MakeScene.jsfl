@@ -94,6 +94,7 @@ function doTextBoxes() {
     switchActive("TEXT");
 
     for (var i = 0; i < dialogueArray.length; i++) {
+        // select current frame
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
         if (i != 0) {
             fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
@@ -154,6 +155,7 @@ function addRigs() {
     for (var i = 0; i < uniqueChars.length; i++) {
         switchActive(masterRigArray[uniqueChars[i]][0]);
         fl.getDocumentDOM().getTimeline().currentFrame = 0;
+        // select current frame
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
 
         fl.getDocumentDOM().addItem({
@@ -196,8 +198,10 @@ function sculpt() {
             fl.getDocumentDOM().getTimeline().currentFrame = iFrameDuration * i;
             if ((i == 0) && (speakertagArray[i] != uniqueChars[j])) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
                 switchActive(masterRigArray[uniqueChars[j]][0]);
+                // select current frame
                 fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
                 fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
+                // select current frame
                 fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
                 fl.getDocumentDOM().deleteSelection();
             }
@@ -205,6 +209,7 @@ function sculpt() {
             else if ((generateWitnessBools(i)[0] /* isWitnessSpeaking */) && (uniqueChars[j] == speakertagArray[i])) { // make keyframe on active witnesses
                 for (var witness in sWitnesses) {
                     switchActive(masterRigArray[sWitnesses[witness]][0]);
+                    // select current frame
                     fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
                     if (i != 0) {
                         fl.getDocumentDOM().getTimeline().insertKeyframe();
@@ -216,6 +221,7 @@ function sculpt() {
                     for (var witness in sWitnesses) {
                         fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
                         switchActive(masterRigArray[sWitnesses[witness]][0]);
+                        // select current frame
                         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
                         fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
                         fl.getDocumentDOM().getTimeline().currentFrame -= iFrameDuration;
@@ -229,6 +235,7 @@ function sculpt() {
                 // if (fl.getDocumentDOM().getTimeline().getLayerProperty('visible')) {
                 //     fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !true);
                 // }
+                // select current frame
                 fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
                 if (i != 0) {
                     fl.getDocumentDOM().getTimeline().insertKeyframe();
@@ -237,6 +244,7 @@ function sculpt() {
                 }
                 if (speakertagArray[i] != speakertagArray[i + 1]) {
                     fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
+                    // select current frame
                     fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
                     fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
                 }
@@ -249,6 +257,7 @@ function placeDesks() {
     fl.getDocumentDOM().getTimeline().currentFrame = 0;
     switchActive("DESKS");
     for (var i = 0; i < speakertagArray.length; i++) {
+        // select current frame
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
         if (i != 0) {
             fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
@@ -270,6 +279,7 @@ function placeBGs() {
     fl.getDocumentDOM().getTimeline().currentFrame = 0;
     switchActive("BACKGROUNDS");
     for (var i = 0; i < speakertagArray.length; i++) {
+        // select current frame
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
         if (i != 0) {
             fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
@@ -325,6 +335,7 @@ function doTextBoxesInvestigation() {
     switchActive("TEXT");
 
     for (var i = 0; i < dialogueArray.length; i++) {
+        // select current frame
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
         if (i != 0) {
             fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
@@ -378,6 +389,7 @@ function addRigsInvestgation() {
         }
         switchActive(masterInvestigationArray[character][0]);
         fl.getDocumentDOM().getTimeline().currentFrame = 0;
+        // select current frame
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
 
         fl.getDocumentDOM().addItem({
@@ -404,8 +416,10 @@ function sculptInvestgation() {
             fl.getDocumentDOM().getTimeline().currentFrame = iFrameDuration * i;
             if ((i == 0) && (speakertagArray[i] != uniqueChars[j])) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
                 switchActive(masterInvestigationArray[uniqueChars[j]][0]);
+                // select current frame
                 fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
                 fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
+                // select current frame
                 fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
                 fl.getDocumentDOM().deleteSelection();
             }
@@ -423,6 +437,7 @@ function sculptInvestgation() {
                 }
                 if (speakertagArray[i] != speakertagArray[i + 1]) {
                     fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
+                    // select current frame
                     fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
                     fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
                 }

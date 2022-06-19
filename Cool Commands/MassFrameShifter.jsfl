@@ -18,6 +18,7 @@ var delta = parseInt(prompt("Enter the frames to shift each keyframe by (positiv
 
 for(var i = startingFrame; i < endFrame - 1; i++) {
 	if(fl.getDocumentDOM().getTimeline().layers[layer].frames[i].startFrame == i) {
+		// select frame at loop index
 		doc.getTimeline().setSelectedFrames(i, i+1);
 		fl.getDocumentDOM().getTimeline().layers[layer].frames[i].elements[0].firstFrame += delta;
 		an.getDocumentDOM().setElementProperty('lastFrame', (an.getDocumentDOM().getElementProperty('lastFrame') + delta) * 1);
