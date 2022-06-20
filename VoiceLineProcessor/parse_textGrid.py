@@ -4,16 +4,16 @@ import os
 
 def writeParsedFile(source, destination):
     tg = textgrid.TextGrid.fromFile(source)
-    words = "var words = [ \n"
-    phonemes = "var phonemes = [ \n"
+    words = "var words = { \n"
+    phonemes = "var phonemes = { \n"
     for j in tg[0]:
-        words += "[" + str(j.minTime) + "," + str(j.maxTime) + \
+        words += str(j.minTime) + " : [" + str(j.maxTime) + \
             ",\"" + str(j.mark) + "\"], \n"
-    words += "];"
+    words += "};"
     for j in tg[1]:
-        phonemes += "[" + str(j.minTime) + "," + \
+        phonemes += str(j.minTime) + " : [" + \
             str(j.maxTime) + ",\"" + str(j.mark) + "\"], \n"
-    phonemes += "];"
+    phonemes += "};"
     f = open(destination, "x")
     f.write(words + "\n" + phonemes)
     f.close()
