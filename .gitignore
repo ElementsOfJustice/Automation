@@ -44,8 +44,8 @@ Import Motion XML.jsfl
 names.xml
 testing.jsfl
 VoiceLineProcessor/__pycache__
-VoiceLineProcessor/output_copy
-VoiceLineProcessor/TextGrid_files_copy
+VoiceLineProcessor/output
+VoiceLineProcessor/TextGrid_files
 VoiceLineProcessor/output2/s5_144_fair devotion.cfg
 VoiceLineProcessor/output2/s5_151_fair devotion.cfg
 VoiceLineProcessor/output2/s5_153_fair devotion.cfg
