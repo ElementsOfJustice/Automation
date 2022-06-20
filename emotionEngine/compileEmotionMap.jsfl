@@ -14,9 +14,6 @@ right now, but I have no idea how to merge maps in written files. Maps ARE NOT
 A GOOD USE HERE BUT I AM STUCK USING THEM. They require special syntax to 
 initialize and you cannot use Map.set to push values in, it will not let you.
 
-- Find a stable method to merge/add on to the CURRENT MAPS
-- DO NOT CHANGE THE STRUCTURE OF THESE MAPS !!!EVER!!!
-- Find some way to gouge out the last entry into the maps as a map cap.
 ******************************************************************************/
 
 var scriptPath = fl.scriptURI;
@@ -34,7 +31,7 @@ function iterateLayers() {
 	for (k = 6; k < timeline.layerCount; k++) {
 		if (timeline.layers[k].parentLayer != null) {
 			if ((timeline.layers[k].parentLayer.name == "RASTER_CHARACTERS") || (timeline.layers[k].parentLayer.name == "VECTOR_CHARACTERS")) {
-				compileMap(timeline.layers[k].name, k, 5)
+				compileMap(timeline.layers[k].name, k, 14)
 			}
 		}
 	}
@@ -44,28 +41,28 @@ function compileMap(charName, layerNum, iOffset) {
 
 	fl.outputPanel.clear();
 
-		for (i = 0; i < n; i++) {
-			if ((i == frameArray[i].startFrame) && (frameArray[i].isEmpty == false)) {
-				var elList = frameArray[i].elements
-				for (var j = elList.length - 1; j > 0; j--) {
-					var el = elList[j - 1] // j-1 for dialogue, j for text.
-					if (fl.getDocumentDOM().getTimeline().layers[layerNum].frames[i + iOffset].elements.length != 0) {
-						var ffIndex = fl.getDocumentDOM().getTimeline().layers[layerNum].frames[i + iOffset].elements[0].firstFrame + 1
-						var itemIndex = doc.library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerNum].frames[i + iOffset].elements[0].libraryItem.name)
+	for (i = 0; i < n; i++) {
+		if ((i == frameArray[i].startFrame) && (frameArray[i].isEmpty == false)) {
+			var elList = frameArray[i].elements
+			for (var j = elList.length - 1; j > 0; j--) {
+				var el = elList[j - 1] // j-1 for dialogue, j for text.
+				if (fl.getDocumentDOM().getTimeline().layers[layerNum].frames[i + iOffset].elements.length != 0) {
+					var ffIndex = fl.getDocumentDOM().getTimeline().layers[layerNum].frames[i + iOffset].elements[0].firstFrame + 1
+					var itemIndex = doc.library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerNum].frames[i + iOffset].elements[0].libraryItem.name)
 
-						var poseName = doc.library.items[itemIndex].timeline.layers[0].frames[ffIndex].name;
-						poseName = poseName.replace(' Talk', '');
+					var poseName = doc.library.items[itemIndex].timeline.layers[0].frames[ffIndex].name;
+					poseName = poseName.replace(' Talk', '');
 
-						var dialogue = el.getTextString();
+					var dialogue = el.getTextString();
 
-						fl.trace(dialogue + "|||" + poseName)
+					fl.trace(dialogue + "|||" + poseName)
 
-					}
 				}
 			}
 		}
+	}
 
-		fl.outputPanel.save(fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/")) + "/databases/" + charName + "_Dictionary.txt", true);	
+	fl.outputPanel.save(fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/")) + "/databases/" + charName + "_Dictionary.txt", true);
 
 }
 

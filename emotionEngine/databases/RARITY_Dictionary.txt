@@ -1,9 +1,10 @@
-﻿Wait a moment.|||Sad
-I… I am going to stay here.|||Thinking
-Hm?|||Thinking
-I want to stay, so that I’ll be able to see Sweetie Belle as soon as she gets out. |||Neutral 
-But, don’t you need an attorney to even be able to set foot in here?|||Neutral 
-Well, yes, but…|||Sad
-!!|||Neutral Happy
-I truly do appreciate it, darling.|||Neutral Happy
-My, my! You certainly are a charming young man, aren’t you?|||Coy
+﻿Well, most of us, darling. |||Thinking
+A certain somepony didn’t want to get out of bed today. |||Thinking
+I practically had to drag her to the courthouse!|||Dramatic
+!?|||
+Sweetie Belle… What’s this about?|||Thinking
+Sweetie?|||Sad
+Sweetie Belle! Apologise to Apple Bloom!|||Angry
+Rainbow! That is quite enough!|||Angry
+See? There you go, Rainbow. A perfectly reasonable explanation.|||Neutral Happy
+I’ll go after her. But, you and I are going to have a serious talk later, Rainbow Dash!|||Thinking
