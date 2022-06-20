@@ -1,12 +1,14 @@
-﻿You guys get going. I’ll stay here with Rarity.|||Neutral
-You guys get going. I’ll stay here with Rarity.|||Neutral
-I said so, didn’t I? What’s the matter?|||Serious
-Hey, come on. I don’t hate everything about this world, y’know? |||Neutral
-And besides, I’d like to help out Rarity. Even if it’s just a bit of legal advice, I’ll do what I can.|||Neutral
-And besides, I’d like to help out Rarity. Even if it’s just a bit of legal advice, I’ll do what I can.|||Neutral
-It’s not like that! Like I said, I don’t hate everything here. |||Shock
-It’s not like that! Like I said, I don’t hate everything here. |||Shock
-Rarity, for instance. She’s… what’s the word? Refined! She takes herself seriously. I can appreciate that. |||Serious
-R-right...|||Weary
-All right. Sounds good, Apollo. We’ll meet up with you later at the Everfree Forest, then.|||Weary
-Right! Good luck, you guys! I’ll see you there!|||Neutral
+﻿Not exactly a great idea to tire yourself out before the trial even starts, though, is it?|||Kristoph
+Hey, at least I’m getting some exercise, Mr. Overnight Instant Noodles and Comics!|||Kristoph
+It’s called “MANGA,” and it’s art!|||Serious
+Speaking of those kids, where are they? They should’ve been brought here by now.|||Thinking
+Apparently, the prosecutor wanted to have one last conversation with them before the trial started. They should be here any minute.|||Thinking
+Hopefully soon. The trial’s about to start.|||Weary
+What’s the deal? Why are they being so secretive?|||Serious
+I don’t know, but it’s starting to get on my nerves…|||Serious
+Uh... she doesn’t seem like she’s ill at all—|||Weary
+Apollo! Be quiet!|||Shock
+…|||Sad
+What a mess…|||Sad
+I shouldn’t have said that. I should NOT have said that.|||Sad
+Don’t worry! You’ve got this! Remember to focus, and you’ll be able to prove your clients’ innocence. |||Determined

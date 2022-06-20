@@ -19,11 +19,11 @@ const Sentiment = require('sentiment');
 var fs = require("fs");
 
 var sentiment = new Sentiment();
-var chkStr = "Some people just want to watch the world burn."
+var chkStr = "(Private Eye? Why does she need him?)"
 var tolerance = 1;
 var dictionary = [];
 
-fs.readFile('./emotionEngine/databases/APOLLO_JUSTICE_Dictionary.txt', function read(err, data) {
+fs.readFile('./emotionEngine/databases/ATHENA_COURTROOM_Dictionary.txt', function read(err, data) {
   if (err) {
       throw err;
   }
@@ -44,7 +44,7 @@ for (var i = 0; i < dictionary.length; i++) {
   var chkStrScore = sentiment.analyze(chkStr).score
   var baseScore = sentiment.analyze(dictionary[i].split("|||")[0]).score
 
-  console.log(sentiment.analyze(dictionary[i].split("|||")[0]).score +" "+ sentiment.analyze(chkStr).score + " " + jaccardDistance(dictionary[i].split("|||")[0], chkStr) + " " + dictionary[i].split("|||")[0]);
+  //console.log(sentiment.analyze(dictionary[i].split("|||")[0]).score +" "+ sentiment.analyze(chkStr).score + " " + jaccardDistance(dictionary[i].split("|||")[0], chkStr) + " " + dictionary[i].split("|||")[0]);
   
   if ((baseScore >= chkStrScore - tolerance) && (baseScore <= chkStrScore + tolerance)) {
     tmpJaccard.set(jaccardDistance(dictionary[i].split("|||")[0], chkStr), dictionary[i].split("|||")[1])
