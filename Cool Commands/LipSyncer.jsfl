@@ -22,8 +22,8 @@ var guiPanel = fl.xmlPanelFromString("<dialog title=\"The Lip Syncer\" buttons=\
 /*
 Function: makeLipFlap
 Variables:  
-	midPointDelta ()
-	lengthOffset ()
+	midPointDelta []
+	lengthOffset []
 Description: 
 */
 function makeLipFlap(midPointDelta, lengthOffset) {
