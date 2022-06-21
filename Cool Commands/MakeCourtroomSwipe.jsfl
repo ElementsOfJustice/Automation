@@ -72,8 +72,7 @@ function doLayerParenting(childLayerIndices, parentLayerIndex) {
 /*
 Function: createTween
 Variables:  
-	layer []
-	frame []
+	sourceCharacterlayers []
 Description: 
 */
 function createTween(sourceCharacterlayers) {

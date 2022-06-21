@@ -3,16 +3,19 @@ LINE ADDER
 Description: 
 ******************************************************************************/
 
-//
+// set scriptPath to "/path/../LineAdder.jsfl"
 var scriptPath = fl.scriptURI;
+// set dirURL to the path up to the last / character (i.e. just the path)
 var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
 
+// store the document object and other data inside
 var doc = fl.getDocumentDOM();
 var layer = doc.getTimeline().getSelectedLayers();
 var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
 var frameArray = fl.getDocumentDOM().getTimeline().layers[layer].frames;
 
 alert("Select the config file for this batch of voice lines. If you don't have this file, run the JAR that is also provided.");
+// Open the file explorer, prompting the user to select a file
 var cfgPath = fl.browseForFileURL("select");
 
 /*var num = prompt("Number of first voice line:");
@@ -21,9 +24,19 @@ if(num == null) {
 	throw new Error("User stopped script.");
 }*/
 
+/*
+Function: extendVoiceLine
+Variables:  
+	lineName []
+Description: insert frames to match voice line length + 3 frames
+*/
 function extendVoiceLine(lineName) {
-	doc.getTimeline().insertFrames(3 + (Math.ceil(doc.frameRate * voiceLineLengths[lineName])) - doc.getTimeline().layers[doc.getTimeline().findLayerIndex("TEXT")].frames[doc.getTimeline().currentFrame].duration, true); // insert frames to match voice line length + 3 frames
+	doc.getTimeline().insertFrames(
+		3 + (Math.ceil(doc.frameRate * voiceLineLengths[lineName])) 
+		- doc.getTimeline().layers[doc.getTimeline().findLayerIndex("TEXT")].frames[doc.getTimeline().currentFrame].duration, true
+		);
 }
+
 fl.runScript(cfgPath);
 
 var curLayer = "";
