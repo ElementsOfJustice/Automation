@@ -58,10 +58,10 @@ function getLipSyncFrameArray(words, phonemes) { // helper function to compute w
                     continue;
                 } else if (arrayContains(VOWEL_PHONES, phonemes[phonemeStart][WORD_PHONEME_INDEX])) {
                     if (index == 0) {
-                        break; // handle edge case (beginning of voice line)
+                        continue; // handle edge case (beginning of voice line)
                     }
                     if (arrayContains(CONSONANT_PHONES, phonemes[phonemeStartTimeArray[index - 1]][WORD_PHONEME_INDEX])) {  
-                        syllableFrames.push(Math.round(phonemeStart * FRAME_RATE)); // vowel after a consonant is a syllable yessiree
+                        syllableFrames.push(Math.round(phonemeStart * FRAME_RATE) - 1); // vowel after a consonant is a syllable yessiree (1 frame before to improve accuracy maybe?)
                     }
                 }
             }
@@ -79,7 +79,7 @@ function placeKeyframes(startFrame, layer, keyframeArray) {
 }
 
 
-alert("Select the voice line's config file.");
+//alert("Select the voice line's config file.");
 var cfgPath = fl.browseForFileURL("select"); // get file
 // data validation
 fl.runScript(cfgPath);

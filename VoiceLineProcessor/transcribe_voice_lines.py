@@ -1,6 +1,5 @@
 import speech_recognition as sr
 import os
-import traceback
 directory_name = "voice_lines"
 directory = os.fsencode(directory_name)
 
