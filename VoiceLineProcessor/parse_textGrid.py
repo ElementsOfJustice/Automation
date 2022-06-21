@@ -1,7 +1,20 @@
+"""
+*******************************************************************************
+PARSE TEXT GRID
+Description: 
+*******************************************************************************
+"""
+
 import textgrid
 import os
 
-
+"""
+Function: writeParsedFile
+Variables:  
+	source [A string. The path of the source file.]
+	destination [A string. The path of the destination file.]
+Description: 
+"""
 def writeParsedFile(source, destination):
     tg = textgrid.TextGrid.fromFile(source)
     words = "var words = { \n"
@@ -18,11 +31,15 @@ def writeParsedFile(source, destination):
     f.write(words + "\n" + phonemes)
     f.close()
 
-
+"""
+>>>MAIN<<<
+Description: 
+"""
 def main():
     directory_name = "TextGrid_files"
     directory = os.fsencode(directory_name)
 
+    # for each file in the directory...
     for file in os.listdir(directory):
         filename = os.fsdecode(file)
         try:

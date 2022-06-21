@@ -1,3 +1,10 @@
+"""
+*******************************************************************************
+TRANSCRIBE VOICE LINES
+Description: Import a directory of voice line files and use the Google speech 
+recognition API to transcribe each line into text.
+*******************************************************************************
+"""
 import speech_recognition as sr
 import os
 directory_name = "voice_lines"
