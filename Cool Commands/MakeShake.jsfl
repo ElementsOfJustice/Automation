@@ -9,11 +9,23 @@ var scriptPath = fl.scriptURI;
 // set dirURL to the path up to the last / character (i.e. just the path)
 var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
 // Creates a GUI window in Animate using the given XML file
-var guiPanel = fl.getDocumentDOM().xmlPanel(dirURL+"/MakeShake.xml");
-
+var guiPanel = fl.getDocumentDOM().xmlPanel(dirURL + "/MakeShake.xml");
+// save important frames to variables
+var selLayerIndex = frameSelection[0];
+var startingFrame = frameSelection[1];
+var endFrame = frameSelection[2];
+function setup() {
+	if (startingFrame > endFrame) { // if selection is backwards, fix it
+		var temp = endFrame;
+		endFrame = startingFrame;
+		startingFrame = temp;
+	}
+	fl.getDocumentDOM().getTimeline().layers[selLayerIndex * 1].locked = false; // unlock layer
+}
 
 // If the user pushes "ok" as opposed to "cancel"
-if(guiPanel.dismiss == "accept") {
+if (guiPanel.dismiss == "accept") {
+	setup();
 	// get the adobe animate file and info inside
 	var doc = fl.getDocumentDOM();
 	var timeline = doc.getTimeline();
@@ -22,10 +34,7 @@ if(guiPanel.dismiss == "accept") {
 
 	// Store the frames the user has selected on the timeline in an array
 	var frameSelection = timeline.getSelectedFrames();
-	// save important frames to variables
-	var selLayerIndex = frameSelection[0];
-	var startingFrame = frameSelection[1];
-	var endFrame = frameSelection[2];
+
 	// number of frames from start to end
 	var range = endFrame - startingFrame;
 
@@ -37,9 +46,9 @@ if(guiPanel.dismiss == "accept") {
 	var mat = timeline.layers[layer].frames[timeline.currentFrame].elements[0].matrix;
 
 	// from the starting frame to the ending frame...
-	for(var i = startingFrame; i < endFrame - 1; i++) {
+	for (var i = startingFrame; i < endFrame - 1; i++) {
 		// if we aren't at the starting frame 
-		if(fl.getDocumentDOM().getTimeline().layers[layer].frames[i].startFrame != i) {
+		if (fl.getDocumentDOM().getTimeline().layers[layer].frames[i].startFrame != i) {
 			//  convert the current frame to a key frame 
 			timeline.convertToKeyframes(timeline.currentFrame);
 		}
@@ -51,11 +60,11 @@ if(guiPanel.dismiss == "accept") {
 		var deltaX = 0;
 		var deltaY = 0;
 		// if the GUI box is checked...
-		if(taperOff == "true") {
+		if (taperOff == "true") {
 			// double intensity times our random value... 
 			deltaX = ((2 * intensity) * randX) // times the percentage of frames remaining
 				* (1 - (((i - startingFrame) / range)));
-			deltaY = ((2 * intensity) * randY) 
+			deltaY = ((2 * intensity) * randY)
 				* (1 - (((i - startingFrame) / range)));
 			// So the change in x and y will reduce as we get closer to the end
 			// of the frame selection

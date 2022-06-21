@@ -16,7 +16,16 @@ var selLayerIndex = frameSelection[0];
 var startFrame = frameSelection[1]+1;
 var endFrame = frameSelection[2];
 var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
+function setup() {
+    if (startFrame > endFrame) { // if selection is backwards, fix it
+        var temp = endFrame;
+        endFrame = startFrame;
+        startFrame = temp;
+    }
+    fl.getDocumentDOM().getTimeline().layers[selLayerIndex * 1].locked = false; // unlock layer
+}
 
+setup();
 // store indexes of layers selected by the user
 var layer = doc.getTimeline().getSelectedLayers();
 // store all frames in the layer

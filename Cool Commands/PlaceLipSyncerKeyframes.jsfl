@@ -5,6 +5,10 @@ FRAME_RATE = fl.getDocumentDOM().frameRate;
 CONSONANT_PHONES = ["M", "N", "NG", "P", "B", "T", "D", "K", "G", "CH", "JH", "S", "Z", "SH", "ZH", "F", "V", "TH", "DH", "HH", "W", "R", "Y", "L"];
 VOWEL_PHONES = ["IY", "UW", "IH", "UH", "EY", "OW", "AH", "EH", "AE", "ER", "AA", "AO", "AW", "AY", "OY"];
 
+function setup() {
+    fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock layer
+}
+
 function resetSelection(layer, frame) { // sets selection the desired layer and frame
     fl.getDocumentDOM().selectNone();
     fl.getDocumentDOM().getTimeline().setSelectedLayers(layer * 1);
@@ -60,7 +64,7 @@ function getLipSyncFrameArray(words, phonemes) { // helper function to compute w
                     if (index == 0) {
                         continue; // handle edge case (beginning of voice line)
                     }
-                    if (arrayContains(CONSONANT_PHONES, phonemes[phonemeStartTimeArray[index - 1]][WORD_PHONEME_INDEX])) {  
+                    if (arrayContains(CONSONANT_PHONES, phonemes[phonemeStartTimeArray[index - 1]][WORD_PHONEME_INDEX])) {
                         syllableFrames.push(Math.round(phonemeStart * FRAME_RATE) - 1); // vowel after a consonant is a syllable yessiree (1 frame before to improve accuracy maybe?)
                     }
                 }
@@ -78,7 +82,7 @@ function placeKeyframes(startFrame, layer, keyframeArray) {
     }
 }
 
-
+setup();
 //alert("Select the voice line's config file.");
 var cfgPath = fl.browseForFileURL("select"); // get file
 // data validation

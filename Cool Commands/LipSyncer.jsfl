@@ -19,21 +19,33 @@ var startingFrame = frameSelection[1];
 var endFrame = frameSelection[2];
 var firstFrameGuess = fl.getDocumentDOM().getTimeline().layers[layer].frames[startingFrame].elements[0].firstFrame;
 var guiPanel = fl.xmlPanelFromString("<dialog title=\"The Lip Syncer\" buttons=\"accept, cancel\">vbox><hbox><label value=\"First Frame of Lip Flap:\" control=\"panel_FF\"/><textbox id=\"panel_FF\" size=\"24\" value=\"" + (firstFrameGuess + 1) + "\" /></hbox><hbox><label value=\"Duration of Lip Flap:\" control=\"panel_dur\"/><textbox id=\"panel_dur\" size=\"24\" value=\"\" /></hbox></vbox></dialog>");
+var frameSelection = doc.getTimeline().getSelectedFrames();
+
+function setup() {
+    if (startingFrame > endFrame) { // if selection is backwards, fix it
+        var temp = endFrame;
+        endFrame = startingFrame;
+        startingFrame = temp;
+    }
+    fl.getDocumentDOM().getTimeline().layers[selLayerIndex * 1].locked = false; // unlock layer
+}
+
 /*
 Function: makeLipFlap
 Variables:  
-	midPointDelta []
-	lengthOffset []
+midPointDelta []
+lengthOffset []
 Description: 
 */
 function makeLipFlap(midPointDelta, lengthOffset) {
 	timeline.currentFrame += midPointDelta;
 	timeline.convertToKeyframes(timeline.currentFrame);
 	fl.getDocumentDOM().getTimeline().layers[layer].frames[timeline.currentFrame].elements[0].firstFrame 
-		= firstFrameOfLipFlap + (lipFlapLength - lengthOffset);
+	= firstFrameOfLipFlap + (lipFlapLength - lengthOffset);
 }
 // If the user pushes "ok" as opposed to "cancel"
 if (guiPanel.dismiss == "accept") {
+	setup();
 	// store user input
 	var lipFlapLength = parseInt(guiPanel.panel_dur);
 	var firstFrameOfLipFlap = parseInt(guiPanel.panel_FF) - 1; 

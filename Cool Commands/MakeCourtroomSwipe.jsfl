@@ -37,7 +37,9 @@ var masterRigArray = { // map layer names to the rig and position (idk what the 
 // store frames selected by the user
 var selectedFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames();
 var startFrame = fl.getDocumentDOM().getTimeline().getSelectedFrames()[1];
-
+function setup() {
+    fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock layer
+}
 /*
 Function: resetSelection
 Variables:  
@@ -241,6 +243,7 @@ function makeCrossCourtSwipe(sourceCharacterLayer, destinationCharacterLayer, wi
 >>>MAIN<<<
 Description: 
 */
+setup();
 resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), startFrame);
 var halfCourt = confirm("Click OK for a half-court swipe. Click Cancel for a full-court swipe.");
 var sourceCharacterLayerNames = prompt("Enter the source character LAYER NAMES, separated by a comma (no spaces)");

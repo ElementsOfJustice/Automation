@@ -14,7 +14,16 @@ var frameSelection = timeline.getSelectedFrames();
 var selLayerIndex = frameSelection[0];
 var startingFrame = frameSelection[1];
 var endFrame = frameSelection[2];
+function setup() {
+    if (startingFrame > endFrame) { // if selection is backwards, fix it
+        var temp = endFrame;
+        endFrame = startingFrame;
+        startingFrame = temp;
+    }
+    fl.getDocumentDOM().getTimeline().layers[selLayerIndex * 1].locked = false; // unlock layer
+}
 
+setup();
 // prompt the user for a number of frames to shift by
 var delta = parseInt(prompt("Enter the frames to shift each keyframe by (positive = forward, negatve = backward)"));
 

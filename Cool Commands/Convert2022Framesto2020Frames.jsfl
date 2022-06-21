@@ -8,11 +8,15 @@ var selLayerIndex = frameSelection[0];
 var startFrame = frameSelection[1];
 var endFrame = frameSelection[2];
 
-if (startFrame > endFrame) { // if selection is backwards, fix it
-    var temp = endFrame;
-    endFrame = startFrame;
-    startFrame = temp;
+function setup() {
+    if (startFrame > endFrame) { // if selection is backwards, fix it
+        var temp = endFrame;
+        endFrame = startFrame;
+        startFrame = temp;
+    }
+    fl.getDocumentDOM().getTimeline().layers[selLayerIndex * 1].locked = false; // unlock layer
 }
+setup();
 
 startFrame = fl.getDocumentDOM().getTimeline().layers[selLayerIndex].frames[startFrame].startFrame;
 var timeline = fl.getDocumentDOM().getTimeline();

@@ -9,12 +9,16 @@ var layer = fl.getDocumentDOM().getTimeline().currentLayer;
 var firstFrame = selectedFrames[1];
 var lastFrame = selectedFrames[2];
 // if the user selected frames from right to left like a weirdo
-if(firstFrame > lastFrame) {
-    // switch it so it's normal
-    var temp = firstFrame;
-    firstFrame = lastFrame;
-    lastFrame = temp;
+function setup() {
+    if (firstFrame > lastFrame) {
+        // switch it so it's normal
+        var temp = firstFrame;
+        firstFrame = lastFrame;
+        lastFrame = temp;
+    }
 }
+
+setup();
 // initialize array
 var selectionArray = [];
 // for all layers

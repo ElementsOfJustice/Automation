@@ -21,6 +21,16 @@ var selLayerIndex = frameSelection[0];
 var startFrame = frameSelection[1]+1;
 var endFrame = frameSelection[2];
 
+function setup() {
+    if (startFrame > endFrame) { // if selection is backwards, fix it
+        var temp = endFrame;
+        endFrame = startFrame;
+        startFrame = temp;
+    }
+    fl.getDocumentDOM().getTimeline().layers[selLayerIndex * 1].locked = false; // unlock layer
+}
+
+setup();
 alert("Select the evidence info image.");
 // Open the file explorer, prompting the user to select an image
 var imagePath = fl.browseForFileURL("select");

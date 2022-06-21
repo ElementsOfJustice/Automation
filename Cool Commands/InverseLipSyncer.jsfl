@@ -3,6 +3,19 @@ INVERSE LIP SYNCER
 Description: Allows the user to undo portions of the Lip Syncer script
     without undoing everything.
 ******************************************************************************/
+var frameSelection = doc.getTimeline().getSelectedFrames();
+var selLayerIndex = frameSelection[0];
+var startFrame = frameSelection[1]+1;
+var endFrame = frameSelection[2];
+
+function setup() {
+    if (startFrame > endFrame) { // if selection is backwards, fix it
+        var temp = endFrame;
+        endFrame = startFrame;
+        startFrame = temp;
+    }
+    fl.getDocumentDOM().getTimeline().layers[selLayerIndex * 1].locked = false; // unlock layer
+}
 
 // TODO figure out how to get an inverse function of the lipsyncer
 // Approach 1: remove all keyframes that aren't the first frame of a lip flap?
@@ -11,6 +24,7 @@ Description: Allows the user to undo portions of the Lip Syncer script
 var firstFrameOfLipFlap = parseInt(prompt("Enter first frame of lip flap"));
 // if the user gave us valid input
 if (firstFrameOfLipFlap != null) {
+    setup();
     // store frames selected by the user
     var frameSelection = fl.getDocumentDOM().getTimeline().getSelectedFrames();
     var selLayerIndex = frameSelection[0];
