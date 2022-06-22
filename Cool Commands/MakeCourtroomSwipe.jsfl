@@ -8,12 +8,12 @@ BACKGROUND_LAYER_NAME = "BACKGROUNDS";
 DESKS_LAYER_NAME = "DESKS";
 WITNESS_STAND_X = 640;
 WITNESS_STAND_Y = 509;
-WITNESS_STAND_SYMBOL_PATH = "OTHER ASSETS/DESKS/WitnessStand";
 WITNESS_STAND_HEIGHT = 410;
-SYMBOL_CONTENT_LAYER = 1;
+WITNESS_STAND_SYMBOL_PATH = "OTHER ASSETS/DESKS/WitnessStand";
+SYMBOL_CONTENT_LAYER = 1; // IF A RIG DOES NOT HAVE THEIR ANIMATION LAYER ON THE SECOND LAYER, THIS SCRIPT WILL BREAK. This means Sonata must have the second layer in her rig swapped for the one that has her animations (the "All" symbol) on them.
 BLUR_SYMBOLS_FOLDER_NAME = "BLUR_SYMBOLS";
 
-var masterRigArray = { // map layer names to the rig and position (idk what the boolean is :D)-- first entry is the path to the rig, second entry is the X coordinate, third entry is Y coordinate
+var masterRigArray = { // map LAYER NAMES to the rig and position-- first entry is the rig library path, second entry is the X coordinate, third entry is Y coordinate. Ignore the fourth entry.
     "TWILIGHT_SPARKLE": ["RIGS/VECTOR CHARACTERS/TWILIGHT SPARKLE/TwilightCouncil►/TwilightCouncil►Scaled", 0, 100, false],
     "ATHENA_COURTROOM": ["RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena", 0, 0, true],
     "THE_JUDGE": ["RIGS/RASTER CHARACTERS/The Judge/THE_JUDGE", 640, 360, true],

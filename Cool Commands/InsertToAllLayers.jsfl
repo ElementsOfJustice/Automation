@@ -10,7 +10,7 @@ var selectedFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames();
 var layer = fl.getDocumentDOM().getTimeline().currentLayer;
 var firstFrame = selectedFrames[1];
 var lastFrame = selectedFrames[2];
-// if the user selected frames from right to left like a weirdo
+// if the user selected frames from left to right like a weirdo
 if(firstFrame > lastFrame) {
     // switch it so it's normal
     var temp = firstFrame;

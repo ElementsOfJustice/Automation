@@ -18,7 +18,9 @@ BETWEEN_FADE_LENGTH = 4; // number of frames of blankness between fades (standar
 CREATE_NEW_FRAMES = true; // if this is true, make fades by inserting frames; if this is false, creates no new frames (overrides BETWEEN_FADE_LENGTH as if it were 0)
 CHANGE_TRANSFORMATION_POINT = false; // if this is true, do shenanigains with the transformation point. Sometimes this causes misalignments, other times it doesn't.
 function setup() {
-    fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock layer
+    for (var i = 0; i < fl.getDocumentDOM().getTimeline().getSelectedLayers().length; i++) {
+        fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[i] * 1].locked = false; // unlock layer
+    }
 }
 
 function resetSelection(layer, frame) { // sets selection the desired layer and frame
