@@ -11,6 +11,7 @@ var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
 // Creates a GUI window in Animate using the given XML file
 var guiPanel = fl.getDocumentDOM().xmlPanel(dirURL + "/MakeShake.xml");
 // save important frames to variables
+var frameSelection = fl.getDocumentDOM().getTimeline().getSelectedFrames();
 var selLayerIndex = frameSelection[0];
 var startingFrame = frameSelection[1];
 var endFrame = frameSelection[2];
