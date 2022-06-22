@@ -71,6 +71,8 @@ Variables:
 	parentLayerIndex [integer index of parent layer]
 Description: Our layer adoption agency function. Assigns an array of children 
     layers to a parent layer.
+    Documentation for setRigParentAtFrame function
+    https://github.com/AdobeDocs/developers-animatesdk-docs/blob/master/Layer_Parenting_Object/layerParenting2.md
 */
 function doLayerParenting(childLayerIndices, parentLayerIndex) {
     // for each layer we we want to be a child
