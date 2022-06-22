@@ -37,19 +37,27 @@ var masterRigArray = { // map layer names to the rig and position (idk what the 
 // store frames selected by the user
 var selectedFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames();
 var startFrame = fl.getDocumentDOM().getTimeline().getSelectedFrames()[1];
+
+/*
+Function: setup
+Variables: none
+Description: unlock selected layer so elements can be selected
+*/
 function setup() {
     fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock layer
 }
 /*
 Function: resetSelection
 Variables:  
-	layer []
-	frame []
-Description: 
+	layer [integer(or should be) index of a layer ]
+	frame [integer index of a frame]
+Description: sets selection to the desired layer and frame
 */
-function resetSelection(layer, frame) { // sets selection the desired layer and frame
-    fl.getDocumentDOM().selectNone();
+function resetSelection(layer, frame) {
+    fl.getDocumentDOM().selectNone(); // deselect any selected items
+    // select given layer (* 1 because otherwise it's not an int for reasons)
     fl.getDocumentDOM().getTimeline().setSelectedLayers(layer * 1);
+    // set the playhead to the given frame
     fl.getDocumentDOM().getTimeline().currentFrame = frame;
     // select current frame
     fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
@@ -59,12 +67,17 @@ function resetSelection(layer, frame) { // sets selection the desired layer and 
 /*
 Function: doLayerParenting
 Variables:  
-	childLayerIndices []
-	parentLayerIndex []
-Description: 
+	childLayerIndices [array of integers. Index of each child layer]
+	parentLayerIndex [integer index of parent layer]
+Description: Our layer adoption agency function. Assigns an array of children 
+    layers to a parent layer.
+    Documentation for setRigParentAtFrame function
+    https://github.com/AdobeDocs/developers-animatesdk-docs/blob/master/Layer_Parenting_Object/layerParenting2.md
 */
 function doLayerParenting(childLayerIndices, parentLayerIndex) {
+    // for each layer we we want to be a child
     for (var i = 0; i < childLayerIndices.length; i++) {
+        // set its parent layer to the one we want to be the parent
         fl.getDocumentDOM().getTimeline().layers[childLayerIndices[i]].setRigParentAtFrame(fl.getDocumentDOM().getTimeline().layers[parentLayerIndex], fl.getDocumentDOM().getTimeline().currentFrame); // THE SECRET COMMAND THAT SETS A LAYER'S PARENT TO THE ARGUMENT AT THE SECOND ARGUMENT FRAME AAAAAAA
     }
 }
@@ -72,7 +85,7 @@ function doLayerParenting(childLayerIndices, parentLayerIndex) {
 /*
 Function: createTween
 Variables:  
-	sourceCharacterlayers []
+	sourceCharacterLayers [array of ints. layer indices of source characters]
 Description: 
 */
 function createTween(sourceCharacterlayers) {
@@ -87,8 +100,8 @@ function createTween(sourceCharacterlayers) {
 /*
 Function: handleCharacters
 Variables:  
-	sourceCharacterLayers []
-	destinationCharacterLayers []
+	sourceCharacterLayers [array of ints. layer indices of source characters]
+    destinationCharacterLayer [array of ints. layer indices of destination characters]
 Description: 
 */
 function handleCharacters(sourceCharacterLayers, destinationCharacterLayers) {
@@ -106,7 +119,7 @@ function handleCharacters(sourceCharacterLayers, destinationCharacterLayers) {
 /*
 Function: handleDesksAndParentDestinationCharacters
 Variables:  
-	destinationCharacterLayers []
+	destinationCharacterLayers [array of ints. layer indices of destination characters]
 Description: 
 */
 function handleDesksAndParentDestinationCharacters(destinationCharacterLayers) {
@@ -119,9 +132,9 @@ function handleDesksAndParentDestinationCharacters(destinationCharacterLayers) {
 /*
 Function: makeSymbol
 Variables:  
-	layer []
-    frame []
-    name []
+	layer [integer(or should be) index of a layer ]
+	frame [integer index of a frame]
+    name [a string containing the name for the symbol]
 Description: 
 */
 function makeSymbol(layer, frame, name) { // reused code from fade script
@@ -152,7 +165,7 @@ function makeSymbol(layer, frame, name) { // reused code from fade script
 /*
 Function: placeRigs
 Variables:  
-	characterLayers []
+	characterLayers [array of ints. layer indices of characters]
 Description: 
 */
 function placeRigs(characterLayers) {
@@ -213,8 +226,8 @@ function handleMidCrossCourtSwipe(witnessStandCharacterLayers) { // handle the f
 /*
 Function: makeWitnessStandToDeskSwipe
 Variables:  
-	sourceCharacterLayers []
-    destinationCharacterLayers []
+	sourceCharacterLayers [array of ints. layer indices of source characters]
+    destinationCharacterLayer [array of ints. layer indices of destination characters]
 Description: 
 */
 function makeWitnessStandToDeskSwipe(sourceCharacterLayers, destinationCharacterLayers) {
@@ -226,9 +239,9 @@ function makeWitnessStandToDeskSwipe(sourceCharacterLayers, destinationCharacter
 /*
 Function: makeCrossCourtSwipe
 Variables:  
-	sourceCharacterLayer []
-    destinationCharacterLayer []
-    witnessStandCharacterLayers []
+	sourceCharacterLayer [integer index of the source character layer]
+    destinationCharacterLayer [array of ints. layer indices of destination characters]
+    witnessStandCharacterLayers [array of ints. layer indices of witness characters]
 Description: 
 */
 function makeCrossCourtSwipe(sourceCharacterLayer, destinationCharacterLayer, witnessStandCharacterLayers) {
@@ -243,10 +256,14 @@ function makeCrossCourtSwipe(sourceCharacterLayer, destinationCharacterLayer, wi
 Description: 
 */
 setup();
+// select layer and frame
 resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), startFrame);
+// user specified boolean value
 var halfCourt = confirm("Click OK for a half-court swipe. Click Cancel for a full-court swipe.");
+// source characters are characters displayed before the swipe
 var sourceCharacterLayerNames = prompt("Enter the source character LAYER NAMES, separated by a comma (no spaces)");
 var sourceCharacterLayers = [];
+
 for (var i = 0; i < sourceCharacterLayerNames.split(',').length; i++) {
     if (fl.getDocumentDOM().getTimeline().findLayerIndex(sourceCharacterLayerNames.split(',')[i]) != undefined) {
         sourceCharacterLayers.push(fl.getDocumentDOM().getTimeline().findLayerIndex(sourceCharacterLayerNames.split(',')[i]));
@@ -254,26 +271,36 @@ for (var i = 0; i < sourceCharacterLayerNames.split(',').length; i++) {
         throw new Error("Invalid input.");
     }
 }
+// A desitination character is the character that will be displayed after the swipe
 var destinationCharacterLayerNames = prompt("Enter the destination character LAYER NAMES, separated by a comma (no spaces)");
 var destinationCharacterLayers = [];
+// for each layer name provided...
 for (var i = 0; i < destinationCharacterLayerNames.split(',').length; i++) {
+    // if the name is valid
     if (fl.getDocumentDOM().getTimeline().findLayerIndex(sourceCharacterLayerNames.split(',')[i]) != undefined) {
+        // add the layer index to the array
         destinationCharacterLayers.push(fl.getDocumentDOM().getTimeline().findLayerIndex(destinationCharacterLayerNames.split(',')[i]));
     } else {
         throw new Error("Invalid input.");
     }
 }
+// If we've got ourselves a full courtroom swipe
 if (!halfCourt) {
+    // witness characters are characters currently at the witness stand
     var witnessCharacterLayerNames = prompt("Enter the witness characters LAYER NAMES, separated by a comma (no spaces)", fl.getDocumentDOM().getDataFromDocument("witnessLayerNames"));
     var witnessCharacterLayers = [];
+    // for each layer name provided...
     for (var i = 0; i < witnessCharacterLayerNames.split(',').length; i++) {
+        // if the name is valid
         if (fl.getDocumentDOM().getTimeline().findLayerIndex(witnessCharacterLayerNames.split(',')[i]) != undefined) {
+            // add the layer index to the array
             witnessCharacterLayers.push(fl.getDocumentDOM().getTimeline().findLayerIndex(witnessCharacterLayerNames.split(',')[i]));
         } else {
             throw new Error("Invalid input.");
         }
     }
 }
+// if we've got ourselves a half courtroom swipe
 if (halfCourt) {
     makeWitnessStandToDeskSwipe(sourceCharacterLayers, destinationCharacterLayers);
 } else {

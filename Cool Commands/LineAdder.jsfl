@@ -1,6 +1,8 @@
 /******************************************************************************
 LINE ADDER
-Description: 
+Description: Continuously prompt the user for voice line files and
+automatically adds them to the next textbox in the timeline. 
+(A config file is required)
 ******************************************************************************/
 
 // set scriptPath to "/path/../LineAdder.jsfl"
@@ -31,10 +33,7 @@ Variables:
 Description: insert frames to match voice line length + 3 frames
 */
 function extendVoiceLine(lineName) {
-	doc.getTimeline().insertFrames(
-		3 + (Math.ceil(doc.frameRate * voiceLineLengths[lineName])) 
-		- doc.getTimeline().layers[doc.getTimeline().findLayerIndex("TEXT")].frames[doc.getTimeline().currentFrame].duration, true
-		);
+	doc.getTimeline().insertFrames(3 + (Math.ceil(doc.frameRate * voiceLineLengths[lineName])) - doc.getTimeline().layers[doc.getTimeline().findLayerIndex("TEXT")].frames[doc.getTimeline().currentFrame].duration, true);
 }
 
 fl.runScript(cfgPath);
