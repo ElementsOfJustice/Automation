@@ -2,6 +2,7 @@
 The pipeline to translate the voice lines into keyframes for extremely accurate lipsyncing.
 
 Steps:
+
 0. Install [Miniconda](https://docs.conda.io/en/latest/miniconda.html) and [Montreal Forced Aligner](https://montreal-forced-aligner.readthedocs.io/en/latest/installation.html) (installed through Miniconda). Set up MFA so that you can use it with English.
 1. Create the following folders in this directory: "model", "output", "speechrecognition_output", "TextGrid_files", and "voice_lines"
 2. If you already have transcriptions for the voice lines, go to Step 4
