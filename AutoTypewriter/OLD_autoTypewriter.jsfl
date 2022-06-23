@@ -123,11 +123,11 @@ Description: displays intro text within a bounding (for date, time, and location
 */
 function displayIntroText(text,bounding) {
 	// for each character in the string...
-	for (var i=0; i-1 < text.length; i++) {
+	for (var i=0; i < text.length - 1; i++) {
 		// Switch to the txt layer
 		switchActive("txt");
 		// stores text up to given index - this gives us the typing effect
-		var txtVar = updateI(text, i);
+		var txtVar = updateI(text, i+1);
 
 		// Add text within the given bounding
 		doc.addNewText(bounding);
