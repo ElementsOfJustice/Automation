@@ -27,7 +27,7 @@ def writeParsedFile(source, destination):
         phonemes += str(j.minTime) + " : [" + \
             str(j.maxTime) + ",\"" + str(j.mark) + "\"], \n"
     phonemes += "};"
-    f = open(destination, "x")
+    f = open(destination, "w")
     f.write(words + "\n" + phonemes)
     f.close()
 

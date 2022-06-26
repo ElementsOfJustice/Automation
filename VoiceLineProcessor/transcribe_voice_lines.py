@@ -18,10 +18,10 @@ for file in os.listdir(directory):
     try:
        # using Google speech recognition API
         text = r.recognize_google(audio_text)
-        f = open("speechrecognition_output/" + filename.rsplit(".", 1 )[0] + ".txt", "x")
-        f.write(text)
-        f.close()
     except:
         print('Transcription FAILED: ' + str(filename))
-        f = open("speechrecognition_output/" + filename.rsplit(".", 1 )[0] + ".txt", "x")
+        f = open("speechrecognition_output/" + filename.rsplit(".", 1 )[0] + ".txt", "w")
         f.close()
+    f = open("speechrecognition_output/" + filename.rsplit(".", 1 )[0] + ".txt", "w")
+    f.write(text)
+    f.close()
