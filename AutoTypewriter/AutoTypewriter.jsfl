@@ -15,11 +15,8 @@ var locationBounding = { left: 69, top: 620, right: 420, bottom: 670 };
 
 //UTILITY FUNCTIONS
 function resetSelection(layer, frame) { // sets selection the desired layer and frame
-    fl.getDocumentDOM().selectNone();
-    fl.getDocumentDOM().getTimeline().setSelectedLayers(layer * 1);
     fl.getDocumentDOM().getTimeline().currentFrame = frame;
-    // select current frame
-    fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+    fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true); // select frame on the layer and replace current selection
 }
 
 

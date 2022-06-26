@@ -8,9 +8,22 @@ END_INDEX = 0;
 WORD_PHONEME_INDEX = 1;
 FRAME_RATE = fl.getDocumentDOM().frameRate;
 
-function arrayContains(array, element) {
+function getKeys(input) { // get array of start times from the words or phonemes
+    var arr = [];
+    for (var i in input) {
+        arr.push(i);
+    }
+    return arr;
+}
+function isEqual(a, b) {
+    return a == b;
+}
+function stringContains(a, b) {
+    return b.indexOf(a) >= 0;
+}
+function arrayContains(array, element, compare) {
     for (var i = 0; i < array.length; i++) {
-        if (array[i] == element) {
+        if (compare(array[i], element)) {
             return true;
         }
     }
@@ -18,16 +31,13 @@ function arrayContains(array, element) {
 }
 
 function resetSelection(layer, frame) { // sets selection the desired layer and frame
-    fl.getDocumentDOM().selectNone();
-    fl.getDocumentDOM().getTimeline().setSelectedLayers(layer * 1);
     fl.getDocumentDOM().getTimeline().currentFrame = frame;
-    // select current frame
-    fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+    fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true); // select frame on the layer and replace current selection
 }
 
 
 // todo: handle "silence" and "unknown word" shit
-function placeKeyframes(startFrame, layer) {
+function placeKeyframes(startFrame, layer, lipsyncMap, poseName) {
     var diphthongMap = {};
     var mouthShapeMap = {};
     for (var phonemeStartTime in phonemes) {
@@ -39,14 +49,14 @@ function placeKeyframes(startFrame, layer) {
         resetSelection(layer, startFrame + Math.round((phonemeStartTime * FRAME_RATE)));
         fl.getDocumentDOM().setElementProperty("loop", "loop");
         var phoneme = phonemes[phonemeStartTime][WORD_PHONEME_INDEX].substring(0, 2);
-        if (arrayContains(DIPHTHONGS, phoneme)) {
+        if (arrayContains(DIPHTHONGS, phoneme, isEqual)) {
             diphthongMap[fl.getDocumentDOM().getTimeline().currentFrame] = phoneme;
             continue;
         }
-        var frame = athenaCourtLipsyncs["Idle"][PHONEME_TO_MOUTH_SHAPE[phoneme]] - 1;
+        var frame = lipsyncMap[poseName][PHONEME_TO_MOUTH_SHAPE[phoneme]] - 1;
         fl.getDocumentDOM().setElementProperty("firstFrame", frame);
-        if(phoneme == "") {
-            fl.getDocumentDOM().setElementProperty("loop", "single frame");
+        if (arrayContains(SINGLE_FRAME_MOUTH_SHAPES, PHONEME_TO_MOUTH_SHAPE[phoneme], isEqual)) {
+            fl.getDocumentDOM().setElementProperty("loop", "single frame"); // set single frame for mouth shapes that only last for one frame
         }
         mouthShapeMap[fl.getDocumentDOM().getTimeline().currentFrame] = PHONEME_TO_MOUTH_SHAPE[phoneme];
     }
@@ -62,7 +72,7 @@ function placeKeyframes(startFrame, layer) {
                 fl.getDocumentDOM().getTimeline().insertKeyframe();
                 resetSelection(layer, (parseInt(frame) + i));
             }
-            var firstFrame = athenaCourtLipsyncs["Idle"][DIPHTHONG_ORDERING[diphthongMap[frame]][i]] - 1;
+            var firstFrame = lipsyncMap[poseName][DIPHTHONG_ORDERING[diphthongMap[frame]][i]] - 1;
             fl.getDocumentDOM().setElementProperty("firstFrame", firstFrame);
             mouthShapeMap[fl.getDocumentDOM().getTimeline().currentFrame] = DIPHTHONG_ORDERING[diphthongMap[frame]][i];
             var framesToAdvanceBy = Math.round(fl.getDocumentDOM().getTimeline().layers[layer].frames[frame].duration / DIPHTHONG_ORDERING[diphthongMap[frame]].length);
@@ -72,8 +82,35 @@ function placeKeyframes(startFrame, layer) {
 }
 
 //MAIN
-var cfgPath = fl.browseForFileURL("select"); // get file
-var masterRasterLipsyncsPath = fl.browseForFileURL("select");
+// input validation
+if (fl.getDocumentDOM().getTimeline().getSelectedFrames().length != 3 || fl.getDocumentDOM().getTimeline().getSelectedFrames()[2] - fl.getDocumentDOM().getTimeline().getSelectedFrames()[1] != 1) {
+    throw new Error("Invalid selection. Select one frame that denotes the beginning of a character talking (first frame of the voice line audio).")
+}
+var cfgPath = fl.browseForFileURL("select"); // get file for specific voice line
+try {
+    fl.runScript(fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/")) + "/MasterRasterRigLipsyncs.cfg");
+} catch (error) {
+    alert("MasterRasterLipsyncs.cfg not found! Browse for and select the MasterRasterLipsyncs.cfg file.");
+    var masterRasterLipsyncsPath = fl.browseForFileURL("select");
+    fl.runScript(masterRasterLipsyncsPath);
+}
 fl.runScript(cfgPath);
-fl.runScript(masterRasterLipsyncsPath);
-placeKeyframes(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().getSelectedLayers());
+var layerName = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].name; // get name of layer
+var characterTimeline = fl.getDocumentDOM().selection[0].libraryItem.timeline; // get the timeline of the selected symbol
+var xSheetLayerIndex = characterTimeline.findLayerIndex("xSheet");
+if (xSheetLayerIndex == undefined) {
+    xSheetLayerIndex = 0; // assume it's at 0 if somehow it doesn't find it
+}
+var poseFrame = fl.getDocumentDOM().getElementProperty("firstFrame");
+var poseName = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].name;
+if (!arrayContains(AVAILABLE_CHARACTERS, layerName, isEqual)) {
+    throw new Error("Incorrect layer or unsupported character. Selected layer name must be one of the following: " + AVAILABLE_CHARACTERS + ". Currently selected layer is " + layerName + ".");
+}
+var availablePoses = getKeys(CHARACTER_NAME_TO_MAP[layerName]);
+if (!arrayContains(availablePoses, poseName, stringContains)) {
+    throw new Error("Invalid pose. Either: you put the character in the non-talking pose OR you are using an incompatible pose. For incompatbile poses, refer to the Automation Guide for help. Currently set pose is: " + poseName);
+}
+if(poseName.substring(poseName.lastIndexOf(" ")) != "Talk") {
+    poseName = poseName.substring(0, poseName.lastIndexOf(" ")); // if it's passed all other data validation and this line runs, that means the pose is one of Athena's (widget emotion at the end). Get rid of the emotion.
+}
+placeKeyframes(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().getSelectedLayers(), CHARACTER_NAME_TO_MAP[layerName], poseName);

@@ -53,14 +53,9 @@ Variables:
 	frame [integer index of a frame]
 Description: sets selection to the desired layer and frame
 */
-function resetSelection(layer, frame) {
-    fl.getDocumentDOM().selectNone(); // deselect any selected items
-    // select given layer (* 1 because otherwise it's not an int for reasons)
-    fl.getDocumentDOM().getTimeline().setSelectedLayers(layer * 1);
-    // set the playhead to the given frame
+function resetSelection(layer, frame) { // sets selection the desired layer and frame
     fl.getDocumentDOM().getTimeline().currentFrame = frame;
-    // select current frame
-    fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+    fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true); // select frame on the layer and replace current selection
 }
 
 
@@ -255,6 +250,13 @@ function makeCrossCourtSwipe(sourceCharacterLayer, destinationCharacterLayer, wi
 >>>MAIN<<<
 Description: 
 */
+try {
+    fl.runScript(fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/")) + "/MasterRigArray.cfg");
+} catch (error) {
+    alert("MasterRigArray.cfg not found! Browse for and select the MasterRigArray.cfg file.");
+    var masterRasterLipsyncsPath = fl.browseForFileURL("select");
+    fl.runScript(masterRasterLipsyncsPath);
+}
 setup();
 // select layer and frame
 resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), startFrame);

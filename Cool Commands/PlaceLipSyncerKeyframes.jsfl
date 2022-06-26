@@ -10,11 +10,8 @@ function setup() {
 }
 
 function resetSelection(layer, frame) { // sets selection the desired layer and frame
-    fl.getDocumentDOM().selectNone();
-    fl.getDocumentDOM().getTimeline().setSelectedLayers(layer * 1);
     fl.getDocumentDOM().getTimeline().currentFrame = frame;
-    // select current frame
-    fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+    fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true); // select frame on the layer and replace current selection
 }
 
 function arrayContains(array, element) {
@@ -29,43 +26,32 @@ function arrayContains(array, element) {
 function getStartTimeArray(input) { // get array of start times from the words or phonemes
     var arr = [];
     for (var i in input) {
-        arr.push(i);
+        arr.push(parseFloat(i));
     }
     return arr;
 }
 function getLipSyncFrameArray(words, phonemes) { // helper function to compute where each syllable is in terms of frames
     // Approach 1: each word begins with a syllable, and every consonant followed by a vowel is another syllable
     var syllableFrames = [];
-    var wordKeyArray = [];
-    for (var wordStart in words) {
-        if (words[wordStart][WORD_PHONEME_INDEX] == "") { // nothing is being said, continue
-            continue;
-        }
-        wordKeyArray.push(wordStart);
-        // syllableFrames.push(Math.round(wordStart * FRAME_RATE)); // push the frame marking the beginning of a word to the array (it's off by one so + 1)
-    }
-    var length = wordKeyArray.length;
+    var wordStartTimeArray = getStartTimeArray(words);
     var phonemeStartTimeArray = getStartTimeArray(phonemes);
-    for (var i = 0; i < length; i++) { // iterate over every word
-        var endTime = words[wordKeyArray[i]][END_INDEX];
+    // god i hate dynamic typing so much i HATE WHEN IT CONSIDERS UNKNOWNS AS STRINGS AND I HAVE TO CALL PARSEFLOAT ON ALL OF IT I HATE IT
+    for (var i = 0; i < wordStartTimeArray.length; i++) { // iterate over every word
+        var endTime = parseFloat(words[wordStartTimeArray[i]][END_INDEX]);
         var index = 0, indexInInterval = 0;
         for (var phonemeStart in phonemes) {
-            if (phonemeStart >= wordKeyArray[i] && phonemeStart < endTime) { // phoneme is in the word interval
+            if (parseFloat(phonemeStart) >= parseFloat(wordStartTimeArray[i]) && parseFloat(phonemeStart) < endTime) { // phoneme is in the word interval 
                 if (indexInInterval == 0) {
-                    if (arrayContains(VOWEL_PHONES, phonemes[phonemeStart][WORD_PHONEME_INDEX])) {
-                        syllableFrames.push(Math.round(phonemeStart * FRAME_RATE)); // if the first syllable of a word is a vowel
-                    } else if (arrayContains(VOWEL_PHONES, phonemes[phonemeStartTimeArray[index + 1]][WORD_PHONEME_INDEX])) {
-                        // syllableFrames.push(Math.round(phonemeStart * FRAME_RATE)); // if the first syllable is a consonant with a vowel after it
+                    if (arrayContains(VOWEL_PHONES, phonemes[parseFloat(phonemeStart)][WORD_PHONEME_INDEX])) {
+                        syllableFrames.push(Math.round(parseFloat(phonemeStart) * FRAME_RATE)); // if the first syllable of a word is a vowel
                     }
                     indexInInterval++;
-                    index++;
-                    continue;
-                } else if (arrayContains(VOWEL_PHONES, phonemes[phonemeStart][WORD_PHONEME_INDEX])) {
+                } else if (arrayContains(VOWEL_PHONES, phonemes[parseFloat(phonemeStart)][WORD_PHONEME_INDEX])) {
                     if (index == 0) {
                         continue; // handle edge case (beginning of voice line)
                     }
                     if (arrayContains(CONSONANT_PHONES, phonemes[phonemeStartTimeArray[index - 1]][WORD_PHONEME_INDEX])) {
-                        syllableFrames.push(Math.round(phonemeStart * FRAME_RATE) - 1); // vowel after a consonant is a syllable yessiree (1 frame before to improve accuracy maybe?)
+                        syllableFrames.push(Math.round(parseFloat(phonemeStart) * FRAME_RATE) - 1); // vowel after a consonant is a syllable yessiree (1 frame before to improve accuracy maybe?)
                     }
                 }
             }

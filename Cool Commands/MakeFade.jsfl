@@ -24,11 +24,8 @@ function setup() {
 }
 
 function resetSelection(layer, frame) { // sets selection the desired layer and frame
-    fl.getDocumentDOM().selectNone();
-    fl.getDocumentDOM().getTimeline().setSelectedLayers(layer);
     fl.getDocumentDOM().getTimeline().currentFrame = frame;
-    // select current frame
-    fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+    fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true); // select frame on the layer and replace current selection
 }
 
 function makeFadeSymbol(layer, frame, name) { // creates a fade symbol of the specified frame and name
