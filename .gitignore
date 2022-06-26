@@ -46,12 +46,4 @@ testing.jsfl
 VoiceLineProcessor/__pycache__
 VoiceLineProcessor/output
 VoiceLineProcessor/TextGrid_files
-VoiceLineProcessor/output2/s5_144_fair devotion.cfg
-VoiceLineProcessor/output2/s5_151_fair devotion.cfg
-VoiceLineProcessor/output2/s5_153_fair devotion.cfg
-VoiceLineProcessor/output2/s5_156_fair devotion.cfg
-VoiceLineProcessor/output2/s5_158_fair devotion.cfg
-VoiceLineProcessor/output2/s5_159_fair devotion.cfg
-VoiceLineProcessor/output2/s5_162_fair devotion.cfg
-VoiceLineProcessor/output2/s5_164_fair devotion.cfg
-VoiceLineProcessor/output2/s5_165_fair devotion.cfg
+VoiceLineProcessor/model/
