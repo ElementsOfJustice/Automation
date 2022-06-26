@@ -23,11 +23,26 @@ function setup() {
     }
 }
 
+/*
+Function: resetSelection
+Variables:  
+	layer [integer(or should be) index of a layer ]
+	frame [integer index of a frame]
+Description: sets selection to the desired layer and frame
+*/
 function resetSelection(layer, frame) { // sets selection the desired layer and frame
     fl.getDocumentDOM().getTimeline().currentFrame = frame;
     fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true); // select frame on the layer and replace current selection
 }
 
+/*
+Function: makeFadeSymbol
+Variables:  
+	layer [integer(or should be) index of a layer ]
+	frame [integer index of a frame]
+    name [a string containing the name for the symbol]
+Description: 
+*/
 function makeFadeSymbol(layer, frame, name) { // creates a fade symbol of the specified frame and name
     resetSelection(layer, frame);
     var originalMat = fl.getDocumentDOM().getElementProperty('matrix'); // get matrix of element on timeline
@@ -54,6 +69,16 @@ function makeFadeSymbol(layer, frame, name) { // creates a fade symbol of the sp
     return [mat, tp]; // return alignment matrix and tp
 }
 
+/*
+Function: fadeSetup
+Variables:  
+	layer [integer(or should be) index of a layer ]
+	frame [integer index of a frame]
+    name [a string containing the name for the symbol]
+    mat [a matrix]
+    tp [a transformation point]
+Description: 
+*/
 function fadeSetup(layer, frame, name, mat, tp) {
     resetSelection(layer, frame);
     fl.getDocumentDOM().setElementProperty('symbolType', 'movie clip'); // convert the frame to movie clip beforehand (this fixes a really weird glitch)
@@ -69,13 +94,23 @@ function fadeSetup(layer, frame, name, mat, tp) {
     }
 }
 
+/*
+Function: makeFadeIn
+Variables:  
+	layer [integer(or should be) index of a layer ]
+	frame [integer index of a frame]
+    name [a string containing the name for the symbol]
+    mat [a matrix]
+    tp [a transformation point]
+Description: 
+*/
 function makeFadeIn(layer, frame, name, mat, tp) {
     fadeSetup(layer, frame, name, mat, tp);
     if (CREATE_NEW_FRAMES && BETWEEN_FADE_LENGTH != 0) { // if there's no space between fades or if we're not making new frames, no need to run these.
         frame += BETWEEN_FADE_LENGTH / 2;
         resetSelection(layer, frame); // go to beginning of fade 
         fl.getDocumentDOM().getTimeline().insertKeyframe(); // create keyframe for beginning of fade
-        frame -= BETWEEN_FADE_LENGTH / 2;
+        frame -= BETWEEN_FADE_LENGTH / 2; 
         resetSelection(layer, frame); // go to where empty frames should be
         fl.getDocumentDOM().deleteSelection(); // get it outta here
     }
@@ -89,6 +124,16 @@ function makeFadeIn(layer, frame, name, mat, tp) {
 
 }
 
+/*
+Function: makeFadeOut
+Variables:  
+	layer [integer(or should be) index of a layer ]
+	frame [integer index of a frame]
+    name [a string containing the name for the symbol]
+    mat [a matrix]
+    tp [a transformation point]
+Description: 
+*/
 function makeFadeOut(layer, frame, name, mat, tp) {
     if (!CREATE_NEW_FRAMES) {
         frame -= FADE_LENGTH; // put cursor at appropriate spot if we're not making new frames   
@@ -109,6 +154,17 @@ function makeFadeOut(layer, frame, name, mat, tp) {
     fl.getDocumentDOM().getTimeline().createMotionTween(); // create the tween for the fade
 }
 
+/*
+Function: fadeOutAndIn
+Variables:  
+	fadeOutLayer []
+    fadeOutFrame []
+    fadeOutName []
+    fadeInLayer []
+    fadeInFrame []
+    fadeInName []
+Description: 
+*/
 function fadeOutAndIn(fadeOutLayer, fadeOutFrame, fadeOutName, fadeInLayer, fadeInFrame, fadeInName) {
     fadeInFrame += (CREATE_NEW_FRAMES) ? (FADE_LENGTH + (BETWEEN_FADE_LENGTH / 2)) : 0; // we sometimes insert frames during makeFadeOut(), so we gotta consider that
     var info = makeFadeSymbol(fadeOutLayer, fadeOutFrame, fadeOutName); // make fade out symbol
@@ -117,16 +173,39 @@ function fadeOutAndIn(fadeOutLayer, fadeOutFrame, fadeOutName, fadeInLayer, fade
     makeFadeIn(fadeInLayer, fadeInFrame, fadeInName, info[0], info[1]); // make fade in
 }
 
+/*
+Function: fadeOut
+Variables:  
+	fadeOutLayer []
+    fadeOutFrame []
+    fadeOutName []
+Description: 
+*/
 function fadeOut(fadeOutLayer, fadeOutFrame, fadeOutName) {
     var info = makeFadeSymbol(fadeOutLayer, fadeOutFrame, fadeOutName); // make fade out symbol
     makeFadeOut(fadeOutLayer, fadeOutFrame, fadeOutName, info[0], info[1]); // make fade out
 }
 
+/*
+Function: fadeIn
+Variables:  
+    fadeInLayer []
+    fadeInFrame []
+    fadeInName []
+Description: 
+*/
 function fadeIn(fadeInLayer, fadeInFrame, fadeInName) {
     var info = makeFadeSymbol(fadeInLayer, fadeInFrame, fadeInName); // make fade in symbol
     makeFadeIn(fadeInLayer, fadeInFrame, fadeInName, info[0], info[1]); // make fade in
 }
 
+/*
+Function: getUniqueNameIndex
+Variables:  
+	name []
+    index []
+Description: 
+*/
 function getUniqueNameIndex(name, index) {
     while (fl.getDocumentDOM().library.itemExists(FADES_FOLDER_NAME + "/" + name + " " + index)) {
         index++;
@@ -134,7 +213,10 @@ function getUniqueNameIndex(name, index) {
     return index;
 }
 
-// MAIN
+/*
+>>>MAIN<<<
+Description: 
+*/
 setup();
 if (!CREATE_NEW_FRAMES) {
     BETWEEN_FADE_LENGTH = 0;
