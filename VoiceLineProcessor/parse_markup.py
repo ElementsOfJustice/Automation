@@ -33,7 +33,6 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
                 dest_file = open(sys.argv[2] + "/" + filename, "w")
                 dest_file.write(new_line.rstrip())
                 dest_file.close()
-                print(filename + ": " + new_line.rstrip())
 
             is_voice_line = False
         elif re.match(r"^s\d*_", line.rstrip()):

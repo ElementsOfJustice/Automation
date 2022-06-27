@@ -86,7 +86,6 @@ function placeKeyframes(startFrame, layer, lipsyncMap, poseName) {
 if (fl.getDocumentDOM().getTimeline().getSelectedFrames().length != 3 || fl.getDocumentDOM().getTimeline().getSelectedFrames()[2] - fl.getDocumentDOM().getTimeline().getSelectedFrames()[1] != 1) {
     throw new Error("Invalid selection. Select one frame that denotes the beginning of a character talking (first frame of the voice line audio).")
 }
-var cfgPath = fl.browseForFileURL("select"); // get file for specific voice line
 try {
     fl.runScript(fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/")) + "/MasterRasterRigLipsyncs.cfg");
 } catch (error) {
@@ -94,8 +93,10 @@ try {
     var masterRasterLipsyncsPath = fl.browseForFileURL("select");
     fl.runScript(masterRasterLipsyncsPath);
 }
-fl.runScript(cfgPath);
 var layerName = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].name; // get name of layer
+if (!arrayContains(AVAILABLE_CHARACTERS, layerName, isEqual)) {
+    throw new Error("Incorrect layer or unsupported character. Selected layer name must be one of the following: " + AVAILABLE_CHARACTERS + ". Currently selected layer is " + layerName + ".");
+}
 var characterTimeline = fl.getDocumentDOM().selection[0].libraryItem.timeline; // get the timeline of the selected symbol
 var xSheetLayerIndex = characterTimeline.findLayerIndex("xSheet");
 if (xSheetLayerIndex == undefined) {
@@ -103,13 +104,12 @@ if (xSheetLayerIndex == undefined) {
 }
 var poseFrame = fl.getDocumentDOM().getElementProperty("firstFrame");
 var poseName = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].name;
-if (!arrayContains(AVAILABLE_CHARACTERS, layerName, isEqual)) {
-    throw new Error("Incorrect layer or unsupported character. Selected layer name must be one of the following: " + AVAILABLE_CHARACTERS + ". Currently selected layer is " + layerName + ".");
-}
 var availablePoses = getKeys(CHARACTER_NAME_TO_MAP[layerName]);
 if (!arrayContains(availablePoses, poseName, stringContains)) {
     throw new Error("Invalid pose. Either: you put the character in the non-talking pose OR you are using an incompatible pose. For incompatbile poses, refer to the Automation Guide for help. Currently set pose is: " + poseName);
 }
+var cfgPath = fl.browseForFileURL("select"); // get file for specific voice line
+fl.runScript(cfgPath);
 if(poseName.substring(poseName.lastIndexOf(" ")) != "Talk") {
     poseName = poseName.substring(0, poseName.lastIndexOf(" ")); // if it's passed all other data validation and this line runs, that means the pose is one of Athena's (widget emotion at the end). Get rid of the emotion.
 }
