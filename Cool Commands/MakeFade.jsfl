@@ -1,6 +1,6 @@
 /******************************************************************************
 MAKE FADE
-Description: 
+Description: Create either a fade-in effect, fade-out effect, or both.
 ******************************************************************************/
 
 FIRST_LAYER_INDEX = 3; // indecies of layers for timeline.getSelectedFrames() for multiple selections
@@ -40,7 +40,7 @@ Function: makeFadeSymbol
 Variables:  
 	layer [integer(or should be) index of a layer ]
 	frame [integer index of a frame]
-    name [a string containing the name for the symbol]
+    name  [a string containing the name for the symbol]
 Description: 
 */
 function makeFadeSymbol(layer, frame, name) { // creates a fade symbol of the specified frame and name
@@ -74,9 +74,9 @@ Function: fadeSetup
 Variables:  
 	layer [integer(or should be) index of a layer ]
 	frame [integer index of a frame]
-    name [a string containing the name for the symbol]
-    mat [a matrix]
-    tp [a transformation point]
+    name  [a string containing the name for the symbol]
+    mat   [a matrix]
+    tp    [a transformation point]
 Description: 
 */
 function fadeSetup(layer, frame, name, mat, tp) {
@@ -99,10 +99,10 @@ Function: makeFadeIn
 Variables:  
 	layer [integer(or should be) index of a layer ]
 	frame [integer index of a frame]
-    name [a string containing the name for the symbol]
-    mat [a matrix]
-    tp [a transformation point]
-Description: 
+    name  [a string containing the name for the symbol]
+    mat   [a matrix]
+    tp    [a transformation point]
+Description: Create a fade-in effect
 */
 function makeFadeIn(layer, frame, name, mat, tp) {
     fadeSetup(layer, frame, name, mat, tp);
@@ -129,10 +129,10 @@ Function: makeFadeOut
 Variables:  
 	layer [integer(or should be) index of a layer ]
 	frame [integer index of a frame]
-    name [a string containing the name for the symbol]
-    mat [a matrix]
-    tp [a transformation point]
-Description: 
+    name  [a string containing the name for the symbol]
+    mat   [a matrix]
+    tp    [a transformation point]
+Description: Create a fade-out effect
 */
 function makeFadeOut(layer, frame, name, mat, tp) {
     if (!CREATE_NEW_FRAMES) {
@@ -157,13 +157,13 @@ function makeFadeOut(layer, frame, name, mat, tp) {
 /*
 Function: fadeOutAndIn
 Variables:  
-	fadeOutLayer []
-    fadeOutFrame []
-    fadeOutName []
-    fadeInLayer []
-    fadeInFrame []
-    fadeInName []
-Description: 
+	fadeOutLayer [integer index of a layer for the fadeOut]
+    fadeOutFrame [integer index of a frame for the fadeOut]
+    fadeOutName  [a string containing the name for the symbol for the fadeOut]
+    fadeInLayer  [integer index of a layer for the fadeIn]
+    fadeInFrame  [integer index of a frame for the fadeIn]
+    fadeInName   [a string containing the name for the symbol for the fadeIn]
+Description: Call functions to create symbols, fadeIn, and fadeOut
 */
 function fadeOutAndIn(fadeOutLayer, fadeOutFrame, fadeOutName, fadeInLayer, fadeInFrame, fadeInName) {
     fadeInFrame += (CREATE_NEW_FRAMES) ? (FADE_LENGTH + (BETWEEN_FADE_LENGTH / 2)) : 0; // we sometimes insert frames during makeFadeOut(), so we gotta consider that
@@ -176,9 +176,9 @@ function fadeOutAndIn(fadeOutLayer, fadeOutFrame, fadeOutName, fadeInLayer, fade
 /*
 Function: fadeOut
 Variables:  
-	fadeOutLayer []
-    fadeOutFrame []
-    fadeOutName []
+	fadeOutLayer [integer index of a layer for the fadeOut]
+    fadeOutFrame [integer index of a frame for the fadeOut]
+    fadeOutName  [a string containing the name for the symbol for the fadeOut]
 Description: 
 */
 function fadeOut(fadeOutLayer, fadeOutFrame, fadeOutName) {
@@ -189,10 +189,10 @@ function fadeOut(fadeOutLayer, fadeOutFrame, fadeOutName) {
 /*
 Function: fadeIn
 Variables:  
-    fadeInLayer []
-    fadeInFrame []
-    fadeInName []
-Description: 
+    fadeInLayer [integer index of a layer for the fadeIn]
+    fadeInFrame [integer index of a frame for the fadeIn]
+    fadeInName  [a string containing the name for the symbol for the fadeIn]
+Description: Create a symbol and a fade-in
 */
 function fadeIn(fadeInLayer, fadeInFrame, fadeInName) {
     var info = makeFadeSymbol(fadeInLayer, fadeInFrame, fadeInName); // make fade in symbol
@@ -202,9 +202,9 @@ function fadeIn(fadeInLayer, fadeInFrame, fadeInName) {
 /*
 Function: getUniqueNameIndex
 Variables:  
-	name []
-    index []
-Description: 
+	name  [A string with a suggested name]
+    index [in integer index to add to the name]
+Description: returns a unique name for a symbol
 */
 function getUniqueNameIndex(name, index) {
     while (fl.getDocumentDOM().library.itemExists(FADES_FOLDER_NAME + "/" + name + " " + index)) {
@@ -215,7 +215,7 @@ function getUniqueNameIndex(name, index) {
 
 /*
 >>>MAIN<<<
-Description: 
+Description: Obtain user input and act accordingly
 */
 setup();
 if (!CREATE_NEW_FRAMES) {
