@@ -27,6 +27,9 @@ def writeParsedFile(source, destination):
         phonemes += str(j.minTime) + " : [" + \
             str(j.maxTime) + ",\"" + str(j.mark) + "\"], \n"
     phonemes += "};"
+    
+    if not os.path.exists(str(destination)[:str(destination).rfind("/")]):
+        os.makedirs(str(destination)[:str(destination).rfind("/")])
     f = open(destination, "w")
     f.write(words + "\n" + phonemes)
     f.close()
@@ -40,14 +43,12 @@ def main():
     directory = os.fsencode(directory_name)
 
     # for each file in the directory...
-    for file in os.listdir(directory):
-        filename = os.fsdecode(file)
-        try:
-            writeParsedFile(directory_name + "/" + filename,
-                           "output/" + filename.rsplit(".", 1 )[0] + ".cfg")
-        except:
-            print("fail")
-            exit()
+    for folder in os.listdir(directory):
+        foldername = os.fsdecode(folder)
+        for file in os.listdir(os.fsencode(directory_name + "/" + foldername)):
+            filename = os.fsdecode(file)
+            writeParsedFile(directory_name + "/" + foldername + "/" + filename,
+                            "output/" + foldername + "/" + filename.rsplit(".", 1 )[0] + ".cfg")
 
 
 main()

@@ -14,7 +14,8 @@ except:
     exit()
 with open(sys.argv[1], "r", encoding="utf8") as file:
     filename = ""
-    is_voice_line = False   
+    is_voice_line = False
+    speaker_name = ""
     for line in file:
         if is_voice_line:
             # strip character voiceine filename, standardize apostrophes, lowercase everything
@@ -29,8 +30,10 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
             new_line = re.sub(r"(.)-\1", r"\1", new_line)
             if not os.path.exists(sys.argv[2]):
                 os.makedirs(sys.argv[2])
+            if not os.path.exists(sys.argv[2] + "/" + speaker_name):
+                os.makedirs(sys.argv[2] + "/" + speaker_name)
             if len(new_line.rstrip()) > 0:
-                dest_file = open(sys.argv[2] + "/" + filename, "w")
+                dest_file = open(sys.argv[2] + "/" + speaker_name + "/" +  filename, "w")
                 dest_file.write(new_line.rstrip())
                 dest_file.close()
 
@@ -38,3 +41,5 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
         elif re.match(r"^s\d*_", line.rstrip()):
             filename = str(line.strip() + ".txt")
             is_voice_line = True
+            # get only first name of speaker
+            speaker_name = re.sub(r"s\d_\d{3}_(.[^_ ]*)_?.*", r"\1", line.rstrip()).rstrip().replace("’", "'").lower()
