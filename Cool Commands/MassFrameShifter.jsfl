@@ -14,6 +14,14 @@ var frameSelection = timeline.getSelectedFrames();
 var selLayerIndex = frameSelection[0];
 var startingFrame = frameSelection[1];
 var endFrame = frameSelection[2];
+
+/*
+Function: setup
+Variables: None
+Description: If the user makes a frame selection from right to left instead of 
+left to right, the starting frame will be the last frame and the ending frame
+will be the first. We need to ensure things are consistent.
+*/
 function setup() {
     if (startingFrame > endFrame) { // if selection is backwards, fix it
         var temp = endFrame;

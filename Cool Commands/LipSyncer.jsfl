@@ -21,6 +21,11 @@ var firstFrameGuess = fl.getDocumentDOM().getTimeline().layers[layer].frames[sta
 var guiPanel = fl.xmlPanelFromString("<dialog title=\"The Lip Syncer\" buttons=\"accept, cancel\">vbox><hbox><label value=\"First Frame of Lip Flap:\" control=\"panel_FF\"/><textbox id=\"panel_FF\" size=\"24\" value=\"" + (firstFrameGuess + 1) + "\" /></hbox><hbox><label value=\"Duration of Lip Flap:\" control=\"panel_dur\"/><textbox id=\"panel_dur\" size=\"24\" value=\"\" /></hbox></vbox></dialog>");
 var frameSelection = doc.getTimeline().getSelectedFrames();
 
+/*
+Function: setup
+Variables: none
+Description: unlock selected layer so elements can be selected
+*/
 function setup() {
     if (startingFrame > endFrame) { // if selection is backwards, fix it
         var temp = endFrame;

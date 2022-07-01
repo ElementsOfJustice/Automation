@@ -5,6 +5,11 @@ FRAME_RATE = fl.getDocumentDOM().frameRate;
 CONSONANT_PHONES = ["M", "N", "NG", "P", "B", "T", "D", "K", "G", "CH", "JH", "S", "Z", "SH", "ZH", "F", "V", "TH", "DH", "HH", "W", "R", "Y", "L"];
 VOWEL_PHONES = ["IY", "UW", "IH", "UH", "EY", "OW", "AH", "EH", "AE", "ER", "AA", "AO", "AW", "AY", "OY"];
 
+/*
+Function: setup
+Variables: none
+Description: unlock selected layer so elements can be selected
+*/
 function setup() {
     fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock layer
 }

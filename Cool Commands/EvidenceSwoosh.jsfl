@@ -16,6 +16,14 @@ var selLayerIndex = frameSelection[0];
 var startFrame = frameSelection[1]+1;
 var endFrame = frameSelection[2];
 var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
+
+/*
+Function: setup
+Variables: None
+Description: If the user makes a frame selection from right to left instead of 
+left to right, the starting frame will be the last frame and the ending frame
+will be the first. We need to ensure things are consistent.
+*/
 function setup() {
     if (startFrame > endFrame) { // if selection is backwards, fix it
         var temp = endFrame;
