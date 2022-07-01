@@ -7,6 +7,11 @@ var scriptPath = fl.scriptURI;
 var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
 var guiPanel = fl.getDocumentDOM().xmlPanel(dirURL + "/RigSwapper.xml");
 
+/*
+Function: setup
+Variables: none
+Description: unlock selected layer so elements can be selected
+*/
 function setup() {
     fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock layer
 }

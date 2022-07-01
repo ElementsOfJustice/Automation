@@ -1,6 +1,8 @@
 /******************************************************************************
 CONVERT 2022 FRAMES TO 2020 FRAMES
-Description: Animate 2020 doesn't have the Last Frame option for looping, so this converts frames that utilize the Last Frame into 2020-friendly frames that don't.
+Description: Animate 2020 doesn't have the Last Frame option for looping, 
+so this converts frames that utilize the Last Frame into 2020-friendly frames 
+that don't.
 ******************************************************************************/
 
 var frameSelection = fl.getDocumentDOM().getTimeline().getSelectedFrames();
@@ -8,6 +10,13 @@ var selLayerIndex = frameSelection[0];
 var startFrame = frameSelection[1];
 var endFrame = frameSelection[2];
 
+/*
+Function: setup
+Variables: None
+Description: If the user makes a frame selection from right to left instead of 
+left to right, the starting frame will be the last frame and the ending frame
+will be the first. We need to ensure things are consistent.
+*/
 function setup() {
     if (startFrame > endFrame) { // if selection is backwards, fix it
         var temp = endFrame;
