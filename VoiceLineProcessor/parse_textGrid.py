@@ -7,6 +7,7 @@ Description:
 
 import textgrid
 import os
+import sys
 
 """
 Function: writeParsedFile
@@ -39,7 +40,13 @@ def writeParsedFile(source, destination):
 Description: 
 """
 def main():
-    directory_name = "TextGrid_files"
+    if not len(sys.argv) > 1:
+        print("Please specify input folder as the first argument.")
+        exit()
+    if not len(sys.argv) > 2:
+        print("Please specify the output folder as the second argument")
+        exit()
+    directory_name = str(sys.argv[1])
     directory = os.fsencode(directory_name)
 
     # for each file in the directory...
@@ -48,7 +55,7 @@ def main():
         for file in os.listdir(os.fsencode(directory_name + "/" + foldername)):
             filename = os.fsdecode(file)
             writeParsedFile(directory_name + "/" + foldername + "/" + filename,
-                            "output/" + foldername + "/" + filename.rsplit(".", 1 )[0] + ".cfg")
+                            str(sys.argv[2]) + "/" +  foldername + "/" + filename.rsplit(".", 1 )[0] + ".cfg")
 
 
 main()

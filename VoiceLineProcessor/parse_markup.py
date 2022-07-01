@@ -18,8 +18,10 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
     speaker_name = ""
     for line in file:
         if is_voice_line:
+            # remove interjections
+            new_line = re.sub(r"TAKE THAT|OBJECTION|HOLD IT", "", line.strip())
             # strip character voiceine filename, standardize apostrophes, lowercase everything
-            new_line = re.sub(r"s\d_\d{3}_", r"", line.rstrip()).rstrip().replace("’", "'").lower()
+            new_line = re.sub(r"s\d*_\d{3}_", r"", new_line.strip()).strip().replace("’", "'").lower()
             # strip line of all characters in square brackets []
             new_line = re.sub(r"\[.*\] ", r"", new_line)
             # get rid of punctuation with space after
@@ -32,14 +34,14 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
                 os.makedirs(sys.argv[2])
             if not os.path.exists(sys.argv[2] + "/" + speaker_name):
                 os.makedirs(sys.argv[2] + "/" + speaker_name)
-            if len(new_line.rstrip()) > 0:
+            if len(new_line.strip()) > 0:
                 dest_file = open(sys.argv[2] + "/" + speaker_name + "/" +  filename, "w")
-                dest_file.write(new_line.rstrip())
+                dest_file.write(new_line.strip())
                 dest_file.close()
 
             is_voice_line = False
-        elif re.match(r"^s\d*_", line.rstrip()):
+        elif re.match(r"^s\d*_", line.strip()):
             filename = str(line.strip() + ".txt")
             is_voice_line = True
             # get only first name of speaker
-            speaker_name = re.sub(r"s\d_\d{3}_(.[^_ ]*)_?.*", r"\1", line.rstrip()).rstrip().replace("’", "'").lower()
+            speaker_name = re.sub(r"s\d_\d{3}_(.[^_ ]*)_?.*", r"\1", line.strip()).strip().replace("’", "'").lower()

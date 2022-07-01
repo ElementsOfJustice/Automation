@@ -35,8 +35,6 @@ function resetSelection(layer, frame) { // sets selection the desired layer and 
     fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true); // select frame on the layer and replace current selection
 }
 
-
-// todo: handle "silence" and "unknown word" shit
 function placeKeyframes(startFrame, layer, lipsyncMap, poseName) {
     var diphthongMap = {};
     var mouthShapeMap = {};
@@ -86,6 +84,7 @@ function placeKeyframes(startFrame, layer, lipsyncMap, poseName) {
 if (fl.getDocumentDOM().getTimeline().getSelectedFrames().length != 3 || fl.getDocumentDOM().getTimeline().getSelectedFrames()[2] - fl.getDocumentDOM().getTimeline().getSelectedFrames()[1] != 1) {
     throw new Error("Invalid selection. Select one frame that denotes the beginning of a character talking (first frame of the voice line audio).")
 }
+fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock layer
 try {
     fl.runScript(fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/")) + "/MasterRasterRigLipsyncs.cfg");
 } catch (error) {
@@ -113,4 +112,5 @@ fl.runScript(cfgPath);
 if(poseName.substring(poseName.lastIndexOf(" ")) != "Talk") {
     poseName = poseName.substring(0, poseName.lastIndexOf(" ")); // if it's passed all other data validation and this line runs, that means the pose is one of Athena's (widget emotion at the end). Get rid of the emotion.
 }
+//actual execution
 placeKeyframes(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().getSelectedLayers(), CHARACTER_NAME_TO_MAP[layerName], poseName);
