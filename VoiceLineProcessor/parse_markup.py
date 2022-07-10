@@ -43,5 +43,5 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
         elif re.match(r"^s\d*_", line.strip()):
             filename = str(line.strip() + ".txt")
             is_voice_line = True
-            # get only first name of speaker
-            speaker_name = re.sub(r"s\d_\d{3}_(.[^_ ]*)_?.*", r"\1", line.strip()).strip().replace("’", "'").lower()
+            # get only first name of first speaker
+            speaker_name = re.sub(r"s\d_\d{3}_(.[^_ ,]*)_?.*", r"\1", line.strip()).strip().replace("’", "'").lower()

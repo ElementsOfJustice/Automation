@@ -127,7 +127,7 @@ function makeEvidenceText(text, bounding, layer, startFrame) {
             fl.getDocumentDOM().addItem({ x: 0, y: 0 }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex(TYPEWRITER_SFX_NAME)]);
             fl.getDocumentDOM().getTimeline().currentFrame.soundSync = "stream";
         }
-        curFrame += Math.round((Math.random() * 2)) + 1;
+        curFrame += Math.round((Math.random() * 1.65)) + 1;
     }
 }
 

@@ -109,7 +109,7 @@ if (!arrayContains(availablePoses, poseName, stringContains)) {
 }
 var cfgPath = fl.browseForFileURL("select"); // get file for specific voice line
 fl.runScript(cfgPath);
-if(poseName.substring(poseName.lastIndexOf(" ")) != "Talk") {
+if (poseName.substring(poseName.lastIndexOf(" ")) != " Talk") {
     poseName = poseName.substring(0, poseName.lastIndexOf(" ")); // if it's passed all other data validation and this line runs, that means the pose is one of Athena's (widget emotion at the end). Get rid of the emotion.
 }
 //actual execution
