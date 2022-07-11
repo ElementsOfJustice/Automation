@@ -18,11 +18,6 @@ function setup() {
 
 if (guiPanel.dismiss == "accept") {
     setup();
-    var doc = fl.getDocumentDOM();
-    var timeline = doc.getTimeline();
-    var layer = timeline.getSelectedLayers();
-    var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
-
     var rigToSwap = guiPanel.panel_rigName + "►";
     var rigsFolderPath = "RIGS/VECTOR CHARACTERS";
     var rigFolderPath = rigsFolderPath + "/" + guiPanel.panel_folderName + "►";
@@ -30,14 +25,14 @@ if (guiPanel.dismiss == "accept") {
 
     var mat = timeline.layers[timeline.currentLayer].frames[timeline.currentFrame].elements[0].matrix;
 
-    doc.library.moveToFolder(rigsFolderPath, rigFolderPath + "/" + rigToSwap + "Scaled");
-    doc.library.deleteItem(rigFolderPath);
+    fl.getDocumentDOM().library.moveToFolder(rigsFolderPath, rigFolderPath + "/" + rigToSwap + "Scaled");
+    fl.getDocumentDOM().library.deleteItem(rigFolderPath);
     fl.copyLibraryItem(newRigPath, rigFolderPath + "/" + rigToSwap + "All");
-    doc.clipPaste(false);
-    doc.library.moveToFolder(rigFolderPath, rigsFolderPath + "/" + rigToSwap + "Scaled");
+    fl.getDocumentDOM().clipPaste(false);
+    fl.getDocumentDOM().library.moveToFolder(rigFolderPath, rigsFolderPath + "/" + rigToSwap + "Scaled");
 
 
-    timeline.layers[timeline.currentLayer].frames[timeline.currentFrame].elements[0].matrix = mat;
+    fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].matrix = mat;
 
     fl.trace("Finished. New rig is on the timeline.");
 }

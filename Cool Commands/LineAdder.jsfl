@@ -38,6 +38,13 @@ function extendVoiceLine(linePath) {
 var curLayer = "";
 //var count = parseInt(num) - 1;
 var prevVoiceLine = "none";
+// verify that Utils is defined (the C level library that finds lengths of FLACs)
+try {
+	Utils;
+} catch (error) {
+	throw new Error("Utils.dll not found. Please place Utils.dll in the External Libraries folder in your Animate Configuration directory (same directory that has the commands folder).")
+}
+
 
 fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("TEXT")].locked = true;
 
@@ -51,6 +58,9 @@ while (doc.getTimeline().currentFrame < doc.getTimeline().layers[doc.getTimeline
 	}
 	// open the file explorer, promting the user to select a file
 	var linePath = fl.browseForFileURL("select");
+	if (linePath.indexOf(".flac") != linePath.length - 5) {
+		throw new Error("Invalid file type! Voice lines must be in FLAC format.");
+	}
 	// if the user selected a valid file...
 	if (linePath != null) {
 		// initialize an empty layer variable

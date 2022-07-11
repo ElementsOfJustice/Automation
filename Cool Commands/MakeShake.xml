@@ -5,5 +5,5 @@
 	<separator />
 
 
-	<checkbox id="panel_taperOff" label="Taper Off?" checked="true">
+	<checkbox id="panel_taperOff" label="Taper Off?" checked="true"/>
 </dialog>
