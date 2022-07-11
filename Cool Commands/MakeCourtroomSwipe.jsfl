@@ -263,7 +263,12 @@ resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER
 // user specified boolean value
 var halfCourt = confirm("Click OK for a half-court swipe. Click Cancel for a full-court swipe.");
 // source characters are characters displayed before the swipe
-var sourceCharacterLayerNames = prompt("Enter the source character LAYER NAMES, separated by a comma (no spaces)");
+var suggestion = "";
+// if there's data in the document, use it!
+if(fl.getDocumentDOM().documentHasData("sourceChars")) {
+    suggestion = fl.getDocumentDOM().getDataFromDocument("sourceChars");
+}
+var sourceCharacterLayerNames = prompt("Enter the source character LAYER NAMES, separated by a comma (no spaces)", suggestion);
 var sourceCharacterLayers = [];
 
 for (var i = 0; i < sourceCharacterLayerNames.split(',').length; i++) {
@@ -273,19 +278,28 @@ for (var i = 0; i < sourceCharacterLayerNames.split(',').length; i++) {
         throw new Error("Invalid input.");
     }
 }
+// store valid source characters into persistent data
+fl.getDocumentDOM().addDataToDocument("sourceChars", "string", sourceCharacterLayerNames);
 // A desitination character is the character that will be displayed after the swipe
-var destinationCharacterLayerNames = prompt("Enter the destination character LAYER NAMES, separated by a comma (no spaces)");
+suggestion = "";
+// if there's data in the document, use it!
+if(fl.getDocumentDOM().documentHasData("destChars")) {
+    suggestion = fl.getDocumentDOM().getDataFromDocument("destChars");
+}
+var destinationCharacterLayerNames = prompt("Enter the destination character LAYER NAMES, separated by a comma (no spaces)", suggestion);
 var destinationCharacterLayers = [];
 // for each layer name provided...
 for (var i = 0; i < destinationCharacterLayerNames.split(',').length; i++) {
     // if the name is valid
-    if (fl.getDocumentDOM().getTimeline().findLayerIndex(sourceCharacterLayerNames.split(',')[i]) != undefined) {
+    if (fl.getDocumentDOM().getTimeline().findLayerIndex(destinationCharacterLayerNames.split(',')[i]) != undefined) {
         // add the layer index to the array
         destinationCharacterLayers.push(fl.getDocumentDOM().getTimeline().findLayerIndex(destinationCharacterLayerNames.split(',')[i]));
     } else {
         throw new Error("Invalid input.");
     }
 }
+// store valid destination characters into persistent data
+fl.getDocumentDOM().addDataToDocument("destChars", "string", destinationCharacterLayerNames);
 // If we've got ourselves a full courtroom swipe
 if (!halfCourt) {
     // witness characters are characters currently at the witness stand
