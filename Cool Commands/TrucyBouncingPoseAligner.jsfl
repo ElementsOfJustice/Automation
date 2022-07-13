@@ -1,3 +1,8 @@
+/******************************************************************************
+TRUCY BOUNCING POSE ALIGNER
+Description: 
+******************************************************************************/
+
 HAPPY_DIFFS = [0, -1.2, -4.2, -7.7, -10.3, -10.4, -10.5, -10.8, -10.9, -11.1, -11.3, -11.3, -11.3, -11.5, -11.6, -12.1, -11.8, -11.8, -6.9, -3.9, -2.3, -1, 0.3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 ANNOYED_DIFFS = [0, 0, -0.5, -0.8, -1.2, -1.3, -1.4, -1.6, -1.9, -2.2, -2.6, -2.5, -2.5, -2.5, -2.6, -2.5, -2.5, -2.4, -2.6, -2.4, -2.4, -2.5, -2.5, -2.5, -2.6, -2, -0.7, 0, 0.5, 0.6, 0.6, 0.5, 0.5, 0.4, 0.3, 0.2, 0.3, 0.3, 0.2, 0.1, 0];
 HAPPY_MODULO = 33;
@@ -7,6 +12,13 @@ var selLayerIndex = frameSelection[0];
 var startFrame = frameSelection[1];
 var endFrame = frameSelection[2];
 
+/*
+Function: setup
+Variables: None
+Description: If the user makes a frame selection from right to left instead of 
+left to right, the starting frame will be the last frame and the ending frame
+will be the first. We need to ensure things are consistent.
+*/
 function setup() {
     if (startFrame > endFrame) { // if selection is backwards, fix it
         var temp = endFrame;
@@ -16,12 +28,23 @@ function setup() {
     fl.getDocumentDOM().getTimeline().layers[selLayerIndex * 1].locked = false; // unlock layer
 }
 
+
+/*
+Function: resetSelection
+Variables: 
+    layer []
+    frame []
+Description: 
+*/
 function resetSelection(layer, frame) { // sets selection the desired layer and frame
     fl.getDocumentDOM().getTimeline().currentFrame = frame;
     fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true); // select frame on the layer and replace current selection
 }
 
-// MAIN
+/*
+>>>MAIN<<<
+Description: 
+*/
 setup();
 var characterTimeline = fl.getDocumentDOM().selection[0].libraryItem.timeline; // get the timeline of the selected symbol
 var xSheetLayerIndex = characterTimeline.findLayerIndex("xSheet");
