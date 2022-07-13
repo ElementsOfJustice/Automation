@@ -32,13 +32,14 @@ function setup() {
 /*
 Function: resetSelection
 Variables: 
-    layer []
-    frame []
+    layer [Integer index of a layer]
+    frame [Integer index of a frame]
 Description: 
 */
 function resetSelection(layer, frame) { // sets selection the desired layer and frame
     fl.getDocumentDOM().getTimeline().currentFrame = frame;
-    fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true); // select frame on the layer and replace current selection
+    // select frame on the layer and replace current selection
+    fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true); 
 }
 
 /*
@@ -47,11 +48,11 @@ Description:
 */
 setup();
 var characterTimeline = fl.getDocumentDOM().selection[0].libraryItem.timeline; // get the timeline of the selected symbol
-var xSheetLayerIndex = characterTimeline.findLayerIndex("xSheet");
+var xSheetLayerIndex = characterTimeline.findLayerIndex("xSheet"); // get the integer index of layer "xSheet"
 if (xSheetLayerIndex == undefined) {
     xSheetLayerIndex = 0; // assume it's at 0 if somehow it doesn't find it
 }
-var poseFrame = fl.getDocumentDOM().getElementProperty("firstFrame");
+var poseFrame = fl.getDocumentDOM().getElementProperty("firstFrame"); // 
 var poseName = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].name;
 
 for (var i = startFrame; i < endFrame; i++) {
