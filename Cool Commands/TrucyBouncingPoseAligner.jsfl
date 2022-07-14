@@ -52,16 +52,21 @@ var xSheetLayerIndex = characterTimeline.findLayerIndex("xSheet"); // get the in
 if (xSheetLayerIndex == undefined) {
     xSheetLayerIndex = 0; // assume it's at 0 if somehow it doesn't find it
 }
-var poseFrame = fl.getDocumentDOM().getElementProperty("firstFrame"); // 
-var poseName = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].name;
+var poseFrame = fl.getDocumentDOM().getElementProperty("firstFrame"); // get the index in the firstFrame property
+// in the character timeline, obtain the name of the pose as it stands on the given frame
+var poseName = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].name; 
 
+// for each selected frame...
 for (var i = startFrame; i < endFrame; i++) {
     resetSelection(selLayerIndex, i);
+    // is the current frame the starting frame of the keyframe?
     var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame;
+    // if it isn't...
     if (!isKeyFrame) {
-        fl.getDocumentDOM().getTimeline().insertKeyframe();
-        resetSelection(selLayerIndex, i);
+        fl.getDocumentDOM().getTimeline().insertKeyframe(); // make it the start of a keyframe
+        resetSelection(selLayerIndex, i); 
     }
+    // now we should be at the start of a new keyframe, so let's start bouncing!
     if (poseName == "Happy Talk") {
         fl.getDocumentDOM().getTimeline().layers[selLayerIndex].frames[i].elements[0].y = HAPPY_DIFFS[(i - startFrame) % HAPPY_MODULO];
     } else if (poseName == "Annoyed Talk") {
