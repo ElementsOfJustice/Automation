@@ -14,9 +14,17 @@ function setup() {
     fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock layer
 }
 
-function resetSelection(layer, frame) { // sets selection the desired layer and frame
+/*
+Function: resetSelection
+Variables:  
+	layer [integer(or should be) index of a layer ]
+	frame [integer index of a frame]
+Description: sets selection to the desired layer and frame
+*/
+function resetSelection(layer, frame) {
     fl.getDocumentDOM().getTimeline().currentFrame = frame;
-    fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true); // select frame on the layer and replace current selection
+    // select frame on the layer and replace current selection
+    fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true); 
 }
 
 function arrayContains(array, element) {
