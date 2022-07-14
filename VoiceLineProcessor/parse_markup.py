@@ -14,6 +14,7 @@ except:
     exit()
 with open(sys.argv[1], "r", encoding="utf8") as file:
     filename = ""
+    scene = 1
     is_voice_line = False
     speaker_name = ""
     for line in file:
@@ -32,16 +33,19 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
             new_line = re.sub(r"(.)-\1", r"\1", new_line)
             if not os.path.exists(sys.argv[2]):
                 os.makedirs(sys.argv[2])
-            if not os.path.exists(sys.argv[2] + "/" + speaker_name):
-                os.makedirs(sys.argv[2] + "/" + speaker_name)
+            if not os.path.exists(sys.argv[2] + "/" + "SCENE " + str(scene)):
+                os.makedirs(sys.argv[2] + "/" + "SCENE " + str(scene))
+            if not os.path.exists(sys.argv[2] + "/" + "SCENE " + str(scene) + "/" + speaker_name):
+                os.makedirs(sys.argv[2] + "/" + "SCENE " + str(scene) + "/" + speaker_name)
             if len(new_line.strip()) > 0:
-                dest_file = open(sys.argv[2] + "/" + speaker_name + "/" +  filename, "w")
+                dest_file = open(sys.argv[2] + "/" + "SCENE " + str(scene) + "/" + speaker_name + "/" +  filename, "w")
                 dest_file.write(new_line.strip())
                 dest_file.close()
 
             is_voice_line = False
         elif re.match(r"^s\d*_", line.strip()):
             filename = str(line.strip() + ".txt")
+            scene = int(re.sub(r"s(\d*).*", r"\1", line.strip()).strip().replace("’", "'").lower())
             is_voice_line = True
             # get only first name of first speaker
-            speaker_name = re.sub(r"s\d_\d{3}_(.[^_ ,]*)_?.*", r"\1", line.strip()).strip().replace("’", "'").lower()
+            speaker_name = re.sub(r"s\d*_\d*_(.[^_ ,]*)_?.*", r"\1", line.strip()).strip().replace("’", "'").lower()
