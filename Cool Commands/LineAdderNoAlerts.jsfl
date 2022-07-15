@@ -72,11 +72,11 @@ fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findL
 // while the current frame is before the last frame in the current layer
 while (doc.getTimeline().currentFrame < doc.getTimeline().layers[doc.getTimeline().currentLayer].frames.length - 1) {
 	// prompt user and store input
-	var cancel = confirm("Previous voice line: " + prevVoiceLine + ". Select voice line to add. Select no file to skip this text keyframe. Click cancel to stop this script.");
-	// if the user stops the script via the panel...
-	if (!cancel) {
-		throw new Error("User stopped script.");
-	}
+	// var cancel = confirm("Previous voice line: " + prevVoiceLine + ". Select voice line to add. Select no file to skip this text keyframe. Click cancel to stop this script.");
+	// // if the user stops the script via the panel...
+	// if (!cancel) {
+	// 	throw new Error("User stopped script.");
+	// }
 	// open the file explorer, promting the user to select a file
 	var linePath = fl.browseForFileURL("select");
 	// if the user selected a valid file...
@@ -90,11 +90,11 @@ while (doc.getTimeline().currentFrame < doc.getTimeline().layers[doc.getTimeline
 			layerGuess = layerGuess.replace("%20", "_")
 			layerGuess = layerGuess.replace(" ", "_");
 		}
-		var promptPanel = fl.xmlPanelFromString("<dialog title=\"Line Adder\" buttons=\"accept, cancel\"> <vbox> <hbox> <label value=\"Name of voice layer (click cancel to stop script):\" control=\"panel_layerName\"/> <textbox id=\"panel_layerName\" size=\"24\" value=\"" + layerGuess + "\"/> </hbox> </vbox> </dialog>");
-		// if the user stops the script via the panel...
-		if (promptPanel.dismiss != "accept") {
-			throw new Error("User stopped script.");
-		}
+		// var promptPanel = fl.xmlPanelFromString("<dialog title=\"Line Adder\" buttons=\"accept, cancel\"> <vbox> <hbox> <label value=\"Name of voice layer (click cancel to stop script):\" control=\"panel_layerName\"/> <textbox id=\"panel_layerName\" size=\"24\" value=\"" + layerGuess + "\"/> </hbox> </vbox> </dialog>");
+		// // if the user stops the script via the panel...
+		// if (promptPanel.dismiss != "accept") {
+		// 	throw new Error("User stopped script.");
+		// }
 		// give the layer variable the index of the variable of the name the user provided
 		switchActive(layerGuess);
 		// if we don't have a valid layer, the loop should start over
@@ -110,6 +110,8 @@ while (doc.getTimeline().currentFrame < doc.getTimeline().layers[doc.getTimeline
 		prevVoiceLine = linePath.substring(linePath.lastIndexOf("/") + 1);
 		extendVoiceLine(linePath);
 		//count++;
+	} else {
+		break; // break if no line selected
 	}
 	// select the text layer
 	doc.getTimeline().setSelectedLayers(doc.getTimeline().findLayerIndex("TEXT") * 1);

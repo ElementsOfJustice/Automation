@@ -12,11 +12,15 @@ FADES_FOLDER_NAME = "FADES";
 SLOW_ASS_CHARACTERS = ["SONATA", "TWILIGHT_SPARKLE", "FAIR_DEVOTION"];
 
 // USER OPTIONS 
-
 FADE_LENGTH = 4; // length of each fade in frames
 BETWEEN_FADE_LENGTH = 4; // number of frames of blankness between fades (standard is 4)
 CREATE_NEW_FRAMES = true; // if this is true, make fades by inserting frames; if this is false, creates no new frames (overrides BETWEEN_FADE_LENGTH as if it were 0)
 CHANGE_TRANSFORMATION_POINT = false; // if this is true, do shenanigains with the transformation point. Sometimes this causes misalignments, other times it doesn't.
+try {
+    fl.runScript(fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/")) + "/Options.cfg"); // load user options from file
+} catch (error) {
+    
+}
 function setup() {
     for (var i = 0; i < fl.getDocumentDOM().getTimeline().getSelectedLayers().length; i++) {
         fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[i] * 1].locked = false; // unlock layer
@@ -26,8 +30,8 @@ function setup() {
 /*
 Function: resetSelection
 Variables:  
-	layer [integer(or should be) index of a layer ]
-	frame [integer index of a frame]
+    layer [integer(or should be) index of a layer ]
+    frame [integer index of a frame]
 Description: sets selection to the desired layer and frame
 */
 function resetSelection(layer, frame) { // sets selection the desired layer and frame
@@ -38,8 +42,8 @@ function resetSelection(layer, frame) { // sets selection the desired layer and 
 /*
 Function: makeFadeSymbol
 Variables:  
-	layer [integer(or should be) index of a layer ]
-	frame [integer index of a frame]
+    layer [integer(or should be) index of a layer ]
+    frame [integer index of a frame]
     name  [a string containing the name for the symbol]
 Description: 
 */
@@ -72,8 +76,8 @@ function makeFadeSymbol(layer, frame, name) { // creates a fade symbol of the sp
 /*
 Function: fadeSetup
 Variables:  
-	layer [integer(or should be) index of a layer ]
-	frame [integer index of a frame]
+    layer [integer(or should be) index of a layer ]
+    frame [integer index of a frame]
     name  [a string containing the name for the symbol]
     mat   [a matrix]
     tp    [a transformation point]
@@ -97,8 +101,8 @@ function fadeSetup(layer, frame, name, mat, tp) {
 /*
 Function: makeFadeIn
 Variables:  
-	layer [integer(or should be) index of a layer ]
-	frame [integer index of a frame]
+    layer [integer(or should be) index of a layer ]
+    frame [integer index of a frame]
     name  [a string containing the name for the symbol]
     mat   [a matrix]
     tp    [a transformation point]
@@ -110,7 +114,7 @@ function makeFadeIn(layer, frame, name, mat, tp) {
         frame += BETWEEN_FADE_LENGTH / 2;
         resetSelection(layer, frame); // go to beginning of fade 
         fl.getDocumentDOM().getTimeline().insertKeyframe(); // create keyframe for beginning of fade
-        frame -= BETWEEN_FADE_LENGTH / 2; 
+        frame -= BETWEEN_FADE_LENGTH / 2;
         resetSelection(layer, frame); // go to where empty frames should be
         fl.getDocumentDOM().deleteSelection(); // get it outta here
     }
@@ -127,8 +131,8 @@ function makeFadeIn(layer, frame, name, mat, tp) {
 /*
 Function: makeFadeOut
 Variables:  
-	layer [integer(or should be) index of a layer ]
-	frame [integer index of a frame]
+    layer [integer(or should be) index of a layer ]
+    frame [integer index of a frame]
     name  [a string containing the name for the symbol]
     mat   [a matrix]
     tp    [a transformation point]
@@ -157,7 +161,7 @@ function makeFadeOut(layer, frame, name, mat, tp) {
 /*
 Function: fadeOutAndIn
 Variables:  
-	fadeOutLayer [integer index of a layer for the fadeOut]
+    fadeOutLayer [integer index of a layer for the fadeOut]
     fadeOutFrame [integer index of a frame for the fadeOut]
     fadeOutName  [a string containing the name for the symbol for the fadeOut]
     fadeInLayer  [integer index of a layer for the fadeIn]
@@ -176,7 +180,7 @@ function fadeOutAndIn(fadeOutLayer, fadeOutFrame, fadeOutName, fadeInLayer, fade
 /*
 Function: fadeOut
 Variables:  
-	fadeOutLayer [integer index of a layer for the fadeOut]
+    fadeOutLayer [integer index of a layer for the fadeOut]
     fadeOutFrame [integer index of a frame for the fadeOut]
     fadeOutName  [a string containing the name for the symbol for the fadeOut]
 Description: 
@@ -202,7 +206,7 @@ function fadeIn(fadeInLayer, fadeInFrame, fadeInName) {
 /*
 Function: getUniqueNameIndex
 Variables:  
-	name  [A string with a suggested name]
+    name  [A string with a suggested name]
     index [in integer index to add to the name]
 Description: returns a unique name for a symbol
 */

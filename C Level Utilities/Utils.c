@@ -19,7 +19,8 @@ JSBool getFLACLength(JSContext *cx, JSObject *obj,  unsigned int argc,   jsval *
     }
     int err = fopen_s(&fp, filename, "rb"); // open the file
     if (err != 0) {
-        return JS_FALSE; // return failure if the file doesn't open
+        *rval = JS_IntegerToValue(-1);
+        return JS_TRUE; // return -1 as an error value so that it doesn't crash.
     }
     for (i = 0, max = 0x20; i < max && (c = getc(fp)) != EOF; i++) { // loop over first 32 bytes of the file
         if ((i >= 0x12 && i <= 0x14) || (i >= 0x15 && i <= 0x19))

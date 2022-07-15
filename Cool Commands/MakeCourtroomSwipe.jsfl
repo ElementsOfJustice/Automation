@@ -19,10 +19,10 @@ var masterRigArray = { // map LAYER NAMES to the rig and position-- first entry 
     "THE_JUDGE": ["RIGS/RASTER CHARACTERS/The Judge/THE_JUDGE", 640, 360, true],
     "PRIVATE_EYE": ["RIGS/VECTOR CHARACTERS/PRIVATE_EYE/PrivateEyeScaled", 0, 10, true],
     "PRINCESS_LUNA": ["RIGS/VECTOR CHARACTERS/Luna►/Luna►Scaled", 0, 24, false],
-    "DIAMOND": ["RIGS/VECTOR CHARACTERS/DIAMOND_TIARA/DT►Scaled", -240, 0, false],
-    "DIAMOND_TIARA": ["RIGS/VECTOR CHARACTERS/DIAMOND_TIARA/DT►Scaled", -240, 0, false],
-    "SILVER": ["RIGS/VECTOR CHARACTERS/SILVER_SPOON/Silver Spoon►Scaled", 240, 0, false],
-    "SILVER_SPOON": ["RIGS/VECTOR CHARACTERS/SILVER_SPOON/Silver Spoon►Scaled", 240, 0, false],
+    "DIAMOND": ["RIGS/VECTOR CHARACTERS/DIAMOND_TIARA►/DT►Scaled", -240, 0, false],
+    "DIAMOND_TIARA": ["RIGS/VECTOR CHARACTERS/DIAMOND_TIARA►/DT►Scaled", -240, 0, false],
+    "SILVER": ["RIGS/VECTOR CHARACTERS/SILVER_SPOON►/Silver Spoon►Scaled", 240, 0, false],
+    "SILVER_SPOON": ["RIGS/VECTOR CHARACTERS/SILVER_SPOON►/Silver Spoon►Scaled", 240, 0, false],
     "ZECORA": ["RIGS/VECTOR CHARACTERS/ZECORA/Zecora_Scaled", 0, 0, false],
     "SCOOTALOO": ["RIGS/VECTOR CHARACTERS/SCOOTALOO►/ST►Scaled", 0, 0, false],
     "SONATA": ["RIGS/VECTOR CHARACTERS/SonataDefense►/SonataDefense►Scaled", -250, 0, false],
@@ -254,8 +254,8 @@ try {
     fl.runScript(fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/")) + "/MasterRigArray.cfg");
 } catch (error) {
     alert("MasterRigArray.cfg not found! Browse for and select the MasterRigArray.cfg file.");
-    var masterRasterLipsyncsPath = fl.browseForFileURL("select");
-    fl.runScript(masterRasterLipsyncsPath);
+    var masterRigArrayPath = fl.browseForFileURL("select");
+    fl.runScript(masterRigArrayPath);
 }
 setup();
 // select layer and frame
