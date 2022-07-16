@@ -55,7 +55,7 @@ Variables:
 	lineName [A string containing the name of a voice line]
 Description: insert frames to match voice line length + 3 frames
 */
-function extendVoiceLine(getDuration) {
+function extendVoiceLine(duration) {
 	doc.getTimeline().insertFrames(3 + (Math.ceil(doc.frameRate * duration / 1000.0)) - doc.getTimeline().layers[doc.getTimeline().findLayerIndex("TEXT")].frames[doc.getTimeline().currentFrame].duration, true);
 }
 
