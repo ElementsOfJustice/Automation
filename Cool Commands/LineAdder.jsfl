@@ -38,22 +38,26 @@ if(num == null) {
 	throw new Error("User stopped script.");
 }*/
 
+function getDuration(linePath) {
+	// Note that Utils.getFLACLength requires the Utils DLL to be in the External Libraries folder.
+	var duration = -1, attempts = 0;
+	while (duration == -1 && attempts < 200) {
+		duration = Utils.getFLACLength(linePath);
+		attempts++;
+	}
+	if (attempts == 200) {
+		throw new Error("Maximum number of attempts to get voice line length reached! Please try again.");
+	}
+	return duration;
+}
+
 /*
 Function: extendVoiceLine
 Variables:  
 	lineName [A string containing the name of a voice line]
 Description: insert frames to match voice line length + 3 frames
 */
-function extendVoiceLine(linePath) {
-	// Note that Utils.getFLACLength requires the Utils DLL to be in the External Libraries folder.
-	var duration = -1, attempts = 0;
-	while (duration == -1 && attempts < 10) {
-		duration = Utils.getFLACLength(linePath);
-		attempts++;
-	}
-	if (attempts == 10) {
-		throw new Error("fuck");
-	}
+function extendVoiceLine(duration) {
 	doc.getTimeline().insertFrames(3 + (Math.ceil(doc.frameRate * duration / 1000.0)) - doc.getTimeline().layers[doc.getTimeline().findLayerIndex("TEXT")].frames[doc.getTimeline().currentFrame].duration, true);
 }
 
@@ -102,13 +106,15 @@ while (doc.getTimeline().currentFrame < doc.getTimeline().layers[doc.getTimeline
 		// unlock the selected layer(s)
 		fl.getDocumentDOM().getTimeline().layers[doc.getTimeline().getSelectedLayers() * 1].locked = false;
 		// import the user-selected line file into the library
-		doc.importFile(linePath);
-		linePath = linePath.substring(8).replace("\|", ":");
-		while (linePath.indexOf("%20") != -1) {
-			linePath = linePath.replace("%20", " ");
+		var cleanLinePath = linePath;
+		cleanLinePath = cleanLinePath.substring(8).replace("\|", ":");
+		while (cleanLinePath.indexOf("%20") != -1) {
+			cleanLinePath = cleanLinePath.replace("%20", " ");
 		}
-		prevVoiceLine = linePath.substring(linePath.lastIndexOf("/") + 1);
-		extendVoiceLine(linePath);
+		var duration = getDuration(cleanLinePath); // get duration before importing file to prevent data race condition maybe?
+		doc.importFile(linePath);
+		prevVoiceLine = cleanLinePath.substring(linePath.lastIndexOf("/") + 1);
+		extendVoiceLine(duration);
 		//count++;
 	}
 	// select the text layer
