@@ -36,7 +36,7 @@ function arrayContains(array, element) {
     return false;
 }
 
-function getStartTimeArray(input) { // get array of start times from the words or phonemes
+function getKeys(input) { // get array of start times from the words or phonemes
     var arr = [];
     for (var i in input) {
         arr.push(parseFloat(i));
@@ -46,8 +46,8 @@ function getStartTimeArray(input) { // get array of start times from the words o
 function getLipSyncFrameArray(words, phonemes) { // helper function to compute where each syllable is in terms of frames
     // Approach 1: each word begins with a syllable, and every consonant followed by a vowel is another syllable
     var syllableFrames = [];
-    var wordStartTimeArray = getStartTimeArray(words);
-    var phonemeStartTimeArray = getStartTimeArray(phonemes);
+    var wordStartTimeArray = getKeys(words);
+    var phonemeStartTimeArray = getKeys(phonemes);
     // god i hate dynamic typing so much i HATE WHEN IT CONSIDERS UNKNOWNS AS STRINGS AND I HAVE TO CALL PARSEFLOAT ON ALL OF IT I HATE IT
     for (var i = 0; i < wordStartTimeArray.length; i++) { // iterate over every word
         var endTime = parseFloat(words[wordStartTimeArray[i]][END_INDEX]);

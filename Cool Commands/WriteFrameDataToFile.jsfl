@@ -16,7 +16,7 @@ left to right, the starting frame will be the last frame and the ending frame
 will be the first. We need to ensure things are consistent.
 */
 function setup() {
-    if (firstFrame > endFrame) { // if selection is backwards, fix it
+    if (firstFrame > lastFrame) { // if selection is backwards, fix it
         var temp = lastFrame;
         lastFrame = firstFrame;
         firstFrame = temp;

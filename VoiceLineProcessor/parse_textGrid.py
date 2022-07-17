@@ -8,6 +8,7 @@ Description:
 import textgrid
 import os
 import sys
+import re
 
 """
 Function: writeParsedFile
@@ -54,8 +55,9 @@ def main():
         foldername = os.fsdecode(folder)
         for file in os.listdir(os.fsencode(directory_name + "/" + foldername)):
             filename = os.fsdecode(file)
+            scene_number = re.sub(r"s(\d*)_.*", r"\1", filename.strip())
             writeParsedFile(directory_name + "/" + foldername + "/" + filename,
-                            str(sys.argv[2]) + "/" +  foldername + "/" + filename.rsplit(".", 1 )[0] + ".cfg")
+                            str(sys.argv[2]) + "/" + "SCENE " + str(scene_number) + "/" + foldername + "/" + filename.rsplit(".", 1 )[0] + ".cfg")
 
 
 main()
