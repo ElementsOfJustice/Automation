@@ -10,6 +10,7 @@ Variables: none
 Description: unlock selected layer so elements can be selected
 */
 function setup() {
+    fl.showIdleMessage(false);
     fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock layer
 }
 
@@ -136,7 +137,7 @@ function makeLipFlap(firstFrameOfLipFlap, lipFlapLength, distance, layer, frame,
         selectOrMakeKeyframe(layer, frame + Math.floor(distance / 2));
         fl.getDocumentDOM().setElementProperty("firstFrame", firstFrameOfLipFlap + (lipFlapLength - (Math.floor(distance / 2) + distance % 2))); // set mouth such that it ends at the end of the keyframe
         selectOrMakeKeyframe(layer, frame + distance);
-    } else if (distance > lipFlapLength) { // Case 3: distance > lipFlapLength: use distance and stillframe the largest mouth
+    } else if (distance > lipFlapLength) { // distance > lipFlapLength: use distance and stillframe the largest mouth
         selectOrMakeKeyframe(layer, frame + Math.floor(lipFlapLength / 2)); // go to where the mouth is largest
         fl.getDocumentDOM().setElementProperty("loop", "single frame");
         fl.getDocumentDOM().setElementProperty("firstFrame", firstFrameOfLipFlap + Math.floor(lipFlapLength / 2) - 1);
