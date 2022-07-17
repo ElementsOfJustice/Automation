@@ -177,6 +177,11 @@ if (guiPanel.dismiss == "accept") {
     var timingArray = getLipSyncFrameArray(words, phonemes);
     var wordStartTimes = getStartTimes(words);
     var wordEndTimes = getEndTimes(words);
+    if(words[0][WORD_PHONEME_INDEX] == "") { // if there's silence at the beginning of a line...
+        selectOrMakeKeyframe(layer, startFrame);
+        fl.getDocumentDOM().setElementProperty("loop", "single frame");
+        fl.getDocumentDOM().setElementProperty("firstFrame", firstFrameOfLipFlap - 1);
+    }
     for (var i = 0; i < timingArray.length; i++) {
         // fl.trace(timingArray[i][0] + ", " +  timingArray[i][1]);
         var dur = timingArray[i][1] - timingArray[i][0];
