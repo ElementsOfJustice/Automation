@@ -199,12 +199,11 @@ if (guiPanel.dismiss == "accept") {
             if(hasThreeSelected && timingArray[i][0] >= (selectedFrames[7] - startFrame)) {
                 break;
             }
-            var dur = timingArray[i][1] - timingArray[i][0];
             var distance;
             if (i != timingArray.length - 1) {
                 distance = timingArray[i + 1][0] - timingArray[i][0];
-            } else {
-                distance = dur;
+            }  else {
+                distance = wordEndTimes[wordEndTimes.length - 1] - timingArray[i][0] - startFrame; // last word of voice line
             }
             makeLipFlap(firstFrameOfLipFlap, lipFlapLength, distance, layer, startFrame + timingArray[i][0], wordStartTimes, wordEndTimes);
         }

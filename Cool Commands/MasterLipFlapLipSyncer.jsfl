@@ -184,12 +184,11 @@ if (guiPanel.dismiss == "accept") {
     }
     for (var i = 0; i < timingArray.length; i++) {
         // fl.trace(timingArray[i][0] + ", " +  timingArray[i][1]);
-        var dur = timingArray[i][1] - timingArray[i][0];
         var distance;
         if (i != timingArray.length - 1) {
             distance = timingArray[i + 1][0] - timingArray[i][0];
         } else {
-            distance = dur;
+            distance = wordEndTimes[wordEndTimes.length - 1] - timingArray[i][0] - startFrame; // last word of voice line
         }
         makeLipFlap(firstFrameOfLipFlap, lipFlapLength, distance, layer, startFrame + timingArray[i][0], wordStartTimes, wordEndTimes);
     }
