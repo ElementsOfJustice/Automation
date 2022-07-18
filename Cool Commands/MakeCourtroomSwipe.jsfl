@@ -181,16 +181,15 @@ function placeRigs(characterLayers) {
         mat.ty = masterRigArray[layerName][2];
         fl.getDocumentDOM().setElementProperty('matrix', mat); // align rig
         var name = layerName + " BLUR";
-        var mat;
-        if (!fl.getDocumentDOM().library.itemExists(BLUR_SYMBOLS_FOLDER_NAME + "/" + name)) {
-            mat = makeSymbol(characterLayers[i], fl.getDocumentDOM().getTimeline().currentFrame, name); // create movieclip symbol of current frame of rig
-        } else {
-            mat = fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex(BLUR_SYMBOLS_FOLDER_NAME + "/" + name)].timeline.layers[SYMBOL_CONTENT_LAYER].frames[fl.getDocumentDOM().getElementProperty("firstFrame")].elements[0].matrix; // get matrix from the already-existant symbol (holy shit this is a long ass line and I'm making it longer with this comment xD)
+        var characterBlurIndex = 1;
+        while(fl.getDocumentDOM().library.itemExists(BLUR_SYMBOLS_FOLDER_NAME + "/" + name + " " + characterBlurIndex)) {
+            characterBlurIndex++;
         }
+        var mat = makeSymbol(characterLayers[i], fl.getDocumentDOM().getTimeline().currentFrame, name + " " + characterBlurIndex); // create movieclip symbol of current frame of rig
         resetSelection(characterLayers[i], startFrame + (SWIPE_LENGTH / 2)); // reset selection
         fl.getDocumentDOM().setElementProperty('symbolType', 'movie clip');
-        fl.getDocumentDOM().swapElement(BLUR_SYMBOLS_FOLDER_NAME + "/" + name);
-        fl.getDocumentDOM().addFilter('blurFilter'); // blur the desk
+        fl.getDocumentDOM().swapElement(BLUR_SYMBOLS_FOLDER_NAME + "/" + name + " " + characterBlurIndex);
+        fl.getDocumentDOM().addFilter('blurFilter'); // blur the character
         fl.getDocumentDOM().setFilterProperty("blurX", 0, 70); // set blur parametrs
         fl.getDocumentDOM().setElementProperty('matrix', mat); // align new symbol
         fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
