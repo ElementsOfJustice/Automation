@@ -190,7 +190,7 @@ if (guiPanel.dismiss == "accept") {
     if(hasThreeSelected) {
         fl.getDocumentDOM().getTimeline().setSelectedFrames(selectedFrames[4], selectedFrames[7] + 1);
     } else {
-        fl.getDocumentDOM().getTimeline().setSelectedFrames(selectedFrames[4], selectedFrames[1] + timingArray[timingArray.length - 1][1] + 1);
+        fl.getDocumentDOM().getTimeline().setSelectedFrames(selectedFrames[4], wordEndTimes[wordEndTimes.length - 1] + 1);
     }
     fl.getDocumentDOM().getTimeline().clearKeyframes(); // all of this to clear the keyframes of previous lipsyncing
     for (var i = 0; i < timingArray.length; i++) {
