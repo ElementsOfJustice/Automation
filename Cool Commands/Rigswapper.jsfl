@@ -23,7 +23,7 @@ if (guiPanel.dismiss == "accept") {
     var rigFolderPath = rigsFolderPath + "/" + guiPanel.panel_folderName + "►";
     var newRigPath = fl.browseForFileURL("select");
 
-    var mat = timeline.layers[timeline.currentLayer].frames[timeline.currentFrame].elements[0].matrix;
+    var mat = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].matrix;
 
     fl.getDocumentDOM().library.moveToFolder(rigsFolderPath, rigFolderPath + "/" + rigToSwap + "Scaled");
     fl.getDocumentDOM().library.deleteItem(rigFolderPath);
