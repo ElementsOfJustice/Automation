@@ -1,3 +1,8 @@
+/******************************************************************************
+FOCUS WITNESS
+Description: 
+******************************************************************************/
+
 BACKGROUND_LAYER_NAME = "BACKGROUNDS";
 
 /*
@@ -13,30 +18,50 @@ function resetSelection(layer, frame) {
     fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true); 
 }
 
+/*
+Function: makeBackgroundKeyframe
+Variables: None
+Description: 
+*/
 function makeBackgroundKeyframe() {
-    var witnessX = fl.getDocumentDOM().getElementProperty("x");
+    var witnessX = fl.getDocumentDOM().getElementProperty("x"); // get the number contained in the x property
+    // reset the selection
     resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), fl.getDocumentDOM().getTimeline().currentFrame);
+    // is the current frame the starting frame of the keyframe?
     var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame; // if the current frame isn't the first frame in a frame sequence, make a note of that
+    // if it isn't...
     if (!isKeyFrame) {
         fl.getDocumentDOM().getTimeline().insertKeyframe(); // keyframe for new position
+        // reset the selectionX
         resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), fl.getDocumentDOM().getTimeline().currentFrame);
     }
+    // is the specified layer locked?
     var isLocked = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked;
+    // if it is...
     if (isLocked) {
-        fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock layer
+        // unlock layer
+        fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; 
+        // reset the selection
         resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), fl.getDocumentDOM().getTimeline().currentFrame);
     }
-    fl.getDocumentDOM().setElementProperty("x", Math.round(-1 * witnessX)); // set background x to make the sum it and the witness x 0, thereby centering the witness!
-    fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = isLocked; // reset lock status
+    // set background x to make the sum it and the witness x 0, thereby centering the witness!
+    fl.getDocumentDOM().setElementProperty("x", Math.round(-1 * witnessX)); 
+    // reset lock status
+    fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = isLocked; 
 }
 
 /*
 >>>MAIN<<<
 Description: 
+Documentation for getRigParentAtFrame function
+https://github.com/AdobeDocs/developers-animatesdk-docs/blob/master/Layer_Parenting_Object/layerParenting1.md
 */
+// save the indexes of the selected layers
 var selectedLayer = fl.getDocumentDOM().getTimeline().getSelectedLayers();
+// if... (see error)
 if (fl.getDocumentDOM().getTimeline().layers[selectedLayer].getRigParentAtFrame(fl.getDocumentDOM().getTimeline().currentFrame) == undefined || fl.getDocumentDOM().getTimeline().layers[selectedLayer].getRigParentAtFrame(fl.getDocumentDOM().getTimeline().currentFrame).name != BACKGROUND_LAYER_NAME) {
     throw new Error("Character layer is not parented to the background layer (or the background layer is not named " + BACKGROUND_LAYER_NAME + ").");
 }
-fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock character layer
+// unlock character layer
+fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; 
 makeBackgroundKeyframe();
