@@ -59,7 +59,11 @@ function placeKeyframes(startFrame, layer, lipsyncMap, poseName) {
             diphthongMap[fl.getDocumentDOM().getTimeline().currentFrame] = phoneme;
             continue;
         }
-        var frame = lipsyncMap[poseName][PHONEME_TO_MOUTH_SHAPE[phoneme]] - 1;
+        if(PHONEME_TO_MOUTH_SHAPE[phoneme] == "No Talking" && lipsyncMap[poseName][PHONEME_TO_MOUTH_SHAPE[phoneme]] === undefined) { // some poses don't have the no talking mouth shape defined
+            var frame = lipsyncMap[poseName]["Closed Mouth No Teeth"] - 1;
+        } else {
+            var frame = lipsyncMap[poseName][PHONEME_TO_MOUTH_SHAPE[phoneme]] - 1;
+        }
         fl.getDocumentDOM().setElementProperty("firstFrame", frame);
         if (arrayContains(SINGLE_FRAME_MOUTH_SHAPES, PHONEME_TO_MOUTH_SHAPE[phoneme], isEqual)) {
             fl.getDocumentDOM().setElementProperty("loop", "single frame"); // set single frame for mouth shapes that only last for one frame
