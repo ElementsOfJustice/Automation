@@ -29,6 +29,7 @@ function setup() {
 		endFrame = startingFrame;
 		startingFrame = temp;
 	}
+	fl.getDocumentDOM().getTimeline().currentFrame = startingFrame;
 	fl.getDocumentDOM().getTimeline().layers[selLayerIndex * 1].locked = false; // unlock layer
 }
 
