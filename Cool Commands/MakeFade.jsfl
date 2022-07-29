@@ -46,9 +46,9 @@ Variables:
     layer [integer(or should be) index of a layer ]
     frame [integer index of a frame]
     name  [a string containing the name for the symbol]
-Description: 
+Description: creates a fade symbol of the specified frame and name
 */
-function makeFadeSymbol(layer, frame, name) { // creates a fade symbol of the specified frame and name
+function makeFadeSymbol(layer, frame, name) {
     resetSelection(layer, frame);
     var originalMat = fl.getDocumentDOM().getElementProperty('matrix'); // get matrix of element on timeline
     fl.getDocumentDOM().enterEditMode('inPlace'); // enter symbol
@@ -88,8 +88,8 @@ function fadeSetup(layer, frame, name, mat, tp) {
     resetSelection(layer, frame);
     fl.getDocumentDOM().setElementProperty('symbolType', 'movie clip'); // convert the frame to movie clip beforehand (this fixes a really weird glitch)
     fl.getDocumentDOM().swapElement(FADES_FOLDER_NAME + "/" + name); // put fading symbol on the timeline
-    if (CHANGE_TRANSFORMATION_POINT) {
-        fl.getDocumentDOM().setTransformationPoint(tp);
+    if (CHANGE_TRANSFORMATION_POINT) { // if the flag is set to true
+        fl.getDocumentDOM().setTransformationPoint(tp); // set the tp to the passed in variable
     }
     fl.getDocumentDOM().setElementProperty('matrix', mat); // align new symbol
     fl.getDocumentDOM().addFilter('dropShadowFilter'); // put the drop shadow filter on the fading symbol (necessary for this kind of fade)
@@ -184,7 +184,7 @@ Variables:
     fadeOutLayer [integer index of a layer for the fadeOut]
     fadeOutFrame [integer index of a frame for the fadeOut]
     fadeOutName  [a string containing the name for the symbol for the fadeOut]
-Description: 
+Description: Create a symbol and a fade-out
 */
 function fadeOut(fadeOutLayer, fadeOutFrame, fadeOutName) {
     var info = makeFadeSymbol(fadeOutLayer, fadeOutFrame, fadeOutName); // make fade out symbol
