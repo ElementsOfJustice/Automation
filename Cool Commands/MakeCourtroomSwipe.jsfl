@@ -82,13 +82,14 @@ function doLayerParenting(childLayerIndices, parentLayerIndex) {
 Function: createTween
 Variables:  
 	sourceCharacterLayers [array of ints. layer indices of source characters]
-Description: 
+Description: Creates a tween based on which layers are given
 */
 function createTween(sourceCharacterlayers) {
     fl.getDocumentDOM().getTimeline().insertFrames(SWIPE_LENGTH - 1, true); // insert frames to all layers
     resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), startFrame); // go back to original selection
     fl.getDocumentDOM().getTimeline().insertKeyframe(); // put keyframe for start of swipe
-    doLayerParenting(sourceCharacterlayers.concat(fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME)), fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME)); // parent da layers
+    // parent da layers
+    doLayerParenting(sourceCharacterlayers.concat(fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME)), fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME)); 
     fl.getDocumentDOM().getTimeline().createMotionTween(); // create the CLASSIC tween 
     fl.getDocumentDOM().getTimeline().setFrameProperty('easeType', 5, 11, 0); // set tween to quint ease in out
 }
@@ -107,7 +108,8 @@ function handleCharacters(sourceCharacterLayers, destinationCharacterLayers) {
     }
     for (var i = 0; i < destinationCharacterLayers.length; i++) {
         resetSelection(destinationCharacterLayers[i], startFrame + (SWIPE_LENGTH / 2)); // select destination character layer in the middle of the tween
-        fl.getDocumentDOM().getTimeline().removeFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + (SWIPE_LENGTH / 2)); // remove half the length in frames (get non-empty keyframes at the playhead)
+        // remove half the length in frames (get non-empty keyframes at the playhead)
+        fl.getDocumentDOM().getTimeline().removeFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + (SWIPE_LENGTH / 2)); 
         fl.getDocumentDOM().getTimeline().insertFrames((SWIPE_LENGTH / 2)); // put the frames back (this mimicks a resize span)
     }
 }
@@ -119,10 +121,13 @@ Variables:
 Description: 
 */
 function handleDesksAndParentDestinationCharacters(destinationCharacterLayers) {
-    resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME), startFrame + (SWIPE_LENGTH / 2)); // select desks layer in the middle of the tween
-    fl.getDocumentDOM().getTimeline().removeFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + (SWIPE_LENGTH / 2)); // remove half the length in frames (get non-empty keyframes at the playhead)
+    // select desks layer in the middle of the tween
+    resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME), startFrame + (SWIPE_LENGTH / 2)); 
+    // remove half the length in frames (get non-empty keyframes at the playhead)
+    fl.getDocumentDOM().getTimeline().removeFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + (SWIPE_LENGTH / 2)); 
     fl.getDocumentDOM().getTimeline().insertFrames((SWIPE_LENGTH / 2)); // put the frames back (this mimicks a resize span)
-    doLayerParenting(destinationCharacterLayers.concat(fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME)), fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME)); // parent da layers
+    // parent da layers
+    doLayerParenting(destinationCharacterLayers.concat(fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME)), fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME)); 
 }
 
 /*
@@ -130,7 +135,7 @@ Function: makeSymbol
 Variables:  
 	layer [integer(or should be) index of a layer ]
 	frame [integer index of a frame]
-    name [a string containing the name for the symbol]
+    name  [a string containing the name for the symbol]
 Description: 
 */
 function makeSymbol(layer, frame, name) { // reused code from fade script
@@ -140,12 +145,15 @@ function makeSymbol(layer, frame, name) { // reused code from fade script
     fl.getDocumentDOM().getTimeline().setSelectedLayers(SYMBOL_CONTENT_LAYER); // set layer to the layer that character is on (assumed to be SYMBOL_CONTENT_LAYER)
     // select current frame
     fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-    var isFirstFrameOfFrameSequence = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame; // if the current frame isn't the first frame in a frame sequence, make a note of that
+    // if the current frame isn't the first frame in a frame sequence, make a note of that
+    var isFirstFrameOfFrameSequence = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame; 
     fl.getDocumentDOM().getTimeline().convertToKeyframes();
     // select current frame
     fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+    // if it is the first frame in the sequence...
     if (isFirstFrameOfFrameSequence) {
-        fl.getDocumentDOM().setElementProperty('firstFrame', fl.getDocumentDOM().getElementProperty('firstFrame') - 1); // animate makes the firstframe one more if you insert a keyframe on a keyframe
+        // animate makes the firstframe one more if you insert a keyframe on a keyframe
+        fl.getDocumentDOM().setElementProperty('firstFrame', fl.getDocumentDOM().getElementProperty('firstFrame') - 1); 
     }
     fl.getDocumentDOM().convertToSymbol("movie clip", name, "top left"); // just assume top left for now. i'll fix it if it doesn't work
     var mat = fl.getDocumentDOM().getElementProperty('matrix');
