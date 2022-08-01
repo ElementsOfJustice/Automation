@@ -101,7 +101,7 @@ function doTextBoxes() {
         }
 
         fl.getDocumentDOM().addNewText(dialogueBounding);
-        fl.getDocumentDOM().setTextString(dialogueArray[i].trim());
+        fl.getDocumentDOM().setTextString(dialogueArray[i]);
         fl.getDocumentDOM().setElementTextAttr('alignment', 'left');
         fl.getDocumentDOM().setElementProperty('textType', 'dynamic');
         fl.getDocumentDOM().setElementProperty('lineType', 'multiline');
@@ -521,14 +521,14 @@ if (guiPanel.dismiss == "accept") {
         doTextBoxes();
         var end = new Date();
         getTimeDiff(start, end);
-        start = new Date();
-        addRigsInvestgation();
-        end = new Date();
-        getTimeDiff(start, end);
-        start = new Date();
-        sculptInvestgation();
-        end = new Date();
-        getTimeDiff(start, end);
+        // start = new Date();
+        // addRigsInvestgation();
+        // end = new Date();
+        // getTimeDiff(start, end);
+        // start = new Date();
+        // sculptInvestgation();
+        // end = new Date();
+        // getTimeDiff(start, end);
     }
     fl.selectTool("arrow");
 
