@@ -8,4 +8,6 @@ var poseFrame = fl.getDocumentDOM().getTimeline().currentFrame; // get the index
 // in the character timeline, obtain the name of the pose as it stands on the given frame
 var poseName = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].name;
 var firstFrameOfBlink = fl.getDocumentDOM().getTimeline().currentFrame + 1, blinkLength = parseInt(prompt("Blink Length", 6));
-fl.getDocumentDOM().addDataToDocument(characterName + "." + poseName + ".blink", "integerArray", [firstFrameOfBlink, blinkLength]);
+if (blinkLength != null) {
+    fl.getDocumentDOM().addDataToDocument(characterName + "." + poseName + ".blink", "integerArray", [firstFrameOfBlink, blinkLength]);
+}

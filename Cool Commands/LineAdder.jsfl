@@ -113,7 +113,7 @@ while (doc.getTimeline().currentFrame < doc.getTimeline().layers[doc.getTimeline
 		}
 		var duration = getDuration(cleanLinePath); // get duration before importing file to prevent data race condition maybe?
 		doc.importFile(linePath);
-		prevVoiceLine = cleanLinePath.substring(linePath.lastIndexOf("/") + 1);
+		prevVoiceLine = cleanLinePath.substring(cleanLinePath.lastIndexOf("/") + 1);
 		extendVoiceLine(duration);
 		//count++;
 	}

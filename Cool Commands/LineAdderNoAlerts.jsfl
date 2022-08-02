@@ -80,7 +80,7 @@ while (doc.getTimeline().currentFrame < doc.getTimeline().layers[doc.getTimeline
 	// 	throw new Error("User stopped script.");
 	// }
 	// open the file explorer, promting the user to select a file
-	var linePath = fl.browseForFileURL("select");
+	var linePath = fl.browseForFileURL("select", "Previous voice line: " + prevVoiceLine);
 	// if the user selected a valid file...
 	if (linePath != null) {
 		if (linePath.indexOf(".flac") != linePath.length - 5) {
@@ -111,7 +111,7 @@ while (doc.getTimeline().currentFrame < doc.getTimeline().layers[doc.getTimeline
 		var duration = getDuration(cleanLinePath); // get duration before importing file to prevent data race condition maybe?
 		// import the user-selected line file into the library
 		doc.importFile(linePath);
-		prevVoiceLine = cleanLinePath.substring(linePath.lastIndexOf("/") + 1);
+		prevVoiceLine = cleanLinePath.substring(cleanLinePath.lastIndexOf("/") + 1);
 		extendVoiceLine(duration);
 		//count++;
 	} else {

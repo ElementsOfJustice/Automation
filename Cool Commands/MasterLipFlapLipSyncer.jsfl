@@ -160,15 +160,15 @@ if (xSheetLayerIndex == undefined) {
 var poseFrame = fl.getDocumentDOM().getElementProperty("firstFrame"); // get the index in the firstFrame property
 // in the character timeline, obtain the name of the pose as it stands on the given frame
 var poseName = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].name;
-var firstFrameOfBlink = 0, blinkLength = 0;
+var firstFrameOfLipFlap = 0, lipFlapLength = 0;
 if (fl.getDocumentDOM().documentHasData(characterName + "." + poseName)) {
-    firstFrameOfBlink = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName)[0];
-    blinkLength = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName)[1];
+    firstFrameOfLipFlap = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName)[0];
+    lipFlapLength = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName)[1];
 }
-var guiPanel = fl.xmlPanelFromString("<dialog title=\"The Lip Syncer\" buttons=\"accept, cancel\">vbox><hbox><label value=\"First Frame of Lip Flap:\" control=\"panel_FF\"/><textbox id=\"panel_FF\" size=\"24\" value=\"" + (firstFrameOfBlink) + "\" /></hbox><hbox><label value=\"Duration of Lip Flap:\" control=\"panel_dur\"/><textbox id=\"panel_dur\" size=\"24\" value=\"" + (blinkLength) + "\" /></hbox></vbox></dialog>");
+var guiPanel = fl.xmlPanelFromString("<dialog title=\"The Lip Syncer\" buttons=\"accept, cancel\">vbox><hbox><label value=\"First Frame of Lip Flap:\" control=\"panel_FF\"/><textbox id=\"panel_FF\" size=\"24\" value=\"" + (firstFrameOfLipFlap) + "\" /></hbox><hbox><label value=\"Duration of Lip Flap:\" control=\"panel_dur\"/><textbox id=\"panel_dur\" size=\"24\" value=\"" + (lipFlapLength) + "\" /></hbox></vbox></dialog>");
 if (guiPanel.dismiss == "accept") {
-    var firstFrameOfBlink = parseInt(guiPanel.panel_FF) - 1;
-    var blinkLength = parseInt(guiPanel.panel_dur);
+    var firstFrameOfLipFlap = parseInt(guiPanel.panel_FF) - 1;
+    var lipFlapLength = parseInt(guiPanel.panel_dur);
     //alert("Select the voice line's config file.");
     var cfgPath = fl.browseForFileURL("select"); // get file
     fl.runScript(cfgPath);
@@ -180,7 +180,7 @@ if (guiPanel.dismiss == "accept") {
     if(words[0][WORD_PHONEME_INDEX] == "") { // if there's silence at the beginning of a line...
         selectOrMakeKeyframe(layer, startFrame);
         fl.getDocumentDOM().setElementProperty("loop", "single frame");
-        fl.getDocumentDOM().setElementProperty("firstFrame", firstFrameOfBlink - 1);
+        fl.getDocumentDOM().setElementProperty("firstFrame", firstFrameOfLipFlap - 1);
     }
     for (var i = 0; i < timingArray.length; i++) {
         // fl.trace(timingArray[i][0] + ", " +  timingArray[i][1]);
@@ -190,7 +190,7 @@ if (guiPanel.dismiss == "accept") {
         } else {
             distance = wordEndTimes[wordEndTimes.length - 1] - timingArray[i][0] - startFrame; // last word of voice line
         }
-        makeLipFlap(firstFrameOfBlink, blinkLength, distance, layer, startFrame + timingArray[i][0], wordStartTimes, wordEndTimes);
+        makeLipFlap(firstFrameOfLipFlap, lipFlapLength, distance, layer, startFrame + timingArray[i][0], wordStartTimes, wordEndTimes);
     }
-    fl.getDocumentDOM().addDataToDocument(characterName + "." + poseName, "integerArray", [firstFrameOfBlink + 1, blinkLength]);
+    fl.getDocumentDOM().addDataToDocument(characterName + "." + poseName, "integerArray", [firstFrameOfLipFlap + 1, lipFlapLength]);
 }

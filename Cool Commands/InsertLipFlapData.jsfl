@@ -8,4 +8,6 @@ var poseFrame = fl.getDocumentDOM().getTimeline().currentFrame; // get the index
 // in the character timeline, obtain the name of the pose as it stands on the given frame
 var poseName = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].name;
 var firstFrameOfLipFlap = fl.getDocumentDOM().getTimeline().currentFrame + 1, lipFlapLength = parseInt(prompt("Lip Flap Length", 6));
-fl.getDocumentDOM().addDataToDocument(characterName + "." + poseName + ".lipFlap", "integerArray", [firstFrameOfLipFlap, lipFlapLength]);
+if (lipFlapLength != null) {
+    fl.getDocumentDOM().addDataToDocument(characterName + "." + poseName + ".lipFlap", "integerArray", [firstFrameOfLipFlap, lipFlapLength]);
+}
