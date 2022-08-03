@@ -3,7 +3,6 @@ RASTER LIP SYNC
 Description: 
 ******************************************************************************/
 
-// this script is in testing mode for now
 END_INDEX = 0;
 WORD_PHONEME_INDEX = 1;
 FRAME_RATE = fl.getDocumentDOM().frameRate;
