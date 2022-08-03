@@ -40,7 +40,8 @@ function makeBackgroundKeyframe() {
     var isLocked = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked;
     // if the layer is locked...
     if (isLocked) {
-        fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock layer
+        // unlock layer
+        fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; 
         // call the above declared resetSelection function
         resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), fl.getDocumentDOM().getTimeline().currentFrame);
     }
@@ -58,13 +59,15 @@ function createTween(witnessLayerIndex) {
     var startFrame = fl.getDocumentDOM().getTimeline().currentFrame;
     fl.getDocumentDOM().getTimeline().insertFrames(SWIPE_LENGTH - 1, true); // insert frames to all layers
     resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), startFrame); // select background
-    var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame; // if the current frame isn't the first frame in a frame sequence, make a note of that
+    // if the current frame isn't the first frame in a frame sequence, make a note of that
+    var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame; 
+    // if it isn't...
     if (!isKeyFrame) {
         fl.getDocumentDOM().getTimeline().insertKeyframe(); // put keyframe for start of swipe
     }
-    fl.getDocumentDOM().getTimeline().currentFrame += SWIPE_LENGTH;
-    resetSelection(witnessLayerIndex, fl.getDocumentDOM().getTimeline().currentFrame);
-    makeBackgroundKeyframe();
+    fl.getDocumentDOM().getTimeline().currentFrame += SWIPE_LENGTH; // move the playhead ahead by 14 frames
+    resetSelection(witnessLayerIndex, fl.getDocumentDOM().getTimeline().currentFrame); //reset the selection
+    makeBackgroundKeyframe(); 
     resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), startFrame);
     fl.getDocumentDOM().getTimeline().createMotionTween(); // create the CLASSIC tween 
     fl.getDocumentDOM().getTimeline().setFrameProperty('easeType', 5, 11, 0); // set tween to quint ease in out
@@ -79,5 +82,6 @@ var selectedLayer = fl.getDocumentDOM().getTimeline().getSelectedLayers();
 if (fl.getDocumentDOM().getTimeline().layers[selectedLayer].getRigParentAtFrame(fl.getDocumentDOM().getTimeline().currentFrame) == undefined || fl.getDocumentDOM().getTimeline().layers[selectedLayer].getRigParentAtFrame(fl.getDocumentDOM().getTimeline().currentFrame).name != BACKGROUND_LAYER_NAME) {
     throw new Error("Character layer is not parented to the background layer (or the background layer is not named " + BACKGROUND_LAYER_NAME + ").");
 }
-fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock character layer
+// unlock character layer
+fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; 
 createTween(selectedLayer);
