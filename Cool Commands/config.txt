@@ -5,19 +5,22 @@ Arg2 - background symbol path
 Arg3 - add item x
 Arg4 - add item y
 */	
-/*	
-var courtmodeBackgroundsArray = [
-[sDefense, "BACKGROUNDS/Sliding Background", 3627, 360],
-[sProsecutor, "BACKGROUNDS/Sliding Background", -2347, 360],
-[sJudge, "BACKGROUNDS/JudgeBackground", 640, 360],
-[sCocouncil, "BACKGROUNDS/CocouncilBG", 640, 360],
-[sWitness1, "BACKGROUNDS/Sliding Background", 640, 360],
-[sWitness2, "BACKGROUNDS/Sliding Background", 640, 360],
-[sWitness3, "BACKGROUNDS/Sliding Background", 640, 360],
-[sWitness4, "BACKGROUNDS/Sliding Background", 640, 360],
-[sWitness5, "BACKGROUNDS/Sliding Background", 640, 360]
-]
-*/	
+	
+var courtmodeBackgroundsArray = {};
+
+courtmodeBackgroundsArray[sJudge] = ["BACKGROUNDS/JudgeBackground", 640, 360];
+courtmodeBackgroundsArray[sDefense] = ["BACKGROUNDS/Sliding Background", 3627, 360];
+courtmodeBackgroundsArray[sCocouncil] = ["BACKGROUNDS/CocouncilBG", 640, 360];
+courtmodeBackgroundsArray[sProsecutor] = ["BACKGROUNDS/Sliding Background", -2347, 360];
+courtmodeBackgroundsArray[sWitnesses[0]] = ["BACKGROUNDS/Sliding Background", 640, 360];
+courtmodeBackgroundsArray[sWitnesses[1]] = ["BACKGROUNDS/Sliding Background", 640, 360];
+courtmodeBackgroundsArray[sWitnesses[2]] = ["BACKGROUNDS/Sliding Background", 640, 360];
+courtmodeBackgroundsArray[sWitnesses[3]] = ["BACKGROUNDS/Sliding Background", 640, 360];
+courtmodeBackgroundsArray[sWitnesses[4]] = ["BACKGROUNDS/Sliding Background", 640, 360];
+courtmodeBackgroundsArray["Sweetie Belle"] = ["BACKGROUNDS/Sliding Background", 640, 360]; // hard coded for now
+courtmodeBackgroundsArray["Sweetie"] = ["BACKGROUNDS/Sliding Background", 640, 360]; // hard coded for now
+
+
 /*
 ===MASTER RIG ARRAY===
 Arg1 - speakertagArray to match
@@ -28,19 +31,25 @@ Arg5 - add item y
 Arg6 - align top left
 */
 	
-var masterRigArray = [
-["Twilight", "TWILIGHT_SPARKLE", "RIGS/VECTOR CHARACTERS/TWILIGHT SPARKLE/TwilightCouncil►/TwilightCouncilScaled", 605, 460, false],
-["Athena", "ATHENA_COURTROOM", "tmp_Athena", 0, 0, true],
-["Judge", "THE_JUDGE", "tmp_Judge", 640, 360, true],
-["Private Eye", "PRIVATE_EYE", "RIGS/VECTOR CHARACTERS/PRIVATE_EYE/PrivateEyeScaled", 250, 335, true], // 640, 400
-["Luna", "PRINCESS_LUNA", "tmp_Luna", 640, 435, false],	// -75
-["Diamond", "DIAMOND", "tmp_Diamond", 400, 360, false],
-["Silver", "SILVER", "tmp_Silver", 880, 360, false],
-["Zecora", "ZECORA", "RIGS/tmp_Zecora", 640, 360, false],
-["Scootaloo", "SCOOTALOO", "RIGS/VECTOR CHARACTERS/SCOOTALOO►/ST►Scaled", 640, 360, false],
-["Sonata", "SONATA", "RIGS/VECTOR CHARACTERS/SonataDefense►/SonataDefense►Scaled", 390, 360, false]
-];
-
+var masterRigArray = {
+"Twilight": ["TWILIGHT_SPARKLE", "RIGS/VECTOR CHARACTERS/TWILIGHT SPARKLE/TwilightCouncil►/TwilightCouncil►Scaled", 0, 100, false],
+"Athena": ["ATHENA_COURTROOM", "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena", 0, 0, true],
+"Judge": ["THE_JUDGE", "RIGS/RASTER CHARACTERS/The Judge/THE_JUDGE", 640, 360, true],
+"Private Eye": ["PRIVATE_EYE", "RIGS/VECTOR CHARACTERS/PRIVATE_EYE/PrivateEyeScaled", 0, 0, true], // 640, 400
+"Luna": ["PRINCESS_LUNA", "RIGS/VECTOR CHARACTERS/Luna►/Luna►Scaled", 0, 24, false],
+"Diamond": ["DIAMOND", "RIGS/VECTOR CHARACTERS/DIAMOND_TIARA/DT►Scaled", -240, 0, false],
+"Diamond Tiara": ["DIAMOND", "RIGS/VECTOR CHARACTERS/DIAMOND_TIARA/DT►Scaled", -240, 0, false],
+"Silver": ["SILVER", "RIGS/VECTOR CHARACTERS/SILVER_SPOON/Silver Spoon►Scaled", 240, 0, false],
+"Silver Spoon": ["SILVER", "RIGS/VECTOR CHARACTERS/SILVER_SPOON/Silver Spoon►Scaled", 240, 0, false],
+"Zecora": ["ZECORA", "RIGS/VECTOR CHARACTERS/ZECORA/Zecora_Scaled", 0, 0, false],
+"Scootaloo": ["SCOOTALOO", "RIGS/VECTOR CHARACTERS/SCOOTALOO►/ST►Scaled", 0, 0, false],
+"Sonata": ["SONATA", "RIGS/VECTOR CHARACTERS/SonataDefense►/SonataDefense►Scaled", -250, 0, false],
+"Sweetie": ["SWEETIE_BELLE", "RIGS/VECTOR CHARACTERS/SWEETIE_BELLE_CUFFED►/SBCuffed►Scaled", 0, 0, false],
+"Sweetie Belle": ["SWEETIE_BELLE", "RIGS/VECTOR CHARACTERS/SWEETIE_BELLE_CUFFED►/SBCuffed►Scaled", 0, 0, false],
+"Apollo": ["APOLLO_JUSTICE", "RIGS/RASTER CHARACTERS/APOLLO - FRONT/JUSTICE - FRONT", 640, 360, false],
+"Rarity": ["RARITY", "RIGS/VECTOR CHARACTERS/RARITY►/Rarity►Scaled", 0, 0, false]
+}
+ 
 // Declare rig paths, layer names and speakertagArray condition. //
 /*
 Arg1 - speakertagArray to match
@@ -51,33 +60,32 @@ Arg5 - add item y
 Arg6 - align top left
 */
   
-var masterInvestigationArray = [
-["Twilight", "TWILIGHT_SPARKLE", "RIGS/VECTOR CHARACTERS/TWILIGHT_SPARKLE►/Twilight►Scaled"],
-["Fluttershy", "FLUTTERSHY", "RIGS/VECTOR CHARACTERS/FLUTTERSHY►/Fluttershy►Scaled"],
-["Apple Bloom", "APPLE_BLOOM", "RIGS/VECTOR CHARACTERS/APPLE_BLOOM►/AB►Scaled"],
-["Turning", "TURNING_PAGE", "RIGS/VECTOR CHARACTERS/TURNING_PAGE►/TP►Scaled"],
-["Scootaloo", "SCOOTALOO", "RIGS/VECTOR CHARACTERS/SCOOTALOO►/ST►Scaled"],
-["Rainbow", "RAINBOW_DASH", "RIGS/VECTOR CHARACTERS/RBD►/RBD►Scaled"],
-["Applejack", "APPLEJACK", "RIGS/VECTOR CHARACTERS/APPLEJACK►/AJ►Scaled"],
-["Sweetie", "SWEETIE_BELLE", "RIGS/VECTOR CHARACTERS/SWEETIE_BELLE►/SB►Scaled"],
-["Rarity", "RARITY", "RIGS/VECTOR CHARACTERS/RARITY►/Rarity►Scaled"],
-["Apollo", "APOLLO_JUSTICE", "RIGS/RASTER CHARACTERS/APOLLO - FRONT/JUSTICE - FRONT"],
-["Trucy", "TRUCY_WRIGHT", "RIGS/RASTER CHARACTERS/TRUCY - FRONT/TRUCY - FRONT"],
-["Phoenix", "PHOENIX_WRIGHT", "RIGS/RASTER CHARACTERS/PHOENIX - FRONT/WRIGHT - FRONT"],
-["Diamond Tiara", "DIAMOND", "RIGS/VECTOR CHARACTERS/DIAMOND_TIARA►/DT►Scaled"],
-["Silver Spoon", "SILVER_SPOON", "RIGS/VECTOR CHARACTERS/SILVER_SPOON►/Silver_Spoon►Scaled"],
-["Spike", "SPIKE", "RIGS/VECTOR CHARACTERS/SPIKE►/Spike►Scaled"],
-["Luna", "LUNA", "RIGS/VECTOR CHARACTERS/Luna►/Luna►Scaled"],
-["Guard #2", "SNOOTY", "RIGS/VECTOR CHARACTERS/Black_Guard_Components/Black_Guard►Scaled"],
-["Fair Devotion", "FAIRDEVOTION", "RIGS/VECTOR CHARACTERS/FAIR_DEVOTION►/Devotion►Scaled"],
-["Guard #1", "GUARD1", "RIGS/VECTOR CHARACTERS/White_Guard_Components/White_Guard►Scaled"],
-["Guard #3", "GUARD1", "RIGS/VECTOR CHARACTERS/White_Guard_Components/White_Guard►Scaled"],
-["Sonata", "SONATA", "RIGS/VECTOR CHARACTERS/SonataDefense►/SonataDefense►Scaled"],
-["Sugar Stamp", "SUGARSTAMP", "RIGS/VECTOR CHARACTERS/SUGAR_STAMP►/SugarStamp_Scaled"],
-["Private Eye", "PRIVATE_EYE", "RIGS/VECTOR CHARACTERS/PRIVATE_EYE/PrivateEyeScaled"],
-["Zecora", "ZECORA", "RIGS/VECTOR CHARACTERS/Zecora►/Zecora>Scaled"]
-];
-
+var masterInvestigationArray = {
+"Twilight": ["TWILIGHT_SPARKLE", "RIGS/VECTOR CHARACTERS/TWILIGHT_SPARKLE►/Twilight►Scaled"],
+"Fluttershy": ["FLUTTERSHY", "RIGS/VECTOR CHARACTERS/FLUTTERSHY►/Fluttershy_Scaled"],
+"Apple Bloom": ["APPLE_BLOOM", "RIGS/VECTOR CHARACTERS/APPLE_BLOOM►/AB►Scaled"],
+"Turning": ["TURNING_PAGE", "RIGS/VECTOR CHARACTERS/TURNING_PAGE►/TP►Scaled"],
+"Scootaloo": ["SCOOTALOO", "RIGS/VECTOR CHARACTERS/SCOOTALOO►/ST►Scaled"],
+"Rainbow": ["RAINBOW_DASH", "RIGS/VECTOR CHARACTERS/RBD►/RBD►Scaled"],
+"Applejack": ["APPLEJACK", "RIGS/VECTOR CHARACTERS/APPLEJACK►/AJ►Scaled"],
+"Sweetie": ["SWEETIE_BELLE", "RIGS/VECTOR CHARACTERS/SWEETIE_BELLE►/SB►Scaled"],
+"Rarity": ["RARITY", "RIGS/VECTOR CHARACTERS/RARITY►/Rarity►Scaled"],
+"Apollo": ["APOLLO_JUSTICE", "RIGS/RASTER CHARACTERS/APOLLO - FRONT/JUSTICE - FRONT"],
+"Trucy": ["TRUCY_WRIGHT", "RIGS/RASTER CHARACTERS/TRUCY - FRONT/TRUCY - FRONT"],
+"Phoenix": ["PHOENIX_WRIGHT", "RIGS/RASTER CHARACTERS/PHOENIX - FRONT/WRIGHT - FRONT"],
+"Diamond Tiara": ["DIAMOND", "RIGS/VECTOR CHARACTERS/DIAMOND_TIARA►/DT►Scaled"],
+"Silver Spoon": ["SILVER_SPOON", "RIGS/VECTOR CHARACTERS/SILVER_SPOON►/Silver_Spoon►Scaled"],
+"Spike": ["SPIKE", "RIGS/VECTOR CHARACTERS/SPIKE►/Spike►Scaled"],
+"Luna": ["LUNA", "RIGS/VECTOR CHARACTERS/tmp_Luna"],
+"Guard #2": ["GUARD2", "RIGS/VECTOR CHARACTERS/Black_Guard_Components/Black_Guard►Scaled"],
+"Fair Devotion": ["FAIRDEVOTION", "RIGS/VECTOR CHARACTERS/FAIR_DEVOTION►/Devotion►Scaled"],
+"Guard #1": ["GUARD1", "RIGS/VECTOR CHARACTERS/White_Guard_Components/White_Guard►Scaled"],
+"Guard #3": ["GUARD1", "RIGS/VECTOR CHARACTERS/White_Guard_Components/White_Guard►Scaled"],
+"Sonata": ["SONATA", "RIGS/VECTOR CHARACTERS/SonataDefense►/SonataDefense►Scaled"],
+"Sugar Stamp": ["SUGARSTAMP", "RIGS/VECTOR CHARACTERS/SUGAR_STAMP►/SugarStamp_Scaled"],
+"Private Eye": ["PRIVATE_EYE", "RIGS/VECTOR CHARACTERS/PRIVATE_EYE►/Private►Scaled"]
+};
+ 
 /*
 ===MASTER RIG ARRAY===
 Arg1 - variable to match
@@ -85,22 +93,28 @@ Arg2 - path to desk
 Arg3 - add item x
 Arg4 - add item y
 */
-/*
-var masterDeskArray = [
-[sJudge, "OTHER ASSETS/DESKS/Judge-Table-Final", 640, 360],
-[sDefense, "OTHER ASSETS/DESKS/DEFENSE-BENCH", 530, 640],
-[sProsecutor, "OTHER ASSETS/DESKS/PROSECUTION-BENCH", 755, 630],
-[sWitness1, "OTHER ASSETS/DESKS/WitnessStand", 640, 715],
-[sWitness2, "OTHER ASSETS/DESKS/WitnessStand", 640, 715],
-[sWitness3, "OTHER ASSETS/DESKS/WitnessStand", 640, 715]
-];
-*/
+
+var masterDeskArray = {
+} 
+//todo concouncil
+masterDeskArray[sJudge] = ["OTHER ASSETS/DESKS/Judge-Table-Final", 640, 360];
+masterDeskArray[sDefense] = ["OTHER ASSETS/DESKS/DEFENSE-BENCH", 530, 640];
+masterDeskArray[sProsecutor] = ["OTHER ASSETS/DESKS/PROSECUTION-BENCH", 755, 630];
+masterDeskArray[sWitnesses[0]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
+masterDeskArray[sWitnesses[1]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
+masterDeskArray[sWitnesses[2]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
+masterDeskArray[sWitnesses[3]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
+masterDeskArray[sWitnesses[4]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
+masterDeskArray["Sweetie Belle"] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
+masterDeskArray["Sweetie"] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
+	
 //Simplifies names.
 var nameswapArray = [
 ["Turning Page", "Turning"],
-["Sweetie Belle", "Sweetie"]
+["Sweetie Belle", "Sweetie"],
+["Diamond Tiara", "Diamond"]
 ]
-
+ 
 //Set custom letter spacing on a character-by-character basis.
 var letterSpacingArray = [
 ["Apple Bloom", 0],
@@ -108,29 +122,18 @@ var letterSpacingArray = [
 ["Sugar Stamp", 0],
 ["Fair Devotion", -1]
 ]
-
+ 
 /*
 ===INVESTIGATIONS POSE ARRAYS===
 Character-Specific Arrays:
 Arg1 - string of pose name
 Arg2 - frame number
-
+ 
 Investigation Pose Array:
 Arg1 - name of character to match to
 Arg2 - character-specific array
 */
-
-var xSheetZecora_I = [
-["Neutral Happy", 21],
-["Neutral", 60],
-["Contemplating", 98],
-["Suggesting", 136],
-["Sad", 174],
-["Shocking", 213],
-["Presenting", 250],
-["Anger", 288]
-];
-
+ 
 var xSheetApplejack_I = [
 ["Neutral Happy", 147],
 ["Neutral", 199],
@@ -174,7 +177,7 @@ var xSheetAppleBloom_I = [
 ["Orly", 327],
 ["Unsure", 370]
 ];
-
+ 
 var xSheetRarity_I = [
 ["Neutral Happy", 1],
 ["Neutral", 39],
@@ -189,7 +192,7 @@ var xSheetRarity_I = [
 ["Angry", 386],
 ["Hoof Out", 426]
 ];
-
+ 
 var xSheetRainbow_I = [
 ["Neutral Happy", 147],
 ["Neutral", 200],
@@ -202,7 +205,7 @@ var xSheetRainbow_I = [
 ["Shocked", 593],
 ["Furious Shake", 652]
 ];
-
+ 
 var xSheetScootaloo_I = [
 ["Happy Neutral", 45],
 ["Neutral", 85],
@@ -216,7 +219,7 @@ var xSheetScootaloo_I = [
 ["Furious", 389],
 ["Terrified Shaking", 428]
 ];
-
+ 
 var xSheetSweetie_I = [
 ["Happy Neutral", 23],
 ["Neutral", 60],
@@ -228,7 +231,7 @@ var xSheetSweetie_I = [
 ["Shocked", 283],
 ["Rubbing Leg", 327]
 ];
-
+ 
 var xSheetTurning_I = [
 ["Neutral Happy", 38],
 ["Neutral", 82],
@@ -245,7 +248,7 @@ var xSheetTurning_I = [
 ["Scared Shivering", 646],
 ["Sword Attack", 694]
 ];
-
+ 
 var xSheetTwilight_I = [
 ["Neutral Happy", 43],
 ["Neutral", 86],
@@ -262,7 +265,7 @@ var xSheetTwilight_I = [
 ["Confused", 863],
 ["Dejected", 906]
 ];
-
+ 
 var xSheetPhoenix_I = [
 ["Neutral", 1],
 ["Smile", 200],
@@ -274,7 +277,7 @@ var xSheetPhoenix_I = [
 ["Weary", 1400],
 ["Shock", 1600]
 ];
-
+ 
 var xSheetApollo_I = [
 ["Neutral", 1],
 ["Serious", 200],
@@ -289,7 +292,7 @@ var xSheetApollo_I = [
 ["Kristoph", 2200],
 ["Laughing", 2400]
 ];
-
+ 
 var xSheetTrucy_I = [
 ["Neutral", 1],
 ["Happy", 200],
@@ -303,7 +306,7 @@ var xSheetTrucy_I = [
 ["Determined", 1700],
 ["Troubled", 1900]
 ];
-
+ 
 var xSheetFluttershy_I = [
 ["Neutral Happy", 7],
 ["Neutral", 44],
@@ -317,7 +320,7 @@ var xSheetFluttershy_I = [
 ["Mood", 341],
 ["Glee Wings", 378]
 ];
-
+ 
 var xSheetSugar_I = [
 ["Neutral Happy", 50],
 ["Neutral", 90],
@@ -329,7 +332,7 @@ var xSheetSugar_I = [
 ["Getting Bag", 354],
 ["Scared Shivering", 402]
 ];
-
+ 
 var xSheetFair_I = [
 ["Neutral Happy", 150],
 ["Neutral", 187],
@@ -341,7 +344,7 @@ var xSheetFair_I = [
 ["Sad", 477],
 ["Thinking", 549]
 ];
-
+ 
 var xSheetSpike_I = [
 ["Neutral Happy", 40],
 ["Lending Hand", 83],
@@ -355,7 +358,7 @@ var xSheetSpike_I = [
 ["Guilty", 450],
 ["This Guy", 493]
 ];
-
+ 
 var xSheetPinkie_I = [
 ["Neutral Happy", 142],
 ["Neutral", 189],
@@ -365,7 +368,7 @@ var xSheetPinkie_I = [
 ["Serious", 431],
 ["Sad", 488]
 ];
-
+ 
 var xSheetGuard2_I = [
 ["Smile", 2],
 ["Frown", 71],
@@ -373,14 +376,14 @@ var xSheetGuard2_I = [
 ["Upset", 209],
 ["Tired", 277]
 ];
-
+ 
 var xSheetGuard1_I = [
 ["Smile", 2],
 ["Frown", 71],
 ["Shocked", 140],
 ["Tired", 208]
 ];
-
+ 
 var xSheetPrivate_I = [
 ["Neutral Happy", 29],
 ["Neutral", 68],
@@ -389,7 +392,7 @@ var xSheetPrivate_I = [
 ["Bow", 188],
 ["Hat Lift", 228]
 ];
-
+ 
 var xSheetSilver_I = [
 ["Neutral Happy", 1],
 ["Neutral", 40],
@@ -401,7 +404,7 @@ var xSheetSilver_I = [
 ["Nervous", 295],
 ["Shocked", 337]
 ];
-
+ 
 var xSheetDiamond_I = [
 ["Neutral Happy", 1],
 ["Neutral", 40],
@@ -437,6 +440,5 @@ var xSheetInvestigationsArray = [
 ["Guard #3", xSheetGuard1_I],
 ["Private Eye", xSheetPrivate_I],
 ["Silver Spoon", xSheetSilver_I],
-["Diamond Tiara", xSheetDiamond_I],
-["Zecora", xSheetZecora_I]
+["Diamond Tiara", xSheetDiamond_I]
 ];

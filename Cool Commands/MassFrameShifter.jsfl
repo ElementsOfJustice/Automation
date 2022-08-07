@@ -38,11 +38,11 @@ var delta = parseInt(prompt("Enter the frames to shift each keyframe by (positiv
 
 for(var i = startingFrame; i < endFrame - 1; i++) {
 	if(fl.getDocumentDOM().getTimeline().layers[layer].frames[i].startFrame == i) {
-		// select frame at loop index
-		doc.getTimeline().setSelectedFrames(i, i+1);
 		// Move the frame (the most important line of the script)
 		fl.getDocumentDOM().getTimeline().layers[layer].frames[i].elements[0].firstFrame += delta;
-		// ?? set the last frame property to what it already is ??
-		an.getDocumentDOM().setElementProperty('lastFrame', (an.getDocumentDOM().getElementProperty('lastFrame') + delta) * 1);
+		// set the last frame property to what it already is plus the frames to shift by
+		if(fl.getDocumentDOM().getTimeline().layers[layer].frames[i].elements[0].lastFrame != undefined) { // only newer versions of Animate have the lastFrame property
+			fl.getDocumentDOM().getTimeline().layers[layer].frames[i].elements[0].lastFrame += delta;
+		}
 	}
 }

@@ -43,6 +43,19 @@ var stageDirections = null;
 
 var startTime = new Date();
 
+function trim(input) { // stolen from java :D
+    var len = input.length;
+    var st = 0;
+    var val = input;
+
+    while ((st < len) && (val.charAt(st) <= ' ')) {
+        st++;
+    }
+    while ((st < len) && (val.charAt(len - 1) <= ' ')) {
+        len--;
+    }
+    return ((st > 0) || (len < input.length)) ? input.substring(st, len) : input;
+}
 
 function switchActive(layerVar) {
     var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(layerVar);
@@ -101,7 +114,7 @@ function doTextBoxes() {
         }
 
         fl.getDocumentDOM().addNewText(dialogueBounding);
-        fl.getDocumentDOM().setTextString(dialogueArray[i]);
+        fl.getDocumentDOM().setTextString(trim(dialogueArray[i]));
         fl.getDocumentDOM().setElementTextAttr('alignment', 'left');
         fl.getDocumentDOM().setElementProperty('textType', 'dynamic');
         fl.getDocumentDOM().setElementProperty('lineType', 'multiline');
@@ -142,7 +155,7 @@ function doTextBoxes() {
 function getCharacters() { // gets unique characters (basically returns a set)
     var unique = speakertagArray;
     for (var i = 0; i < unique.length; i++) {
-        unique[i] = unique[i].trim();
+        unique[i] = trim(unique[i]);
     }
     unique = unique.filter(function (value, index, self) {
         return self.indexOf(value) === index;
@@ -153,6 +166,7 @@ function getCharacters() { // gets unique characters (basically returns a set)
 function addRigs() {
     var uniqueChars = getCharacters();
     for (var i = 0; i < uniqueChars.length; i++) {
+        fl.trace(masterRigArray[uniqueChars[i]]);
         switchActive(masterRigArray[uniqueChars[i]][0]);
         fl.getDocumentDOM().getTimeline().currentFrame = 0;
         // select current frame
@@ -177,15 +191,15 @@ function generateWitnessBools(speakerTagIndex) { // helper function to generate 
     var isNextCharacterWitness = false;
     for (var witness in sWitnesses) {
         if (sWitnesses[witness] == speakertagArray[speakerTagIndex]) {
-            isWitnessSpeaking = true;
+                isWitnessSpeaking = true;
+            }
+            if (speakerTagIndex < speakertagArray.length - 1 && sWitnesses[witness] == speakertagArray[speakerTagIndex + 1]) {
+                isNextCharacterWitness = true;
+            }
+            if (isWitnessSpeaking && isNextCharacterWitness) {
+                break;
+            }
         }
-        if (sWitnesses[witness] == speakertagArray[speakerTagIndex + 1]) {
-            isNextCharacterWitness = true;
-        }
-        if (isWitnessSpeaking && isNextCharacterWitness) {
-            break;
-        }
-    }
 
     return [isWitnessSpeaking, isNextCharacterWitness];
 
@@ -193,7 +207,7 @@ function generateWitnessBools(speakerTagIndex) { // helper function to generate 
 
 function sculpt() {
     var uniqueChars = getCharacters();
-    for (var i = speakertagArray.length - 2; i >= 0; i--) {
+    for (var i = speakertagArray.length - 1; i >= 0; i--) {
         for (var j = 0; j < uniqueChars.length; j++) {
             fl.getDocumentDOM().getTimeline().currentFrame = iFrameDuration * i;
             if ((i == 0) && (speakertagArray[i] != uniqueChars[j])) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
@@ -342,7 +356,7 @@ function doTextBoxesInvestigation() {
         }
 
         fl.getDocumentDOM().addNewText(dialogueBounding);
-        fl.getDocumentDOM().setTextString(dialogueArray[i].trim());
+        fl.getDocumentDOM().setTextString(trim(dialogueArray[i]));
         fl.getDocumentDOM().setElementTextAttr('alignment', 'left');
         fl.getDocumentDOM().setElementProperty('textType', 'dynamic');
         fl.getDocumentDOM().setElementProperty('lineType', 'multiline');
@@ -384,7 +398,7 @@ function addRigsInvestgation() {
     var uniqueChars = getCharacters();
     for (var i = 0; i < uniqueChars.length; i++) {
         var character = uniqueChars[i];
-        if(character == sDefense) {
+        if (character == sDefense) {
             continue;
         }
         switchActive(masterInvestigationArray[character][0]);
@@ -409,7 +423,7 @@ function addRigsInvestgation() {
 function sculptInvestgation() {
     var uniqueChars = getCharacters();
     for (var i = speakertagArray.length - 2; i >= 0; i--) {
-        if(speakertagArray[i] == sDefense) {
+        if (speakertagArray[i] == sDefense) {
             continue;
         }
         for (var j = 0; j < uniqueChars.length; j++) {
@@ -512,7 +526,7 @@ if (guiPanel.dismiss == "accept") {
         end = new Date();
         getTimeDiff(start, end);
     }
-    if(viewMode == "investigationMode") {
+    if (viewMode == "investigationMode") {
         sProsecutor = null;
         sJudge = null;
         sCocouncil = null;
@@ -521,14 +535,14 @@ if (guiPanel.dismiss == "accept") {
         doTextBoxes();
         var end = new Date();
         getTimeDiff(start, end);
-        // start = new Date();
-        // addRigsInvestgation();
-        // end = new Date();
-        // getTimeDiff(start, end);
-        // start = new Date();
-        // sculptInvestgation();
-        // end = new Date();
-        // getTimeDiff(start, end);
+        start = new Date();
+        addRigsInvestgation();
+        end = new Date();
+        getTimeDiff(start, end);
+        start = new Date();
+        sculptInvestgation();
+        end = new Date();
+        getTimeDiff(start, end);
     }
     fl.selectTool("arrow");
 
