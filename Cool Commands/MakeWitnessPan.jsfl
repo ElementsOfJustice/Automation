@@ -1,6 +1,7 @@
 /******************************************************************************
 MAKE WITNESS PAN
-Description: 
+Description: For use with multi-witness cross examination. Animates a slide
+from one witness to the other.
 Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 ******************************************************************************/
 

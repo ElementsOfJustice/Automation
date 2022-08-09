@@ -1,6 +1,9 @@
 /******************************************************************************
 FOCUS WITNESS
-Description: 
+Description: For use with multi-witness cross examination. Centers the
+selected witness but does not create the slide animation from the previous
+wittness to the current witness. For slide animation creation, see the
+MakeWitnessPan.jsfl script.
 
 Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 ******************************************************************************/
@@ -23,7 +26,8 @@ function resetSelection(layer, frame) {
 /*
 Function: makeBackgroundKeyframe
 Variables: None
-Description: Make a keyframe on the background layer
+Description: Make a new keyframe on the background layer where the new witness 
+is the center of attention.
 */
 function makeBackgroundKeyframe() {
     var witnessX = fl.getDocumentDOM().getElementProperty("x"); // get the number contained in the x property
