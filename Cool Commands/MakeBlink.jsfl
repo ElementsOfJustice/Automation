@@ -1,3 +1,10 @@
+/******************************************************************************
+MAKE BLINK
+Description: 
+
+Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
+******************************************************************************/
+
 function resetSelection(layer, frame) {
     fl.getDocumentDOM().getTimeline().currentFrame = frame;
     // select frame on the layer and replace current selection

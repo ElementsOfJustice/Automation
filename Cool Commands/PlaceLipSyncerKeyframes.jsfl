@@ -1,3 +1,10 @@
+/******************************************************************************
+PLACE LIP SYNCER KEYFRAMES
+Description: 
+
+Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
+******************************************************************************/
+
 // TODO: implement something to fix words that start with soft consonants
 END_INDEX = 0;
 WORD_PHONEME_INDEX = 1;

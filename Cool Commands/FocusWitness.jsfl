@@ -1,6 +1,8 @@
 /******************************************************************************
 FOCUS WITNESS
 Description: 
+
+Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 ******************************************************************************/
 
 BACKGROUND_LAYER_NAME = "BACKGROUNDS";
@@ -21,7 +23,7 @@ function resetSelection(layer, frame) {
 /*
 Function: makeBackgroundKeyframe
 Variables: None
-Description: 
+Description: Make a keyframe on the background layer
 */
 function makeBackgroundKeyframe() {
     var witnessX = fl.getDocumentDOM().getElementProperty("x"); // get the number contained in the x property

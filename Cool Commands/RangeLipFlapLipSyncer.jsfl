@@ -1,3 +1,9 @@
+/******************************************************************************
+RANGE LIP FLAP LIP SYNCER
+Description: 
+
+******************************************************************************/
+
 END_INDEX = 0;
 WORD_PHONEME_INDEX = 1;
 FRAME_RATE = fl.getDocumentDOM().frameRate;

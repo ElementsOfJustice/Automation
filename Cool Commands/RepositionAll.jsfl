@@ -1,3 +1,9 @@
+/******************************************************************************
+REPOSITION ALL
+Description: 
+
+******************************************************************************/
+
 function resetSelection(layer, frame) {
     fl.getDocumentDOM().getTimeline().currentFrame = frame;
     // select frame on the layer and replace current selection

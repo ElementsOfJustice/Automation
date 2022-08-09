@@ -1,3 +1,9 @@
+/******************************************************************************
+MAKE FRAME BY FRAME
+Description: 
+
+******************************************************************************/
+
 var frameSelection = fl.getDocumentDOM().getTimeline().getSelectedFrames();
 var selLayerIndex = frameSelection[0];
 var startingFrame = frameSelection[1];

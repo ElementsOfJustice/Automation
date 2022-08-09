@@ -1,3 +1,8 @@
+/******************************************************************************
+INSERT BLINK DATA
+Description: 
+******************************************************************************/
+
 var characterName = fl.getDocumentDOM().getTimeline().name;
 var characterTimeline = fl.getDocumentDOM().getTimeline(); // get the timeline of the selected symbol
 var xSheetLayerIndex = characterTimeline.findLayerIndex("xSheet"); // get the integer index of layer "xSheet"

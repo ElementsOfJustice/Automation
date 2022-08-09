@@ -1,3 +1,8 @@
+/******************************************************************************
+PLACE MASK
+Description: 
+
+******************************************************************************/
 
 function resetSelection(layer, frame) {
     fl.getDocumentDOM().getTimeline().currentFrame = frame;

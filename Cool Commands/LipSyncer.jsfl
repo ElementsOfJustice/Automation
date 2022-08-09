@@ -1,7 +1,7 @@
 /******************************************************************************
 LIP SYNCER
 Description:
-HOW TO USE THIS SCRIPT: https://www.youtube.com/watch?v=I-YhWTgXB4E
+Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 ******************************************************************************/
 // Create Variables
 var scriptPath = fl.scriptURI;

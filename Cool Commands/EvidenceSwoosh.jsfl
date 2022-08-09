@@ -1,6 +1,8 @@
 /******************************************************************************
 EVIDENCE SWOOSH
 Description: 
+
+Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 ******************************************************************************/
 
 // get the adobe animate doc object
@@ -63,7 +65,7 @@ mat.ty = 12.6;
 
 // assign the new matrix values back to the current frame
 doc.getTimeline().layers[layer].frames[doc.getTimeline().currentFrame].elements[0].matrix = mat;
-// 
+// Set the point about which transformations occur
 doc.setTransformationPoint({x:-115.6, y:-115.6});
 
 // advance playhead by 4 frames
@@ -86,7 +88,7 @@ doc.getTimeline().layers[layer].frames[doc.getTimeline().currentFrame].elements[
 // select the current frame and the one after
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
 
-//
+// Set the point about which transformations occur
 doc.setTransformationPoint({x:-115.6, y:-115.6});
 
 // reverse playhead by 4 frames
@@ -106,7 +108,7 @@ doc.getTimeline().convertToKeyframes(doc.getTimeline().currentFrame);
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
 // assign the original matrix values to the current frame
 doc.getTimeline().layers[layer].frames[doc.getTimeline().currentFrame].elements[0].matrix = mat;
-//
+// Set the point about which transformations occur
 doc.setTransformationPoint({x:-115.6, y:-115.6});
 
 // reverse playhead by 4 frames
@@ -115,7 +117,7 @@ doc.getTimeline().currentFrame-=4;
 doc.getTimeline().convertToKeyframes(doc.getTimeline().currentFrame);
 // select the current frame and the one after
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
-//
+// Set the point about which transformations occur
 doc.setTransformationPoint({x:-115.6, y:-115.6});
 // animate movement between two positions
 doc.getTimeline().createMotionTween();

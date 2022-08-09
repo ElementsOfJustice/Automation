@@ -3,6 +3,7 @@ LINE ADDER
 Description: Continuously prompt the user for voice line files and
 automatically adds them to the next textbox in the timeline. 
 (A config file is required)
+Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 ******************************************************************************/
 
 // set scriptPath to "/path/../LineAdder.jsfl"

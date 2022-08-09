@@ -2,6 +2,8 @@
 EVIDENCE GET
 Description: Creates the animation for when evidence is added to the court
 record. Specifically moving the evidence image on to and off of the screen.
+
+Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 ******************************************************************************/
 
 // get the adobe animate file and info inside
