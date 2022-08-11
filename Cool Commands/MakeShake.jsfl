@@ -1,6 +1,7 @@
 /******************************************************************************
 MAKE SHAKE
 Description: Create a shake effect for selected frames
+Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 ******************************************************************************/
 
 // Create Variables

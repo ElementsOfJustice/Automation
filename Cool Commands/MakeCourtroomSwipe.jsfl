@@ -1,6 +1,7 @@
 /******************************************************************************
 MAKE COURTROOM SWIPE
 Description: Create animation of swipe between characters in the courtroom
+Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 ******************************************************************************/
 
 SWIPE_LENGTH = 14; // frames in swipe from witness stand to desks and vice versa *must be even*

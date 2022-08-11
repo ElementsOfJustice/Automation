@@ -1,6 +1,7 @@
 /******************************************************************************
 RASTER LIP SYNC
 Description: 
+Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 ******************************************************************************/
 
 END_INDEX = 0;

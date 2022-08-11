@@ -3,6 +3,7 @@ EVIDENCE UPDATE
 Description: Creates the following animation:
 Move old evidence image on screen. After flashing white, the updated evidence 
 image is shown. The evidence then moves off screen.
+Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 ******************************************************************************/
 
 // get the adobe animate doc object and data inside
@@ -78,7 +79,7 @@ doc.setInstanceTint('#ffffff', 100);
 doc.getTimeline().currentFrame -= 9; // reverse playhead 9 frames
 // select current frame
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1); 
-// ?? can tweens do color transitions ?? 
+// tween does color transition
 doc.getTimeline().createMotionTween();
 // Change how exactly the tween proceeds from one end to the other
 an.getDocumentDOM().getTimeline().setFrameProperty('easeType', 5, 9, 0);
@@ -117,7 +118,7 @@ doc.setElementProperty("width", trueWidth);
 doc.getTimeline().currentFrame -= 9; // reverse playhead 9 frames
 // select current frame
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
-// ?? can tweens do color transitions ?? 
+// tween does color transition
 doc.getTimeline().createMotionTween();
 // Change how exactly the tween proceeds from one end to the other
 an.getDocumentDOM().getTimeline().setFrameProperty('easeType', 5, 10, 0);

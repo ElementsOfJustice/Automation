@@ -1,6 +1,7 @@
 /******************************************************************************
 MAKE FADE
 Description: Create either a fade-in effect, fade-out effect, or both.
+Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 ******************************************************************************/
 
 FIRST_LAYER_INDEX = 3; // indecies of layers for timeline.getSelectedFrames() for multiple selections

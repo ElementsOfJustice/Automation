@@ -1,5 +1,5 @@
 /******************************************************************************
-MAKE COURTROOM SWIPE
+MAKE COURTROOM SWIPE LEGACY
 Description: Create animation of swipe between characters in the courtroom
 ******************************************************************************/
 
