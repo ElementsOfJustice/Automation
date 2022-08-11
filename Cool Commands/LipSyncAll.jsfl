@@ -157,7 +157,7 @@ function makeLipFlap(firstFrameOfLipFlap, lipFlapLength, distance, layer, frame,
         if (!isLipFlapPose(layer, frame)) {
             return -1;
         }
-        fl.trace("Pose change at frame " + frame + " has no lip flap data. Your punishment is the console flooding with these messages (and the pose reverting to the previous one >:] )");
+        fl.trace("Pose change at frame " + frame + " (" + getPoseName(layer, frame) + ") has no lip flap data. Your punishment is the console flooding with these messages (and the pose reverting to the previous one >:] )");
     }
     fl.getDocumentDOM().setElementProperty("firstFrame", firstFrameOfLipFlap); // first frame of lip flap
     fl.getDocumentDOM().setElementProperty("loop", "loop");
@@ -196,7 +196,7 @@ function makeLipFlap(firstFrameOfLipFlap, lipFlapLength, distance, layer, frame,
         if (!isLipFlapPose(layer, frame + distance)) {
             return -1;
         } else {
-            fl.trace("Pose at frame " + (frame + distance) + " has no lip flap data. Your punishment is the console flooding with these messages (and the pose reverting to the previous one >:] )");
+            fl.trace("Pose at frame " + (frame + distance) + " (" + getPoseName(layer, frame + distance) + ") has no lip flap data. Your punishment is the console flooding with these messages (and the pose reverting to the previous one >:] )");
         }
     }
     fl.getDocumentDOM().setElementProperty("firstFrame", toReturn[0] + toReturn[1] - 1); // use new lip flap data for the closed mouth 
@@ -371,6 +371,12 @@ if (confirmExecution) {
     var selectedLayers = fl.getDocumentDOM().getTimeline().getSelectedLayers(); // get selected layers
     for (var i = 0; i < selectedLayers.length; i++) { // loop through each voice line layer
         resetSelection(selectedLayers[i], 0); // go to first frame of layer
+        var voiceLayerName = fl.getDocumentDOM().getTimeline().getLayerProperty("name"); // used to go to the character layer
+        var characterLayerName = voiceLayerName.substring(0, voiceLayerName.lastIndexOf("_")); // sound layer should have _VOX at the end, character layer shouldn't
+        if(fl.getDocumentDOM().getTimeline().findLayerIndex(characterLayerName) == undefined) { // invalid layer setup, skip to next one
+            fl.trace("Invalid layer selected: " + voiceLayerName + ". Skipping this layer.");
+            continue;
+        }
         var numFrames = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()].frames.length; // get length of layer
         while (fl.getDocumentDOM().getTimeline().currentFrame < numFrames - 1) { // iterate over every keyframe
             var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().getFrameProperty("startFrame", fl.getDocumentDOM().getTimeline().currentFrame);
@@ -378,8 +384,6 @@ if (confirmExecution) {
             if (isKeyFrame && soundName != "") { // for every voice line 
                 var voiceStartFrame = fl.getDocumentDOM().getTimeline().currentFrame; // this is essentially an anchor point for all the lipsyncing
                 var voiceDuration = fl.getDocumentDOM().getTimeline().getFrameProperty("duration"); // used to move to the next voice line
-                var voiceLayerName = fl.getDocumentDOM().getTimeline().getLayerProperty("name"); // used to go to the character layer
-                var characterLayerName = voiceLayerName.substring(0, voiceLayerName.lastIndexOf("_")); // sound layer should have _VOX at the end, character layer shouldn't
                 resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(characterLayerName), voiceStartFrame); // select corresponding layer
                 fl.getDocumentDOM().getTimeline().setLayerProperty("locked", false); // unlock it
                 fl.getDocumentDOM().getTimeline().setLayerProperty("viisble", !false); // visible it
