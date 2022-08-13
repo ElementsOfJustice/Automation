@@ -41,7 +41,9 @@ fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
 var frameArray = fl.getDocumentDOM().getTimeline().layers[layer].frames;
 for (var frame in data) {
     frameArray[parseInt(frame) + firstFrame].elements[0].firstFrame = parseInt(data[frame][0]);
-    frameArray[parseInt(frame) + firstFrame].elements[0].lastFrame = parseInt(data[frame][1]);
+    if (frameArray[parseInt(frame) + firstFrame].elements[0].lastFrame != undefined) {
+        frameArray[parseInt(frame) + firstFrame].elements[0].lastFrame = parseInt(data[frame][1]);
+    }
     frameArray[parseInt(frame) + firstFrame].elements[0].loop = (data[frame][2]);
 }
 
