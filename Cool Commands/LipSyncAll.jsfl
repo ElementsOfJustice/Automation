@@ -29,7 +29,7 @@ function selectOrMakeKeyframe(layer, frame) {
 }
 function isLipFlapPose(layer, frame) {
     var poseName = getPoseName(layer, frame);
-    if (poseName == undefined) {
+    if (poseName === undefined) {
         return undefined;
     }
     var layerName = fl.getDocumentDOM().getTimeline().getLayerProperty("name");
@@ -38,8 +38,10 @@ function isLipFlapPose(layer, frame) {
     }
     if (arrayContains(AVAILABLE_CHARACTERS, layerName, isEqual)) {
         var availablePoses = getKeys(CHARACTER_NAME_TO_MAP[layerName]);
-        if (!arrayContains(availablePoses, poseName, stringContains)) { // part of raster characters, but not an available pose
-            return true;
+        if (!arrayContains(availablePoses, poseName, isEqual)) { 
+            if(!arrayContains(availablePoses, poseName, stringContains)) { 
+                return true; // part of raster characters, but not an available pose
+            }
         }
     }
     return false;
@@ -246,7 +248,6 @@ function lipFlapLipSync(noLipFlapData, voiceLayerName, voiceStartFrame, voiceDur
     if (firstFrameOfLipFlap == undefined || lipFlapLength == undefined) {
         noLipFlapData.push(soundName);
         resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(voiceLayerName), voiceStartFrame);
-        fl.getDocumentDOM().getTimeline().currentFrame += fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()].frames[fl.getDocumentDOM().getTimeline().currentFrame].duration;
         return noLipFlapData;
     }
     firstFrameOfLipFlap--; // it's 1 indexed, fix that
@@ -257,6 +258,7 @@ function lipFlapLipSync(noLipFlapData, voiceLayerName, voiceStartFrame, voiceDur
     }
     lipFlapLipSyncHelper(firstFrameOfLipFlap, lipFlapLength, voiceStartFrame, voiceStartFrame, voiceStartFrame + voiceDuration, words, phonemes);
     resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(voiceLayerName), voiceStartFrame); // go back to the original voice layer frame
+    return noLipFlapData;
 }
 
 // raster lipsync utils
@@ -334,8 +336,6 @@ function rasterLipSyncHelper(voiceLineStartFrame, startFrame, layer, lipsyncMap,
 }
 // if a voice line starts with a raster mouth shape pose, it runs this function which iterates through each keyframe and if it's a lip flap pose, it calls lipFlapLipSyncHelper and goes to the next pose
 function rasterLipSync(noLipFlapData, voiceLayerName, voiceStartFrame, voiceDuration, words, phonemes) {
-
-    var count = 0;
     while (fl.getDocumentDOM().getTimeline().currentFrame < voiceStartFrame + voiceDuration && fl.getDocumentDOM().getTimeline().currentFrame < fl.getDocumentDOM().getTimeline().getLayerProperty("frames").length - 1) {
         var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
         var duration = fl.getDocumentDOM().getTimeline().getFrameProperty("duration");
@@ -346,21 +346,20 @@ function rasterLipSync(noLipFlapData, voiceLayerName, voiceStartFrame, voiceDura
             if (firstFrameOfLipFlap != undefined && lipFlapLength != undefined) {
                 lipFlapLipSyncHelper(firstFrameOfLipFlap - 1, lipFlapLength, voiceStartFrame, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + duration, words, phonemes);
             } else {
-                noLipFlapData.push("Frame " + curframe);
+                noLipFlapData.push("Frame " + curFrame);
             }
             selectOrMakeKeyframe(fl.getDocumentDOM().getTimeline().currentLayer, curFrame + duration);
             continue;
         }
         var poseName = getPoseName(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame);
+        if(poseName == undefined) {
+            break; // goes to new character, so we're done here
+        }
         if (poseName.substring(poseName.lastIndexOf(" ")) != " Talk") {
             poseName = poseName.substring(0, poseName.lastIndexOf(" ")); // if it's passed all other data validation and this line runs, that means the pose is one of Athena's (widget emotion at the end). Get rid of the emotion.
         }
-        rasterLipSyncHelper(voiceStartFrame, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentLayer, CHARACTER_NAME_TO_MAP[fl.getDocumentDOM().getTimeline().getLayerProperty("name")], poseName, fl.getDocumentDOM().getTimeline().currentFrame + duration);
+        rasterLipSyncHelper(voiceStartFrame, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentLayer, CHARACTER_NAME_TO_MAP[fl.getDocumentDOM().getTimeline().getLayerProperty("name")], poseName, fl.getDocumentDOM().getTimeline().currentFrame + duration - 1);
         selectOrMakeKeyframe(fl.getDocumentDOM().getTimeline().currentLayer, curFrame + duration);
-        count++;
-        if(count >= 10) {
-            throw new Error("STOP");
-        }
     }
     resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(voiceLayerName), voiceStartFrame); // go back to the original voice layer frame
 }
@@ -368,9 +367,9 @@ function rasterLipSync(noLipFlapData, voiceLayerName, voiceStartFrame, voiceDura
 // >>MAIN<<
 //TODO: Iterate over all the VOX layers, use the sound file names to then lipsync the corresponding stuff.
 var confirmExecution = confirm("Confirm: Every voice layer is selected AND the voice layer names match the character layers names (without \"_VOX\")");
-var cfgFolderPath = fl.browseForFolderURL("Select CFG files folder"); // cfg files need to all be in one folder
 if (confirmExecution) {
     setup();
+    var cfgFolderPath = fl.browseForFolderURL("Select CFG files folder"); // cfg files need to all be in one folder
     fl.runScript(fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/")) + "/MasterRasterRigLipsyncs.cfg");
     fl.runScript(fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/")) + "/MasterRasterRigLipsyncs.cfg"); // no clue why, but running this twice fixes everything
     var startTime = new Date();
@@ -405,7 +404,7 @@ if (confirmExecution) {
                     continue; // continue to the next iteration in the while loop
                 }
                 // no errors, let's do this
-                if (isLipFlapPose(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame) == undefined) { // no pose name, assume it means empty keyframe
+                if (isLipFlapPose(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame) === undefined) { // no pose name, assume it means empty keyframe
                     resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(voiceLayerName), voiceStartFrame); // start of voiceline
                     // next voiceline
                     fl.getDocumentDOM().getTimeline().currentFrame += fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()].frames[fl.getDocumentDOM().getTimeline().currentFrame].duration;
