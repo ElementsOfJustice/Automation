@@ -38,7 +38,7 @@ function makeBackgroundKeyframe() {
     // if it isn't...
     if (!isKeyFrame) {
         fl.getDocumentDOM().getTimeline().insertKeyframe(); // keyframe for new position
-        // reset the selectionX
+        // reset the selection
         resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), fl.getDocumentDOM().getTimeline().currentFrame);
     }
     // is the specified layer locked?
