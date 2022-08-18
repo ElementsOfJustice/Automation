@@ -52,3 +52,5 @@ The victim was knocked to the ground, and then stabbed before he could even reac
 Oh? Please, do tell.|||Thinking
 !?|||Shock
 Of course, My Lord.|||Bow
+Yes, My Lord?|||Happy_Neutral
+Certainly, My Lord.|||Happy_Neutral

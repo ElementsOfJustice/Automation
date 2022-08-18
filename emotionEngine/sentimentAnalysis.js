@@ -19,23 +19,29 @@ const Sentiment = require('sentiment');
 var fs = require("fs");
 
 var sentiment = new Sentiment();
-var chkStr = "(Private Eye? Why does she need him?)"
 var tolerance = 1;
 var dictionary = [];
 
-fs.readFile('./emotionEngine/databases/ATHENA_COURTROOM_Dictionary.txt', function read(err, data) {
+var outputArray = new Array;
+
+//Load script of your choice & specify type on l64
+var sceneFile = require('./sceneFile.array')
+
+function markupLine(dictionaryName, text, type) {
+
+fs.readFile('./emotionEngine/databases/' + type + '/' + dictionaryName + '.txt', function read(err, data) {
   if (err) {
-      throw err;
-  }
+        
+  } else {
 
   var allTxt = data.toString()
   dictionary = allTxt.split("\r\n");
 
-  calculateAnswer(dictionary)
+  matchEmotion(dictionary, text)
 
-});
+} } ) };
 
-function calculateAnswer(dictionary) { //the worst function name fucking ever
+function matchEmotion(dictionary, chkStr) {
 
 var tmpJaccard = new Map();
 
@@ -52,6 +58,22 @@ for (var i = 0; i < dictionary.length; i++) {
 }
 
   //console.log(Math.min(... tmpJaccard.keys()))
-  console.log(chkStr + " should have the pose " + tmpJaccard.get(Math.min(... tmpJaccard.keys())) + ".")
+  //console.log("||" + tmpJaccard.get(Math.min(... tmpJaccard.keys())) + "|| " + chkStr)
+  
+  fs.appendFile('./emotionEngine/emotionEngineOutput.array', "||" + tmpJaccard.get(Math.min(... tmpJaccard.keys())) + "|| " + chkStr + "\r\n", (err) => {
+    if (err) {
 
-}
+    } else {
+      
+    }
+  });
+
+  //outputArray.push("||" + tmpJaccard.get(Math.min(... tmpJaccard.keys())) + "|| " + chkStr)
+
+};
+
+for (let i = 0; i < dialogueArray.length; i++) {
+  markupLine(speakertagArray[i], dialogueArray[i], 'COURTROOM');
+};
+
+console.log(JSON.stringify(outputArray))

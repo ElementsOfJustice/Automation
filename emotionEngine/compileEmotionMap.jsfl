@@ -31,7 +31,7 @@ function iterateLayers() {
 	for (k = 6; k < timeline.layerCount; k++) {
 		if (timeline.layers[k].parentLayer != null) {
 			if ((timeline.layers[k].parentLayer.name == "RASTER_CHARACTERS") || (timeline.layers[k].parentLayer.name == "VECTOR_CHARACTERS")) {
-				compileMap(timeline.layers[k].name, k, 14)
+				compileMap(timeline.layers[k].name, k, 7)
 			}
 		}
 	}
@@ -51,7 +51,7 @@ function compileMap(charName, layerNum, iOffset) {
 					var itemIndex = doc.library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerNum].frames[i + iOffset].elements[0].libraryItem.name)
 
 					var poseName = doc.library.items[itemIndex].timeline.layers[0].frames[ffIndex].name;
-					poseName = poseName.replace(' Talk', '');
+					//poseName = poseName.replace(' Talk', '');
 
 					var dialogue = el.getTextString();
 
