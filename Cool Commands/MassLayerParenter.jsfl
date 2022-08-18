@@ -22,7 +22,7 @@ function setup() {
 
 setup();
 // prompt the user for a number of frames to shift by
-var layer = prompt("Enter the layer to parent to.");
+var layer = prompt("Enter the layer to parent to.", "BACKGROUNDS");
 if(fl.getDocumentDOM().getTimeline().findLayerIndex(layer) == undefined) {
     throw new Error("Invalid layer name: " + layer);
 }
