@@ -1,0 +1,25 @@
+speakertagArray = [
+"Athena",
+"Athena",
+"Athena",
+"Athena",
+"Athena",
+"Athena",
+"Athena",
+"Athena",
+"Athena",
+"Athena"
+];
+
+dialogueArray = [
+"Luna's hiding something. I just know it. But how am I ever gonna figure it out?!",
+"WHAT?! But why not?!",
+"I don't think so, Prosecutor Luna!",
+"I think I have a pretty good explanation for why Silver Spoon heard two, but Diamond Tiara did not.",
+"What a miserable experience...",
+"Your Honor! I'd like to have that striken from the record!",
+"Twilight, I know you're disappointed in me, but please... Trust me?",
+"NOOOOO!",
+"Aha! Thank you very much, Prosecutor Luna!",
+"Oh, er... Thanks?"
+];

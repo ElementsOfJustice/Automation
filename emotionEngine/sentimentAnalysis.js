@@ -19,7 +19,7 @@ const Sentiment = require('sentiment');
 var fs = require("fs");
 
 var sentiment = new Sentiment();
-var tolerance = 2;
+var tolerance = 6;
 var dictionary = [];
 
 var sceneFile = require('./sceneFile.array')
@@ -38,7 +38,13 @@ fs.readFile('./emotionEngine/databases/' + type + '/' + dictionaryName + '.txt',
 
   //matchEmotion(dictionary, text);
 
-  writeFile(text, matchEmotion(dictionary, text))
+  var pose = matchEmotion(dictionary, text)
+
+  if (text.includes("think")) {
+    writeFile(text, "Thinking")
+  } else {
+    writeFile(text, pose)
+  }
 
 } } ) };
 
@@ -51,7 +57,7 @@ for (var i = 0; i < dictionary.length; i++) {
   var chkStrScore = sentiment.analyze(chkStr).score
   var baseScore = sentiment.analyze(dictionary[i].split("|||")[0]).score
 
-  //console.log(sentiment.analyze(dictionary[i].split("|||")[0]).score +" "+ sentiment.analyze(chkStr).score + " " + jaccardDistance(dictionary[i].split("|||")[0], chkStr) + " " + dictionary[i].split("|||")[0]);
+  console.log(sentiment.analyze(dictionary[i].split("|||")[0]).score +" "+ sentiment.analyze(chkStr).score + " " + jaccardDistance(dictionary[i].split("|||")[0], chkStr) + " " + dictionary[i].split("|||")[0]);
   
   if ((baseScore >= chkStrScore - tolerance) && (baseScore <= chkStrScore + tolerance)) {
     tmpJaccard.set(jaccardDistance(dictionary[i].split("|||")[0], chkStr), dictionary[i].split("|||")[1])

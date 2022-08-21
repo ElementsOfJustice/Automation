@@ -1,0 +1,25 @@
+speakertagArray = [
+"Luna",
+"Luna",
+"Luna",
+"Luna",
+"Luna",
+"Luna",
+"Luna",
+"Luna",
+"Luna",
+"Luna"
+];
+
+dialogueArray = [
+"MISS CYKES! I can hardly believe you'd act in such a rash and irresponsible matter!",
+"It's hardly a coincidence, your Honor. In fact, it's the basis for our entire argument.",
+"What are you talking about?! The witness never claimed she saw the killer!",
+"Your Honor, if you take a closer look, you'll see that these shards of glass are irregular in size. A fact that could only be the case if the defense is mistaken in this matter.",
+"WITNESS! Have you been LYING to the court?!",
+"You always manage to surprise me, Golden Pixie. You've grown as an attorney through the course of this trial.",
+"So, this means that in addition to being in the forest on the night of the murder, the witness had both motive and ample time to strike!",
+"I can't believe a small child would so something so heinous...",
+"I think, Your Honor, the prosecution requests a twenty minute recess to reassess the situation!",
+"Make yourself more clear, Golden Pixie. This court has a hard enough time following your logic without you stumbling over your own words."
+];
