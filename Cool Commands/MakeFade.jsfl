@@ -22,6 +22,11 @@ try {
 } catch (error) {
     
 }
+/*
+Function: setup
+Variables: none
+Description: unlock all selected layers
+*/
 function setup() {
     for (var i = 0; i < fl.getDocumentDOM().getTimeline().getSelectedLayers().length; i++) {
         fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[i] * 1].locked = false; // unlock layer

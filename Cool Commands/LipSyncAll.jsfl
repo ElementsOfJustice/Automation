@@ -46,6 +46,14 @@ function selectOrMakeKeyframe(layer, frame) {
     }
 }
 
+/*
+Function: isLipFlapPose
+Variables:  
+    layer [integer index of a layer ]
+    frame [integer index of a frame]
+Description: returns a boolean depending on whether the current layer and frame
+ contains a lip flap pose
+*/
 function isLipFlapPose(layer, frame) {
     var poseName = getPoseName(layer, frame);
     if (poseName === undefined) {
@@ -65,6 +73,14 @@ function isLipFlapPose(layer, frame) {
     }
     return false;
 }
+
+/*
+Function: getPoseName
+Variables:  
+    layer [integer index of a layer]
+    frame [integer index of a frame]
+Description: 
+*/
 function getPoseName(layer, frame) {
     resetSelection(layer, frame);
     if (fl.getDocumentDOM().selection[0] == undefined) {
@@ -82,6 +98,13 @@ function getPoseName(layer, frame) {
 
 // lip flap lipsync utils
 
+/*
+Function: getPoseName
+Variables:  
+    array   [ ]
+    element [ ]
+Description: 
+*/
 function arrayContainsTruncated(array, element) {
     for (var i = 0; i < array.length; i++) {
         if (element.substring(0, 2) == array[i]) { // strip the stupid dumb crappy stress number (will fix evertyhing plxzzzzzz)
@@ -90,6 +113,13 @@ function arrayContainsTruncated(array, element) {
     }
     return false;
 }
+
+/*
+Function: getKeysAsFloats
+Variables:  
+    input []
+Description: 
+*/
 function getKeysAsFloats(input) { // get array of start times from the words or phonemes
     var arr = [];
     for (var i in input) {
@@ -97,6 +127,13 @@ function getKeysAsFloats(input) { // get array of start times from the words or 
     }
     return arr;
 }
+
+/*
+Function: getStartTimes
+Variables:  
+    input []
+Description: 
+*/
 function getStartTimes(input) {
     var arr = [];
     for (var i in input) {
@@ -106,6 +143,13 @@ function getStartTimes(input) {
     }
     return arr;
 }
+
+/*
+Function: getEndTimes
+Variables:  
+    input []
+Description: 
+*/
 function getEndTimes(input) {
     var arr = [];
     for (var i in input) {
@@ -115,6 +159,14 @@ function getEndTimes(input) {
     }
     return arr;
 }
+
+/*
+Function: getLipSyncFrameArray
+Variables:  
+    words    []
+    phonemes []
+Description: 
+*/
 function getLipSyncFrameArray(words, phonemes) { // helper function to compute where each syllable is in terms of frames
     // Approach 1: each word begins with a syllable, and every consonant followed by a vowel is another syllable
     var syllableFrames = [];
@@ -145,6 +197,15 @@ function getLipSyncFrameArray(words, phonemes) { // helper function to compute w
     }
     return syllableFrames;
 }
+
+/*
+Function: getEndOfWordIndex
+Variables:  
+    wordEndTimeArray []
+    frame            []
+    distance         []
+Description: 
+*/
 function getEndOfWordIndex(wordEndTimeArray, frame, distance) {
     for (var i = 0; i < wordEndTimeArray.length; i++) {
         if (wordEndTimeArray[i] > frame && wordEndTimeArray[i] < frame + distance) {
@@ -153,6 +214,14 @@ function getEndOfWordIndex(wordEndTimeArray, frame, distance) {
     }
     return -1;
 }
+
+/*
+Function: getLipFlapInfo
+Variables:  
+    layer [integer index of a layer]
+    frame [integer index of a frame]
+Description: 
+*/
 function getLipFlapInfo(layer, frame) {
     var poseName = getPoseName(layer, frame);
     var characterName = fl.getDocumentDOM().selection[0].libraryItem.name;
@@ -165,7 +234,19 @@ function getLipFlapInfo(layer, frame) {
     }
     return [firstFrameOfLipFlap, lipFlapLength]
 }
-// very complex function that makes really accurate lip flaps
+
+/*
+Function: getLipFlapInfo
+Variables:  
+    firstFrameOfLipFlap []
+    lipFlapLength       []
+    distance            []
+    layer               []
+    frame               []
+    wordStartTimes      []
+    wordEndTimes        []
+Description: very complex function that makes really accurate lip flaps
+*/
 function makeLipFlap(firstFrameOfLipFlap, lipFlapLength, distance, layer, frame, wordStartTimes, wordEndTimes) {
     // TODO: make a lip flap such that the mouth is closed at the end of (currentFrame + distance)
     var endOfWordIndex = getEndOfWordIndex(wordEndTimes, frame, distance);
@@ -231,6 +312,19 @@ function makeLipFlap(firstFrameOfLipFlap, lipFlapLength, distance, layer, frame,
     fl.getDocumentDOM().setElementProperty("loop", "single frame");
     return toReturn;
 }
+
+/*
+Function: lipFlapLipSyncHelper
+Variables:  
+    firstFrameOfLipFlap []
+    lipFlapLength       []
+    voiceStartFrame     []
+    startFrame          []
+    endFrame            []
+    words               []
+    phonemes            []
+Description: 
+*/
 function lipFlapLipSyncHelper(firstFrameOfLipFlap, lipFlapLength, voiceStartFrame, startFrame, endFrame, words, phonemes) { // basically an API for lip flaps
     var layer = fl.getDocumentDOM().getTimeline().getSelectedLayers();
     var timingArray = getLipSyncFrameArray(words, phonemes);
@@ -259,7 +353,18 @@ function lipFlapLipSyncHelper(firstFrameOfLipFlap, lipFlapLength, voiceStartFram
         }
     }
 }
-// voice line starts with lip flap pose, so sync that
+
+/*
+Function: lipFlapLipSyncHelper
+Variables:  
+    noLipFlapData   []
+    voiceLayerName  []
+    voiceStartFrame []
+    voiceDuration   []
+    words           []
+    phonemes        []
+Description: voice line starts with lip flap pose, so sync that
+*/
 function lipFlapLipSync(noLipFlapData, voiceLayerName, voiceStartFrame, voiceDuration, words, phonemes) {
     var lipFlapInfo = getLipFlapInfo(fl.getDocumentDOM().getTimeline().getSelectedLayers(), fl.getDocumentDOM().getTimeline().currentFrame);
     var firstFrameOfLipFlap = lipFlapInfo[0];
@@ -281,7 +386,12 @@ function lipFlapLipSync(noLipFlapData, voiceLayerName, voiceStartFrame, voiceDur
 }
 
 // raster lipsync utils
-
+/*
+Function: getKeys
+Variables:  
+    input []
+Description: 
+*/
 function getKeys(input) { // get array of start times from the words or phonemes
     var arr = [];
     for (var i in input) {
@@ -289,12 +399,36 @@ function getKeys(input) { // get array of start times from the words or phonemes
     }
     return arr;
 }
+
+/*
+Function: isEqual
+Variables:  
+    a []
+    b []
+Description: returns true if the two items are equal
+*/
 function isEqual(a, b) {
     return a == b;
 }
+
+/*
+Function: stringContains
+Variables:  
+    input []
+Description: 
+*/
 function stringContains(a, b) {
     return b.indexOf(a) >= 0;
 }
+
+/*
+Function: arrayContains
+Variables:  
+    array   []
+    element []
+    compare []
+Description: 
+*/
 function arrayContains(array, element, compare) {
     for (var i = 0; i < array.length; i++) {
         if (compare(array[i], element)) {
@@ -303,7 +437,19 @@ function arrayContains(array, element, compare) {
     }
     return false;
 }
-// does mouth shape syncing from startFrame to endFrame in the given poseName
+
+/*
+Function: rasterLipSyncHelper
+Variables:  
+    voiceLineStartFrame []
+    startFrame          []
+    layer               []
+    lipsyncMap          []
+    words               []
+    phonemes            []
+    endFrame            []
+Description: does mouth shape syncing from startFrame to endFrame in the given poseName
+*/
 function rasterLipSyncHelper(voiceLineStartFrame, startFrame, layer, lipsyncMap, poseName, endFrame) { 
     var diphthongMap = {};
     var mouthShapeMap = {};
@@ -353,6 +499,18 @@ function rasterLipSyncHelper(voiceLineStartFrame, startFrame, layer, lipsyncMap,
         }
     }
 }
+
+/*
+Function: rasterLipSync
+Variables:  
+    noLipFlapData   []
+    voiceLayerName  []
+    voiceStartFrame []
+    voiceDuration   []
+    words           []
+    phonemes        []
+Description: 
+*/
 // if a voice line starts with a raster mouth shape pose, it runs this function which iterates through each keyframe and if it's a lip flap pose, it calls lipFlapLipSyncHelper and goes to the next pose
 function rasterLipSync(noLipFlapData, voiceLayerName, voiceStartFrame, voiceDuration, words, phonemes) {
     while (fl.getDocumentDOM().getTimeline().currentFrame < voiceStartFrame + voiceDuration && fl.getDocumentDOM().getTimeline().currentFrame < fl.getDocumentDOM().getTimeline().getLayerProperty("frames").length - 1) {
