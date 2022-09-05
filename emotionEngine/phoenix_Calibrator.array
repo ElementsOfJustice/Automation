@@ -1,0 +1,25 @@
+speakertagArray = [
+"Phoenix",
+"Phoenix",
+"Phoenix",
+"Phoenix",
+"Phoenix",
+"Phoenix",
+"Phoenix",
+"Phoenix",
+"Phoenix",
+"Phoenix"
+];
+
+dialogueArray = [
+"Athena? Are you feeling okay?",
+"It was rather curious how she was doging your questions. You think she's hiding something?",
+"That was the biggest mistake of my life. And not a day's gone by I haven't thought about it.",
+"ATHENA!",
+"Wait! I thought Overall Concept hanged himself?",
+"Well, I'm sorry I can't afford the latest iPhone X! Some of us have expenses back home!",
+"So, this means that in addition to being in the forest on the night of the murder, the witness had both motive and ample time to strike...",
+"This whole case has been nothing but a lot of heartache for all those involved...",
+"I think we need to return to the crime scene and investigate further.",
+"Um... Twilight? What's that you've got with you?"
+];
