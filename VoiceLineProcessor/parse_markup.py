@@ -25,6 +25,8 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
             new_line = re.sub(r"s\d*_\d{3}_", r"", new_line.strip()).strip().replace("’", "'").lower()
             # strip line of all characters in square brackets []
             new_line = re.sub(r"\[.*\] ", r"", new_line)
+            # strip line of all characters in angle brackets <>
+            new_line = re.sub(r"\<.*\> ", r"", new_line)
             # get rid of punctuation with space after
             new_line = re.sub(r"[^a-zA-z-' \d:] ", r" ", new_line)
             # get rid of punctuation without space
