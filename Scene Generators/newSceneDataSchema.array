@@ -1,7 +1,7 @@
 var sceneData = [
 ["fade", "in"],
-["dialogue", "s2_001_judge", "Judge", "Court is now in session for the trial of Ms. Sweetie Belle. Are the prosecution and defense ready?", "pose"],
-["dialogue", "s2_002_luna", "Luna", "The prosecution is indeed ready, Your Honor.", "pose"],
+["dialogue", "s2_001_judge", "Judge", "Court is now in session for the trial of Ms. Sweetie Belle. Are the prosecution and defense ready?", "Stern"],
+["dialogue", "s2_002_luna", "Luna", "The prosecution is indeed ready, Your Honor.", "Skeptical"],
 ["screenshake", "sfx-stab2", "indeed"],
 ["pan", "prosecution"],
 ["dialogue", "s2_003_athena", "Athena", "The defense is also ready, Your Honor.", "pose"],
@@ -12,6 +12,6 @@ var sceneData = [
 ["evidence", "get", "BrokenGlass", "The description for this evidence is this"],
 ["dialogue", "s2_007_athena", "Athena", "(I know we’re on the same side, but that doesn’t mean I know how exactly she intends to set Sweetie Belle free.)", "pose"],
 ["evidence", "present", "BrokenGlass", "left side"],
-["dialogue", "s2_007_judge", "Judge", "Yesterday, I expressed sorrow at the fact that more children were involved with this case." , "pose"],
+["dialogue", "s2_007_judge", "Judge", "Yesterday, I expressed sorrow at the fact that more children were involved with this case." , "Thinking"],
 ["fade", "out"]
 ]
