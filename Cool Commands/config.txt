@@ -94,12 +94,10 @@ Arg3 - add item x
 Arg4 - add item y
 */
 
-var masterDeskArray = {
-} 
-//todo concouncil
+var masterDeskArray = {}
 masterDeskArray[sJudge] = ["OTHER ASSETS/DESKS/Judge-Table-Final", 640, 360];
-masterDeskArray[sDefense] = ["OTHER ASSETS/DESKS/DEFENSE-BENCH", 530, 640];
-masterDeskArray[sProsecutor] = ["OTHER ASSETS/DESKS/PROSECUTION-BENCH", 755, 630];
+masterDeskArray[sDefense] = ["OTHER ASSETS/DESKS/Judge-Table-Final", 530, 640];
+masterDeskArray[sProsecutor] = ["OTHER ASSETS/DESKS/Judge-Table-Final", 755, 630];
 masterDeskArray[sWitnesses[0]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
 masterDeskArray[sWitnesses[1]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
 masterDeskArray[sWitnesses[2]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
@@ -107,7 +105,8 @@ masterDeskArray[sWitnesses[3]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
 masterDeskArray[sWitnesses[4]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
 masterDeskArray["Sweetie Belle"] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
 masterDeskArray["Sweetie"] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
-	
+
+
 //Simplifies names.
 var nameswapArray = [
 ["Turning Page", "Turning"],

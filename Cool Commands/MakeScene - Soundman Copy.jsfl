@@ -7,7 +7,13 @@ editing process.
 Issues:
 - Parallel array schema is terrible and doesn't encode for things that have since
 been automated.
-- Why are the witnesses commented out? Do witnesses work?
+- Why are the witnesses commented out? Do witnesses work at all?
+- Desk placement only works with symbols. Convert all attorney desks to symbols
+in the template FLA and reverse hardcode workaround in config.txt
+- First time BG placement in court mode is wack
+- Text does strange stuff. Sometimes it is Suburga regular, sometimes othe properties
+of the text are really bad. Hardcode font and the VA setting to force it to be
+correct
 
 To-Do:
 - Add connecting features (Evidence, Typewriter, Screenshakes, Flashes)
@@ -67,6 +73,9 @@ var writeReport = true;
 var stopRigPlacement = false;
 var hasDirections = null;
 var stageDirections = null;
+
+var dialogueArray = [];
+var speakertagArray = [];
 
 var startTime = new Date();
 
@@ -158,7 +167,7 @@ function doTextBoxes() {
         }
 
         fl.getDocumentDOM().addNewText(dialogueBounding);
-        fl.getDocumentDOM().setTextString(trim(dialogueArray[i]));
+        fl.getDocumentDOM().setTextString(trim(dialogueArray[i][1]));
         fl.getDocumentDOM().setElementTextAttr('alignment', 'left');
         fl.getDocumentDOM().setElementProperty('textType', 'dynamic');
         fl.getDocumentDOM().setElementProperty('lineType', 'multiline');
@@ -166,24 +175,24 @@ function doTextBoxes() {
         fl.getDocumentDOM().setElementProperty('fontRenderingMode', 'standard');
         dialogueFormat();
 
-        if (dialogueArray[i].indexOf('(') > -1) {
+        if (dialogueArray[i][1].indexOf('(') > -1) {
             thinkingFormat();
         }
 
-        if (speakertagArray[i] == "Widget") {
+        if (dialogueArray[i][0] == "Widget") {
             fl.getDocumentDOM.setTextAttr("fillColor", 0xD7D700);
         }
 
         for (var m = 0; m < nameswapArray.length; m++) {
-            if (speakertagArray[i] == nameswapArray[m][0]) {
-                speakertagArray[i] = nameswapArray[m][1]
+            if (dialogueArray[i][0] == nameswapArray[m][0]) {
+                dialogueArray[i][0] = nameswapArray[m][1]
             }
         }
 
         fl.getDocumentDOM().selectNone();
         fl.getDocumentDOM().addNewText(speakerBounding);
 
-        fl.getDocumentDOM().setTextString(speakertagArray[i]);
+        fl.getDocumentDOM().setTextString(dialogueArray[i][0]);
         fl.getDocumentDOM().setElementProperty('textType', 'dynamic');
         fl.getDocumentDOM().setElementProperty('lineType', 'multiline');
         fl.getDocumentDOM().setElementProperty('name', 'txt');
@@ -191,7 +200,7 @@ function doTextBoxes() {
         speakerFormat();
 
         for (var z = 0; z < letterSpacingArray.length; z++) {
-            if (speakertagArray[i] == letterSpacingArray[z][0]) {
+            if (dialogueArray[i][0] == letterSpacingArray[z][0]) {
                 fl.getDocumentDOM().setElementTextAttr("letterSpacing", (letterSpacingArray[z][1]))
             }
         }
@@ -469,18 +478,18 @@ function doTextBoxesInvestigation() {
         }
 
         fl.getDocumentDOM().addNewText(dialogueBounding);
-        fl.getDocumentDOM().setTextString(trim(dialogueArray[i]));
+        fl.getDocumentDOM().setTextString(trim(dialogueArray[i][1]));
         fl.getDocumentDOM().setElementTextAttr('alignment', 'left');
         fl.getDocumentDOM().setElementProperty('textType', 'dynamic');
         fl.getDocumentDOM().setElementProperty('lineType', 'multiline');
         fl.getDocumentDOM().setElementProperty('name', 'txt');
         fl.getDocumentDOM().setElementProperty('fontRenderingMode', 'standard');
         dialogueFormat();
-        if (dialogueArray[i].indexOf('(') > -1) {
+        if (dialogueArray[i][1].indexOf('(') > -1) {
             thinkingFormat();
         }
 
-        if (speakertagArray[i] == "Widget") {
+        if (dialogueArray[i][0] == "Widget") {
             fl.getDocumentDOM.setTextAttr("fillColor", 0xD7D700);
         }
         for (var m = 0; m < nameswapArray.length; m++) {
@@ -687,12 +696,51 @@ if (guiPanel.dismiss == "accept") {
     }
 
     writeReport = guiPanel.panel_writeReport;
+    
     fl.runScript(arrayPath);
     fl.runScript(dirURL + "/config.txt");
 
 /******************************************************************************
+                            DISCRIMINATE ARRAYS
+******************************************************************************/
+
+/*
+Dialogue Array
+
+All the entries in the scene data array that are prefixed with "dialogue" will
+be bumped into this new array in charge of text and rig generation.
+
+speakertagArray is a fossil from the old schema, but it's called like 40 times
+in this script and I have no idea what some functions do, so we will add a step
+to rebuild the old speakertagArray to fit compatibility with this new schema.
+
+sceneData[0] will determine if it is dialogue
+sceneData[1] is the AE markup ID
+sceneData[2] is the speaker
+sceneData[3] is the dialogue itself
+sceneData[4] is the pose suggested by the script or emotionEngine
+*/
+
+    for (var i = 0; i < sceneData.length; i++) {
+
+        if (sceneData[i][0] == "dialogue") {
+            dialogueArray.push( [sceneData[i][2], sceneData[i][3]] )
+        }
+
+    }
+
+    for (var i = 0; i < dialogueArray.length; i++) {
+        speakertagArray[i] = (dialogueArray[i][0])
+        fl.trace(speakertagArray[i])
+    }
+
+    fl.trace(speakertagArray)
+
+/******************************************************************************
                                 MAIN EXECUTION
 ******************************************************************************/
+
+//move get time diff into each function plus a string saying the name of the function
 
     fl.getDocumentDOM().getTimeline().currentFrame = 0;
     if (viewMode == "courtMode") {
