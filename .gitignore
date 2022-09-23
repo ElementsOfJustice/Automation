@@ -12,3 +12,7 @@ VoiceLineProcessor/__pycache__
 VoiceLineProcessor/output
 VoiceLineProcessor/TextGrid_files
 VoiceLineProcessor/model/
+.VSCodeCounter
+getLineId.jsfl
+VoiceLineProcessor
+Scene\ Generators/Script\ Parsing/Scripts
