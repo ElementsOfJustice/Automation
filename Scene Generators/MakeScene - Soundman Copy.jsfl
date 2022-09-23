@@ -622,7 +622,7 @@ of a word and so need to be linked to lipsync data to tell when in a
 voice line that happens.
 */
 
-function screenshake(intensity, taperOff) {
+function screenshake(sfx, cue) {
 
 }
 
@@ -631,9 +631,11 @@ FUNCTION flash
 
 Applies a simple white flash on the flash layer.
 Always white, max opacity is always 50%.
+
+The flash occurs on the cue and can be provided with a SFX
 */
 
-function flash() {
+function flash(sfx, cue) {
 
 }
 
@@ -658,6 +660,16 @@ do not change playhead location.
 */
 
 function typewriter(type, contents) {
+
+}
+
+/*
+FUNCTION pan
+
+Courtroom swipe over to the desired position.
+*/
+
+function pan(destination) {
 
 }
 
@@ -731,10 +743,90 @@ sceneData[4] is the pose suggested by the script or emotionEngine
 
     for (var i = 0; i < dialogueArray.length; i++) {
         speakertagArray[i] = (dialogueArray[i][0])
-        fl.trace(speakertagArray[i])
     }
 
-    fl.trace(speakertagArray)
+/*
+Pan Array
+
+sceneData[0] will determine if we are panning
+sceneData[1] will determine the pan destination
+*/
+
+    for (var i = 0; i < sceneData.length; i++) {
+
+        if (sceneData[i][0] == "pan") {
+            //issue: what step do we run this on and how do we tell the function where to pan? We lose our step order after we pull from the scene data array!!!
+            // Do we include what sceneData i we are on? That way we don't lose the original scene data order.
+            // Even shittier idea, discriminate arrays as we iterate dialogueArray and match dialogueArray[i] to the type we're doing to be in sync
+            pan(sceneData[i][1])
+        }
+
+    }
+
+/*
+Fade Array
+
+sceneData[0] will determine if we are fading
+sceneData[1] will determine if we are fading in or out
+*/
+
+var defaultFadeLength = 12; //declare this a million years ago
+
+for (var i = 0; i < sceneData.length; i++) {
+
+    if (sceneData[i][0] == "fade") {
+        fade(defaultFadeLength, sceneData[i][1])
+    }
+
+}
+
+/*
+Flash 
+*/
+
+for (var i = 0; i < sceneData.length; i++) {
+
+    if (sceneData[i][0] == "flash") {
+        flash(sfx, cue)
+    }
+
+}
+
+/*
+Screenshake 
+*/
+
+for (var i = 0; i < sceneData.length; i++) {
+
+    if (sceneData[i][0] == "screenshake") {
+        screenshake(sfx, cue) //screenshake with default settings always
+    }
+
+}
+
+/*
+Evidence
+
+sceneData[0] will determine if we are evidence
+sceneData[1] will determine if we are presenting or obtaining
+sceneData[2] will determine the png name
+sceneData[3] the side of the evidence if we're presenting
+sceneData[4] the text data of the evidence if we're obtaining it
+
+If we obtain the evidence, invoke typewriter with the text data of 'sceneData[2] added to Court Record.'
+
+*/
+
+for (var i = 0; i < sceneData.length; i++) {
+
+    if (sceneData[i][0] == "evidence") {
+        evidence(sceneData[i][1], sceneData[i][2], sceneData[i][3], sceneData[i][4])
+        //evidence function needs to be polymorphic for obtain vs present
+    }
+
+}
+
+
 
 /******************************************************************************
                                 MAIN EXECUTION
