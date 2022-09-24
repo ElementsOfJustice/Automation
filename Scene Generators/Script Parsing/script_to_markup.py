@@ -1,3 +1,16 @@
+
+""" 
+SCRIPT MARKUP
+Description:
+Converts a script from Elements of Justice into an audio markup and into an array file for
+scene generation.
+
+Issues:
+- Don't specify an output file, get rid of that argument
+- Export scene array to its own file
+- How the hell are we gonna do SFX?
+"""
+
 import sys
 import re
 import os
@@ -6,6 +19,7 @@ if not len(sys.argv) > 1:
     print("Please specify script file as the first argument. TXT file must be UTF-8 encoded or else you will receive the error UnicodeEncodeError: 'charmap' codec can't encode character '\ufeff' in position 0: character maps to <undefined>.")
     exit()
 
+#why specify an output file? make it the input file with -markup appended to it for the audio markup and -sceneData for the scene generation data. One less argument
 if not len(sys.argv) > 2:
     print("Please specify the output file")
     exit()
@@ -21,8 +35,10 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
 
     to_write = ""
     cur_voice_line = 1
+
     scene = 1
     characters = []
+
     flag_isSpeakingLine = False
     flag_runFirst = True
 
@@ -30,6 +46,8 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
     str_speaker = ""
     str_dialogue = ""
     str_pose = ""
+
+    arr_sceneData = []
 
     for line in file:
 
@@ -81,12 +99,12 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
             #gets dialogue lines
 
             if line.startswith("["):
-                str_pose = line[line.find('[')+1:line.find(']')]
+                #str_pose = line[line.find('[')+1:line.find(']')]
+                str_pose = "NONE"
             else:
                 str_pose = "NONE"
 
-            str_dialogue = re.sub(r"[\([{})\]]", "", line.strip('\n'))
-            
+            str_dialogue = re.sub(r"[\([{})\]]", "", line.strip('\n')) #TODO this still does not remove text inside [] brackets, fuck my life
             flag_isSpeakingLine = False
             flag_runFirst = False
     
@@ -100,10 +118,15 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
 
         if not flag_runFirst:
             #export dialogue data
-            print("dialogue" + " " + str_lineId + " "  + str_speaker + " "  + str_dialogue + " " + "(" + str_pose + ")")
+            #print("dialogue" + " " + str_lineId + " "  + str_speaker + " "  + str_dialogue + " " + "(" + str_pose + ")")
+
+            arr_tmpData = ["dialogue", str_lineId, str_speaker, str_dialogue, str_pose]
+            arr_sceneData.append(arr_tmpData)
+
             flag_runFirst = True
 
         to_write+=new_line
+    print(arr_sceneData)
 
     try:
         dest_file = open(sys.argv[2], "w")
