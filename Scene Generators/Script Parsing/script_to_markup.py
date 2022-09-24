@@ -23,22 +23,22 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
     cur_voice_line = 1
     scene = 1
     characters = []
-    isSpeakingLine = False
-    runFirst = True
+    flag_isSpeakingLine = False
+    flag_runFirst = True
 
-    lineId = ""
-    speaker = ""
-    dialogue = ""
-    pose = ""
+    str_lineId = ""
+    str_speaker = ""
+    str_dialogue = ""
+    str_pose = ""
 
     for line in file:
 
         new_line = line
-        is_dialogue_line = False
+        flag_isSpeakertag = False
 
         if "SCENE " in line:
             scene = int(line[line.index("SCENE ") + len("SCENE "):len(line) - 1])
-            characters = [] # reset characters for new scene, probably redundant
+            characters = [] # reset characters for new scene, probably redundant <= don't reset, let it build to maximize successful run if a character is undeclared by err in a later scene -S
             cur_voice_line = 1 # reset voice line count
 
         if "Characters: " in line:
@@ -47,32 +47,61 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
 
         for character in characters:
             if (character.upper()+"\n" in line) or (character.upper() + " &" in line):
-                is_dialogue_line = True
+                flag_isSpeakertag = True
                 new_line = new_line.replace(character.upper(), "s"+str(scene)+"_"+str(cur_voice_line).zfill(3)+"_"+character.lower())
-                lineId = new_line.strip('\n')
+                str_lineId = new_line.strip('\n')
 
-        if isSpeakingLine: #gets dialogue line
+        if line.startswith("<"):
+            #get stage directions
+
+            #fades
+            if "fade" in line.lower():
+                if "out" in line.lower():
+                    print("fade out")
+                if "in" in line.lower():
+                    print("fade in")            
+
+            #panning TODO: Handle Multiple Witnesses
+            if "pan" in line.lower():
+                if "prosecution" in line.lower():
+                    print("pan prosecution")
+                if "defense" in line.lower():
+                    print("pan defense")
+
+            #evidence
+            if "evidence" in line.lower():
+                if "get" in line.lower():
+                    print("evidence get " + line.split(' ')[3-1] + " " + line.split(" ", 3)[-1].strip('\n').strip('>'))
+                if "present" in line.lower():
+                    print("evidence present " + line.split(' ')[3-1] + " " + line.split(" ", 3)[-1].strip('\n').strip('>'))
+
+            #write SFX some other day
+
+        if flag_isSpeakingLine: 
+            #gets dialogue lines
 
             if line.startswith("["):
-                pose = line[line.find('[')+1:line.find(']')]
+                str_pose = line[line.find('[')+1:line.find(']')]
             else:
-                pose = "NONE"
+                str_pose = "NONE"
 
-            dialogue = re.sub(r"[\([{})\]]", "", line.strip('\n'))
+            str_dialogue = re.sub(r"[\([{})\]]", "", line.strip('\n'))
             
-            isSpeakingLine = False
-            runFirst = False
+            flag_isSpeakingLine = False
+            flag_runFirst = False
     
-        if is_dialogue_line: #this variable name is fucking terrible CONZOR!!! it actually checks if it's a SPEAKERTAG line!!!
-            speaker = line.title()
-            speaker = speaker.strip('\n')
-            isSpeakingLine = True
+        if flag_isSpeakertag:
+            #gets speaker tag
+            str_speaker = line.title()
+            str_speaker = str_speaker.strip('\n')
+            flag_isSpeakingLine = True
             cur_voice_line+=1
-            runFirst = True
+            flag_runFirst = True
 
-        if not runFirst:
-            print("dialogue" + " " + lineId + " "  + speaker + " "  + dialogue + " " + "(" + pose + ")")
-            runFirst = True
+        if not flag_runFirst:
+            #export dialogue data
+            print("dialogue" + " " + str_lineId + " "  + str_speaker + " "  + str_dialogue + " " + "(" + str_pose + ")")
+            flag_runFirst = True
 
         to_write+=new_line
 
