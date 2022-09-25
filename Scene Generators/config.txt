@@ -96,8 +96,8 @@ Arg4 - add item y
 
 var masterDeskArray = {}
 masterDeskArray[sJudge] = ["OTHER ASSETS/DESKS/Judge-Table-Final", 640, 360];
-masterDeskArray[sDefense] = ["OTHER ASSETS/DESKS/Judge-Table-Final", 530, 640];
-masterDeskArray[sProsecutor] = ["OTHER ASSETS/DESKS/Judge-Table-Final", 755, 630];
+masterDeskArray[sDefense] = ["OTHER ASSETS/DESKS/DEFENSE-BENCH", 530, 640];
+masterDeskArray[sProsecutor] = ["OTHER ASSETS/DESKS/PROSECUTION-BENCH", 755, 630];
 masterDeskArray[sWitnesses[0]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
 masterDeskArray[sWitnesses[1]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
 masterDeskArray[sWitnesses[2]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];

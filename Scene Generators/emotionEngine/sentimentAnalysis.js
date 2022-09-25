@@ -107,6 +107,8 @@ data = fs.readFileSync('Scene Generators/emotionEngine/databases/' + type + '/' 
 
   console.log(dictionaryName, text, pose)
 
+  if (pose == undefined) {pose = "UNDEF"}
+
   writeFile(posePlacement, pose)
 
 };

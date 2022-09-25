@@ -108,7 +108,7 @@ function switchActive(layerVar) {
 }
 
 function dialogueFormat() {
-    fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2");
+    fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2 Semi-condensed Regular");
     fl.getDocumentDOM().setElementTextAttr("size", 40);
     fl.getDocumentDOM().setElementTextAttr("fillColor", 0xffffff);
     fl.getDocumentDOM().setElementTextAttr("letterSpacing", 2);
@@ -116,14 +116,14 @@ function dialogueFormat() {
 }
 
 function speakerFormat() {
-    fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2");
+    fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2 Semi-condensed Regular");
     fl.getDocumentDOM().setElementTextAttr("size", 42);
     fl.getDocumentDOM().setElementTextAttr("fillColor", 0xffffff);
     fl.getDocumentDOM().setElementTextAttr("letterSpacing", 2);
 }
 
 function thinkingFormat() {
-    fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2");
+    fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2 Semi-condensed Regular");
     fl.getDocumentDOM().setElementTextAttr("size", 40);
     fl.getDocumentDOM().setElementTextAttr("fillColor", 0x008fff);
     fl.getDocumentDOM().setElementTextAttr("letterSpacing", 2);
@@ -162,6 +162,7 @@ function doTextBoxes() {
     for (var i = 0; i < dialogueArray.length; i++) {
         // select current frame
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+
         if (i != 0) {
             fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
         }
@@ -204,6 +205,9 @@ function doTextBoxes() {
                 fl.getDocumentDOM().setElementTextAttr("letterSpacing", (letterSpacingArray[z][1]))
             }
         }
+
+        fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("TEXT")].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].name = dialogueArray[i][2]
+
         fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
     }
 }
@@ -299,6 +303,54 @@ function sculpt() {
     for (var i = speakertagArray.length - 1; i >= 0; i--) {
         for (var j = 0; j < uniqueChars.length; j++) {
             fl.getDocumentDOM().getTimeline().currentFrame = iFrameDuration * i;
+
+        if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
+            switchActive(masterRigArray[uniqueChars[j]][0]);
+
+            // POSE AUTOMATION //
+
+            var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
+
+            //fl.trace("Layer Index: " + layerIndex)
+            //fl.trace("Frame: " + fl.getDocumentDOM().getTimeline().currentFrame)
+            //fl.trace("Element: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0])
+            //fl.trace("Item Index: " + fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name))
+
+            //fl.trace("Selected Layer is " + masterRigArray[uniqueChars[j]][0] + " but it should be " + speakertagArray[i])
+            //fl.trace("Selected Sym for xSheet Browsing is: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
+
+            var itemIndex= fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
+            var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0]
+
+            var poseFrameNum = -1
+
+            for (var k = 0; k < objTl.frameCount; k++) {
+                if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame)) {    
+                    //fl.trace(dialogueArray[i][2] + " " + dialogueArray[i][1])
+                    //fl.trace("Internal xSheet Pose Name: " + objTl.frames[k].name + " | Intended Pose Name: " + dialogueArray[i][3] + " k: " + k)              
+                    if (objTl.frames[k].name == dialogueArray[i][3]) {
+                        poseFrameNum = k
+                    }
+                }       
+            }
+
+        }
+
+            if (poseFrameNum != -1) {
+                //fl.trace(dialogueArray[i][3] + " is not NONE")
+                //fl.trace("Current FirstFrame is " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame)
+                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
+            } else {
+                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = 0
+            }
+
+            //write pose to frame name
+            fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
+
+            if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
+                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
+            }
+
             if ((i == 0) && (speakertagArray[i] != uniqueChars[j])) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
                 switchActive(masterRigArray[uniqueChars[j]][0]);
                 // select current frame
@@ -332,25 +384,23 @@ function sculpt() {
                 }
             }
 
-
             else if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
                 switchActive(masterRigArray[uniqueChars[j]][0]);
-                // if (fl.getDocumentDOM().getTimeline().getLayerProperty('visible')) {
-                //     fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !true);
-                // }
-                // select current frame
+
                 fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
                 if (i != 0) {
                     fl.getDocumentDOM().getTimeline().insertKeyframe();
                 } else {
                     fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
                 }
-                if (speakertagArray[i] != speakertagArray[i + 1]) {
-                    fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
-                    // select current frame
-                    fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-                    fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
-                }
+
+            if (speakertagArray[i] != speakertagArray[i + 1]) {
+                fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
+                // select current frame
+                fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+                fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
+            }
+
             }
         }
     }
@@ -736,7 +786,11 @@ sceneData[4] is the pose suggested by the script or emotionEngine
     for (var i = 0; i < sceneData.length; i++) {
 
         if (sceneData[i][0] == "dialogue") {
-            dialogueArray.push( [sceneData[i][2], sceneData[i][3]] )
+            dialogueArray.push( [sceneData[i][2], sceneData[i][3], sceneData[i][1], sceneData[i][4]] ) 
+            //dialogueArray[i][0] for SpeakerTag
+            //dialogueArray[i][1] for Dialogue
+            //dialogueArray[i][2] for Line ID
+            //dialogueArray[i][3] for Pose
         }
 
     }
