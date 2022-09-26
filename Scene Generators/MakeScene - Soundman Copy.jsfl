@@ -135,13 +135,14 @@ function thinkingFormat() {
 ******************************************************************************/
 
 /*
-FUNCTION doTextBoxes
-
-Inserts dialogue and speaker tags into each frame on the text layer. This text
-is obtained from the script itself via a plaintext parser. Bounding boxes are
-specified for the textboxes as well as text options like multiline wrap,
-antialiasing and paragraph settings. Text color is determined here. Defaults to
-white, blue for thinking, and yellow for Widget.
+Function: doTextBoxes
+Variables: None
+Description: 
+    Inserts dialogue and speaker tags into each frame on the text layer. 
+    This text is obtained from the script itself via a plaintext parser. Bounding 
+    boxes are specified for the textboxes as well as text options like multiline 
+    wrap, antialiasing and paragraph settings. Text color is determined here. 
+    Defaults to white, blue for thinking, and yellow for Widget.
 */
 
 function doTextBoxes() {
@@ -214,11 +215,12 @@ function doTextBoxes() {
 }
 
 /*
-FUNCTION getCharacters
-
-Returns a set of unique characters. I don't know why we do this
-but I assume it is related to error-handling or characters who speak
-without a rig.
+Function: getCharacters
+Variables: None
+Description: 
+    Returns a set of unique characters. I don't know why we do this
+    but I assume it is related to error-handling or characters who speak
+    without a rig.
 */
 
 function getCharacters() { // gets unique characters (basically returns a set)
@@ -233,12 +235,13 @@ function getCharacters() { // gets unique characters (basically returns a set)
 }
 
 /*
-FUNCTION addRigs
-
-Adds the rigs to the stage. First, we add a dummy symbol, because it is faster to
-replace a symbol than it is to place a rig. Then we swap the symbol with the rig
-of our chouse, make sure it is positioned correctly and visible. This function
-needs a companion function that changes poses based on emotionEngine output.
+Function: addRigs
+Variables: None
+Description:
+    Adds the rigs to the stage. First, we add a dummy symbol, because it is faster to
+    replace a symbol than it is to place a rig. Then we swap the symbol with the rig
+    of our chouse, make sure it is positioned correctly and visible. This function
+    needs a companion function that changes poses based on emotionEngine output.
 */
 
 function addRigs() {
@@ -265,12 +268,14 @@ function addRigs() {
 }
 
 /*
-FUNCTION generateWitnessBools
-
-No idea
+Function: generateWitnessBools
+Variables: 
+    speakerTagIndex []
+Description: 
+    Helper function to generate the condition for witness handling
 */
 
-function generateWitnessBools(speakerTagIndex) { // helper function to generate the condition for witness handling
+function generateWitnessBools(speakerTagIndex) { 
     var isWitnessSpeaking = false;
     var isNextCharacterWitness = false;
     for (var witness in sWitnesses) {
@@ -290,13 +295,14 @@ function generateWitnessBools(speakerTagIndex) { // helper function to generate 
 }
 
 /*
-FUNCTION sculpt
-
-A reversed process for adding rigs to stage. It is faster to remove and
-clear frames than it is to place them. So every rig is placed one time
-and then we navigate to the end of the document and work backwards,
-chiseling out where we want rigs to be by adding blank keyframes. This
-function alone is the most extreme speedup to scene generation.
+Function: sculpt
+Variables: None
+Description:
+    A reversed process for adding rigs to stage. It is faster to remove and
+    clear frames than it is to place them. So every rig is placed one time
+    and then we navigate to the end of the document and work backwards,
+    chiseling out where we want rigs to be by adding blank keyframes. This
+    function alone is the most extreme speedup to scene generation.
 */
 
 function sculpt() {
@@ -408,11 +414,12 @@ function sculpt() {
 }
 
 /*
-FUNCTION placeDesks
-
-Places desks as bitmaps. Sometimes desks jump out of position. This is related
-to whichever step is last in execution. It is typically desks in most builds of
-EoJ scene generators.
+Function: placeDesks
+Variables: None
+Description:
+    Places desks as bitmaps. Sometimes desks jump out of position. This is related
+    to whichever step is last in execution. It is typically desks in most builds of
+    EoJ scene generators.
 */
 
 function placeDesks() {
@@ -438,11 +445,12 @@ function placeDesks() {
 }
 
 /*
-FUNCTION placeBGs
-
-Places backgrounds. Knows which BG to add by comparing to an array of backgrounds
-for each character. So the Judge will always get the Judge background and Athena
-will always get the defense background.
+Function: placeBGs
+Variables:
+Descriptions:
+    Places backgrounds. Knows which BG to add by comparing to an array of backgrounds
+    for each character. So the Judge will always get the Judge background and Athena
+    will always get the defense background.
 */
 
 function placeBGs() {
@@ -473,10 +481,11 @@ function placeBGs() {
 }
 
 /*
-FUNCTION getTimeDiff
-
-Gets the time difference. Useful for telling how long each step
-takes to execute and which rigs are bloated.
+Function: getTimeDiff
+Variables:
+Descriptions:
+    Gets the time difference. Useful for telling how long each step
+    takes to execute and which rigs are bloated.
 */
 
 function getTimeDiff(startTime, endTime) {
@@ -500,10 +509,11 @@ function getTimeDiff(startTime, endTime) {
 ******************************************************************************/
 
 /*
-FUNCTION doTextBoxesInvestigation
-
-No clue why this function needs an investigation variant. Ask Connor
-about this later.
+Function: doTextBoxesInvestigation
+Variables:
+Description: 
+    No clue why this function needs an investigation variant. 
+    Ask Connor about this later.
 */
 
 function doTextBoxesInvestigation() {
@@ -568,11 +578,12 @@ function doTextBoxesInvestigation() {
 }
 
 /*
-FUNCTION addRigsInvestigation
-
-Adds rigs for the Investigation view format. Same as courtroom, but
-all the ponies face forwards and are centered. Also add emotionEngine support
-to this as well as incorporate automating fading.
+Function: addRigsInvestigation
+Variables: 
+Description:
+    Adds rigs for the Investigation view format. Same as courtroom, but
+    all the ponies face forwards and are centered. Also add emotionEngine support
+    to this as well as incorporate automating fading.
 */
 
 function addRigsInvestgation() {
@@ -602,9 +613,10 @@ function addRigsInvestgation() {
 }
 
 /*
-FUNCTION sculptInvestigations
-
-Sculpts rigs like courtroom functions, but for Investigations.
+Function: sculptInvestigations
+Variables: None
+Description: 
+    Sculpts rigs like courtroom functions, but for Investigations.
 */
 
 function sculptInvestgation() {
@@ -652,11 +664,16 @@ function sculptInvestgation() {
 ******************************************************************************/
 
 /*
-FUNCTION evidence
-
-Takes in whether evidence is being presented or obtained. Will also take in
-a PNG and what side of the screen to appear on, or if evidence is obtained,
-what the descriptor is. Side and descriptor are mutually exclusive.
+Function: evidence
+Variables:
+    png        []
+    type       []
+    side       []
+    descriptor []
+Description:
+    Takes in whether evidence is being presented or obtained. Will also take in
+    a PNG and what side of the screen to appear on, or if evidence is obtained,
+    what the descriptor is. Side and descriptor are mutually exclusive.
 */
 
 function evidence(png, type, side, descriptor) {
@@ -664,13 +681,16 @@ function evidence(png, type, side, descriptor) {
 }
 
 /*
-FUNCTION screenshake
-
-Will apply a random screenshake. If a SFX is provided, will cross-reference
-the standards for which SFX require screenshakes AND flashes and will
-automatically flash if required. Screenshakes may happen on the middle
-of a word and so need to be linked to lipsync data to tell when in a 
-voice line that happens.
+Function: screenshake
+Variables:
+    sfx []
+    cue []
+Description:
+    Will apply a random screenshake. If a SFX is provided, will cross-reference
+    the standards for which SFX require screenshakes AND flashes and will
+    automatically flash if required. Screenshakes may happen on the middle
+    of a word and so need to be linked to lipsync data to tell when in a 
+    voice line that happens.
 */
 
 function screenshake(sfx, cue) {
@@ -678,12 +698,15 @@ function screenshake(sfx, cue) {
 }
 
 /*
-FUNCTION flash
+Function: flash
+Variables:
+    sfx []
+    cue []
+Description:
+    Applies a simple white flash on the flash layer.
+    Always white, max opacity is always 50%.
 
-Applies a simple white flash on the flash layer.
-Always white, max opacity is always 50%.
-
-The flash occurs on the cue and can be provided with a SFX
+    The flash occurs on the cue and can be provided with a SFX
 */
 
 function flash(sfx, cue) {
@@ -691,10 +714,13 @@ function flash(sfx, cue) {
 }
 
 /*
-FUNCTION fade
-
-Fades out the standard amount of frames on the flash layer.
-Always black.
+Function: fade
+Variables:
+    duration []
+    inOut    []
+Description:
+    Fades out the standard amount of frames on the flash layer.
+    Always black.
 */
 
 function fade(duration, inOut) {
@@ -702,12 +728,15 @@ function fade(duration, inOut) {
 }
 
 /*
-FUNCTION typewriter
-
-Connor's autotypewriter script. Allows scene intros to be done
-automatically. If intro type, make a new Scene that is the first
-in the Scene order and enter the typewriter there. If evidence,
-do not change playhead location.
+Function: typewriter
+Variables:
+    type     []
+    contents []
+Description:
+    Connor's autotypewriter script. Allows scene intros to be done
+    automatically. If intro type, make a new Scene that is the first
+    in the Scene order and enter the typewriter there. If evidence,
+    do not change playhead location.
 */
 
 function typewriter(type, contents) {
@@ -715,16 +744,20 @@ function typewriter(type, contents) {
 }
 
 /*
-FUNCTION pan
-
-Courtroom swipe over to the desired position.
+Function: pan
+Variables: 
+    destination []
+Description:
+    Courtroom swipe over to the desired position.
 */
 
 function pan(destination) {
 
 }
 
-
+/******************************************************************************
+                                >>>MAIN<<<
+******************************************************************************/
 /******************************************************************************
                                 INVOKE GUI
 ******************************************************************************/
