@@ -194,6 +194,7 @@ function doTextBoxes() {
         fl.getDocumentDOM().addNewText(speakerBounding);
 
         fl.getDocumentDOM().setTextString(dialogueArray[i][0]);
+        fl.getDocumentDOM().setElementTextAttr("alignment", "left");
         fl.getDocumentDOM().setElementProperty('textType', 'dynamic');
         fl.getDocumentDOM().setElementProperty('lineType', 'multiline');
         fl.getDocumentDOM().setElementProperty('name', 'txt');
@@ -304,12 +305,13 @@ function sculpt() {
         for (var j = 0; j < uniqueChars.length; j++) {
             fl.getDocumentDOM().getTimeline().currentFrame = iFrameDuration * i;
 
+        var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
+
         if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
             switchActive(masterRigArray[uniqueChars[j]][0]);
+            layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
 
             // POSE AUTOMATION //
-
-            var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
 
             //fl.trace("Layer Index: " + layerIndex)
             //fl.trace("Frame: " + fl.getDocumentDOM().getTimeline().currentFrame)
@@ -334,11 +336,7 @@ function sculpt() {
                 }       
             }
 
-        }
-
             if (poseFrameNum != -1) {
-                //fl.trace(dialogueArray[i][3] + " is not NONE")
-                //fl.trace("Current FirstFrame is " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame)
                 fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
             } else {
                 fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = 0
@@ -349,6 +347,8 @@ function sculpt() {
 
             if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
                 fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
+            }
+
             }
 
             if ((i == 0) && (speakertagArray[i] != uniqueChars[j])) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
@@ -372,6 +372,7 @@ function sculpt() {
                         fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
                     }
                 }
+                
                 if (!generateWitnessBools(i)[1] /* isNextCharacterWitness */) { // if next speaker is neither witnesses, put blank keyframes at the end of their keyframe
                     for (var witness in sWitnesses) {
                         fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;

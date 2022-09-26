@@ -6,8 +6,7 @@ Converts a script from Elements of Justice into an audio markup and into an arra
 scene generation.
 
 Issues:
-- Don't specify an output file, get rid of that argument
-- Export scene array to its own file
+- Export scene generation file per-scene
 - How the hell are we gonna do SFX?
 """
 
@@ -17,11 +16,6 @@ import os
 
 if not len(sys.argv) > 1:
     print("Please specify script file as the first argument. TXT file must be UTF-8 encoded or else you will receive the error UnicodeEncodeError: 'charmap' codec can't encode character '\ufeff' in position 0: character maps to <undefined>.")
-    exit()
-
-#why specify an output file? make it the input file with -markup appended to it for the audio markup and -sceneData for the scene generation data. One less argument
-if not len(sys.argv) > 2:
-    print("Please specify the output file")
     exit()
 
 try:
@@ -104,7 +98,7 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
             else:
                 str_pose = "NONE"
 
-            str_dialogue = re.sub(r"[\([{})\]]", "", line.strip('\n')) #TODO this still does not remove text inside [] brackets, fuck my life
+            str_dialogue = re.sub("\[.*?\]+\s", "", line.strip('\n')) #TODO this still does not remove text inside [] brackets, fuck my life
             flag_isSpeakingLine = False
             flag_runFirst = False
     
@@ -126,10 +120,9 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
             flag_runFirst = True
 
         to_write+=new_line
-    print(arr_sceneData)
 
     try:
-        dest_file = open(sys.argv[2], "w")
+        dest_file = open(sys.argv[1].replace(".txt", "_ae_markup.txt"), "w")
 
     except:
         print("Invalid destination file, abort.")
@@ -137,3 +130,24 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
 
     dest_file.write(to_write)
     dest_file.close()
+
+    try:
+        dest_file = open(sys.argv[1].replace(".txt", "_sceneGeneration.txt"), "w")
+
+    except:
+        print("Invalid destination file, abort.")
+        exit()
+
+    dest_file.write("var sceneData = \n[")
+
+    for i in arr_sceneData:
+        if i != arr_sceneData[-1]:
+            dest_file.write("\n" + str(i) + ",")
+        else:
+            dest_file.write("\n" + str(i))
+
+    dest_file.write("\n];")
+
+    dest_file.close()
+
+    print("Execution completed successfully.")
