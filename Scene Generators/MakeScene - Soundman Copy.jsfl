@@ -247,7 +247,7 @@ Description:
 function addRigs() {
     var uniqueChars = getCharacters();
     for (var i = 0; i < uniqueChars.length; i++) {
-        fl.trace(masterRigArray[uniqueChars[i]]);
+        //fl.trace(masterRigArray[uniqueChars[i]]);
         switchActive(masterRigArray[uniqueChars[i]][0]);
         fl.getDocumentDOM().getTimeline().currentFrame = 0;
         // select current frame
@@ -311,50 +311,11 @@ function sculpt() {
         for (var j = 0; j < uniqueChars.length; j++) {
             fl.getDocumentDOM().getTimeline().currentFrame = iFrameDuration * i;
 
-        var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
+            var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
 
-        if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
-            switchActive(masterRigArray[uniqueChars[j]][0]);
-            layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
-
-            // POSE AUTOMATION //
-
-            //fl.trace("Layer Index: " + layerIndex)
-            //fl.trace("Frame: " + fl.getDocumentDOM().getTimeline().currentFrame)
-            //fl.trace("Element: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0])
-            //fl.trace("Item Index: " + fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name))
-
-            //fl.trace("Selected Layer is " + masterRigArray[uniqueChars[j]][0] + " but it should be " + speakertagArray[i])
-            //fl.trace("Selected Sym for xSheet Browsing is: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
-
-            var itemIndex= fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
-            var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0]
-
-            var poseFrameNum = -1
-
-            for (var k = 0; k < objTl.frameCount; k++) {
-                if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame)) {    
-                    //fl.trace(dialogueArray[i][2] + " " + dialogueArray[i][1])
-                    //fl.trace("Internal xSheet Pose Name: " + objTl.frames[k].name + " | Intended Pose Name: " + dialogueArray[i][3] + " k: " + k)              
-                    if (objTl.frames[k].name == dialogueArray[i][3]) {
-                        poseFrameNum = k
-                    }
-                }       
-            }
-
-            if (poseFrameNum != -1) {
-                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
-            } else {
-                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = 0
-            }
-
-            //write pose to frame name
-            fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
-
-            if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
-                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
-            }
-
+            if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
+                switchActive(masterRigArray[uniqueChars[j]][0]);
+                layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
             }
 
             if ((i == 0) && (speakertagArray[i] != uniqueChars[j])) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
@@ -401,6 +362,45 @@ function sculpt() {
                     fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
                 }
 
+            // POSE AUTOMATION //
+
+            //fl.trace("Layer Index: " + layerIndex)
+            //fl.trace("Frame: " + fl.getDocumentDOM().getTimeline().currentFrame)
+            //fl.trace("Element: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0])
+            //fl.trace("Item Index: " + fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name))
+
+            fl.trace("Selected Layer is " + masterRigArray[uniqueChars[j]][0] + " but it should be " + speakertagArray[i])
+            fl.trace("Selected Sym for xSheet Browsing is: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
+
+            var itemIndex= fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
+            var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0]
+
+            var poseFrameNum = -1
+
+            for (var k = 0; k < objTl.frameCount; k++) {
+                if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame)) {    
+                    //fl.trace(dialogueArray[i][2] + " " + dialogueArray[i][1])
+                    //fl.trace("Internal xSheet Pose Name: " + objTl.frames[k].name + " | Intended Pose Name: " + dialogueArray[i][3] + " k: " + k)              
+                    if (objTl.frames[k].name == dialogueArray[i][3]) {
+                        poseFrameNum = k
+                        fl.trace("K is : " + k)
+                    }
+                }       
+            }
+
+            if (poseFrameNum != -1) {
+                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
+            } else {
+                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = 0
+            }
+
+            //write pose to frame name
+            fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
+
+            if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
+                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
+            }
+
             if (speakertagArray[i] != speakertagArray[i + 1]) {
                 fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
                 // select current frame
@@ -409,6 +409,7 @@ function sculpt() {
             }
 
             }
+            
         }
     }
 }
