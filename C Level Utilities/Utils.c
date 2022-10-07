@@ -1,8 +1,71 @@
 #include <TChar.h>
 #include "mm_jsapi.h" 
 #include <stdio.h>
+#include <Python.h>
 #include <stdlib.h>
 #include <string.h>
+
+double call_func(PyObject* func, double x, double y) {
+    PyObject* args;
+    PyObject* kwargs;
+    PyObject* result = 0;
+    double retval;
+
+    // Make sure we own the GIL
+    PyGILState_STATE state = PyGILState_Ensure();
+
+
+    // Verify that func is a proper callable
+    if (!PyCallable_Check(func))
+    {
+        fprintf(stderr, "call_func: expected a callable\n");
+        goto fail;
+    }
+    // Step3
+    args = Py_BuildValue("(dd)", x, y);
+    kwargs = NULL;
+
+    // Step 4
+    result = PyObject_Call(func, args, kwargs);
+    Py_DECREF(args);
+    Py_XDECREF(kwargs);
+
+    // Step 5
+    if (PyErr_Occurred())
+    {
+        PyErr_Print();
+        goto fail;
+    }
+
+    // Verify the result is a float object 
+    if (!PyFloat_Check(result))
+    {
+        fprintf(stderr, "call_func: callable didn't return a float\n");
+        goto fail;
+    }
+
+    // Step 6
+    retval = PyFloat_AsDouble(result);
+    Py_DECREF(result);
+
+    // Step 7
+    PyGILState_Release(state);
+    return retval;
+fail:
+    Py_XDECREF(result);
+    PyGILState_Release(state);
+    abort();
+}
+
+PyObject* import_name(const char* modname, const char* symbol) {
+    PyObject* u_name, * module;
+    u_name = PyUnicode_FromString(modname);
+    module = PyImport_Import(u_name);
+    Py_DECREF(u_name);
+
+    return PyObject_GetAttrString(module, symbol);
+}
+
 
 // A sample function
 // Every implementation of a Javascript function must have this signature
@@ -43,7 +106,42 @@ JSBool getFLACLength(JSContext* cx, JSObject* obj, unsigned int argc, jsval* arg
     // Indicate success
     return JS_TRUE;
 }
+// Takes in a string from JSFL and returns it to JSFL
+JSBool stringExample(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
+    unsigned int size = 0;
+    unsigned short* jsString = JS_ValueToString(cx, argv[0], &size);
+    char* toReturn = malloc(size);
+    for (int i = 0; i < size; i++) {
+        toReturn[i] = (char)jsString[i];
+    }
+    JS_StringToValue(cx, toReturn, size, rval);
+    free(toReturn);
+    return JS_TRUE;
+}
 
+// testing with python, taking in two arguments
+JSBool pythonTest(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
+    PyObject* pow_func;
+    double x = 0, y = 0;
+    JSObject* args = JS_NewArrayObject(cx, argc, argv);
+    jsval arg1, arg2;
+    JS_GetElement(cx, args, 0, &arg1);
+    JS_GetElement(cx, args, 1, &arg2);
+    JS_ValueToDouble(cx, arg1, &x);
+    JS_ValueToDouble(cx, arg2, &y);
+
+    Py_Initialize();
+
+    // Get a reference to the math.pow function
+    pow_func = import_name("math", "pow");
+
+    // Call it using our call_func() code 
+    double result = call_func(pow_func, x, y);
+    JS_DoubleToValue(cx, result, rval);
+    Py_DECREF(pow_func);
+    Py_Finalize();
+    return JS_TRUE;
+}
 
 // MM_STATE is a macro that expands to some definitions that are
 // needed in order interact with Dreamweaver.  This macro must be
@@ -57,4 +155,6 @@ MM_Init()
 {
     // sample function
     JS_DefineFunction(_T("getFLACLength"), getFLACLength, 1);
+    JS_DefineFunction(_T("stringExample"), stringExample, 1);
+    JS_DefineFunction(_T("pythonTest"), pythonTest, 2);
 }
