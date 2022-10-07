@@ -38,8 +38,8 @@ function setup() {
 /*
 Function: makeLipFlap
 Variables:  
-midPointDelta []
-lengthOffset []
+	midPointDelta []
+	lengthOffset []
 Description: 
 */
 function makeLipFlap(midPointDelta, lengthOffset) {

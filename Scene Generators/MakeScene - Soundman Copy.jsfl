@@ -108,7 +108,7 @@ function switchActive(layerVar) {
 }
 
 function dialogueFormat() {
-    fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2");
+    fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2 Semi-condensed Regular");
     fl.getDocumentDOM().setElementTextAttr("size", 40);
     fl.getDocumentDOM().setElementTextAttr("fillColor", 0xffffff);
     fl.getDocumentDOM().setElementTextAttr("letterSpacing", 2);
@@ -116,14 +116,14 @@ function dialogueFormat() {
 }
 
 function speakerFormat() {
-    fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2");
+    fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2 Semi-condensed Regular");
     fl.getDocumentDOM().setElementTextAttr("size", 42);
     fl.getDocumentDOM().setElementTextAttr("fillColor", 0xffffff);
     fl.getDocumentDOM().setElementTextAttr("letterSpacing", 2);
 }
 
 function thinkingFormat() {
-    fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2");
+    fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2 Semi-condensed Regular");
     fl.getDocumentDOM().setElementTextAttr("size", 40);
     fl.getDocumentDOM().setElementTextAttr("fillColor", 0x008fff);
     fl.getDocumentDOM().setElementTextAttr("letterSpacing", 2);
@@ -135,13 +135,14 @@ function thinkingFormat() {
 ******************************************************************************/
 
 /*
-FUNCTION doTextBoxes
-
-Inserts dialogue and speaker tags into each frame on the text layer. This text
-is obtained from the script itself via a plaintext parser. Bounding boxes are
-specified for the textboxes as well as text options like multiline wrap,
-antialiasing and paragraph settings. Text color is determined here. Defaults to
-white, blue for thinking, and yellow for Widget.
+Function: doTextBoxes
+Variables: None
+Description: 
+    Inserts dialogue and speaker tags into each frame on the text layer. 
+    This text is obtained from the script itself via a plaintext parser. Bounding 
+    boxes are specified for the textboxes as well as text options like multiline 
+    wrap, antialiasing and paragraph settings. Text color is determined here. 
+    Defaults to white, blue for thinking, and yellow for Widget.
 */
 
 function doTextBoxes() {
@@ -162,6 +163,7 @@ function doTextBoxes() {
     for (var i = 0; i < dialogueArray.length; i++) {
         // select current frame
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+
         if (i != 0) {
             fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
         }
@@ -193,6 +195,7 @@ function doTextBoxes() {
         fl.getDocumentDOM().addNewText(speakerBounding);
 
         fl.getDocumentDOM().setTextString(dialogueArray[i][0]);
+        fl.getDocumentDOM().setElementTextAttr("alignment", "left");
         fl.getDocumentDOM().setElementProperty('textType', 'dynamic');
         fl.getDocumentDOM().setElementProperty('lineType', 'multiline');
         fl.getDocumentDOM().setElementProperty('name', 'txt');
@@ -204,16 +207,20 @@ function doTextBoxes() {
                 fl.getDocumentDOM().setElementTextAttr("letterSpacing", (letterSpacingArray[z][1]))
             }
         }
+
+        fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("TEXT")].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].name = dialogueArray[i][2]
+
         fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
     }
 }
 
 /*
-FUNCTION getCharacters
-
-Returns a set of unique characters. I don't know why we do this
-but I assume it is related to error-handling or characters who speak
-without a rig.
+Function: getCharacters
+Variables: None
+Description: 
+    Returns a set of unique characters. I don't know why we do this
+    but I assume it is related to error-handling or characters who speak
+    without a rig.
 */
 
 function getCharacters() { // gets unique characters (basically returns a set)
@@ -228,12 +235,13 @@ function getCharacters() { // gets unique characters (basically returns a set)
 }
 
 /*
-FUNCTION addRigs
-
-Adds the rigs to the stage. First, we add a dummy symbol, because it is faster to
-replace a symbol than it is to place a rig. Then we swap the symbol with the rig
-of our chouse, make sure it is positioned correctly and visible. This function
-needs a companion function that changes poses based on emotionEngine output.
+Function: addRigs
+Variables: None
+Description:
+    Adds the rigs to the stage. First, we add a dummy symbol, because it is faster to
+    replace a symbol than it is to place a rig. Then we swap the symbol with the rig
+    of our chouse, make sure it is positioned correctly and visible. This function
+    needs a companion function that changes poses based on emotionEngine output.
 */
 
 function addRigs() {
@@ -260,12 +268,14 @@ function addRigs() {
 }
 
 /*
-FUNCTION generateWitnessBools
-
-No idea
+Function: generateWitnessBools
+Variables: 
+    speakerTagIndex []
+Description: 
+    Helper function to generate the condition for witness handling
 */
 
-function generateWitnessBools(speakerTagIndex) { // helper function to generate the condition for witness handling
+function generateWitnessBools(speakerTagIndex) { 
     var isWitnessSpeaking = false;
     var isNextCharacterWitness = false;
     for (var witness in sWitnesses) {
@@ -285,13 +295,14 @@ function generateWitnessBools(speakerTagIndex) { // helper function to generate 
 }
 
 /*
-FUNCTION sculpt
-
-A reversed process for adding rigs to stage. It is faster to remove and
-clear frames than it is to place them. So every rig is placed one time
-and then we navigate to the end of the document and work backwards,
-chiseling out where we want rigs to be by adding blank keyframes. This
-function alone is the most extreme speedup to scene generation.
+Function: sculpt
+Variables: None
+Description:
+    A reversed process for adding rigs to stage. It is faster to remove and
+    clear frames than it is to place them. So every rig is placed one time
+    and then we navigate to the end of the document and work backwards,
+    chiseling out where we want rigs to be by adding blank keyframes. This
+    function alone is the most extreme speedup to scene generation.
 */
 
 function sculpt() {
@@ -299,6 +310,53 @@ function sculpt() {
     for (var i = speakertagArray.length - 1; i >= 0; i--) {
         for (var j = 0; j < uniqueChars.length; j++) {
             fl.getDocumentDOM().getTimeline().currentFrame = iFrameDuration * i;
+
+        var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
+
+        if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
+            switchActive(masterRigArray[uniqueChars[j]][0]);
+            layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
+
+            // POSE AUTOMATION //
+
+            //fl.trace("Layer Index: " + layerIndex)
+            //fl.trace("Frame: " + fl.getDocumentDOM().getTimeline().currentFrame)
+            //fl.trace("Element: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0])
+            //fl.trace("Item Index: " + fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name))
+
+            //fl.trace("Selected Layer is " + masterRigArray[uniqueChars[j]][0] + " but it should be " + speakertagArray[i])
+            //fl.trace("Selected Sym for xSheet Browsing is: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
+
+            var itemIndex= fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
+            var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0]
+
+            var poseFrameNum = -1
+
+            for (var k = 0; k < objTl.frameCount; k++) {
+                if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame)) {    
+                    //fl.trace(dialogueArray[i][2] + " " + dialogueArray[i][1])
+                    //fl.trace("Internal xSheet Pose Name: " + objTl.frames[k].name + " | Intended Pose Name: " + dialogueArray[i][3] + " k: " + k)              
+                    if (objTl.frames[k].name == dialogueArray[i][3]) {
+                        poseFrameNum = k
+                    }
+                }       
+            }
+
+            if (poseFrameNum != -1) {
+                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
+            } else {
+                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = 0
+            }
+
+            //write pose to frame name
+            fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
+
+            if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
+                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
+            }
+
+            }
+
             if ((i == 0) && (speakertagArray[i] != uniqueChars[j])) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
                 switchActive(masterRigArray[uniqueChars[j]][0]);
                 // select current frame
@@ -320,6 +378,7 @@ function sculpt() {
                         fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
                     }
                 }
+                
                 if (!generateWitnessBools(i)[1] /* isNextCharacterWitness */) { // if next speaker is neither witnesses, put blank keyframes at the end of their keyframe
                     for (var witness in sWitnesses) {
                         fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
@@ -332,36 +391,35 @@ function sculpt() {
                 }
             }
 
-
             else if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
                 switchActive(masterRigArray[uniqueChars[j]][0]);
-                // if (fl.getDocumentDOM().getTimeline().getLayerProperty('visible')) {
-                //     fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !true);
-                // }
-                // select current frame
+
                 fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
                 if (i != 0) {
                     fl.getDocumentDOM().getTimeline().insertKeyframe();
                 } else {
                     fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
                 }
-                if (speakertagArray[i] != speakertagArray[i + 1]) {
-                    fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
-                    // select current frame
-                    fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-                    fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
-                }
+
+            if (speakertagArray[i] != speakertagArray[i + 1]) {
+                fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
+                // select current frame
+                fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+                fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
+            }
+
             }
         }
     }
 }
 
 /*
-FUNCTION placeDesks
-
-Places desks as bitmaps. Sometimes desks jump out of position. This is related
-to whichever step is last in execution. It is typically desks in most builds of
-EoJ scene generators.
+Function: placeDesks
+Variables: None
+Description:
+    Places desks as bitmaps. Sometimes desks jump out of position. This is related
+    to whichever step is last in execution. It is typically desks in most builds of
+    EoJ scene generators.
 */
 
 function placeDesks() {
@@ -387,11 +445,12 @@ function placeDesks() {
 }
 
 /*
-FUNCTION placeBGs
-
-Places backgrounds. Knows which BG to add by comparing to an array of backgrounds
-for each character. So the Judge will always get the Judge background and Athena
-will always get the defense background.
+Function: placeBGs
+Variables:
+Descriptions:
+    Places backgrounds. Knows which BG to add by comparing to an array of backgrounds
+    for each character. So the Judge will always get the Judge background and Athena
+    will always get the defense background.
 */
 
 function placeBGs() {
@@ -422,10 +481,11 @@ function placeBGs() {
 }
 
 /*
-FUNCTION getTimeDiff
-
-Gets the time difference. Useful for telling how long each step
-takes to execute and which rigs are bloated.
+Function: getTimeDiff
+Variables:
+Descriptions:
+    Gets the time difference. Useful for telling how long each step
+    takes to execute and which rigs are bloated.
 */
 
 function getTimeDiff(startTime, endTime) {
@@ -449,10 +509,11 @@ function getTimeDiff(startTime, endTime) {
 ******************************************************************************/
 
 /*
-FUNCTION doTextBoxesInvestigation
-
-No clue why this function needs an investigation variant. Ask Connor
-about this later.
+Function: doTextBoxesInvestigation
+Variables:
+Description: 
+    No clue why this function needs an investigation variant. 
+    Ask Connor about this later.
 */
 
 function doTextBoxesInvestigation() {
@@ -517,11 +578,12 @@ function doTextBoxesInvestigation() {
 }
 
 /*
-FUNCTION addRigsInvestigation
-
-Adds rigs for the Investigation view format. Same as courtroom, but
-all the ponies face forwards and are centered. Also add emotionEngine support
-to this as well as incorporate automating fading.
+Function: addRigsInvestigation
+Variables: 
+Description:
+    Adds rigs for the Investigation view format. Same as courtroom, but
+    all the ponies face forwards and are centered. Also add emotionEngine support
+    to this as well as incorporate automating fading.
 */
 
 function addRigsInvestgation() {
@@ -551,9 +613,10 @@ function addRigsInvestgation() {
 }
 
 /*
-FUNCTION sculptInvestigations
-
-Sculpts rigs like courtroom functions, but for Investigations.
+Function: sculptInvestigations
+Variables: None
+Description: 
+    Sculpts rigs like courtroom functions, but for Investigations.
 */
 
 function sculptInvestgation() {
@@ -601,11 +664,16 @@ function sculptInvestgation() {
 ******************************************************************************/
 
 /*
-FUNCTION evidence
-
-Takes in whether evidence is being presented or obtained. Will also take in
-a PNG and what side of the screen to appear on, or if evidence is obtained,
-what the descriptor is. Side and descriptor are mutually exclusive.
+Function: evidence
+Variables:
+    png        []
+    type       []
+    side       []
+    descriptor []
+Description:
+    Takes in whether evidence is being presented or obtained. Will also take in
+    a PNG and what side of the screen to appear on, or if evidence is obtained,
+    what the descriptor is. Side and descriptor are mutually exclusive.
 */
 
 function evidence(png, type, side, descriptor) {
@@ -613,35 +681,46 @@ function evidence(png, type, side, descriptor) {
 }
 
 /*
-FUNCTION screenshake
-
-Will apply a random screenshake. If a SFX is provided, will cross-reference
-the standards for which SFX require screenshakes AND flashes and will
-automatically flash if required. Screenshakes may happen on the middle
-of a word and so need to be linked to lipsync data to tell when in a 
-voice line that happens.
+Function: screenshake
+Variables:
+    sfx []
+    cue []
+Description:
+    Will apply a random screenshake. If a SFX is provided, will cross-reference
+    the standards for which SFX require screenshakes AND flashes and will
+    automatically flash if required. Screenshakes may happen on the middle
+    of a word and so need to be linked to lipsync data to tell when in a 
+    voice line that happens.
 */
 
-function screenshake(intensity, taperOff) {
+function screenshake(sfx, cue) {
 
 }
 
 /*
-FUNCTION flash
+Function: flash
+Variables:
+    sfx []
+    cue []
+Description:
+    Applies a simple white flash on the flash layer.
+    Always white, max opacity is always 50%.
 
-Applies a simple white flash on the flash layer.
-Always white, max opacity is always 50%.
+    The flash occurs on the cue and can be provided with a SFX
 */
 
-function flash() {
+function flash(sfx, cue) {
 
 }
 
 /*
-FUNCTION fade
-
-Fades out the standard amount of frames on the flash layer.
-Always black.
+Function: fade
+Variables:
+    duration []
+    inOut    []
+Description:
+    Fades out the standard amount of frames on the flash layer.
+    Always black.
 */
 
 function fade(duration, inOut) {
@@ -649,19 +728,36 @@ function fade(duration, inOut) {
 }
 
 /*
-FUNCTION typewriter
-
-Connor's autotypewriter script. Allows scene intros to be done
-automatically. If intro type, make a new Scene that is the first
-in the Scene order and enter the typewriter there. If evidence,
-do not change playhead location.
+Function: typewriter
+Variables:
+    type     []
+    contents []
+Description:
+    Connor's autotypewriter script. Allows scene intros to be done
+    automatically. If intro type, make a new Scene that is the first
+    in the Scene order and enter the typewriter there. If evidence,
+    do not change playhead location.
 */
 
 function typewriter(type, contents) {
 
 }
 
+/*
+Function: pan
+Variables: 
+    destination []
+Description:
+    Courtroom swipe over to the desired position.
+*/
 
+function pan(destination) {
+
+}
+
+/******************************************************************************
+                                >>>MAIN<<<
+******************************************************************************/
 /******************************************************************************
                                 INVOKE GUI
 ******************************************************************************/
@@ -724,17 +820,101 @@ sceneData[4] is the pose suggested by the script or emotionEngine
     for (var i = 0; i < sceneData.length; i++) {
 
         if (sceneData[i][0] == "dialogue") {
-            dialogueArray.push( [sceneData[i][2], sceneData[i][3]] )
+            dialogueArray.push( [sceneData[i][2], sceneData[i][3], sceneData[i][1], sceneData[i][4]] ) 
+            //dialogueArray[i][0] for SpeakerTag
+            //dialogueArray[i][1] for Dialogue
+            //dialogueArray[i][2] for Line ID
+            //dialogueArray[i][3] for Pose
         }
 
     }
 
     for (var i = 0; i < dialogueArray.length; i++) {
         speakertagArray[i] = (dialogueArray[i][0])
-        fl.trace(speakertagArray[i])
     }
 
-    fl.trace(speakertagArray)
+/*
+Pan Array
+
+sceneData[0] will determine if we are panning
+sceneData[1] will determine the pan destination
+*/
+
+    for (var i = 0; i < sceneData.length; i++) {
+
+        if (sceneData[i][0] == "pan") {
+            //issue: what step do we run this on and how do we tell the function where to pan? We lose our step order after we pull from the scene data array!!!
+            // Do we include what sceneData i we are on? That way we don't lose the original scene data order.
+            // Even shittier idea, discriminate arrays as we iterate dialogueArray and match dialogueArray[i] to the type we're doing to be in sync
+            pan(sceneData[i][1])
+        }
+
+    }
+
+/*
+Fade Array
+
+sceneData[0] will determine if we are fading
+sceneData[1] will determine if we are fading in or out
+*/
+
+var defaultFadeLength = 12; //declare this a million years ago
+
+for (var i = 0; i < sceneData.length; i++) {
+
+    if (sceneData[i][0] == "fade") {
+        fade(defaultFadeLength, sceneData[i][1])
+    }
+
+}
+
+/*
+Flash 
+*/
+
+for (var i = 0; i < sceneData.length; i++) {
+
+    if (sceneData[i][0] == "flash") {
+        flash(sfx, cue)
+    }
+
+}
+
+/*
+Screenshake 
+*/
+
+for (var i = 0; i < sceneData.length; i++) {
+
+    if (sceneData[i][0] == "screenshake") {
+        screenshake(sfx, cue) //screenshake with default settings always
+    }
+
+}
+
+/*
+Evidence
+
+sceneData[0] will determine if we are evidence
+sceneData[1] will determine if we are presenting or obtaining
+sceneData[2] will determine the png name
+sceneData[3] the side of the evidence if we're presenting
+sceneData[4] the text data of the evidence if we're obtaining it
+
+If we obtain the evidence, invoke typewriter with the text data of 'sceneData[2] added to Court Record.'
+
+*/
+
+for (var i = 0; i < sceneData.length; i++) {
+
+    if (sceneData[i][0] == "evidence") {
+        evidence(sceneData[i][1], sceneData[i][2], sceneData[i][3], sceneData[i][4])
+        //evidence function needs to be polymorphic for obtain vs present
+    }
+
+}
+
+
 
 /******************************************************************************
                                 MAIN EXECUTION

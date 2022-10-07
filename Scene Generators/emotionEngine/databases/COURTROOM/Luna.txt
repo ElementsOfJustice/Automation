@@ -1,209 +1,209 @@
-﻿I am Princess Luna. A pleasure to meet you, Your Honor.|||Neutral Happying
-Just “Prosecutor” will do, Your Honor, and I understand. My sincerest apologies.|||Neutral Happying
-A colleague of mine had something they wished to discuss with me, and so it delayed my arrival. Nevertheless, the prosecution is now prepared.|||Neutraling
-Ah, Twilight Sparkle. I heard that you would be assisting the defense today.|||Neutral Happying
-Heh, I should’ve expected you’d know. You’ve always been the clever one.|||Neutral Happying
-Nevertheless, Ms. Sparkle, the reason I’m here is quite simple: it is my duty to uphold the laws of Equestria. I am simply fulfilling that duty. |||N_Eyes Closed -ing
-Regardless of whom it is I may be prosecuting, be they adult or child, friend or foe, I plan to fulfill my responsibility to the fullest.|||Neutraling
-But of course, being the clever pony that you are, I’m sure you could’ve guessed that, couldn’t you?|||Condescendinging
-As for you, defense.|||Neutraling
-I must confess, I WAS hoping that the Blue Phoenix would stand against me.|||N_Eyes Closed -ing
-His efforts during the TS-5 case, and the case from two days ago, were certainly admirable, twice proving there WAS no murder in our peaceful country.|||Neutral Happying
-So, imagine my surprise when I learned that YOU would be the lead on this case instead. |||Neutral Happying
-You, whom I have only heard of in hearsay and whispers that began spreading after the trial in Manehattan.|||Condescendinging
-I look forward to seeing if you can hold yourself up to the same standards that the Blue Phoenix has set.|||Condescendinging
-Is that so? Well, that’s wonderful to hear.|||Condescendinging
-At once, Your Honor.|||Neutral Happying
-Today’s proceedings shall center around the murder of Royal Order, who had just returned home from Canterlot the night he was killed. |||Neutraling
-He was a member of the Royal Guard.|||Neutraling
+﻿I am Princess Luna. A pleasure to meet you, Your Honor.|||Neutral Happy Talking
+Just “Prosecutor” will do, Your Honor, and I understand. My sincerest apologies.|||Neutral Happy Talking
+A colleague of mine had something they wished to discuss with me, and so it delayed my arrival. Nevertheless, the prosecution is now prepared.|||Neutral Talking
+Ah, Twilight Sparkle. I heard that you would be assisting the defense today.|||Neutral Happy Talking
+Heh, I should’ve expected you’d know. You’ve always been the clever one.|||Neutral Happy Talking
+Nevertheless, Ms. Sparkle, the reason I’m here is quite simple: it is my duty to uphold the laws of Equestria. I am simply fulfilling that duty. |||N_Eyes Closed - Talking
+Regardless of whom it is I may be prosecuting, be they adult or child, friend or foe, I plan to fulfill my responsibility to the fullest.|||Neutral Talking
+But of course, being the clever pony that you are, I’m sure you could’ve guessed that, couldn’t you?|||Condescending Talking
+As for you, defense.|||Neutral Talking
+I must confess, I WAS hoping that the Blue Phoenix would stand against me.|||N_Eyes Closed - Talking
+His efforts during the TS-5 case, and the case from two days ago, were certainly admirable, twice proving there WAS no murder in our peaceful country.|||Neutral Happy Talking
+So, imagine my surprise when I learned that YOU would be the lead on this case instead. |||Neutral Happy Talking
+You, whom I have only heard of in hearsay and whispers that began spreading after the trial in Manehattan.|||Condescending Talking
+I look forward to seeing if you can hold yourself up to the same standards that the Blue Phoenix has set.|||Condescending Talking
+Is that so? Well, that’s wonderful to hear.|||Condescending Talking
+At once, Your Honor.|||Neutral Happy Talking
+Today’s proceedings shall center around the murder of Royal Order, who had just returned home from Canterlot the night he was killed. |||Neutral Talking
+He was a member of the Royal Guard.|||Neutral Talking
 Rest assured, my little ponies, that there is no cause for alarm. We anticipated this would be the public’s reaction to this news. |||Desk Slam Neutral
-That is why we withheld this information until we had all the facts.|||Neutraling
-Now that we have investigated this matter in full, we are ready to present the truth behind this stallion’s death to the court, and the public. |||Neutraling
-I will begin by submitting the victim’s autopsy report.|||Neutraling
+That is why we withheld this information until we had all the facts.|||Neutral Talking
+Now that we have investigated this matter in full, we are ready to present the truth behind this stallion’s death to the court, and the public. |||Neutral Talking
+I will begin by submitting the victim’s autopsy report.|||Neutral Talking
 The time of death is estimated to be on the evening of February 12th, between 9:30pm, when the victim was last seen, and 10:30pm, when the body was discovered. |||Reading Scroll
-The coroner was able to confirm this during their examination of the body.|||Neutraling
+The coroner was able to confirm this during their examination of the body.|||Neutral Talking
 Death came as the result of a single stab wound to the right side of the victim’s head.|||Reading Scroll
-It’s not quite that simple, Your Honor. There was only ONE visible wound, but he appears to have been stabbed at least twice. |||N_Eyes Closed -ing
-Whether or not this was caused by a single weapon or multiple weapons is unclear. |||Neutraling
+It’s not quite that simple, Your Honor. There was only ONE visible wound, but he appears to have been stabbed at least twice. |||N_Eyes Closed - Talking
+Whether or not this was caused by a single weapon or multiple weapons is unclear. |||Neutral Talking
 What we DO know for certain is that the victim died instantly after just a single stab. All subsequent stabs the victim suffered were post-mortem.|||Reading Scroll
 Additionally, we discovered a large bruise on the left side of the victim’s torso, indicating that he was struck by some sort of object. |||Reading Scroll
 However, unlike the subsequent stab wounds, the victim received this bruise BEFORE he died.|||
-I assume you are referring to the affliction the victim was suffering?|||Neutral Happying
-There’s no need to worry, Your Honor. I shall explain. Poison joke is a rare type of flower, native only to the Everfree Forest.|||Neutral Happying
-It is relatively harmless, but should one so much as touch the plant, they will be afflicted with a bizarre condition, unique to every individual.|||Neutraling
+I assume you are referring to the affliction the victim was suffering?|||Neutral Happy Talking
+There’s no need to worry, Your Honor. I shall explain. Poison joke is a rare type of flower, native only to the Everfree Forest.|||Neutral Happy Talking
+It is relatively harmless, but should one so much as touch the plant, they will be afflicted with a bizarre condition, unique to every individual.|||Neutral Talking
 In the case of Royal Order, the affliction he suffered was weak knees. |||Reading Scroll
-Ironic, that a member of the royal guard would be afflicted with a condition that makes it difficult to stand tall.|||N_Eyes Closed -ing
-As for the body itself, it was discovered at the foot of the bridge leading to the Castle of the Two Sisters. |||Neutraling
-As you can see on this diagram, the castle ruins lie at the very end of the path that cuts through the Everfree Forest.|||Neutraling
-Lastly, the prosecution wishes to submit this photo of the crime scene to the court. |||Neutraling
-The victim’s body had already been removed for autopsy by the time it was taken, but we laid out tape to mark its exact positioning.|||Neutraling
-The ponies accused of committing this wretched crime are Turning Page, the son of the victim, and Scootaloo, a friend of Turning’s.|||Neutraling
-It’s certainly a rather tough pill to swallow, but I am certain that, in time, you will come to see that these two were the only ones capable of committing this crime.|||N_Eyes Closed -ing
+Ironic, that a member of the royal guard would be afflicted with a condition that makes it difficult to stand tall.|||N_Eyes Closed - Talking
+As for the body itself, it was discovered at the foot of the bridge leading to the Castle of the Two Sisters. |||Neutral Talking
+As you can see on this diagram, the castle ruins lie at the very end of the path that cuts through the Everfree Forest.|||Neutral Talking
+Lastly, the prosecution wishes to submit this photo of the crime scene to the court. |||Neutral Talking
+The victim’s body had already been removed for autopsy by the time it was taken, but we laid out tape to mark its exact positioning.|||Neutral Talking
+The ponies accused of committing this wretched crime are Turning Page, the son of the victim, and Scootaloo, a friend of Turning’s.|||Neutral Talking
+It’s certainly a rather tough pill to swallow, but I am certain that, in time, you will come to see that these two were the only ones capable of committing this crime.|||N_Eyes Closed - Talking
 Trust me, Your Honor, it brings me no pleasure to prosecute these young souls. However, justice must still be served. |||Sad
 In the eyes of the law, everypony is equal. “Age” is a non-issue. I trust that you, too, know this, and will remain impartial in your judgement?|||Sad Eyes Forward
-I am glad to hear that, Your Honor.|||Neutral Happying
+I am glad to hear that, Your Honor.|||Neutral Happy Talking
 …|||Sad
-Your Honor, the prosecution would like to call the detective in charge of this investigation, Private Eye, to the stand.|||Neutral Happying
-Witness, please state your name and occupation for the record.|||Neutral Happying
-The prosecution’s first course of action will be to make the actions of the victim clear to the court.|||Neutral Happying
-Detective, please testify in regards to this matter.|||Neutral Happying
-Our investigation determined that Turning Page had gone off into the forest with Scootaloo that night for currently unknown reasons. |||Neutraling
-We believe this is why the victim was in the forest that night...|||Neutraling
+Your Honor, the prosecution would like to call the detective in charge of this investigation, Private Eye, to the stand.|||Neutral Happy Talking
+Witness, please state your name and occupation for the record.|||Neutral Happy Talking
+The prosecution’s first course of action will be to make the actions of the victim clear to the court.|||Neutral Happy Talking
+Detective, please testify in regards to this matter.|||Neutral Happy Talking
+Our investigation determined that Turning Page had gone off into the forest with Scootaloo that night for currently unknown reasons. |||Neutral Talking
+We believe this is why the victim was in the forest that night...|||Neutral Talking
 ...he was trying to save his son.|||Sad talk
-It is indeed, Your Honor. Figuring out why the victim chose to go so far into the forest was one of the key questions we had during our investigation. |||Neutral Happying
+It is indeed, Your Honor. Figuring out why the victim chose to go so far into the forest was one of the key questions we had during our investigation. |||Neutral Happy Talking
 It was the statement of one Ms. Devotion that cleared the matter up for us.|||Reading Scroll
-…|||N_Eyes Closed -ing
-It’s just as Detective Eye says. |||Neutraling
-As someone who gave the victim his orders, I can say with certainty that there was nothing that set him apart from the other guards in our entourage.|||Neutraling
-If you’re looking for a motive, defense, I’m sorry to say that you will not find it here.|||Condescendinging
-Royal Order often spent many weeks in Canterlot with little time to himself. |||Neutraling
-Even when offered extended sabbaticals, he chose to forgo them in service to the crown.|||Neutraling
-He was simply honor-bound to serving Equestria and maintaining harmony amongst its citizens.|||N_Eyes Closed -ing
-Whenever he wasn’t on active duty, he spent all of his time with his family in Ponyville.|||Neutraling
-The forest entrance is roughly 20 minutes away from the victim’s house. |||Neutraling
-The crime scene is about 35 minutes away from the entrance. The body was discovered at 10:30pm.|||Neutraling
+…|||N_Eyes Closed - Talking
+It’s just as Detective Eye says. |||Neutral Talking
+As someone who gave the victim his orders, I can say with certainty that there was nothing that set him apart from the other guards in our entourage.|||Neutral Talking
+If you’re looking for a motive, defense, I’m sorry to say that you will not find it here.|||Condescending Talking
+Royal Order often spent many weeks in Canterlot with little time to himself. |||Neutral Talking
+Even when offered extended sabbaticals, he chose to forgo them in service to the crown.|||Neutral Talking
+He was simply honor-bound to serving Equestria and maintaining harmony amongst its citizens.|||N_Eyes Closed - Talking
+Whenever he wasn’t on active duty, he spent all of his time with his family in Ponyville.|||Neutral Talking
+The forest entrance is roughly 20 minutes away from the victim’s house. |||Neutral Talking
+The crime scene is about 35 minutes away from the entrance. The body was discovered at 10:30pm.|||Neutral Talking
 Do the math, attorney. Do you really think the victim could’ve dawdled before entering the forest?|||Skeptical
-What is it, Ms. Sparkle?|||Neutraling
+What is it, Ms. Sparkle?|||Neutral Talking
 Detective. Do you have the answer to Princess Twilight’s question?|||
-You have a point, but, as I’m sure one as proficient in magic as yourself is aware, one cannot teleport to locations that they’ve never been.|||N_Eyes Closed -ing
-We could not find any indication that the victim had ever been to the Castle of the Two Sisters before this incident. |||N_Eyes Closed -ing
-The best we could uncover were multiple instances of him and his son going to Froggy Bottom Bog, to spar with the monsters that inhabit the area.|||Neutraling
-I suppose that’s a reasonable assumption to make. Then, are you saying that between 9:30 and 10:00, the victim was off doing something else?|||N_Eyes Closed -ing
+You have a point, but, as I’m sure one as proficient in magic as yourself is aware, one cannot teleport to locations that they’ve never been.|||N_Eyes Closed - Talking
+We could not find any indication that the victim had ever been to the Castle of the Two Sisters before this incident. |||N_Eyes Closed - Talking
+The best we could uncover were multiple instances of him and his son going to Froggy Bottom Bog, to spar with the monsters that inhabit the area.|||Neutral Talking
+I suppose that’s a reasonable assumption to make. Then, are you saying that between 9:30 and 10:00, the victim was off doing something else?|||N_Eyes Closed - Talking
 Why? |||Skeptical
 His son had gone off into the Everfree Forest alone at night. |||Skeptical
 Do you really think he’d waste time delaying his entrance into the forest? |||Skeptical
 If anything, he would’ve used the extra half-hour he had to search elsewhere in the woods. After all, it’s not like he could’ve known exactly where his son was.|||Skeptical
-A wooden one, Your Honor. No need to worry. I have it right here.|||Neutraling
-The defendant has been known to carry this sword everywhere he goes. That night was no different.|||Neutraling
+A wooden one, Your Honor. No need to worry. I have it right here.|||Neutral Talking
+The defendant has been known to carry this sword everywhere he goes. That night was no different.|||Neutral Talking
 According to our witness, when she last saw the defendant, his sword was still in one piece, yet the sword you see now is broken. |||Reading Scroll
-Turning Page’s mother has also confirmed that his sword was undamaged earlier that day. |||Neutraling
+Turning Page’s mother has also confirmed that his sword was undamaged earlier that day. |||Neutral Talking
 The prosecution contends that the sword broke when it was used to attack the victim.|||Skeptical
-Before you explain it to us, defense, I would like you to tell us from where you learned this alternate interpretation.|||N_Eyes Closed -ing
+Before you explain it to us, defense, I would like you to tell us from where you learned this alternate interpretation.|||N_Eyes Closed - Talking
 From the defendant himself, in other words? Do you truly believe that story to be reliable, in that case?|||Skeptical
-Unless you have some proof to back up his story, I think you’d do well to keep it to yourself for now.|||Condescendinging
+Unless you have some proof to back up his story, I think you’d do well to keep it to yourself for now.|||Condescending Talking
 In any case, the prosecution recognizes that our own evidence on the matter is circumstantial. More definitive evidence may yet prove our claim to be false.|||
 At the moment, however, this interpretation of the facts surrounding the sword is the most likely scenario.|||Skeptical
 It was not, Your Honor. There wasn’t a single trace of blood on the sword. No forensic spell or potion could reveal even a single drop.|||
 It was a possession belonging to the other defendant: Ms. Scootaloo. She stabbed him using her scooter.|||Desk Slam Neutral
-You can see it in the photo I submitted earlier, Your Honor. |||Neutraling
+You can see it in the photo I submitted earlier, Your Honor. |||Neutral Talking
 When tested, we discovered that the blood was indeed the victim’s.|||Skeptical
 ...|||Sad
-Yes, enlighten us, defense. What is this supposed contradiction?|||Condescendinging
-Hmph. You certainly pose an interesting dilemma, defense. |||Condescendinging
-So, are you implying that the victim was first stabbed in the head, and THEN hit in the torso? |||Condescendinging
-It would certainly help your case, if you were. |||Condescendinging
-After all, a child would have a much more difficult time trying to stab a fully grown stallion in the head if he were standing up straight, even IF one of them was a unicorn.|||Condescendinging
-Intriguing… And why not, defense?|||Condescendinging
-Hmph.|||Condescendinging
-Of course I do.|||Condescendinging
-At once, Your Honor. |||Neutral Happying
-As the defense has so eagerly demonstrated for us, the victim’s autopsy report creates quite a few perplexing contradictions. |||Skeptical talk
-However, there are two explanations that can clear them all up.|||Condescendinging
-The first is a rather simple one. |||Neutraling
+Yes, enlighten us, defense. What is this supposed contradiction?|||Condescending Talking
+Hmph. You certainly pose an interesting dilemma, defense. |||Condescending Talking
+So, are you implying that the victim was first stabbed in the head, and THEN hit in the torso? |||Condescending Talking
+It would certainly help your case, if you were. |||Condescending Talking
+After all, a child would have a much more difficult time trying to stab a fully grown stallion in the head if he were standing up straight, even IF one of them was a unicorn.|||Condescending Talking
+Intriguing… And why not, defense?|||Condescending Talking
+Hmph.|||Condescending Talking
+Of course I do.|||Condescending Talking
+At once, Your Honor. |||Neutral Happy Talking
+As the defense has so eagerly demonstrated for us, the victim’s autopsy report creates quite a few perplexing contradictions. |||Skeptical Talking
+However, there are two explanations that can clear them all up.|||Condescending Talking
+The first is a rather simple one. |||Neutral Talking
 After the victim was struck, he fell onto something sharp, and it pierced his head, killing him.|||Desk slam normal talk
 Well, it may not be right to call it a “murder” weapon. |||sad talk right
-After all, there’s no proof to indicate that the assailant ever intended on killing the victim, should this be the case.|||Skeptical talk
+After all, there’s no proof to indicate that the assailant ever intended on killing the victim, should this be the case.|||Skeptical Talking
 And the crime scene WAS a forest, after all. Who knows what could be on the ground? All kinds of dangerous objects, I’m sure.|||Desk slam normal talk
-Not if the culprit took it away in a panic, or in fear.|||Neutraling
+Not if the culprit took it away in a panic, or in fear.|||Neutral Talking
 That could’ve been the result of our real culprit wishing to frame Ms. Scootaloo for the crime. |||Desk slam normal talk
-Even if it was an accident, the culprit still wouldn’t want to be caught. They would likely fabricate a weapon to avoid their punishment.|||Skeptical talk
-In truth, while the stab wound in question IS quite similar in shape to the exposed bolt on the scooter...|||Skeptical talk
+Even if it was an accident, the culprit still wouldn’t want to be caught. They would likely fabricate a weapon to avoid their punishment.|||Skeptical Talking
+In truth, while the stab wound in question IS quite similar in shape to the exposed bolt on the scooter...|||Skeptical Talking
 Irregularities WERE discovered during examination, which indicates that it’s possible two different items could’ve stabbed the victim.|||Desk slam normal talk
-Indeed, Your Honor. The evidence, as it stands, suggests that Turning Page was the one who knocked the victim over. |||Neutraling
-On top of that, out of the two defendants, he’s the only one who would benefit from making a fake weapon out of the scooter.|||Skeptical talk
-What do YOU think, defense? |||Condescendinging
-Do you wish to argue that this was all an accident, perpetrated by Turning Page alone?|||Condescendinging
-Undoubtedly, the victim was knocked over after he was hit, but who’s to say that’s also when he died?|||attention talk
-Yes, I do. The victim was NOT stabbed when he was knocked to the ground. |||attention talk
-Instead, after he was knocked over, he managed to stand himself back up. |||attention talk
-After an unspecified amount of time, he was then stabbed in the RIGHT temple, which caused him to fall over onto his LEFT side!|||attention talk
-If you wish to pursue the theory of the body having been moved, you’ll need to first disprove that he was killed at the castle ruins. |||attention talk
-All of the evidence presented in the trial so far points towards the likelihood of the murder occurring there. |||attention talk
-Furthermore, nothing was missing from the crime scene to suggest that the murder may have occurred elsewhere. Right, defense?|||attention talk
+Indeed, Your Honor. The evidence, as it stands, suggests that Turning Page was the one who knocked the victim over. |||Neutral Talking
+On top of that, out of the two defendants, he’s the only one who would benefit from making a fake weapon out of the scooter.|||Skeptical Talking
+What do YOU think, defense? |||Condescending Talking
+Do you wish to argue that this was all an accident, perpetrated by Turning Page alone?|||Condescending Talking
+Undoubtedly, the victim was knocked over after he was hit, but who’s to say that’s also when he died?|||Skeptical Talking
+Yes, I do. The victim was NOT stabbed when he was knocked to the ground. |||Skeptical Talking
+Instead, after he was knocked over, he managed to stand himself back up. |||Skeptical Talking
+After an unspecified amount of time, he was then stabbed in the RIGHT temple, which caused him to fall over onto his LEFT side!|||Skeptical Talking
+If you wish to pursue the theory of the body having been moved, you’ll need to first disprove that he was killed at the castle ruins. |||Skeptical Talking
+All of the evidence presented in the trial so far points towards the likelihood of the murder occurring there. |||Skeptical Talking
+Furthermore, nothing was missing from the crime scene to suggest that the murder may have occurred elsewhere. Right, defense?|||Skeptical Talking
 …|||N_eyes-closed - talk
-Interesting claim, Golden Pixie. And you sounded so triumphant while making it, too...|||attention talk
+Interesting claim, Golden Pixie. And you sounded so triumphant while making it, too...|||Skeptical Talking
 It's a shame that it’s completely flawed.|||N_eyes-closed - talk
 True, there doesn’t appear to be any blood on the scene right now, but once I bring my next witness to the stand, that tune of yours will surely change.|||N_eyes-closed - talk
 Witness, please state your name and occupation for the record.|||
 Let’s get back on topic, shall we? |||Neutral_talking
-Witness, is it true that, on the night of the murder, you were the one who discovered and reported the victim’s body?|||attention talk
-Perhaps I can shed some light on this matter.|||N_Eyes Closed -ing
-Of course, Your Honor. I’d look rather silly if I didn’t. |||N_Eyes Closed -ing
-As was just stated, this witness was the one who reported the body to the police. |||N_Eyes Closed -ing
-She accompanied them to the crime scene, and they found it in exactly the same state as she just described - the victim lying in a pool of his own blood. |||Neutraling
+Witness, is it true that, on the night of the murder, you were the one who discovered and reported the victim’s body?|||Skeptical Talking
+Perhaps I can shed some light on this matter.|||N_Eyes Closed - Talking
+Of course, Your Honor. I’d look rather silly if I didn’t. |||N_Eyes Closed - Talking
+As was just stated, this witness was the one who reported the body to the police. |||N_Eyes Closed - Talking
+She accompanied them to the crime scene, and they found it in exactly the same state as she just described - the victim lying in a pool of his own blood. |||Neutral Talking
 I have here a photograph of that very scene.|||Skepticaling
-That will become clear soon enough.|||N_Eyes Closed -ing
-First, the prosecution would like to submit this evidence to the court, along with this photograph.|||Neutraling
-It’s a cape, Your Honor. The emblem on it denotes it as belonging to the Cutie Mark Crusaders, the group of which the defendant, Scootaloo, is a member.|||Neutraling
-As you can see in this earlier photograph, two more of these capes, as well as the fabric used to line their undersides, laid in this wagon attached to the scooter. |||Neutraling
+That will become clear soon enough.|||N_Eyes Closed - Talking
+First, the prosecution would like to submit this evidence to the court, along with this photograph.|||Neutral Talking
+It’s a cape, Your Honor. The emblem on it denotes it as belonging to the Cutie Mark Crusaders, the group of which the defendant, Scootaloo, is a member.|||Neutral Talking
+As you can see in this earlier photograph, two more of these capes, as well as the fabric used to line their undersides, laid in this wagon attached to the scooter. |||Neutral Talking
 It likely goes without saying, but this wagon also belongs to Scootaloo.|||Skepticaling
-We’ll cover that in a moment. For now, I would like to draw further attention to this cape here. |||N_Eyes Closed -ing
-Upon testing it, we found that it was absolutely drenched in the victim’s blood.|||Neutraling
-I can’t imagine that to be the case. Going by where this cape was found, I’d say there’s another, more likely possibility.|||Neutraling
-This cape was discovered underneath the victim’s body. Specifically…|||Desk Slam Neutraling
-…under his head.|||N_Eyes Closed -ing
-It appears as though the little Golden Pixie has figured it out. |||Condescendinging
+We’ll cover that in a moment. For now, I would like to draw further attention to this cape here. |||N_Eyes Closed - Talking
+Upon testing it, we found that it was absolutely drenched in the victim’s blood.|||Neutral Talking
+I can’t imagine that to be the case. Going by where this cape was found, I’d say there’s another, more likely possibility.|||Neutral Talking
+This cape was discovered underneath the victim’s body. Specifically…|||Desk Slam Neutral Talking
+…under his head.|||N_Eyes Closed - Talking
+It appears as though the little Golden Pixie has figured it out. |||Condescending Talking
 When the police went to examine the blood, they discovered that it wasn’t blood at all. It was actually…|||Reading Scrolling
 …this cape right here!|||Skepticaling
 …this cape right here!|||Skepticaling
-Now do you understand, defense?|||Condescendinging
+Now do you understand, defense?|||Condescending Talking
 When the victim fell to the ground after being stabbed, he must have fallen on top of this cape. |||Skepticaling
-Any blood that seeped from his wound would’ve trailed down his face and been absorbed by the cloth. |||Neutraling
+Any blood that seeped from his wound would’ve trailed down his face and been absorbed by the cloth. |||Neutral Talking
 When the witness came across it, she mistook the cape for blood due to its red color. |||Skepticaling
-The fact that there was no blood at the scene is completely irrelevant. After all, it was the police themselves who removed it!|||Desk Slam Neutraling
-Indeed it has, Your Honor. Despite what they claimed, it’s clear that the body was never moved. |||N_Eyes Closed -ing
-The scene of the crime was undoubtedly at the foot of the bridge. The blood on this cape proves it. |||N_Eyes Closed -ing
-And, as luck would have it, I have one more piece of information that will crush the defense’s rebuttal once and for all.|||Neutraling
-Upon examining the area where the cape lay, thanks to forensic spell-testing, we discovered traces of blood...|||N_Eyes Closed -ing
+The fact that there was no blood at the scene is completely irrelevant. After all, it was the police themselves who removed it!|||Desk Slam Neutral Talking
+Indeed it has, Your Honor. Despite what they claimed, it’s clear that the body was never moved. |||N_Eyes Closed - Talking
+The scene of the crime was undoubtedly at the foot of the bridge. The blood on this cape proves it. |||N_Eyes Closed - Talking
+And, as luck would have it, I have one more piece of information that will crush the defense’s rebuttal once and for all.|||Neutral Talking
+Upon examining the area where the cape lay, thanks to forensic spell-testing, we discovered traces of blood...|||N_Eyes Closed - Talking
  ...UNDERNEATH the area around the victim’s head.|||Skepticaling
-It seems as if the cape absorbed more blood than it could handle, and some of it leaked through to the ground below.|||Neutraling
+It seems as if the cape absorbed more blood than it could handle, and some of it leaked through to the ground below.|||Neutral Talking
 Further testing of this blood revealed that it belonged to the victim. |||Reading Scrolling
 Your Honor, I submit to you the photo of the victim’s body, as well as the blood-stained cape, as evidence.|||
-It seems the Golden Pixie has been rendered speechless in the face of such irrefutable evidence.|||Condescendinging
-Feigning confidence will get you nowhere, defense.|||N_Eyes Closed -ing
-You forget that the owner of that scooter is a pegasus. What’s stopping them from simply flying up and stabbing him that way?|||N_Eyes Closed -ing
-…|||N_Eyes Closed -ing
+It seems the Golden Pixie has been rendered speechless in the face of such irrefutable evidence.|||Condescending Talking
+Feigning confidence will get you nowhere, defense.|||N_Eyes Closed - Talking
+You forget that the owner of that scooter is a pegasus. What’s stopping them from simply flying up and stabbing him that way?|||N_Eyes Closed - Talking
+…|||N_Eyes Closed - Talking
 Of course she couldn’t.|||Skepticaling
-What the defense has said is absolutely true. I have the medical report from Scootaloo’s doctor right here. |||Neutraling
-Contrary to other pegasus fillies her age, her wings haven’t fully developed yet, and thus, she cannot fly.|||Neutraling
+What the defense has said is absolutely true. I have the medical report from Scootaloo’s doctor right here. |||Neutral Talking
+Contrary to other pegasus fillies her age, her wings haven’t fully developed yet, and thus, she cannot fly.|||Neutral Talking
 Now, when did I ever claim that?|||Skepticaling
 All I ever claimed was that SOMEPONY stabbed him whilst he was standing upright. |||Skepticaling
-If it was impossible for Scootaloo to have done so, then that leaves only one option, doesn’t it?|||Neutraling
-Turning Page is a talented unicorn for his age, and levitation is a relatively simple spell to learn, even for colts and fillies.|||Neutraling
-I’m sure he’d have no problem levitating the scooter up to his father’s head, and stabbing him with it.|||N_Eyes Closed -ing
-…|||N_Eyes Closed -ing
-Heh. We shall see.|||Condescendinging
-First, I think it’s time for the defense’s cross-examination of our witness. We’ve been putting that off for long enough now.|||Neutraling
-We already know when the victim died. It was long after this witness was scouring the area for plants. |||Neutraling
-Stop wasting our time with these pointless questions, and move on.|||Desk Slam Neutraling
-Please continue, witness.|||Desk Slam Neutraling
-Please continue, witness.|||Desk Slam Neutraling
-These two ponies… Was there anything about them that caught your eye?|||Neutraling
-And what was that?|||Neutraling
+If it was impossible for Scootaloo to have done so, then that leaves only one option, doesn’t it?|||Neutral Talking
+Turning Page is a talented unicorn for his age, and levitation is a relatively simple spell to learn, even for colts and fillies.|||Neutral Talking
+I’m sure he’d have no problem levitating the scooter up to his father’s head, and stabbing him with it.|||N_Eyes Closed - Talking
+…|||N_Eyes Closed - Talking
+Heh. We shall see.|||Condescending Talking
+First, I think it’s time for the defense’s cross-examination of our witness. We’ve been putting that off for long enough now.|||Neutral Talking
+We already know when the victim died. It was long after this witness was scouring the area for plants. |||Neutral Talking
+Stop wasting our time with these pointless questions, and move on.|||Desk Slam Neutral Talking
+Please continue, witness.|||Desk Slam Neutral Talking
+Please continue, witness.|||Desk Slam Neutral Talking
+These two ponies… Was there anything about them that caught your eye?|||Neutral Talking
+And what was that?|||Neutral Talking
 This matches what we found at the crime scene, as there was a roll of golden silk left behind in the wagon.|||Reading Scrolling
-And I’m assuming this sword was in one piece, am I right?|||Neutraling
+And I’m assuming this sword was in one piece, am I right?|||Neutral Talking
 And it then broke when he used it to attack the victim.|||Skepticaling
-We already know when the victim died. It was long after this witness was scouring the area for plants. |||Neutraling
-Stop wasting our time with these pointless questions, and move on.|||Desk Slam Neutraling
-Please continue, witness.|||Desk Slam Neutraling
-Please continue, witness.|||Desk Slam Neutraling
-These two ponies… Was there anything about them that caught your eye?|||Neutraling
-And what was that?|||Neutraling
+We already know when the victim died. It was long after this witness was scouring the area for plants. |||Neutral Talking
+Stop wasting our time with these pointless questions, and move on.|||Desk Slam Neutral Talking
+Please continue, witness.|||Desk Slam Neutral Talking
+Please continue, witness.|||Desk Slam Neutral Talking
+These two ponies… Was there anything about them that caught your eye?|||Neutral Talking
+And what was that?|||Neutral Talking
 This matches what we found at the crime scene, as there was a roll of golden silk left behind in the wagon.|||Reading Scrolling
-And I’m assuming this sword was in one piece, am I right?|||Neutraling
+And I’m assuming this sword was in one piece, am I right?|||Neutral Talking
 And it then broke when he used it to attack the victim.|||Skepticaling
-Agreed, Your Honor. I don’t think our Golden Pixie can take much more. Best we put her out of her misery now.|||N_Eyes Closed -ing
+Agreed, Your Honor. I don’t think our Golden Pixie can take much more. Best we put her out of her misery now.|||N_Eyes Closed - Talking
 Unless you two are interested in sharing with the court what you are squabbling about, I believe it is time we moved on.|||Skepticaling
-Oh? Really, now? Please, do tell.|||N_Eyes Closed -ing
-Talking to yourself, are we?|||Condescendinging
-Another way?|||Neutraling
-And right there, she found the dead body of one Royal Order. I see no point in us repeating all of this.|||Neutraling
-Quite so. Our current theory is that Turning Page was the one who hit him, using his sword. |||Neutraling
-However, if he was killed right at that moment, the stab wound would be on the opposite side of his head. |||N_Eyes Closed -ing
-Therefore, he must have had an opportunity to stand upright before being stabbed, and falling over again.|||Neutraling
-Which leads us to the conclusion that it must have been Turning Page. |||N_Eyes Closed -ing
-He used his magic to stab the victim with the scooter. There wasn’t anyone else on the scene who could’ve done it, after all.|||Neutraling
-...|||N_Eyes Closed -ing
+Oh? Really, now? Please, do tell.|||N_Eyes Closed - Talking
+Talking to yourself, are we?|||Condescending Talking
+Another way?|||Neutral Talking
+And right there, she found the dead body of one Royal Order. I see no point in us repeating all of this.|||Neutral Talking
+Quite so. Our current theory is that Turning Page was the one who hit him, using his sword. |||Neutral Talking
+However, if he was killed right at that moment, the stab wound would be on the opposite side of his head. |||N_Eyes Closed - Talking
+Therefore, he must have had an opportunity to stand upright before being stabbed, and falling over again.|||Neutral Talking
+Which leads us to the conclusion that it must have been Turning Page. |||N_Eyes Closed - Talking
+He used his magic to stab the victim with the scooter. There wasn’t anyone else on the scene who could’ve done it, after all.|||Neutral Talking
+...|||N_Eyes Closed - Talking
 Defense…|||Desk Slam Neutral
 You naive CHILD! |||Angrying #2
 For one who knows not the weight of her words, I can’t think of a better comparison!|||Angrying #2
@@ -215,34 +215,34 @@ And it’s your job to point out why that assumption is flawed, and demand furth
 But instead of doing that, you have openly accused this witness! You have dirted not just her name, but, if you’re wrong, yours as well!|||Angrying #2
 But instead of doing that, you have openly accused this witness! You have dirted not just her name, but, if you’re wrong, yours as well!|||Angrying #2
 But instead of doing that, you have openly accused this witness! You have dirted not just her name, but, if you’re wrong, yours as well!|||Angrying #2
-And you, ponies of the gallery! You who would be so quick to suspect this poor creature on nothing but a baseless theory! |||Desk Slam Neutraling
+And you, ponies of the gallery! You who would be so quick to suspect this poor creature on nothing but a baseless theory! |||Desk Slam Neutral Talking
 Shame on you all! Is this the kind of “harmony” Equestria seeks to share with the world?!|||Desk Slam Aggressive
 Shame on you all! Is this the kind of “harmony” Equestria seeks to share with the world?!|||Desk Slam Aggressive
-My apologies, Your Honor.|||N_Eyes Closed -ing
-Very well. If that’s the path you choose, so be it. I wonder if your co-counsel feels the same way, though?|||N_Eyes Closed -ing
-Nevertheless, you shan’t be relying on that theory for much longer. If I can’t convince you to simply abandon it...|||Neutraling
+My apologies, Your Honor.|||N_Eyes Closed - Talking
+Very well. If that’s the path you choose, so be it. I wonder if your co-counsel feels the same way, though?|||N_Eyes Closed - Talking
+Nevertheless, you shan’t be relying on that theory for much longer. If I can’t convince you to simply abandon it...|||Neutral Talking
 ...then I’ll just force you to go against it.|||Deskslaming
 You mentioned motive a minute ago, did you not? The motive that Scootaloo and Turning Page lack? |||Deskslaming
-It’s about time we discussed that, don’t you think? So bring out that letter you received yesterday.|||Neutraling
+It’s about time we discussed that, don’t you think? So bring out that letter you received yesterday.|||Neutral Talking
 The blackmail letter! I know you have it. Show it to the court! Now!|||Deskslaming
-They should, Your Honor. |||Neutraling
+They should, Your Honor. |||Neutral Talking
 All of these items were accounted for at the crime scene.|||Reading Scrolling
 Read the letter yourself, and I’m sure you’ll figure it out.|||Skepticaling
-Precisely, Your Honor. Now we finally know why the defendants were in the forest in the first place. They went to settle this deal with their blackmailer. |||Neutraling
-Not exactly, Your Honor. The two had met for the first time earlier that day. They became quick friends over the course of an afternoon.|||Neutraling
-During her interrogation, the defendant, Scootaloo, mentioned that she was backed into a corner when her friends decided against following the orders they were given. |||Neutraling
+Precisely, Your Honor. Now we finally know why the defendants were in the forest in the first place. They went to settle this deal with their blackmailer. |||Neutral Talking
+Not exactly, Your Honor. The two had met for the first time earlier that day. They became quick friends over the course of an afternoon.|||Neutral Talking
+During her interrogation, the defendant, Scootaloo, mentioned that she was backed into a corner when her friends decided against following the orders they were given. |||Neutral Talking
 She decided, instead, to ask her newfound friend, Turning Page, to help her retrieve what had been taken. |||Skepticaling
-The two conspired to break into, and steal from, Carousel Boutique in order to acquire the golden silk the blackmailer asked for.|||N_Eyes Closed -ing
-After acquiring the fabric, they proceeded to enter the forest, and made their way to the scene where the blackmailer was waiting.|||Neutraling
-Unfortunately, defense, that is not a wholly concrete possibility.|||N_Eyes Closed -ing
+The two conspired to break into, and steal from, Carousel Boutique in order to acquire the golden silk the blackmailer asked for.|||N_Eyes Closed - Talking
+After acquiring the fabric, they proceeded to enter the forest, and made their way to the scene where the blackmailer was waiting.|||Neutral Talking
+Unfortunately, defense, that is not a wholly concrete possibility.|||N_Eyes Closed - Talking
 Could easily be a red herring by the author of the note. These fillies are not the only ones who are aware of that particular taunt.|||Skepticaling
-After all, if these fillies are as infamous as you say they are, then anypony familiar with them would know that they are fond of the term “blank flank.” |||Neutraling
+After all, if these fillies are as infamous as you say they are, then anypony familiar with them would know that they are fond of the term “blank flank.” |||Neutral Talking
 It’s hardly proof, defense. Suppose Your Honor began to refer to you as “Golden Pixie.” Would that make him me?|||Skepticaling
 But now let us turn our attention to the letter itself.|||Skepticaling
-I’m sure everyone can see that this note is written entirely in letters cut out from a magazine. |||Neutraling
-As a result, it is impossible to perform any sort of writing analysis. However, that doesn’t mean we can’t prove who the author of this note is.|||N_Eyes Closed -ing
-If we could find the magazines that these letters were cut-out from, it’d be a simple matter of matching the cuts on the letters to the holes in the magazines.|||N_Eyes Closed -ing
-Are you sure about that? |||N_Eyes Closed -ing
+I’m sure everyone can see that this note is written entirely in letters cut out from a magazine. |||Neutral Talking
+As a result, it is impossible to perform any sort of writing analysis. However, that doesn’t mean we can’t prove who the author of this note is.|||N_Eyes Closed - Talking
+If we could find the magazines that these letters were cut-out from, it’d be a simple matter of matching the cuts on the letters to the holes in the magazines.|||N_Eyes Closed - Talking
+Are you sure about that? |||N_Eyes Closed - Talking
 I have here two magazines with several letters cut out from many different pages. |||Skepticaling
-If the court would be so kind, I’d like to request some time for the police to analyze the letters on the note, and the empty spaces in the magazines. |||Desk Slam Neutraling
-If we get a match, then we’ll know for a fact that the blackmail letter was written using these magazines.|||Desk Slam Neutraling
+If the court would be so kind, I’d like to request some time for the police to analyze the letters on the note, and the empty spaces in the magazines. |||Desk Slam Neutral Talking
+If we get a match, then we’ll know for a fact that the blackmail letter was written using these magazines.|||Desk Slam Neutral Talking
