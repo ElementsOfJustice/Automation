@@ -72,6 +72,18 @@ function getEndTimes(input) {
 
 }
 
+function getLipFlapInfo(poseName) {
+    var characterName = fl.getDocumentDOM().selection[0].libraryItem.name;
+    var firstFrameOfLipFlap = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".lipFlap")[0];
+    var lipFlapLength = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".lipFlap")[1];
+    if (firstFrameOfLipFlap == undefined || lipFlapLength == undefined) { // check to see if data is in the symbol name instead of the full path 
+        characterName = characterName.substring(characterName.lastIndexOf("/") + 1);
+        firstFrameOfLipFlap = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".lipFlap")[0];
+        lipFlapLength = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".lipFlap")[1];
+    }
+    return [firstFrameOfLipFlap, lipFlapLength]
+}
+
 function getLipSyncFrameArray(words, phonemes) { // helper function to compute where each syllable is in terms of frames
     // Approach 1: each word begins with a syllable, and every consonant followed by a vowel is another syllable
     var syllableFrames = [];
@@ -175,11 +187,9 @@ if (xSheetLayerIndex == undefined) {
 var poseFrame = fl.getDocumentDOM().getElementProperty("firstFrame"); // get the index in the firstFrame property
 // in the character timeline, obtain the name of the pose as it stands on the given frame
 var poseName = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].name;
-var firstFrameOfLipFlap = 0, lipFlapLength = 0;
-if (fl.getDocumentDOM().documentHasData(characterName + "." + poseName)) {
-    firstFrameOfLipFlap = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName)[0];
-    lipFlapLength = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName)[1];
-}
+var lipFlapInfo = getLipFlapInfo(poseName);
+var firstFrameOfLipFlap = (lipFlapInfo[0] === undefined) ? 0 : lipFlapInfo[0];
+var lipFlapLength = (lipFlapInfo[1] === undefined) ? 0 : lipFlapInfo[1];
 var guiPanel = fl.xmlPanelFromString("<dialog title=\"The Lip Syncer\" buttons=\"accept, cancel\">vbox><hbox><label value=\"First Frame of Lip Flap:\" control=\"panel_FF\"/><textbox id=\"panel_FF\" size=\"24\" value=\"" + (firstFrameOfLipFlap) + "\" /></hbox><hbox><label value=\"Duration of Lip Flap:\" control=\"panel_dur\"/><textbox id=\"panel_dur\" size=\"24\" value=\"" + (lipFlapLength) + "\" /></hbox></vbox></dialog>");
 if (guiPanel.dismiss == "accept") {
     var firstFrameOfLipFlap = parseInt(guiPanel.panel_FF) - 1;
