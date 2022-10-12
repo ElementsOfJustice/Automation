@@ -451,6 +451,9 @@ Variables:
 Description: does mouth shape syncing from startFrame to endFrame in the given poseName
 */
 function rasterLipSyncHelper(voiceLineStartFrame, startFrame, layer, lipsyncMap, poseName, endFrame) { 
+    if (poseName.substring(poseName.lastIndexOf(" ")) != " Talk") {
+        poseName = poseName.substring(0, poseName.lastIndexOf(" ")); // if it's passed all other data validation and this line runs, that means the pose is one of Athena's (widget emotion at the end). Get rid of the emotion.
+    }
     var diphthongMap = {};
     var mouthShapeMap = {};
     for (var phonemeStartTime in phonemes) {
@@ -569,7 +572,7 @@ if (confirmExecution) {
                 var voiceDuration = fl.getDocumentDOM().getTimeline().getFrameProperty("duration"); // used to move to the next voice line
                 resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(characterLayerName), voiceStartFrame); // select corresponding layer
                 fl.getDocumentDOM().getTimeline().setLayerProperty("locked", false); // unlock it
-                fl.getDocumentDOM().getTimeline().setLayerProperty("viisble", !false); // visible it
+                fl.getDocumentDOM().getTimeline().setLayerProperty("visible", !false); // visible it
                 var cfgFilePath = cfgFolderPath + "/" + soundName.substring(0, soundName.indexOf(".flac")) + ".cfg"; // get the cfg file (should have the exact same filename, just different extension)
                 try {
                     fl.runScript(cfgFilePath); // run cfg file to load values
