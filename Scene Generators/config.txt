@@ -35,18 +35,30 @@ var masterRigArray = {
 "Twilight": ["TWILIGHT_SPARKLE", "RIGS/VECTOR CHARACTERS/TWILIGHT SPARKLE/TwilightCouncil►/TwilightCouncil►Scaled", 0, 100, false],
 "Athena": ["ATHENA_COURTROOM", "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena", 0, 0, true],
 "Judge": ["THE_JUDGE", "RIGS/RASTER CHARACTERS/The Judge/THE_JUDGE", 640, 360, true],
-"Private Eye": ["PRIVATE_EYE", "RIGS/VECTOR CHARACTERS/PRIVATE_EYE/PrivateEyeScaled", 0, 0, true], // 640, 400
+"Private Eye": ["PRIVATE_EYE", "RIGS/VECTOR CHARACTERS/PRIVATE_EYE►/Private►Scaled", 0, 0, true],
 "Luna": ["PRINCESS_LUNA", "RIGS/VECTOR CHARACTERS/Luna►/Luna►Scaled", 0, 24, false],
 "Diamond": ["DIAMOND", "RIGS/VECTOR CHARACTERS/DIAMOND_TIARA/DT►Scaled", -240, 0, false],
 "Diamond Tiara": ["DIAMOND", "RIGS/VECTOR CHARACTERS/DIAMOND_TIARA/DT►Scaled", -240, 0, false],
+"Apple Bloom": ["APPLE_BLOOM", "RIGS/VECTOR CHARACTERS/APPLE_BLOOM►/APPLE_BLOOM►Scaled", 0, 0, false],
 "Silver": ["SILVER", "RIGS/VECTOR CHARACTERS/SILVER_SPOON/Silver Spoon►Scaled", 240, 0, false],
 "Silver Spoon": ["SILVER", "RIGS/VECTOR CHARACTERS/SILVER_SPOON/Silver Spoon►Scaled", 240, 0, false],
+"Sweetie": ["SWEETIE_BELLE", "RIGS/VECTOR CHARACTERS/SWEETIE_BELLE_CUFFED►/SBCuffed►Scaled"],
+"Sweetie Belle": ["SWEETIE_BELLE", "RIGS/VECTOR CHARACTERS/SWEETIE_BELLE_CUFFED►/SBCuffed►Scaled"],
 "Zecora": ["ZECORA", "RIGS/VECTOR CHARACTERS/ZECORA/Zecora_Scaled", 0, 0, false],
+"Turning": ["TURNING_PAGE", "RIGS/VECTOR CHARACTERS/TURNING_PAGE►/TP►Scaled", 0, 0, false],
+"Turning Page": ["TURNING_PAGE", "RIGS/VECTOR CHARACTERS/TURNING_PAGE►/TP►Scaled", 0, 0, false],
 "Scootaloo": ["SCOOTALOO", "RIGS/VECTOR CHARACTERS/SCOOTALOO►/ST►Scaled", 0, 0, false],
 "Sonata": ["SONATA", "RIGS/VECTOR CHARACTERS/SonataDefense►/SonataDefense►Scaled", -250, 0, false],
 "Sweetie": ["SWEETIE_BELLE", "RIGS/VECTOR CHARACTERS/SWEETIE_BELLE_CUFFED►/SBCuffed►Scaled", 0, 0, false],
 "Sweetie Belle": ["SWEETIE_BELLE", "RIGS/VECTOR CHARACTERS/SWEETIE_BELLE_CUFFED►/SBCuffed►Scaled", 0, 0, false],
 "Apollo": ["APOLLO_JUSTICE", "RIGS/RASTER CHARACTERS/APOLLO - FRONT/JUSTICE - FRONT", 640, 360, false],
+"Fair": ["FAIR_DEVOTION", "RIGS/VECTOR CHARACTERS/FAIR_DEVOTION►/Devotion►Scaled", 0, 0, false],
+"Fair Devotion": ["FAIR_DEVOTION", "RIGS/VECTOR CHARACTERS/FAIR_DEVOTION►/Devotion►Scaled", 0, 0, false],
+"Sugar Stamp": ["SUGAR_STAMP", "RIGS/VECTOR CHARACTERS/SUGAR_STAMP►/SugarStamp_Scaled", 0, 0, false],
+"Sugar": ["SUGAR_STAMP", "RIGS/VECTOR CHARACTERS/SUGAR_STAMP►/SugarStamp_Scaled", 0, 0, false],
+"Royal": ["ROYAL_ORDER", "RoyalOrder", 0, 0, false],
+"Royal Order": ["ROYAL_ORDER", "RoyalOrder", 0, 0, false],
+"Bailiff #1": ["BAILIFF_1", "RoyalOrder", 0, 0, false],
 "Rarity": ["RARITY", "RIGS/VECTOR CHARACTERS/RARITY►/Rarity►Scaled", 0, 0, false]
 }
  
@@ -116,6 +128,7 @@ var nameswapArray = [
  
 //Set custom letter spacing on a character-by-character basis.
 var letterSpacingArray = [
+["Royal Order", 1],
 ["Apple Bloom", 0],
 ["Silver Spoon", 0],
 ["Sugar Stamp", 0],

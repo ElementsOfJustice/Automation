@@ -247,23 +247,26 @@ Description:
 function addRigs() {
     var uniqueChars = getCharacters();
     for (var i = 0; i < uniqueChars.length; i++) {
-        //fl.trace(masterRigArray[uniqueChars[i]]);
-        switchActive(masterRigArray[uniqueChars[i]][0]);
-        fl.getDocumentDOM().getTimeline().currentFrame = 0;
-        // select current frame
-        fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+        if (masterRigArray[uniqueChars[i]] !== undefined) {
+            //fl.trace(masterRigArray[uniqueChars[i]]);
+            switchActive(masterRigArray[uniqueChars[i]][0]);
+            fl.getDocumentDOM().getTimeline().currentFrame = 0;
+            // select current frame
+            fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
 
-        fl.getDocumentDOM().addItem({
-            x: masterRigArray[uniqueChars[i]][2],
-            y: masterRigArray[uniqueChars[i]][3]
-        }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
-        fl.getDocumentDOM().swapElement(masterRigArray[uniqueChars[i]][1]);
-        fl.getDocumentDOM().setTransformationPoint({ x: 0, y: 0 });
-        fl.getDocumentDOM().align('vertical center', true);
-        fl.getDocumentDOM().align('horizontal center', true);
-        fl.getDocumentDOM().setElementProperty('transformX', masterRigArray[uniqueChars[i]][2]);
-        fl.getDocumentDOM().setElementProperty('transformY', masterRigArray[uniqueChars[i]][3]);
-        fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !true);
+            fl.getDocumentDOM().addItem({
+                x: masterRigArray[uniqueChars[i]][2],
+                y: masterRigArray[uniqueChars[i]][3]
+            }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
+            fl.trace(masterRigArray[uniqueChars[i]])
+            fl.getDocumentDOM().swapElement(masterRigArray[uniqueChars[i]][1]);
+            fl.getDocumentDOM().setTransformationPoint({ x: 0, y: 0 });
+            fl.getDocumentDOM().align('vertical center', true);
+            fl.getDocumentDOM().align('horizontal center', true);
+            fl.getDocumentDOM().setElementProperty('transformX', masterRigArray[uniqueChars[i]][2]);
+            fl.getDocumentDOM().setElementProperty('transformY', masterRigArray[uniqueChars[i]][3]);
+            fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !true);
+        }
     }
 }
 
@@ -308,108 +311,113 @@ Description:
 function sculpt() {
     var uniqueChars = getCharacters();
     for (var i = speakertagArray.length - 1; i >= 0; i--) {
+        //fl.trace(masterRigArray)
+        //fl.trace(masterRigArray[uniqueChars[j]])
         for (var j = 0; j < uniqueChars.length; j++) {
-            fl.getDocumentDOM().getTimeline().currentFrame = iFrameDuration * i;
+                fl.trace(masterRigArray[uniqueChars[j]][0])
+                if (masterRigArray[uniqueChars[j]][0] !== undefined) {
+                fl.getDocumentDOM().getTimeline().currentFrame = iFrameDuration * i;
 
-            var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
+                var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
 
-            if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
-                switchActive(masterRigArray[uniqueChars[j]][0]);
-                layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
-            }
+                if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
+                    switchActive(masterRigArray[uniqueChars[j]][0]);
+                    layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
+                }
 
-            if ((i == 0) && (speakertagArray[i] != uniqueChars[j])) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
-                switchActive(masterRigArray[uniqueChars[j]][0]);
-                // select current frame
-                fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-                fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
-                // select current frame
-                fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-                fl.getDocumentDOM().deleteSelection();
-            }
-
-            else if ((generateWitnessBools(i)[0] /* isWitnessSpeaking */) && (uniqueChars[j] == speakertagArray[i])) { // make keyframe on active witnesses
-                for (var witness in sWitnesses) {
-                    switchActive(masterRigArray[sWitnesses[witness]][0]);
+                if ((i == 0) && (speakertagArray[i] != uniqueChars[j])) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
+                    switchActive(masterRigArray[uniqueChars[j]][0]);
                     // select current frame
+                    fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+                    fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
+                    // select current frame
+                    fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+                    fl.getDocumentDOM().deleteSelection();
+                }
+
+                else if ((generateWitnessBools(i)[0] /* isWitnessSpeaking */) && (uniqueChars[j] == speakertagArray[i])) { // make keyframe on active witnesses
+                    for (var witness in sWitnesses) {
+                        switchActive(masterRigArray[sWitnesses[witness]][0]);
+                        // select current frame
+                        fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+                        if (i != 0) {
+                            fl.getDocumentDOM().getTimeline().insertKeyframe();
+                        } else {
+                            fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
+                        }
+                    }
+                    
+                    if (!generateWitnessBools(i)[1] /* isNextCharacterWitness */) { // if next speaker is neither witnesses, put blank keyframes at the end of their keyframe
+                        for (var witness in sWitnesses) {
+                            fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
+                            switchActive(masterRigArray[sWitnesses[witness]][0]);
+                            // select current frame
+                            fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+                            fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
+                            fl.getDocumentDOM().getTimeline().currentFrame -= iFrameDuration;
+                        }
+                    }
+                }
+
+                else if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
+                    switchActive(masterRigArray[uniqueChars[j]][0]);
+
                     fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
                     if (i != 0) {
                         fl.getDocumentDOM().getTimeline().insertKeyframe();
                     } else {
                         fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
                     }
-                }
-                
-                if (!generateWitnessBools(i)[1] /* isNextCharacterWitness */) { // if next speaker is neither witnesses, put blank keyframes at the end of their keyframe
-                    for (var witness in sWitnesses) {
-                        fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
-                        switchActive(masterRigArray[sWitnesses[witness]][0]);
-                        // select current frame
-                        fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-                        fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
-                        fl.getDocumentDOM().getTimeline().currentFrame -= iFrameDuration;
-                    }
-                }
-            }
 
-            else if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
-                switchActive(masterRigArray[uniqueChars[j]][0]);
+                // POSE AUTOMATION //
 
-                fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-                if (i != 0) {
-                    fl.getDocumentDOM().getTimeline().insertKeyframe();
+                //fl.trace("Layer Index: " + layerIndex)
+                //fl.trace("Frame: " + fl.getDocumentDOM().getTimeline().currentFrame)
+                //fl.trace("Element: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0])
+                //fl.trace("Item Index: " + fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name))
+
+                fl.trace("Selected Layer is " + masterRigArray[uniqueChars[j]][0] + " but it should be " + speakertagArray[i])
+                fl.trace("Selected Sym for xSheet Browsing is: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
+
+                var itemIndex= fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
+                var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0]
+
+                var poseFrameNum = -1
+
+                for (var k = 0; k < objTl.frameCount; k++) {
+                    if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame)) {    
+                        //fl.trace(dialogueArray[i][2] + " " + dialogueArray[i][1])
+                        //fl.trace("Internal xSheet Pose Name: " + objTl.frames[k].name + " | Intended Pose Name: " + dialogueArray[i][3] + " k: " + k)              
+                        if (objTl.frames[k].name == dialogueArray[i][3]) {
+                            poseFrameNum = k
+                            fl.trace("K is : " + k)
+                        }
+                    }       
+                }
+
+                if (poseFrameNum != -1) {
+                    fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
                 } else {
-                    fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
+                    fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = 0
                 }
 
-            // POSE AUTOMATION //
-
-            //fl.trace("Layer Index: " + layerIndex)
-            //fl.trace("Frame: " + fl.getDocumentDOM().getTimeline().currentFrame)
-            //fl.trace("Element: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0])
-            //fl.trace("Item Index: " + fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name))
-
-            fl.trace("Selected Layer is " + masterRigArray[uniqueChars[j]][0] + " but it should be " + speakertagArray[i])
-            fl.trace("Selected Sym for xSheet Browsing is: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
-
-            var itemIndex= fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
-            var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0]
-
-            var poseFrameNum = -1
-
-            for (var k = 0; k < objTl.frameCount; k++) {
-                if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame)) {    
-                    //fl.trace(dialogueArray[i][2] + " " + dialogueArray[i][1])
-                    //fl.trace("Internal xSheet Pose Name: " + objTl.frames[k].name + " | Intended Pose Name: " + dialogueArray[i][3] + " k: " + k)              
-                    if (objTl.frames[k].name == dialogueArray[i][3]) {
-                        poseFrameNum = k
-                        fl.trace("K is : " + k)
-                    }
-                }       
-            }
-
-            if (poseFrameNum != -1) {
-                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
-            } else {
-                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = 0
-            }
-
-            //write pose to frame name
-            fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
-
-            if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
+                //write pose to frame name
                 fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
-            }
 
-            if (speakertagArray[i] != speakertagArray[i + 1]) {
-                fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
-                // select current frame
-                fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-                fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
-            }
+                if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
+                    fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
+                }
 
-            }
-            
+                if (speakertagArray[i] != speakertagArray[i + 1]) {
+                    fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
+                    // select current frame
+                    fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+                    fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
+                }
+
+                }
+
+                }
         }
     }
 }
