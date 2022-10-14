@@ -38,7 +38,7 @@ Description: selects the keyframe if there's one there, or makes one if there is
 function selectOrMakeKeyframe(layer, frame) {
     resetSelection(layer, frame); // select layer and frame
     // if the current frame isn't the first frame in a frame sequence, make a note of that
-    var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame; 
+    var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame;
     // if it isn't...
     if (!isKeyFrame) {
         fl.getDocumentDOM().getTimeline().insertKeyframe(); // keyframe for new position
@@ -65,8 +65,8 @@ function isLipFlapPose(layer, frame) {
     }
     if (arrayContains(AVAILABLE_CHARACTERS, layerName, isEqual)) {
         var availablePoses = getKeys(CHARACTER_NAME_TO_MAP[layerName]);
-        if (!arrayContains(availablePoses, poseName, isEqual)) { 
-            if(!arrayContains(availablePoses, poseName, stringContains)) { 
+        if (!arrayContains(availablePoses, poseName, isEqual)) {
+            if (!arrayContains(availablePoses, poseName, stringContains)) {
                 return true; // part of raster characters, but not an available pose
             }
         }
@@ -93,7 +93,10 @@ function getPoseName(layer, frame) {
     }
     var poseFrame = fl.getDocumentDOM().getElementProperty("firstFrame"); // get the index in the firstFrame property
     // in the character timeline, obtain the name of the pose as it stands on the given frame
-    return poseName = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].name;
+    if(characterTimeline.layers[xSheetLayerIndex].frames[poseFrame] === undefined) {
+        return undefined;   
+    }
+    return characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].name;
 }
 
 // lip flap lipsync utils
@@ -225,12 +228,22 @@ Description:
 function getLipFlapInfo(layer, frame) {
     var poseName = getPoseName(layer, frame);
     var characterName = fl.getDocumentDOM().selection[0].libraryItem.name;
-    var firstFrameOfLipFlap = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".lipFlap")[0];
-    var lipFlapLength = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".lipFlap")[1];
-    if (firstFrameOfLipFlap == undefined || lipFlapLength == undefined) { // check to see if data is in the symbol name instead of the full path 
+    var firstFrameOfLipFlap = undefined;
+    var lipFlapLength = undefined;
+    var i = 0;
+    while (firstFrameOfLipFlap === undefined && lipFlapLength === undefined && i < fl.documents.length) {
+        firstFrameOfLipFlap = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".lipFlap")[0];
+        lipFlapLength = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".lipFlap")[1];
+        i++
+    }
+    if (firstFrameOfLipFlap === undefined || lipFlapLength === undefined) { // check to see if data is in the symbol name instead of the full path 
         characterName = characterName.substring(characterName.lastIndexOf("/") + 1);
-        firstFrameOfLipFlap = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".lipFlap")[0];
-        lipFlapLength = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".lipFlap")[1];
+        i = 0;
+        while (firstFrameOfLipFlap === undefined && lipFlapLength === undefined && i < fl.documents.length) {
+            firstFrameOfLipFlap = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".lipFlap")[0];
+            lipFlapLength = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".lipFlap")[1];
+            i++
+        }
     }
     return [firstFrameOfLipFlap, lipFlapLength]
 }
@@ -340,7 +353,7 @@ function lipFlapLipSyncHelper(firstFrameOfLipFlap, lipFlapLength, voiceStartFram
             }
             // makeLipFlap returns -1 if it's a mouth shape pose
             var newInfo = makeLipFlap(firstFrameOfLipFlap, lipFlapLength, distance, layer, voiceStartFrame + timingArray[k][0], wordStartTimes, wordEndTimes);
-            if (newInfo == -1) { 
+            if (newInfo == -1) {
                 //do stuff with rasters...
                 var duration = fl.getDocumentDOM().getTimeline().getFrameProperty("duration");
                 // call rasterLipSyncHelper to sync the mouth shape pose, then move on to the next pose (startFrame += duration)
@@ -450,7 +463,7 @@ Variables:
     endFrame            []
 Description: does mouth shape syncing from startFrame to endFrame in the given poseName
 */
-function rasterLipSyncHelper(voiceLineStartFrame, startFrame, layer, lipsyncMap, poseName, endFrame) { 
+function rasterLipSyncHelper(voiceLineStartFrame, startFrame, layer, lipsyncMap, poseName, endFrame) {
     if (poseName.substring(poseName.lastIndexOf(" ")) != " Talk") {
         poseName = poseName.substring(0, poseName.lastIndexOf(" ")); // if it's passed all other data validation and this line runs, that means the pose is one of Athena's (widget emotion at the end). Get rid of the emotion.
     }
@@ -532,7 +545,7 @@ function rasterLipSync(noLipFlapData, voiceLayerName, voiceStartFrame, voiceDura
             continue;
         }
         var poseName = getPoseName(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame);
-        if(poseName == undefined) {
+        if (poseName == undefined) {
             break; // goes to new character, so we're done here
         }
         if (poseName.substring(poseName.lastIndexOf(" ")) != " Talk") {
@@ -559,7 +572,7 @@ if (confirmExecution) {
         resetSelection(selectedLayers[i], 0); // go to first frame of layer
         var voiceLayerName = fl.getDocumentDOM().getTimeline().getLayerProperty("name"); // used to go to the character layer
         var characterLayerName = voiceLayerName.substring(0, voiceLayerName.lastIndexOf("_")); // sound layer should have _VOX at the end, character layer shouldn't
-        if(fl.getDocumentDOM().getTimeline().findLayerIndex(characterLayerName) == undefined) { // invalid layer setup, skip to next one
+        if (fl.getDocumentDOM().getTimeline().findLayerIndex(characterLayerName) == undefined) { // invalid layer setup, skip to next one
             fl.trace("Invalid layer selected: " + voiceLayerName + ". Skipping this layer.");
             continue;
         }

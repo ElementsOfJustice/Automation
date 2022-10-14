@@ -275,20 +275,20 @@ Description:
     Helper function to generate the condition for witness handling
 */
 
-function generateWitnessBools(speakerTagIndex) { 
+function generateWitnessBools(speakerTagIndex) {
     var isWitnessSpeaking = false;
     var isNextCharacterWitness = false;
     for (var witness in sWitnesses) {
         if (sWitnesses[witness] == speakertagArray[speakerTagIndex]) {
-                isWitnessSpeaking = true;
-            }
-            if (speakerTagIndex < speakertagArray.length - 1 && sWitnesses[witness] == speakertagArray[speakerTagIndex + 1]) {
-                isNextCharacterWitness = true;
-            }
-            if (isWitnessSpeaking && isNextCharacterWitness) {
-                break;
-            }
+            isWitnessSpeaking = true;
         }
+        if (speakerTagIndex < speakertagArray.length - 1 && sWitnesses[witness] == speakertagArray[speakerTagIndex + 1]) {
+            isNextCharacterWitness = true;
+        }
+        if (isWitnessSpeaking && isNextCharacterWitness) {
+            break;
+        }
+    }
 
     return [isWitnessSpeaking, isNextCharacterWitness];
 
@@ -339,7 +339,7 @@ function sculpt() {
                         fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
                     }
                 }
-                
+
                 if (!generateWitnessBools(i)[1] /* isNextCharacterWitness */) { // if next speaker is neither witnesses, put blank keyframes at the end of their keyframe
                     for (var witness in sWitnesses) {
                         fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
@@ -362,54 +362,54 @@ function sculpt() {
                     fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
                 }
 
-            // POSE AUTOMATION //
+                // POSE AUTOMATION //
 
-            //fl.trace("Layer Index: " + layerIndex)
-            //fl.trace("Frame: " + fl.getDocumentDOM().getTimeline().currentFrame)
-            //fl.trace("Element: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0])
-            //fl.trace("Item Index: " + fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name))
+                //fl.trace("Layer Index: " + layerIndex)
+                //fl.trace("Frame: " + fl.getDocumentDOM().getTimeline().currentFrame)
+                //fl.trace("Element: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0])
+                //fl.trace("Item Index: " + fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name))
 
-            fl.trace("Selected Layer is " + masterRigArray[uniqueChars[j]][0] + " but it should be " + speakertagArray[i])
-            fl.trace("Selected Sym for xSheet Browsing is: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
+                fl.trace("Selected Layer is " + masterRigArray[uniqueChars[j]][0] + " but it should be " + speakertagArray[i])
+                fl.trace("Selected Sym for xSheet Browsing is: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
 
-            var itemIndex= fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
-            var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0]
+                var itemIndex = fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
+                var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0]
 
-            var poseFrameNum = -1
+                var poseFrameNum = -1
 
-            for (var k = 0; k < objTl.frameCount; k++) {
-                if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame)) {    
-                    //fl.trace(dialogueArray[i][2] + " " + dialogueArray[i][1])
-                    //fl.trace("Internal xSheet Pose Name: " + objTl.frames[k].name + " | Intended Pose Name: " + dialogueArray[i][3] + " k: " + k)              
-                    if (objTl.frames[k].name == dialogueArray[i][3]) {
-                        poseFrameNum = k
-                        fl.trace("K is : " + k)
+                for (var k = 0; k < objTl.frameCount; k++) {
+                    if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame)) {
+                        //fl.trace(dialogueArray[i][2] + " " + dialogueArray[i][1])
+                        //fl.trace("Internal xSheet Pose Name: " + objTl.frames[k].name + " | Intended Pose Name: " + dialogueArray[i][3] + " k: " + k)              
+                        if (objTl.frames[k].name == dialogueArray[i][3]) {
+                            poseFrameNum = k
+                            fl.trace("K is : " + k)
+                        }
                     }
-                }       
-            }
+                }
 
-            if (poseFrameNum != -1) {
-                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
-            } else {
-                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = 0
-            }
+                if (poseFrameNum != -1) {
+                    fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
+                } else {
+                    fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = 0
+                }
 
-            //write pose to frame name
-            fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
-
-            if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
+                //write pose to frame name
                 fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
+
+                if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
+                    fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
+                }
+
+                if (speakertagArray[i] != speakertagArray[i + 1]) {
+                    fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
+                    // select current frame
+                    fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+                    fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
+                }
+
             }
 
-            if (speakertagArray[i] != speakertagArray[i + 1]) {
-                fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
-                // select current frame
-                fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-                fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
-            }
-
-            }
-            
         }
     }
 }
@@ -594,6 +594,7 @@ function addRigsInvestgation() {
         if (character == sDefense) {
             continue;
         }
+        fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
         switchActive(masterInvestigationArray[character][0]);
         fl.getDocumentDOM().getTimeline().currentFrame = 0;
         // select current frame
@@ -603,10 +604,11 @@ function addRigsInvestgation() {
             x: 0,
             y: 0
         }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
+        fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
         fl.getDocumentDOM().swapElement(masterInvestigationArray[character][1]);
         fl.getDocumentDOM().setTransformationPoint({ x: 0, y: 0 });
-        fl.getDocumentDOM().align('vertical center', true);
-        fl.getDocumentDOM().align('horizontal center', true);
+        // fl.getDocumentDOM().align('vertical center', true);
+        // fl.getDocumentDOM().align('horizontal center', true);
         // fl.getDocumentDOM().setElementProperty('transformX', masterRigArray[uniqueChars[i]][2]);
         // fl.getDocumentDOM().setElementProperty('transformY', masterRigArray[uniqueChars[i]][3]);
         fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !true);
@@ -623,10 +625,13 @@ Description:
 function sculptInvestgation() {
     var uniqueChars = getCharacters();
     for (var i = speakertagArray.length - 2; i >= 0; i--) {
-        if (speakertagArray[i] == sDefense) {
+        if (speakertagArray[i] == sDefense || speakertagArray[i] == "Bailiff #1") {
             continue;
         }
         for (var j = 0; j < uniqueChars.length; j++) {
+            if (uniqueChars[j] == sDefense || uniqueChars[j] == "Bailiff #1") {
+                continue;
+            }
             fl.getDocumentDOM().getTimeline().currentFrame = iFrameDuration * i;
             if ((i == 0) && (speakertagArray[i] != uniqueChars[j])) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
                 switchActive(masterInvestigationArray[uniqueChars[j]][0]);
@@ -635,7 +640,9 @@ function sculptInvestgation() {
                 fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
                 // select current frame
                 fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-                fl.getDocumentDOM().deleteSelection();
+                if (fl.getDocumentDOM().getTimeline().getFrameProperty("elements").length != 0) {
+                    fl.getDocumentDOM().deleteSelection();
+                }
             }
 
             else if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
@@ -793,35 +800,35 @@ if (guiPanel.dismiss == "accept") {
     }
 
     writeReport = guiPanel.panel_writeReport;
-    
+
     fl.runScript(arrayPath);
     fl.runScript(dirURL + "/config.txt");
 
-/******************************************************************************
-                            DISCRIMINATE ARRAYS
-******************************************************************************/
+    /******************************************************************************
+                                DISCRIMINATE ARRAYS
+    ******************************************************************************/
 
-/*
-Dialogue Array
-
-All the entries in the scene data array that are prefixed with "dialogue" will
-be bumped into this new array in charge of text and rig generation.
-
-speakertagArray is a fossil from the old schema, but it's called like 40 times
-in this script and I have no idea what some functions do, so we will add a step
-to rebuild the old speakertagArray to fit compatibility with this new schema.
-
-sceneData[0] will determine if it is dialogue
-sceneData[1] is the AE markup ID
-sceneData[2] is the speaker
-sceneData[3] is the dialogue itself
-sceneData[4] is the pose suggested by the script or emotionEngine
-*/
+    /*
+    Dialogue Array
+    
+    All the entries in the scene data array that are prefixed with "dialogue" will
+    be bumped into this new array in charge of text and rig generation.
+    
+    speakertagArray is a fossil from the old schema, but it's called like 40 times
+    in this script and I have no idea what some functions do, so we will add a step
+    to rebuild the old speakertagArray to fit compatibility with this new schema.
+    
+    sceneData[0] will determine if it is dialogue
+    sceneData[1] is the AE markup ID
+    sceneData[2] is the speaker
+    sceneData[3] is the dialogue itself
+    sceneData[4] is the pose suggested by the script or emotionEngine
+    */
 
     for (var i = 0; i < sceneData.length; i++) {
 
         if (sceneData[i][0] == "dialogue") {
-            dialogueArray.push( [sceneData[i][2], sceneData[i][3], sceneData[i][1], sceneData[i][4]] ) 
+            dialogueArray.push([sceneData[i][2], sceneData[i][3], sceneData[i][1], sceneData[i][4]])
             //dialogueArray[i][0] for SpeakerTag
             //dialogueArray[i][1] for Dialogue
             //dialogueArray[i][2] for Line ID
@@ -834,12 +841,12 @@ sceneData[4] is the pose suggested by the script or emotionEngine
         speakertagArray[i] = (dialogueArray[i][0])
     }
 
-/*
-Pan Array
-
-sceneData[0] will determine if we are panning
-sceneData[1] will determine the pan destination
-*/
+    /*
+    Pan Array
+    
+    sceneData[0] will determine if we are panning
+    sceneData[1] will determine the pan destination
+    */
 
     for (var i = 0; i < sceneData.length; i++) {
 
@@ -852,76 +859,76 @@ sceneData[1] will determine the pan destination
 
     }
 
-/*
-Fade Array
+    /*
+    Fade Array
+    
+    sceneData[0] will determine if we are fading
+    sceneData[1] will determine if we are fading in or out
+    */
 
-sceneData[0] will determine if we are fading
-sceneData[1] will determine if we are fading in or out
-*/
+    var defaultFadeLength = 12; //declare this a million years ago
 
-var defaultFadeLength = 12; //declare this a million years ago
+    for (var i = 0; i < sceneData.length; i++) {
 
-for (var i = 0; i < sceneData.length; i++) {
+        if (sceneData[i][0] == "fade") {
+            fade(defaultFadeLength, sceneData[i][1])
+        }
 
-    if (sceneData[i][0] == "fade") {
-        fade(defaultFadeLength, sceneData[i][1])
     }
 
-}
+    /*
+    Flash 
+    */
 
-/*
-Flash 
-*/
+    for (var i = 0; i < sceneData.length; i++) {
 
-for (var i = 0; i < sceneData.length; i++) {
+        if (sceneData[i][0] == "flash") {
+            flash(sfx, cue)
+        }
 
-    if (sceneData[i][0] == "flash") {
-        flash(sfx, cue)
     }
 
-}
+    /*
+    Screenshake 
+    */
 
-/*
-Screenshake 
-*/
+    for (var i = 0; i < sceneData.length; i++) {
 
-for (var i = 0; i < sceneData.length; i++) {
+        if (sceneData[i][0] == "screenshake") {
+            screenshake(sfx, cue) //screenshake with default settings always
+        }
 
-    if (sceneData[i][0] == "screenshake") {
-        screenshake(sfx, cue) //screenshake with default settings always
     }
 
-}
+    /*
+    Evidence
+    
+    sceneData[0] will determine if we are evidence
+    sceneData[1] will determine if we are presenting or obtaining
+    sceneData[2] will determine the png name
+    sceneData[3] the side of the evidence if we're presenting
+    sceneData[4] the text data of the evidence if we're obtaining it
+    
+    If we obtain the evidence, invoke typewriter with the text data of 'sceneData[2] added to Court Record.'
+    
+    */
 
-/*
-Evidence
+    for (var i = 0; i < sceneData.length; i++) {
 
-sceneData[0] will determine if we are evidence
-sceneData[1] will determine if we are presenting or obtaining
-sceneData[2] will determine the png name
-sceneData[3] the side of the evidence if we're presenting
-sceneData[4] the text data of the evidence if we're obtaining it
+        if (sceneData[i][0] == "evidence") {
+            evidence(sceneData[i][1], sceneData[i][2], sceneData[i][3], sceneData[i][4])
+            //evidence function needs to be polymorphic for obtain vs present
+        }
 
-If we obtain the evidence, invoke typewriter with the text data of 'sceneData[2] added to Court Record.'
-
-*/
-
-for (var i = 0; i < sceneData.length; i++) {
-
-    if (sceneData[i][0] == "evidence") {
-        evidence(sceneData[i][1], sceneData[i][2], sceneData[i][3], sceneData[i][4])
-        //evidence function needs to be polymorphic for obtain vs present
     }
 
-}
 
 
+    /******************************************************************************
+                                    MAIN EXECUTION
+    ******************************************************************************/
 
-/******************************************************************************
-                                MAIN EXECUTION
-******************************************************************************/
-
-//move get time diff into each function plus a string saying the name of the function
+    //move get time diff into each function plus a string saying the name of the function
 
     fl.getDocumentDOM().getTimeline().currentFrame = 0;
     if (viewMode == "courtMode") {
