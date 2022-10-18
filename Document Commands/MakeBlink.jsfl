@@ -36,28 +36,52 @@ function selectOrMakeKeyframe(layer, frame) {
     }
 }
 
-//TODO: search for the blinking persistent data. If it does not exist, tell the user and quit
-var characterName = fl.getDocumentDOM().selection[0].libraryItem.name;
-var characterTimeline = fl.getDocumentDOM().selection[0].libraryItem.timeline; // get the timeline of the selected symbol
-var xSheetLayerIndex = characterTimeline.findLayerIndex("xSheet"); // get the integer index of layer "xSheet"
-if (xSheetLayerIndex == undefined) {
-    xSheetLayerIndex = 0; // assume it's at 0 if somehow it doesn't find it
-}
-var poseFrame = fl.getDocumentDOM().getElementProperty("firstFrame"); // get the index in the firstFrame property
-// in the character timeline, obtain the name of the pose as it stands on the given frame
-var poseName = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].name;
-var firstFrameOfBlink = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".blink")[0];
-var blinkLength = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".blink")[1];
-if (firstFrameOfBlink == undefined || blinkLength == undefined) {
-    characterName = characterName.substring(characterName.lastIndexOf("/") + 1);
-    firstFrameOfBlink = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".blink")[0];
-    blinkLength = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".blink")[1];
-    if (firstFrameOfBlink == undefined || firstFrameOfBlink == undefined) {
-        throw new Error("Blink data not found. Use InsertBlinkData to create it.");
+function getPoseName(layer, frame) {
+    resetSelection(layer, frame);
+    if (fl.getDocumentDOM().selection[0] == undefined) {
+        return undefined;
     }
+    var characterTimeline = fl.getDocumentDOM().selection[0].libraryItem.timeline; // get the timeline of the selected symbol
+    var xSheetLayerIndex = characterTimeline.findLayerIndex("xSheet"); // get the integer index of layer "xSheet"
+    if (xSheetLayerIndex == undefined) {
+        xSheetLayerIndex = 0; // assume it's at 0 if somehow it doesn't find it
+    }
+    var poseFrame = fl.getDocumentDOM().getElementProperty("firstFrame"); // get the index in the firstFrame property
+    // in the character timeline, obtain the name of the pose as it stands on the given frame
+    if(characterTimeline.layers[xSheetLayerIndex].frames[poseFrame] === undefined) {
+        return undefined;   
+    }
+    return characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].name;
 }
+
+function getBlinkInfo(layer, frame) {
+    var poseName = getPoseName(layer, frame);
+    var characterName = fl.getDocumentDOM().selection[0].libraryItem.name;
+    var firstFrameOfLipFlap = undefined;
+    var lipFlapLength = undefined;
+    var i = 0;
+    while (firstFrameOfLipFlap === undefined && lipFlapLength === undefined && i < fl.documents.length) {
+        firstFrameOfLipFlap = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[0];
+        lipFlapLength = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[1];
+        i++
+    }
+    if (firstFrameOfLipFlap === undefined || lipFlapLength === undefined) { // check to see if data is in the symbol name instead of the full path 
+        characterName = characterName.substring(characterName.lastIndexOf("/") + 1);
+        i = 0;
+        while (firstFrameOfLipFlap === undefined && lipFlapLength === undefined && i < fl.documents.length) {
+            firstFrameOfLipFlap = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[0];
+            lipFlapLength = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[1];
+            i++
+        }
+    }
+    return [firstFrameOfLipFlap, lipFlapLength];
+}
+
+//TODO: search for the blinking persistent data. If it does not exist, tell the user and quit
+var blinkInfo = getBlinkInfo(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame);
+if(blinkInfo[0] === undefined || blinkInfo[1] === undefined) throw new Error("Blink data not found. Use InsertBlinkData to create it.");
 selectOrMakeKeyframe(fl.getDocumentDOM().getTimeline().getSelectedLayers(), fl.getDocumentDOM().getTimeline().currentFrame);
 fl.getDocumentDOM().setElementProperty("loop", "loop");
-fl.getDocumentDOM().setElementProperty("firstFrame", firstFrameOfBlink - 1); // it's one indexed
-selectOrMakeKeyframe(fl.getDocumentDOM().getTimeline().getSelectedLayers(), fl.getDocumentDOM().getTimeline().currentFrame + blinkLength);
+fl.getDocumentDOM().setElementProperty("firstFrame", blinkInfo[0] - 1); // it's one indexed
+selectOrMakeKeyframe(fl.getDocumentDOM().getTimeline().getSelectedLayers(), fl.getDocumentDOM().getTimeline().currentFrame + blinkInfo[1]);
 fl.getDocumentDOM().setElementProperty("loop", "single frame");

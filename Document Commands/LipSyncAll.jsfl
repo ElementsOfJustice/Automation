@@ -245,7 +245,7 @@ function getLipFlapInfo(layer, frame) {
             i++
         }
     }
-    return [firstFrameOfLipFlap, lipFlapLength]
+    return [firstFrameOfLipFlap, lipFlapLength];
 }
 
 /*
