@@ -11,7 +11,6 @@ Get all voice lines in a subset of folders
 
 function switchVox(layerVar) {
 	var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(layerVar);
-	var audioFolder = fl.getDocumentDOM().getTimeline().findLayerIndex("AUDIO")
 	if (layerIndex == null) {
 		var newLayer = fl.getDocumentDOM().getTimeline().addNewLayer(layerVar);
 		layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(layerVar);
@@ -65,6 +64,7 @@ while (fl.getDocumentDOM().getTimeline().currentFrame < fl.getDocumentDOM().getT
 	} else {
 		fl.trace("NOT FOUND: " + attemptFile);
 	}
+
 	switchVox("TEXT");
 
 	// fl.trace("Current Frame is: " + fl.getDocumentDOM().getTimeline().currentFrame);

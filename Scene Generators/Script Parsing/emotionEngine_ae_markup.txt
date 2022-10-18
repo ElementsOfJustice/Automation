@@ -1,0 +1,912 @@
+Scene 6
+Characters: Royal Order, Turning Page, Fair Devotion, Sugar Stamp, Athena, Twilight, Luna, Judge, Private Eye, Sweetie Belle
+
+s1_001_royal order
+[Shocked] Turning?!
+
+s1_002_turning page
+[Surprised] Dad? What are you doing here?
+
+s1_003_royal order
+[Concerned] We… we were looking for you. Are you all right? Are you hurt?
+
+s1_004_turning page
+Y-Yeah, I’m fine… what were you and Mom arguing about?
+
+s1_005_royal order
+[Questioning on 3rd sentence] You heard that? … Well, never you mind. Turning, what exactly are you doing in the Everfree Forest at this hour? Your mother and I were so worried!
+
+s1_006_turning page
+S-Sorry, Dad, but… it’s kinda a long story. 
+
+s1_007_turning page
+You see, a… very good friend of mine got into some trouble with these two fillies: Diamond Tiara and Silver Spoon.
+
+s1_008_royal order
+Trouble? What kind of trouble?
+
+s1_009_turning page
+[Angry] They… They’d stolen some of her stuff. And they were blackmailing her so that she’d get them something they wanted in exchange! 
+
+s1_010_turning page
+They arranged to meet in the forest, by the castle ruins, to conduct the exchange. My friend came to me for help, and I agreed.
+
+s1_011_turning page
+So, I went with her, to make sure that she didn’t get hurt, and to make sure the deal went smoothly.
+
+s1_012_royal order
+[Surprised] You… came out here without an adult?
+
+s1_013_turning page
+Well, yeah! I couldn’t just let her go off on her own! Besides, I wanted to teach those blackmailers a lesson! 
+
+s1_014_royal order
+[Worried] A lesson…? 
+
+s1_015_turning page
+[Excited, satisfied] Right, a lesson. It’s like you’ve always taught me! Evildoers beware, or taste the might of my sword! I’d say those fillies got a good taste of it, all right!
+
+[Turning levitates his broken sword in front of him, and Royal notes the damage.]
+
+s1_016_royal order
+Your sword… it’s broken.
+
+s1_017_turning page
+[Cheerfully] Yeah… I guess I swung it a little too hard. Oh, well! Nothing that a bit of duct tape won’t fix!
+
+s1_018_royal order
+(He could have seriously hurt somepony! And if he wasn’t careful with his swing, he might have hurt his friend… or even himself!)
+
+s1_019_royal order
+[Guilty] (This… This must be what Fair meant. His reckless behavior at home… Is it really my fault? Have I led him that far astray?)
+
+s1_020_royal order
+I’m afraid I still don’t quite fully understand, Turning. You still came out to a dangerous forest armed with nothing but that wooden sword.
+
+s1_021_turning page
+[Not understanding] Yeah, and? 
+
+s1_022_royal order
+What if you’d gotten attacked by something, like a wild animal? Or worse… what if your friend had?
+
+s1_023_turning page
+[Confident] Come on, Dad! That’s why I went with her in the first place! 
+
+s1_024_turning page
+Besides, I’m pretty sure I could take on anycreature in this forest! Your training has definitely proven that! HIYAH!
+
+[Turning proudly swings his sword again.]
+
+s1_025_turning page
+[Excited] If nothing else, it would have proven a great way to test my skills! Hey! Maybe you could teach me a few new strikes that only a Royal Guard would know!
+
+s1_026_royal order
+My training…
+
+s1_027_royal order
+(Stars above… Fair was right. This IS my fault! How do I even begin to confront this issue?)
+
+s1_028_royal order
+[Tone of warning] Turning Page… 
+
+[Turning, previously excited, notes the change in his father’s tone. He lowers his sword and looks at him, confused.]
+
+s1_029_royal order
+I… We need to talk about that, actually. Your… “training.”
+
+s1_030_turning page
+O-oh? Okay… Um, what about it?
+
+s1_031_royal order
+[Delicately] It’s just… maybe we should, you know… ease up on it for a bit. 
+
+s1_032_turning page
+Ease… up?
+
+s1_033_royal order
+Right… it’s just, well… I know you’re still enthusiastic about joining the Royal Guard, but… maybe now isn’t the best time.
+
+s1_034_turning page
+W-what? What do you mean?
+
+s1_035_royal order
+Look, son. There’s… there’s a lot going on in the world, right now. Crazy stuff. Dangerous stuff. 
+
+s1_036_royal order
+Even with your training… I’m just concerned about your safety, that’s all.
+
+[Turning is silent, uncomprehending. Royal rushes on, attempting to explain himself.]
+
+s1_037_royal order
+[Delicately] A-and your mother and I, well, we think it might be better if you focus on something less risky. For the time being, of course!
+
+s1_038_royal order
+Though that WOULD mean you would have to attend school.
+
+s1_039_turning page
+[Shocked] W-What?!
+
+s1_040_royal order
+I understand that school is a bit of a sore topic for you, but you DO have to attend. 
+
+s1_041_turning page
+B-But what about joining the Royal Guard?!
+
+s1_042_royal order
+I’m not saying you can’t, just that… you should wait. Learn some patience. Be a little less reckless with yourself, show some forethought, that sort of thing.
+
+s1_043_turning page
+Are you saying I’m not ready?!
+
+s1_044_royal order
+[sigh] No, Turning Page, you aren’t. Not… not by a long shot.
+
+s1_045_turning page
+[Defensive] How can you say that?! I-I’m more than ready to join! I-I save ponies and hurt those who want to do bad things, like Diamond Tiara and Silver Spoon and—
+
+s1_046_royal order
+But that’s my point, Turning Page. 
+
+s1_047_royal order
+You hurt them, yes, but don’t you know what that resulted in? Spoiled Rich demanding we pay for the damages you wrought!
+
+s1_048_royal order
+[Lecturing] Had you not been so reckless as to attack those fillies—
+
+s1_049_turning page
+But they DESERVED it—
+
+s1_050_royal order
+That’s not for either of us to say, Turning. And even if they DID, attacking them has only landed us in a truly dire situation.
+
+s1_051_royal order
+[Lecturing] You can’t be this reckless. Not if you want to join the Royal Guard… and certainly not for the rest of your life.
+
+s1_052_turning page
+!!
+
+s1_053_royal order
+That’s why I think it would be best if you DO start attending school. If nothing else, perhaps the social interaction will teach you how to keep a cool head. 
+
+s1_054_turning page
+[Even more worried and hurt] W-what… but… I… W-What about our sparring sessions? D-Does this mean we can’t have them anymore?
+
+s1_055_royal order
+[Distant] I… I’m afraid not. My job in Canterlot is… about to be even more demanding of my time. 
+
+s1_056_royal order
+[Second sentence slightly under breath] I probably won’t be able to come home all that often… much to your mother’s disappointment…
+
+s1_057_turning page
+[Outraged] Your job? B-but why? How does working in some stuffy place like Canterlot lead to more work for you?!
+
+s1_058_royal order
+… I’m sorry, Turning. I can’t tell you that.
+
+s1_059_turning page
+Nngk! 
+
+s1_060_royal order
+I know this comes as a great shock to you, son, but… 
+
+s1_061_royal order
+[Attempting to placate Turning] If you simply listen to your mother, and start attending school, everything will play out just fine. I promise. 
+
+s1_062_turning page
+I… I… 
+
+[Turning begins to shake. Royal, concerned, approaches him.]
+
+s1_063_royal order
+Turning? Are… Are you all right—
+
+s1_064_turning page
+YYYEEEAAAAAGGHHH!
+
+s1_065_turning page
+[Breathing heavily]... ? H-Huh? W-what… what the…
+
+s1_066_turning page
+…D-Dad?
+
+*END OF FLASHBACK*
+
+s1_067_judge
+ …
+
+s1_068_judge
+[Solemn] This has… left me truly speechless.
+
+s1_069_luna
+[Serious] This is a grave turn of events, Your Honor. I expect many of us are at a loss for words.
+
+s1_070_athena
+[Attempting to recover] Turning, you… You must have been in complete shock afterwards.
+
+s1_071_turning page
+I was. It just happened so fast. I couldn’t believe my eyes—I thought he would somehow be fine.
+
+s1_072_twilight
+It was the poison joke. He’d gotten infected while looking around Froggy Bottom Bog, and it took effect by the time you had confronted him. 
+
+s1_073_turning page
+Once I’d recovered enough, I levitated him down from the spike, to see if I could help him, but… 
+
+s1_074_turning page
+[Horrified] He just kept gushing blood. Everywhere. The statue, the ground… it was all covered. I wanted to scream, but my voice just wouldn’t come out.
+
+s1_075_fair devotion
+[Quietly] And that was when I came rushing back. 
+
+[Fair momentarily composes herself, and when she looks at Athena and speaks, it’s almost with a bittersweet, begrudging tone.]
+
+s1_076_fair devotion
+[Bittersweet] Honestly, I’m impressed you managed to piece it together so thoroughly, Ms. Cykes. I DID run off after Royal Order and I fought… and I did come back afterwards.
+
+s1_077_twilight
+I’m guessing it was the clang that got you to turn back?
+
+s1_078_fair devotion
+[Solemn] That’s right. The clang… that came from Turning hitting his father with his sword.
+
+*FLASHBACK RESUMES*
+
+s1_079_fair devotion
+[Confused] W-What the—Turning Page? What happened here?
+
+s1_080_turning page
+Mom, I… I… It was an accident, I swear, I just got so angry and—
+
+s1_081_fair devotion
+[gasp] R-Royal?! H-hang on, honey, j-just—
+
+[But when Fair reaches his body, she realizes it’s too late.]
+
+s1_082_fair devotion
+[quietly, on the verge of panic] Oh, no. Oh, no no no, no… 
+
+s1_083_turning page
+M-Mom? I-is there anything we can do?
+
+s1_084_fair devotion
+[Quietly] … N-no. He’s… He’s already gone.
+
+s1_085_turning page
+[subdued] No…
+
+[Silence descends upon the scene for but a moment. Then Turning squares himself up.]
+
+s1_086_turning page
+[Serious] I’ll do it.
+
+s1_087_fair devotion
+You’ll… what?
+
+s1_088_turning page
+Turn myself in. It’s my fault, after all, and… It’s the right thing to do.
+
+s1_089_fair devotion
+N-No!
+
+[Turning is taken aback by her outburst.]
+
+s1_090_fair devotion
+[Desperate, trying to compose herself] Please, just… listen to me. I’m… I’m so grateful you’re alive, Turning. I was worried that… Well, I… You can’t turn yourself in!
+
+s1_091_turning page
+B-but Mom—
+
+s1_092_fair devotion
+Even if this was an accident, the police won’t care! They’ll treat it like a murder! 
+
+s1_093_fair devotion
+[Frantic] And you know what happens to murderers—they’re banished from Equestria, no matter who they are!
+
+s1_094_fair devotion
+Royal wouldn’t want that. He wanted you to become a member of the Royal Guard one day, not throw it all away because of… because of some accident!
+
+s1_095_fair devotion
+[Pleading] Please, Turning… I… I can’t bear to lose you, too.
+
+s1_096_turning page
+B-but, Mom… I did this. D-Don’t I have to pay for it?
+
+[Fair begins to think.]
+
+s1_097_fair devotion
+… No, Turning. After all, you didn’t do this.
+
+s1_098_turning page
+Huh?
+
+s1_099_fair devotion
+[Coyly] It was… it was the result of an attack by some of the forest’s creatures. That’s what happened here. Nothing else. And here’s how we’ll make it so… 
+
+*END OF FLASHBACK*
+
+s1_100_athena
+Hold up a second, Ms. Devotion. Before you continue, I’d like to ask Sugar Stamp something.
+
+[Sugar Stamp appears.]
+
+s1_101_athena
+Sugar Stamp, the one thing you’ve been consistent on throughout this trial was that you saw the murder happen with your own eyes. 
+
+s1_102_athena
+Given what we now know, could you elaborate on that?
+
+s1_103_sugar stamp
+Y-yeah. I… I was in the forest that night delivering a letter to Zecora. I meant to fly to her hut right away, but… I heard a clang from somewhere in the woods.
+
+s1_104_sugar stamp
+When I went to investigate, I saw Turning remove his father’s body from the statue. 
+
+s1_105_sugar stamp
+I didn’t understand what had happened—not yet—but just as I was about to fly down and ask…
+
+s1_106_sugar stamp
+… That’s when Deva showed up.
+
+s1_107_twilight
+But you didn’t leave?
+
+s1_108_sugar stamp
+No, even though I thought I should. But… I couldn’t leave them. Turning looked so scared, and Deva… She looked so broken. 
+
+s1_109_sugar stamp
+I didn’t want to interfere with whatever conversation they were having, but I figured I could just… watch. 
+
+s1_110_luna
+And that must be when you overheard the witness’s plan. 
+
+s1_111_sugar stamp
+Yeah. It’s just as Fair had claimed before… but this time, Turning was the one complicit with it. 
+
+s1_112_turning page
+I didn’t want to go through with it, to be honest, but seeing Mom so upset, and remembering what my dad said to me before he…
+
+[Turning trails off, but Athena figures out the rest for him.]
+
+s1_113_athena
+[Solemnly] (“If you simply listen to your mother… everything will play out just fine. I promise.”)
+
+s1_114_turning page
+Well, I decided that I couldn’t refuse. So… I did as she told me. 
+
+s1_115_turning page
+The first thing I did was move Dad’s body from the statue over to the crossroads, leaving the armor behind. Mom followed next to me.
+
+s1_116_sugar stamp
+[Concerned] While he did that, I kept watch, flying from tree to tree. The body… It kept leaking blood everywhere, leaving a trail behind them.
+
+s1_117_turning page
+We would have continued, but that was when we heard ANOTHER clang—coming from the statue.
+
+s1_118_twilight
+The second clang… The one that Sweetie Belle made in order to scare off the timberwolves.
+
+s1_119_fair devotion
+After we heard that, I told Turning to continue to Froggy Bottom Bog, then rushed back to the statue, afraid somepony had discovered the scene. 
+
+s1_120_fair devotion
+When I got to the statue, though, nopony was there. Only the armor and blood were. 
+
+s1_121_athena
+I see… And that’s when you must have moved the blood, as well as the armor, farther into the forest—to the clearing.
+
+s1_122_twilight
+All in order to suggest that timberwolves had attacked Royal Order and eaten his body.
+
+s1_123_turning page
+While Mom was doing that, though, I stopped at the crossroads. I was starting to have second thoughts. 
+
+s1_124_turning page
+I know Dad said I should listen to Mom, but still, lying? It… It felt horrible.
+
+s1_125_turning page
+But before I could come to a decision, I heard somepony coming. Thinking quickly, I ducked behind the body. And that…
+
+s1_126_luna
+… was when Scootaloo crashed into you.
+
+s1_127_turning page
+[Pained] Yeah. It took everything I had in me to avoid screaming. But I realized soon after who had hit me. 
+
+s1_128_turning page
+I tried to call out to her, but she was already running away, so I ran after her instead.
+
+s1_129_sugar stamp
+He’d left the body behind, and… that was when I decided to try and help out. I flew down to the scene to grab the body and move the scooter.
+
+s1_130_athena
+Move the scooter?
+
+s1_131_sugar stamp
+Yeah. I didn’t want Scootaloo to be blamed for Royal’s death, so I figured if I could move it, then deliver it to her later, she’d be fine.
+
+s1_132_athena
+Huh? You mean, you DIDN’T plant the scooter at the castle ruins? 
+
+s1_133_sugar stamp
+[Regretful] N-No. I… I lied about that, too. And in actuality, I didn’t even get to grab the body before I heard somepony coming and I had to hide in the trees again.
+
+s1_134_twilight
+Then, who brought it there? Who made it so that Scootaloo ended up being blamed for Royal’s death?
+
+s1_135_turning page
+[Guiltily] … That was me, Princess Twilight.
+
+s1_136_twilight
+[Shocked] W-What? Turning? How could you!
+
+s1_137_turning page
+[Quickly] I-It was an accident! You see, I tried to run after Scootaloo, but lost her, so I came running back to the body. 
+
+s1_138_turning page
+Once I saw the scooter again, I had made up my mind about what I would do.
+
+s1_139_turning page
+[Resolved] I didn’t want to follow Mom’s orders, but I also didn’t want to confess immediately. 
+
+s1_140_turning page
+Instead, I’d try to frame Diamond Tiara and Silver Spoon for the crime.
+
+s1_141_judge
+Frame them? Why?
+
+s1_142_turning page
+[Angry] Because this was all their fault! If they hadn’t bullied and blackmailed the Cutie Mark Crusaders, NONE of this would have happened!
+
+[Turning takes a moment to compose himself.]
+
+s1_143_turning page
+M-more than that, though, there was still the problem of Diamond’s mother, Spoiled Rich. She wanted us to pay for those dumb dresses.
+
+s1_144_turning page
+I figured, if I could get Diamond blamed for the murder, then maybe Mom and I could leverage the truth to get Spoiled Rich to back off.
+
+s1_145_turning page
+If she did, then I’d confess, Diamond Tiara would be acquitted, and Mom wouldn’t have to pay back a single bit. 
+
+s1_146_turning page
+That was my plan, anyway—and it would involve teleporting myself to the castle ruins with the body. 
+
+s1_147_turning page
+But, I accidentally teleported the scooter and wagon with me, too.
+
+s1_148_twilight
+Of course. Because anything that is in contact with the subject of teleportation will get teleported as well.
+
+s1_149_athena
+Sugar Stamp, did you see that happen?
+
+s1_150_sugar stamp
+[Concerned] I did, but I didn’t know where he teleported to! So I couldn’t help out in any other way. 
+
+s1_151_sugar stamp
+At that point I decided I’d just go and deliver Zecora’s letter, and maybe talk to Deva later about everything I’d seen. 
+
+s1_152_twilight
+What happened after you teleported, Turning Page?
+
+s1_153_turning page
+Well, I wanted to remove the scooter and wagon from the scene, but I had to rest for a second before I could teleport again. 
+
+s1_154_turning page
+That was when I heard somepony coming up the stairs from the gorge.
+
+s1_155_athena
+[Realizing] Diamond Tiara… Silver Spoon were already chasing after Scootaloo and you at that point.
+
+s1_156_turning page
+Yep. I couldn’t teleport again, so I chose to hide in the trees while she went to check the body. Not long after, Zecora showed up, making Diamond hide too. 
+
+s1_157_turning page
+At that point, I realized it’d be pointless to try and remove the scooter and wagon—both Zecora and Diamond had seen them.
+
+s1_158_turning page
+So, I figured that I could try and meet up with my mother back at the statue, and then tell her about what I did.
+
+*FLASHBACK RESUMES*
+
+s1_159_fair devotion
+Turning, no! You can’t STILL insist on turning yourself in at the end of this!
+
+s1_160_turning page
+[Insistent] But what choice do we have, Mom?! If I don’t, somepony innocent will end up being accused! 
+
+s1_161_turning page
+And it doesn’t matter if that’s either Diamond Tiara OR Scootaloo—
+
+s1_162_fair devotion
+[Imploring] But we can STILL make it look like an accident—
+
+s1_163_turning page
+It’s too late for that! Two ponies have already SEEN the body AND the scooter and wagon. Somepony WILL be blamed for what happened to Dad.
+
+s1_164_turning page
+The least we can do is ENSURE that it’s ME in the end. Because I killed him! 
+
+s1_165_turning page
+[Bitterly] The only thing I’m waiting on now is if Diamond Tiara still ends up getting accused.
+
+s1_166_fair devotion
+I… Rrgh. W-we’ll discuss this later, Turning Page. For now, go home, and wait for me to return.
+
+*END OF FLASHBACK*
+
+s1_167_athena
+So you were talking about all of this while at the statue, correct?
+
+s1_168_turning page
+That’s right.
+
+s1_169_athena
+Then that means… this was what you heard while you were behind the statue, right, Sweetie Belle?
+
+[Sweetie Belle appears.]
+
+s1_170_sweetie belle
+[Hesitant] Y-Yeah. When I heard that  Turning… um… When I heard… what he did… to his dad, I thought… I thought I could use that to help Scootaloo.
+
+s1_171_sweetie belle
+I was sure he’d confess immediately just to save her. 
+
+s1_172_twilight
+But… you didn’t, Turning Page?
+
+s1_173_turning page
+[Regretful] N-no… maybe I should have. But I was still holding out hope that Diamond Tiara would be accused at some point. 
+
+s1_174_turning page
+By the time the trial began, though, I realized that wasn’t about to happen.
+
+s1_175_turning page
+And because of that, I was fully prepared to confess to the crime… 
+
+s1_176_athena
+!! T-then, when THAT happened…
+
+*FLASHBACK TO 2-3.6*
+
+TURNING
+[Grateful] Thank you for fighting so hard for us, Ms. Cykes, but… [Sad] This is honestly for the best.
+
+*END OF FLASHBACK*
+
+s1_177_athena
+You were prepared to throw your chance of freedom away… just to save Scootaloo?
+
+s1_178_turning page
+Yeah… But it didn’t matter. After all, you managed to get the both of us acquitted without needing me to confess. 
+
+s1_179_turning page
+I might have been okay with that, but then… Sweetie Belle was accused. 
+
+s1_180_turning page
+[Fired up] Another innocent pony was about to take the blame for what I did. I… I couldn’t let that happen again!
+
+s1_181_turning page
+[Quickly subdued] But… After the trial, Mom told me that confessing was out of the question. 
+
+s1_182_turning page
+Sure, it’d save Sweetie Belle, but… Scootaloo’s innocence might be questioned by other ponies. I couldn’t put her through that. 
+
+s1_183_turning page
+And by then, Ms. Stamp had already gotten involved as a suspect.
+
+s1_184_turning page
+Mom told me about double jeopardy, and how admitting my guilt would do nothing but hurt Ms. Stamp, who only wanted to save Sweetie and me. 
+
+s1_185_turning page
+I couldn’t do that. Not to somepony our family loved so much, and somepony that’s been hurt a lot already. 
+
+s1_186_turning page
+Confessing would make her efforts wasted, and knowing that, along with what Scootaloo might have to go through, left me feeling trapped.
+
+s1_187_turning page
+[Frustrated] I didn’t know what to do! No matter if I confessed or not, someone would be hurt. 
+
+s1_188_turning page
+All I could do was just follow along with my mom’s plan, and hope everyone would be happy by the end.
+
+s1_189_athena
+[Pensive] But… Sugar Stamp’s role as a suspect… that was orchestrated by you, Fair Devotion. 
+
+s1_190_fair devotion
+Correct, Ms. Cykes. Truthfully, I hadn’t planned on getting Sugar involved, but that day, when Turning was arrested…
+
+*FLASHBACK BEGINS*
+
+[At Fair Devotion’s house, knocking on the door. Opening it, we see Sugar Stamp.]
+
+s1_191_fair devotion
+S-Sugar Stamp? What are you doing here?
+
+s1_192_sugar stamp
+[Conflicted] H-Hi, Deva. I… I just wanted to check up on you and Turning Page.
+
+s1_193_fair devotion
+[Tired] Oh… well, thank you. But you’re too late. Turning’s already been arrested.
+
+s1_194_sugar stamp
+Y-yeah, I heard. I…
+
+[Sugar Stamp takes a deep breath.]
+
+s1_195_sugar stamp
+Fair. I want you to know… I saw it. 
+
+s1_196_fair devotion
+Huh?
+
+s1_197_sugar stamp
+[Serious] Please don’t play dumb with me. We’ve been friends too long. I saw it, Fair. I saw what happened that night… I saw Turning kill his father.
+
+s1_198_fair devotion
+!!
+
+s1_199_sugar stamp
+Don’t worry. I don’t plan on telling anypony. But… I wanted to know if there was anything I could do to help out.
+
+s1_200_fair devotion
+H-Help out…? I mean… I don’t know, Sugar. I’m not sure how you could.
+
+s1_201_fair devotion
+I’ve been wracking my brain for a way to get Turning out of this mess, but the only thing I can think of is if I somehow were to take the fall.
+
+s1_202_fair devotion
+[Hesitant] But if I did that, who’d be able to take care of him? … W-would you?
+
+s1_203_sugar stamp
+[Just as hesitant] I-I don’t know, Deva. I… I don’t want to take Turning away from you.
+
+s1_204_fair devotion
+[Disappointed] Then… I guess…
+
+s1_205_sugar stamp
+W-well, hang on. What if, instead of YOU taking the fall, I did, instead?
+
+s1_206_fair devotion
+What?! You want to take the blame for killing Royal Order? I-I couldn’t allow that, Sugar!
+
+s1_207_sugar stamp
+But please, Deva! Think about Turning and yourself! If that happened, you both would be safe and happy! 
+
+s1_208_sugar stamp
+And… if you two were happy… then I could be, too. Even if I would have to be banished from Equestria.
+
+s1_209_fair devotion
+Sugar Stamp…
+
+*END OF FLASHBACK*
+
+s1_210_fair devotion
+So it was decided. Between the two of us, we’d make it so that Sugar Stamp would appear to be the true culprit all along. 
+
+s1_211_fair devotion
+There were a number of steps we had to take to accomplish that, though. The first was acquiring a motive for Sugar Stamp. 
+
+s1_212_fair devotion
+After some thinking, I had her return to Canterlot to write a fake love letter to Royal Order. 
+
+s1_213_fair devotion
+She’d keep it in her home, as well as stay in Canterlot until further notice.
+
+s1_214_fair devotion
+The next day, I went to the trial to see how things played out for Turning and Scootaloo. I also wanted to learn any more details about the murder…
+
+s1_215_fair devotion
+… anything that could make Sugar Stamp being the culprit more believable.
+
+s1_216_fair devotion
+[Mildly impressed] Even so, I couldn’t have anticipated the clone theory you and Princess Twilight presented, Ms. Cykes. It was perfect. It cleared Turning of any suspicion.
+
+s1_217_fair devotion
+But there was just one problem—
+
+s1_218_athena
+—that being, that now there were two murders to account for. 
+
+s1_219_fair devotion
+Exactly. I realized that for my plan to still work, I’d have to take the blame for ONE of them. For that to happen, however, I needed help… Private?
+
+s1_220_private eye
+[Regretful] Ah. Yes, I suppose this is where I should explain my own role in this whole affair.
+
+*FLASHBACK BEGINS*
+
+[In the courtroom, in a secluded area. Fair approaches Private Eye.]
+
+s1_221_private eye
+[Cheerful] Ah, Ms. Devotion. How fortunate to have run into you! I must express my immense relief to see that Turning’s been acquitted. You must be equally relieved.
+
+s1_222_fair devotion
+[Gloomy] Mm… Not quite, Detective Eye.
+
+s1_223_private eye
+Please, Private is fine. But… why not? 
+
+s1_224_fair devotion
+[Serious] … What I’m about to tell you doesn’t leave the two of us. Can you promise me that?
+
+s1_225_private eye
+[Confused, then grave] Promise? … Very well. I promise I won’t tell another soul.
+
+s1_226_fair devotion
+Good.
+
+[Fair Devotion takes a deep breath.]
+
+s1_227_fair devotion
+The truth is… there aren’t any clones involved. There’s only one death, and that’s Royal Order’s… and the pony who killed him was Turning Page.
+
+s1_228_private eye
+W-What?!
+
+s1_229_private eye
+If it is as you say, that Turning is guilty, and that it WAS an accident—we need to do something about that, now! 
+
+s1_230_private eye
+[Imploring] The warrant for Sweetie Belle’s arrest will no doubt soon be issued! We can still stop it, if we move quick enough!
+
+s1_231_fair devotion
+W-What? Why would there be a warrant for Sweetie Belle?
+
+s1_232_private eye
+Because it was HER blood found at the statue along with Royal Order’s. She was the other pony there on the night of the murder!
+
+s1_233_fair devotion
+!! Then that means…
+
+s1_234_private eye
+Ms. Devotion, please, there’s no way either of us can let that happen!
+
+s1_235_fair devotion
+But to stop that… surely you don’t mean I should give up my son for Sweetie’s freedom?
+
+s1_236_private eye
+[Hesitant] W-Well, I mean… 
+
+s1_237_fair devotion
+Do you really want him to be ostracized from the rest of Equestria for what he did?
+
+s1_238_private eye
+[Perturbed] N-No, of course not! Turning Page is the son of my friend! 
+
+s1_239_private eye
+But… the truth is the truth, isn’t it? And I can’t stand idly by and let somepony innocent be blamed.
+
+s1_240_fair devotion
+I have a few ideas. My friend Sugar Stamp and I are willing to take the fall for both deaths, but I’d need you to cooperate with me. 
+
+s1_241_fair devotion
+We can make it look like one of the fake murders was the result of a lover’s quarrel. That’ll absolve Sweetie, Turning, and everypony else involved.
+
+s1_242_private eye
+[Hesitant] I… I’m not sure…
+
+s1_243_fair devotion
+Please, Private. This WILL help Turning, and it WON’T hurt anypony who ISN’T willing to face the consequences.
+
+s1_244_fair devotion
+[Coy] Besides… I know what Royal Order was hiding—why he was in Canterlot for so long.
+
+s1_245_private eye
+!! Y-You do?!
+
+s1_246_fair devotion
+Yes. If you don’t help me on this… I won’t hesitate to reveal it.
+
+s1_247_private eye
+… 
+
+*END OF FLASHBACK*
+
+s1_248_athena
+This secret… What is it, exactly?
+
+[The court is silent.]
+
+s1_249_athena
+[Disappointed] (... That big, huh?)
+
+s1_250_fair devotion
+I was willing to say anything in order to get Private Eye on my side. In actuality, though, I never intended on revealing the truth. 
+
+s1_251_fair devotion
+Not that I believed I’d have to—I thought Private’s loyalty towards Royal Order would have convinced him anyway. 
+
+s1_252_athena
+[Disturbed] (Jeez… the levels of manipulation she was willing to go through…)
+
+s1_253_fair devotion
+Once he was on my side, I told him what I needed him to do. I’m sure you can figure out the rest, Ms. Cykes.
+
+s1_254_athena
+[Declarative] You would have asked him to fabricate evidence to implicate Sugar Stamp for one of the faux-murders. The one that supposedly happened at the clearing. 
+
+s1_255_athena
+More than that, you would have wanted evidence to show that the victim had been wearing armor prior to his death, in order to explain the clangs.
+
+s1_256_fair devotion
+Yes… And finally, I needed him to create evidence of Royal going to the Mirror Pool to clone himself in the first place.
+
+s1_257_private eye
+After Ms. Devotion told me her plan, I immediately set about completing what I was assigned. 
+
+s1_258_private eye
+I sealed off the forest, forged the evidence, and met with Sugar Stamp in Canterlot to fill her in.
+
+s1_259_fair devotion
+He performed marvelously, to the point where I thought my plan would work. But there was still one more wrinkle left to iron—the anonymous tip.
+
+s1_260_fair devotion
+[Determined] I had to stop whoever had written it from talking, since it appeared they knew what had happened that night. 
+
+s1_261_fair devotion
+I didn’t know who it could be until I learned that Sweetie Belle had been at the statue that night. That meant SHE was the sender.
+
+s1_262_fair devotion
+And furthermore: she must have heard the conversation between Turning and me. Realizing that, I went to the detention center to see if I could… change her mind.
+
+s1_263_twilight
+And that was why you were at the detention center when we went to see her…
+
+s1_264_athena
+Change her mind? Sweetie Belle, what does she mean?
+
+s1_265_sweetie belle
+[Hesitant] R-Right. So… we talked. And we agreed that we wouldn’t reveal each other’s secrets, so long as the two of us kept quiet. 
+
+s1_266_fair devotion
+And that was that. Everything was in place. Sugar and I would testify in a manner that would end with Ms. Cykes accusing me of the murder.
+
+s1_267_fair devotion
+[Disappointed] But… that wasn’t what ended up happening in the slightest. Somehow… everything fell apart.
+
+[Fair sighs.]
+
+s1_268_fair devotion
+[Dejected] I just don’t understand how. Ms. Cykes… Athena… I should have been able to fool you. I fooled Private Eye, Princess Luna… but not you. 
+
+s1_269_fair devotion
+[Desperate - needs to know once and for all] How? How did you see past the lie?
+
+s1_270_athena
+[Solemn] … Because your emotions told me the truth, Ms. Devotion.
+
+s1_271_fair devotion
+[Confused] My… emotions?
+
+s1_272_athena
+For how strongly the evidence pointed towards you, your emotions still gave you away. You couldn’t hide them, no matter how much you might have wanted to.
+
+s1_273_fair devotion
+I see… 
+
+s1_274_fair devotion
+I have just one more question, Athena, if you would permit me to ask it…
+
+s1_275_athena
+Go ahead, Ms. Devotion.
+
+s1_276_fair devotion
+After everything you’ve heard, everything you’ve uncovered… Can you honestly say that this was worth it all?
+
+s1_277_athena
+[Not entirely convincing] … I found the truth, Ms. Devotion. That’s worth everything, I should think.
+
+s1_278_fair devotion
+I know that, and I agree, but what I mean is, if you had simply gone along with how I wanted things to progress…
+
+s1_279_fair devotion
+… wouldn’t things have ended better for all of us?
+
+s1_280_fair devotion
+You’ve torn through so much evidence and testimony, I’ll grant you that. But what WERE you able to save? What made this worth the cost?
+
+[There’s another moment of silence, showing us the reactions of most of the characters. No one speaks.]
+
+s1_281_athena
+[Deeply conflicted] (... What made this worth the cost, indeed…?)

@@ -130,6 +130,65 @@ function thinkingFormat() {
     fl.getDocumentDOM().setElementTextAttr("lineSpacing", 1);
 }
 
+function levenshteinRatio(s, t) {
+    var d = []; //2d matrix
+
+    // Step 1
+    var n = s.length;
+    var m = t.length;
+
+    if (n == 0) return m;
+    if (m == 0) return n;
+
+    //Create an array of arrays in javascript
+    for (var i = n; i >= 0; i--) d[i] = [];
+
+    // Step 2
+    for (var i = n; i >= 0; i--) d[i][0] = i;
+    for (var j = m; j >= 0; j--) d[0][j] = j;
+
+    // Step 3
+    for (var i = 1; i <= n; i++) {
+        var s_i = s.charAt(i - 1);
+
+        // Step 4
+        for (var j = 1; j <= m; j++) {
+
+            //Check the jagged ld total so far
+            if (i == j && d[i][j] > 4) return n;
+
+            var t_j = t.charAt(j - 1);
+            var cost = (s_i == t_j) ? 0 : 1; // Step 5
+
+            //Calculate the minimum
+            var mi = d[i - 1][j] + 1;
+            var b = d[i][j - 1] + 1;
+            var c = d[i - 1][j - 1] + cost;
+
+            if (b < mi) mi = b;
+            if (c < mi) mi = c;
+
+            d[i][j] = mi; // Step 6
+
+            //Damerau transposition
+            if (i > 1 && j > 1 && s_i == t.charAt(j - 2) && s.charAt(i - 2) == t_j) {
+                d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + cost);
+            }
+        }
+    }
+
+    return ((s.length + t.length - d[n][m]) / (s.length + t.length));
+}
+
+function spreadMax(arr) {
+    
+    var result = arr.reduce(function(a, b) {
+        return Math.max(a, b);
+    });
+
+    return result;
+}
+
 /******************************************************************************
                             COURTROOM FUNCTIONS
 ******************************************************************************/
@@ -376,24 +435,29 @@ function sculpt() {
                 //fl.trace("Element: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0])
                 //fl.trace("Item Index: " + fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name))
 
-                fl.trace("Selected Layer is " + masterRigArray[uniqueChars[j]][0] + " but it should be " + speakertagArray[i])
-                fl.trace("Selected Sym for xSheet Browsing is: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
+                //fl.trace("Selected Layer is " + masterRigArray[uniqueChars[j]][0] + " but it should be " + speakertagArray[i])
+                //fl.trace("Selected Sym for xSheet Browsing is: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
 
                 var itemIndex= fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
-                var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0]
+                var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[1]
 
                 var poseFrameNum = -1
+                var tmpArray = []
 
                 for (var k = 0; k < objTl.frameCount; k++) {
-                    if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame)) {    
-                        //fl.trace(dialogueArray[i][2] + " " + dialogueArray[i][1])
-                        //fl.trace("Internal xSheet Pose Name: " + objTl.frames[k].name + " | Intended Pose Name: " + dialogueArray[i][3] + " k: " + k)              
-                        if (objTl.frames[k].name == dialogueArray[i][3]) {
+                    if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame)) {  
+                        fl.trace(objTl.frames[k].name + " : " + dialogueArray[i][3]) 
+                        tmpArray.push(levenshteinRatio(objTl.frames[k].name, dialogueArray[i][3]))
+                        if (spreadMax(tmpArray) == tmpArray[tmpArray.length-1]) {
                             poseFrameNum = k
-                            fl.trace("K is : " + k)
+                            fl.trace("L RATIO IS: " + levenshteinRatio(objTl.frames[k].name, dialogueArray[i][3]))
+                            fl.trace("SPREADMAX RETURNED " + spreadMax(tmpArray))
+                            fl.trace("NEW MAXIMUM. K IS: " + k)
                         }
-                    }       
+                    }                    
                 }
+
+                fl.trace("FINAL POSE NUM IS: " + poseFrameNum)
 
                 if (poseFrameNum != -1) {
                     fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
@@ -402,7 +466,7 @@ function sculpt() {
                 }
 
                 //write pose to frame name
-                fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
+                //fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
 
                 if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
                     fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]

@@ -52,6 +52,8 @@ var masterRigArray = {
 "Sweetie": ["SWEETIE_BELLE", "RIGS/VECTOR CHARACTERS/SWEETIE_BELLE_CUFFED►/SBCuffed►Scaled", 0, 0, false],
 "Sweetie Belle": ["SWEETIE_BELLE", "RIGS/VECTOR CHARACTERS/SWEETIE_BELLE_CUFFED►/SBCuffed►Scaled", 0, 0, false],
 "Apollo": ["APOLLO_JUSTICE", "RIGS/RASTER CHARACTERS/APOLLO - FRONT/JUSTICE - FRONT", 640, 360, false],
+"Private Eye": ["PRIVATE_EYE", "RIGS/VECTOR CHARACTERS/PRIVATE_EYE►/Private►Scaled", 0, 0, false],
+"Private": ["PRIVATE_EYE", "RIGS/VECTOR CHARACTERS/PRIVATE_EYE►/Private►Scaled", 0, 0, false],
 "Fair": ["FAIR_DEVOTION", "RIGS/VECTOR CHARACTERS/FAIR_DEVOTION►/Devotion►Scaled", 0, 0, false],
 "Fair Devotion": ["FAIR_DEVOTION", "RIGS/VECTOR CHARACTERS/FAIR_DEVOTION►/Devotion►Scaled", 0, 0, false],
 "Sugar Stamp": ["SUGAR_STAMP", "RIGS/VECTOR CHARACTERS/SUGAR_STAMP►/SugarStamp_Scaled", 0, 0, false],
