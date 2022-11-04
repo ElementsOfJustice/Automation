@@ -1,6 +1,6 @@
 <DOMDocument xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ns.adobe.com/xfl/2008/" backgroundColor="#666666" width="1280" height="720" currentTimeline="1" xflVersion="2.971" creatorInfo="Adobe Animate" platform="Windows" versionInfo="Saved by Animate Windows 20.0 build 17400" majorVersion="20" buildNumber="17400" guidesVisible="false" snapAlign="false" objectsSnapTo="false" timelineLabelWidth="328" viewAngle3D="100.925968316201" vanishingPoint3DX="640" vanishingPoint3DY="360" nextSceneIdentifier="2" playOptionsPlayPages="false" playOptionsPlayFrameActions="false" filetypeGUID="DD0DDBBF-5BEF-45B2-9F24-A3048D2A676F" fileGUID="BDBF37FF4F754D49A532E584989BCD05">
      <folders>
-          <DOMFolderItem name="SUGAR_STAMP►" itemID="60a28a76-00000b03" isExpanded="true"/>
+          <DOMFolderItem name="SUGAR_STAMP►" itemID="60a28a76-00000b03"/>
           <DOMFolderItem name="SUGAR_STAMP►/SugarStamp_BodyParts" itemID="606893a1-00000267"/>
           <DOMFolderItem name="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_Wings" itemID="606894c2-0000027b"/>
           <DOMFolderItem name="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_Wings2" itemID="6068942d-00000271"/>
@@ -15,7 +15,7 @@
           <DOMSoundItem name="s4_076_sugar stamp (1).flac" itemID="63082960-00000456" sourceExternalFilepath="./LIBRARY/s4_076_sugar stamp (1).flac" sourceLastImported="1661478362" externalFileCRC32="2966056379" externalFileSize="167133" href="s4_076_sugar stamp (1).flac" soundDataHRef="M 1 1661479264.dat" format="44kHz 16bit Mono" sampleCount="163867" dataLength="327734"/>
      </media>
      <symbols>
-          <Include href="SUGAR_STAMP►/SugarStamp_All.xml" itemIcon="1" loadImmediate="false" itemID="60689396-00000266" lastModified="1667589244"/>
+          <Include href="SUGAR_STAMP►/SugarStamp_All.xml" itemIcon="1" loadImmediate="false" itemID="60689396-00000266" lastModified="1661472497"/>
           <Include href="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLeg0-8.xml" itemIcon="1" loadImmediate="false" itemID="606893f2-0000026e" lastModified="1617466354"/>
           <Include href="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLeg2-8.xml" itemIcon="1" loadImmediate="false" itemID="606893f7-00000270" lastModified="1617466359"/>
           <Include href="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLeg4-8.xml" itemIcon="1" loadImmediate="false" itemID="60689590-000002a0" lastModified="1617466768"/>
@@ -118,10 +118,10 @@
           <Include href="SUGAR_STAMP►/SugarStamp_HeadParts/SugarStamp_Other/SugarStamp_HeadBase.xml" itemIcon="1" loadImmediate="false" itemID="606894e8-0000027e" lastModified="1617466600"/>
           <Include href="SUGAR_STAMP►/SugarStamp_Other/SugarStamp_Badge.xml" itemIcon="1" loadImmediate="false" itemID="60695c20-000002b0" lastModified="1617517739"/>
           <Include href="SUGAR_STAMP►/SugarStamp_Other/SugarStamp_Mail_Bag.xml" itemIcon="1" loadImmediate="false" itemID="60a28a9d-00000b05" lastModified="1621265053"/>
-          <Include href="SUGAR_STAMP►/SugarStamp_Scaled.xml" itemIcon="1" loadImmediate="false" itemID="629543d0-000000f5" lastModified="1667589149"/>
+          <Include href="SUGAR_STAMP►/SugarStamp_Scaled.xml" itemIcon="1" loadImmediate="false" itemID="629543d0-000000f5" lastModified="1661472930"/>
      </symbols>
      <timelines>
-          <DOMTimeline name="Scene 1" currentFrame="476" layerDepthEnabled="true">
+          <DOMTimeline name="Scene 1" currentFrame="801" layerDepthEnabled="true">
                <layers>
                     <DOMLayer name="NOTES__Other_" color="#FF800A" locked="true" autoNamed="false" layerType="guide" heightLiteral="18">
                          <frames>

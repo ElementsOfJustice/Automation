@@ -1,15 +1,8 @@
-<DOMSymbolItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ns.adobe.com/xfl/2008/" name="SUGAR_STAMP►/SugarStamp_Scaled" itemID="629543d0-000000f5" symbolType="graphic" lastModified="1667589149">
+<DOMSymbolItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ns.adobe.com/xfl/2008/" name="SUGAR_STAMP►/SugarStamp_Scaled" itemID="629543d0-000000f5" symbolType="graphic" lastModified="1661472930">
   <timeline>
-    <DOMTimeline name="SugarStamp_Scaled" currentFrame="591" layerDepthEnabled="true">
+    <DOMTimeline name="SugarStamp_Scaled" currentFrame="805" layerDepthEnabled="true">
       <layers>
-        <DOMLayer name="Hello_Layer" color="#9933CC" autoNamed="false">
-          <frames>
-            <DOMFrame index="0" duration="807" keyMode="9728">
-              <elements/>
-            </DOMFrame>
-          </frames>
-        </DOMLayer>
-        <DOMLayer name="xsheet" color="#9933CC" locked="true" autoNamed="false" layerType="guide" heightLiteral="18">
+        <DOMLayer name="xsheet" color="#9933CC" locked="true" autoNamed="false" layerType="guide">
           <frames>
             <DOMFrame index="0" duration="39" name="Neutral Happy" labelType="name" keyMode="9728">
               <elements/>
@@ -133,7 +126,7 @@
             </DOMFrame>
           </frames>
         </DOMLayer>
-        <DOMLayer name="Layer_1" color="#00FFFF" current="true" isSelected="true" heightLiteral="18">
+        <DOMLayer name="Layer_1" color="#00FFFF" current="true" isSelected="true">
           <frames>
             <DOMFrame index="0" duration="807" keyMode="9728">
               <elements>
