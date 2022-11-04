@@ -1,0 +1,40 @@
+<DOMSymbolItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ns.adobe.com/xfl/2008/" name="SUGAR_STAMP►/SugarStamp_HeadParts/SugarStamp_Mane&amp;#038TailParts/SugarStamp_Hairback_2" itemID="60689f17-000003e6" symbolType="graphic" lastModified="1617469207">
+  <timeline>
+    <DOMTimeline name="SugarStamp_Hairback_2" layerDepthEnabled="true">
+      <layers>
+        <DOMLayer name="Layer_1" color="#00FFFF" current="true" isSelected="true">
+          <frames>
+            <DOMFrame index="0" keyMode="9728">
+              <elements>
+                <DOMShape>
+                  <fills>
+                    <FillStyle index="1">
+                      <SolidColor color="#6DDCFC"/>
+                    </FillStyle>
+                  </fills>
+                  <strokes>
+                    <StrokeStyle index="1">
+                      <SolidStroke scaleMode="normal" caps="square" weight="4" joints="miter">
+                        <fill>
+                          <SolidColor color="#48A8A8"/>
+                        </fill>
+                      </SolidStroke>
+                    </StrokeStyle>
+                  </strokes>
+                  <edges>
+                    <Edge fillStyle1="1" strokeStyle="1" edges="!352 401[395 370 545 248!545 248[669 147 747 98!747 98[986 -51 1155 52!1155 52[1259 115 1358 193!1358 193[1490 297 1655 521!1655 521[1837 767 1952 1017!1952 1017[2086 1310 2086 1526!2086 1526[2085 1780 1896 1896!1896 1896[1472 2157 869
+ 1305!869 1305[568 879 352 401"/>
+                    <Edge cubics="!352 401(;600,222 889,-111 1155,52q352 401Q395 370q545 248Q669 147q747 98Q986 -51q1155 52);"/>
+                    <Edge cubics="!1155 52(;1229,97 1295,142 1358,193q1155 52Q1259 115q1358 193);"/>
+                    <Edge cubics="!1358 193(;1683,451 2437,1564 1896,1896q1358 193Q1490 297q1655 521Q1837 767q1952 1017Q2086 1310q2086 1526Q2085 1780q1896 1896);"/>
+                    <Edge cubics="!1896 1896(;1217,2313 352,401 352,401q1896 1896Q1472 2157q869 1305Q568 879q352 401);"/>
+                  </edges>
+                </DOMShape>
+              </elements>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+      </layers>
+    </DOMTimeline>
+  </timeline>
+</DOMSymbolItem>
