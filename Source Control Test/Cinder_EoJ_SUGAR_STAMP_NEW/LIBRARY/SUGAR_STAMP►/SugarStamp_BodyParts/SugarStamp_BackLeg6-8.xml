@@ -1,0 +1,829 @@
+<DOMSymbolItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ns.adobe.com/xfl/2008/" name="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLeg6-8" itemID="60689596-000002a2" symbolType="graphic" lastModified="1617466774">
+  <timeline>
+    <DOMTimeline name="SugarStamp_BackLeg6-8" layerDepthEnabled="true">
+      <layers>
+        <DOMLayer name="Xsheet" color="#9933CC" autoNamed="false" layerType="guide">
+          <frames>
+            <DOMFrame index="0" duration="14" name="DEFAULT" labelType="comment" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="14" duration="22" name="NEW" labelType="comment" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+        <DOMLayer name="Cutie_Mark" color="#9933CC" current="true" isSelected="true" autoNamed="false">
+          <frames>
+            <DOMFrame index="0" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_FlatCM" symbolType="graphic" centerPoint3DX="-125.45" centerPoint3DY="133.15" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.43536376953125" c="-0.18804931640625" d="1.3331298828125" tx="-120.15" ty="139.2"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="3.25" y="-4.9"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="1" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_FlatCM" symbolType="graphic" centerPoint3DX="-121" centerPoint3DY="132.1" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.16270446777344" c="-0.00146484375" d="1.36474609375" tx="-117.45" ty="138.5"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="3.25" y="-4.85"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="2" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_FlatCM" symbolType="graphic" centerPoint3DX="-118.9" centerPoint3DY="131.55" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.28408813476562" c="0.102859497070312" d="1.40653991699219" tx="-114.35" ty="139.8"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="3.35" y="-4.9"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="3" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_FlatCM" symbolType="graphic" centerPoint3DX="-125.45" centerPoint3DY="133.15" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.43536376953125" c="-0.18804931640625" d="1.3331298828125" tx="-120.15" ty="139.2"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="3.25" y="-4.9"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="4" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_FlatCM" symbolType="graphic" centerPoint3DX="-119.3" centerPoint3DY="153.25" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.43536376953125" c="-0.18804931640625" d="1.3331298828125" tx="-114.05" ty="159.25"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="3.25" y="-4.85"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="5" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_FlatCM" symbolType="graphic" centerPoint3DX="-119.3" centerPoint3DY="153.25" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.43536376953125" c="-0.18804931640625" d="1.3331298828125" tx="-114.05" ty="159.25"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="3.25" y="-4.85"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="6" duration="8" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="14" duration="22" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+        <DOMLayer name="_" color="#4FFF4F" autoNamed="false">
+          <frames>
+            <DOMFrame index="0" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" centerPoint3DX="-125.7" centerPoint3DY="185.75" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.24516296386719" b="0.03900146484375" c="0.012359619140625" d="1.29441833496094" tx="-125.7" ty="185.7"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="1" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" centerPoint3DX="-125.55" centerPoint3DY="182.8" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.13922119140625" b="-0.0838623046875" c="-0.04974365234375" d="0.726165771484375" tx="-125.55" ty="182.8"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="2" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" centerPoint3DX="-125.95" centerPoint3DY="178.1" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.16386413574219" b="-0.643722534179688" c="-0.099639892578125" d="0.710220336914062" tx="-125.95" ty="178.1"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="3" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" centerPoint3DX="-127.15" centerPoint3DY="188.65" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.34390258789062" d="1.28744506835938" tx="-127.15" ty="188.6"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="4" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_Sitting Leg" symbolType="graphic" centerPoint3DX="-113.25" centerPoint3DY="144.3" loop="loop">
+                  <matrix>
+                    <Matrix a="0.917098999023438" d="0.878570556640625" tx="-151.65" ty="110.85"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="14.6" y="4.55"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="5" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegHoof" symbolType="graphic" firstFrame="12" centerPoint3DX="-85.8" centerPoint3DY="188.8" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.17962646484375" b="0.09930419921875" c="0.103652954101562" d="1.13006591796875" tx="-89.35" ty="190.75"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="-0.1"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="6" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="7" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" centerPoint3DX="-125.7" centerPoint3DY="185.75" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.24516296386719" b="0.03900146484375" c="0.012359619140625" d="1.29441833496094" tx="-125.7" ty="185.7"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="8" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" centerPoint3DX="-125.55" centerPoint3DY="182.8" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.13922119140625" b="-0.0838623046875" c="-0.04974365234375" d="0.726165771484375" tx="-125.55" ty="182.8"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="9" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" centerPoint3DX="-125.95" centerPoint3DY="178.1" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.16386413574219" b="-0.643722534179688" c="-0.099639892578125" d="0.710220336914062" tx="-125.95" ty="178.1"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="10" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" centerPoint3DX="-127.15" centerPoint3DY="188.65" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.34390258789062" d="1.28744506835938" tx="-127.15" ty="188.6"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="11" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_Sitting Leg" symbolType="graphic" centerPoint3DX="-113.25" centerPoint3DY="144.3" loop="loop">
+                  <matrix>
+                    <Matrix a="0.917098999023438" d="0.878570556640625" tx="-151.65" ty="110.85"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="14.6" y="4.55"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="12" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegHoof" symbolType="graphic" firstFrame="12" centerPoint3DX="-85.8" centerPoint3DY="188.8" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.17962646484375" b="0.09930419921875" c="0.103652954101562" d="1.13006591796875" tx="-89.35" ty="190.75"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="-0.1"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="13" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="14" duration="22" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+        <DOMLayer name="_" color="#FF800A" autoNamed="false">
+          <frames>
+            <DOMFrame index="0" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegTop" symbolType="graphic" centerPoint3DX="-123.6" centerPoint3DY="152.15" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.34390258789062" c="0.0128936767578125" d="1.30802917480469" tx="-128.4" ty="102.55"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="1" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegTop" symbolType="graphic" centerPoint3DX="-121.45" centerPoint3DY="149.9" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.40977478027344" c="0.0638427734375" d="1.24853515625" tx="-128.4" ty="102.55"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="2" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegTop" symbolType="graphic" centerPoint3DX="-119.25" centerPoint3DY="147.55" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.47561645507812" c="0.116790771484375" d="1.1871337890625" tx="-128.4" ty="102.55"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="3" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegTop" symbolType="graphic" centerPoint3DX="-123.6" centerPoint3DY="152.15" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.34390258789062" c="0.0128936767578125" d="1.30802917480469" tx="-128.4" ty="102.55"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="4" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="5" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_Sitting Leg" symbolType="graphic" centerPoint3DX="-113.3" centerPoint3DY="143.8" loop="loop">
+                  <matrix>
+                    <Matrix a="0.917098999023438" d="0.878570556640625" tx="-151.7" ty="110.35"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="14.6" y="4.55"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="6" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="7" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegTop" symbolType="graphic" centerPoint3DX="-123.6" centerPoint3DY="152.15" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.34390258789062" c="0.0128936767578125" d="1.30802917480469" tx="-128.4" ty="102.55"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="8" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegTop" symbolType="graphic" centerPoint3DX="-121.45" centerPoint3DY="149.9" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.40977478027344" c="0.0638427734375" d="1.24853515625" tx="-128.4" ty="102.55"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="9" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegTop" symbolType="graphic" centerPoint3DX="-119.25" centerPoint3DY="147.55" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.47561645507812" c="0.116790771484375" d="1.1871337890625" tx="-128.4" ty="102.55"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="10" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegTop" symbolType="graphic" centerPoint3DX="-123.6" centerPoint3DY="152.15" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.34390258789062" c="0.0128936767578125" d="1.30802917480469" tx="-128.4" ty="102.55"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="11" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="12" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_Sitting Leg" symbolType="graphic" centerPoint3DX="-113.3" centerPoint3DY="143.8" loop="loop">
+                  <matrix>
+                    <Matrix a="0.917098999023438" d="0.878570556640625" tx="-151.7" ty="110.35"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="14.6" y="4.55"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="13" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="14" duration="22" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+        <DOMLayer name="_" color="#4FFFFF" autoNamed="false">
+          <frames>
+            <DOMFrame index="0" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegMid" symbolType="graphic" centerPoint3DX="-141.05" centerPoint3DY="233.7" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.22526550292969" d="1.28744506835938" tx="-130.7" ty="195.8"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="1" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegMid" symbolType="graphic" firstFrame="1" centerPoint3DX="-140.55" centerPoint3DY="222.1" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.33000183105469" b="0.178558349609375" c="0.186386108398438" d="1.27413940429688" tx="-135.15" ty="185.45"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="2" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegMid" symbolType="graphic" firstFrame="2" centerPoint3DX="-136.2" centerPoint3DY="206.05" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.27769470214844" b="0.39837646484375" c="0.415817260742188" d="1.2239990234375" tx="-139.9" ty="171.7"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="3" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegMid" symbolType="graphic" centerPoint3DX="-143.45" centerPoint3DY="233.7" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.34390258789062" d="1.28744506835938" tx="-132.1" ty="195.8"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="4" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegMid" symbolType="graphic" firstFrame="2" centerPoint3DX="-105.55" centerPoint3DY="195.65" loop="single frame">
+                  <matrix>
+                    <Matrix a="-0.0879974365234375" b="1.284423828125" c="1.34074401855469" d="0.084320068359375" tx="-140.2" ty="186.15"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="5" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="6" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="7" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegMid" symbolType="graphic" centerPoint3DX="-141.05" centerPoint3DY="233.7" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.22526550292969" d="1.28744506835938" tx="-130.7" ty="195.8"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="8" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegMid" symbolType="graphic" firstFrame="1" centerPoint3DX="-140.55" centerPoint3DY="222.1" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.33000183105469" b="0.178558349609375" c="0.186386108398438" d="1.27413940429688" tx="-135.15" ty="185.45"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="9" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegMid" symbolType="graphic" firstFrame="2" centerPoint3DX="-136.2" centerPoint3DY="206.05" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.27769470214844" b="0.39837646484375" c="0.415817260742188" d="1.2239990234375" tx="-139.9" ty="171.7"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="10" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegMid" symbolType="graphic" centerPoint3DX="-143.45" centerPoint3DY="233.7" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.34390258789062" d="1.28744506835938" tx="-132.1" ty="195.8"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="11" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegMid" symbolType="graphic" firstFrame="2" centerPoint3DX="-105.55" centerPoint3DY="195.65" loop="single frame">
+                  <matrix>
+                    <Matrix a="-0.0879974365234375" b="1.284423828125" c="1.34074401855469" d="0.084320068359375" tx="-140.2" ty="186.15"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="12" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="13" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="14" duration="22" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+        <DOMLayer name="_" color="#FF4FFF" autoNamed="false">
+          <frames>
+            <DOMFrame index="0" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" firstFrame="1" centerPoint3DX="-125.3" centerPoint3DY="188.75" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.34390258789062" d="1.28744506835938" tx="-127.15" ty="188.6"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="1" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" firstFrame="1" centerPoint3DX="-124" centerPoint3DY="183" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.13922119140625" b="-0.0838623046875" c="-0.04974365234375" d="0.726165771484375" tx="-125.55" ty="182.8"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="2" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" firstFrame="1" centerPoint3DX="-124.3" centerPoint3DY="178.9" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.16386413574219" b="-0.643722534179688" c="-0.0985565185546875" d="0.7025146484375" tx="-125.9" ty="177.95"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="3" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" firstFrame="1" centerPoint3DX="-125.3" centerPoint3DY="188.75" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.34390258789062" d="1.28744506835938" tx="-127.15" ty="188.6"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="4" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="5" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegMid" symbolType="graphic" firstFrame="4" centerPoint3DX="-109.8" centerPoint3DY="190.95" loop="single frame">
+                  <matrix>
+                    <Matrix a="0.223114013671875" b="1.268798828125" c="1.32421875" d="-0.21368408203125" tx="-145.7" ty="189.5"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="6" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="7" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" firstFrame="1" centerPoint3DX="-125.3" centerPoint3DY="188.75" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.34390258789062" d="1.28744506835938" tx="-127.15" ty="188.6"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="8" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" firstFrame="1" centerPoint3DX="-124" centerPoint3DY="183" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.13922119140625" b="-0.0838623046875" c="-0.04974365234375" d="0.726165771484375" tx="-125.55" ty="182.8"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="9" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" firstFrame="1" centerPoint3DX="-124.3" centerPoint3DY="178.9" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.16386413574219" b="-0.643722534179688" c="-0.0985565185546875" d="0.7025146484375" tx="-125.9" ty="177.95"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="10" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_KneeCover" symbolType="graphic" firstFrame="1" centerPoint3DX="-125.3" centerPoint3DY="188.75" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.34390258789062" d="1.28744506835938" tx="-127.15" ty="188.6"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="11" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="12" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegMid" symbolType="graphic" firstFrame="4" centerPoint3DX="-109.8" centerPoint3DY="190.95" loop="single frame">
+                  <matrix>
+                    <Matrix a="0.223114013671875" b="1.268798828125" c="1.32421875" d="-0.21368408203125" tx="-145.7" ty="189.5"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="13" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="14" duration="22" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+        <DOMLayer name="_" color="#FF800A" autoNamed="false">
+          <frames>
+            <DOMFrame index="0" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegHoof" symbolType="graphic" firstFrame="4" centerPoint3DX="-136.85" centerPoint3DY="282.45" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.2825927734375" d="1.28738403320312" tx="-140.8" ty="282.85"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="-0.05"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="1" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegHoof" symbolType="graphic" firstFrame="5" centerPoint3DX="-132.8" centerPoint3DY="260.1" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.3057861328125" b="-0.29583740234375" c="-0.308807373046875" d="1.25094604492188" tx="-135.75" ty="258.05"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="-0.05"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="2" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegHoof" symbolType="graphic" firstFrame="6" centerPoint3DX="-126.65" centerPoint3DY="236.6" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.21966552734375" b="-0.535659790039062" c="-0.55914306640625" d="1.16842651367188" tx="-128.25" ty="233.15"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="-0.05"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="3" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegHoof" symbolType="graphic" firstFrame="5" centerPoint3DX="-141.7" centerPoint3DY="281.15" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.34390258789062" d="1.28744506835938" tx="-145.05" ty="279.85"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="-0.05"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_HoofWrinkle" symbolType="graphic" centerPoint3DX="-134.05" centerPoint3DY="295" loop="single frame">
+                  <matrix>
+                    <Matrix a="-2.6461181640625" b="0.230422973632812" c="-1.89079284667969" d="1.80046081542969" tx="-134.1" ty="295.1"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="-0.05" y="-0.1"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="4" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegHoof" symbolType="graphic" firstFrame="6" centerPoint3DX="-72.4" centerPoint3DY="198.45" loop="single frame">
+                  <matrix>
+                    <Matrix a="-0.9718017578125" b="0.886215209960938" c="0.925079345703125" d="0.930984497070312" tx="-76.3" ty="198.6"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="-0.1" y="0.1"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="5" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="6" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="7" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegHoof" symbolType="graphic" firstFrame="4" centerPoint3DX="-136.85" centerPoint3DY="282.45" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.2825927734375" d="1.28738403320312" tx="-140.8" ty="282.85"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="-0.05"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="8" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegHoof" symbolType="graphic" firstFrame="5" centerPoint3DX="-132.8" centerPoint3DY="260.1" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.3057861328125" b="-0.29583740234375" c="-0.308807373046875" d="1.25094604492188" tx="-135.75" ty="258.05"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="-0.05"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="9" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegHoof" symbolType="graphic" firstFrame="6" centerPoint3DX="-126.65" centerPoint3DY="236.6" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.21966552734375" b="-0.535659790039062" c="-0.55914306640625" d="1.16842651367188" tx="-128.25" ty="233.15"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="-0.05"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="10" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegHoof" symbolType="graphic" firstFrame="5" centerPoint3DX="-141.7" centerPoint3DY="281.15" loop="single frame">
+                  <matrix>
+                    <Matrix a="-1.34390258789062" d="1.28744506835938" tx="-145.05" ty="279.85"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="-0.05"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_HoofWrinkle" symbolType="graphic" centerPoint3DX="-134.05" centerPoint3DY="295" loop="single frame">
+                  <matrix>
+                    <Matrix a="-2.6461181640625" b="0.230422973632812" c="-1.89079284667969" d="1.80046081542969" tx="-134.1" ty="295.1"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="-0.05" y="-0.1"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="11" keyMode="9728">
+              <elements>
+                <DOMSymbolInstance libraryItemName="SUGAR_STAMP►/SugarStamp_BodyParts/SugarStamp_BackLegHoof" symbolType="graphic" firstFrame="6" centerPoint3DX="-72.4" centerPoint3DY="198.45" loop="single frame">
+                  <matrix>
+                    <Matrix a="-0.9718017578125" b="0.886215209960938" c="0.925079345703125" d="0.930984497070312" tx="-76.3" ty="198.6"/>
+                  </matrix>
+                  <transformationPoint>
+                    <Point x="-0.1" y="0.1"/>
+                  </transformationPoint>
+                </DOMSymbolInstance>
+              </elements>
+            </DOMFrame>
+            <DOMFrame index="12" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="13" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+            <DOMFrame index="14" duration="22" keyMode="9728">
+              <elements/>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+      </layers>
+    </DOMTimeline>
+  </timeline>
+</DOMSymbolItem>

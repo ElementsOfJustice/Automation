@@ -1,0 +1,28 @@
+<DOMSymbolItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ns.adobe.com/xfl/2008/" name="SUGAR_STAMP►/SugarStamp_HeadParts/SugarStamp_Eyes/SugarStamp_Highlights" itemID="6068967b-000002bb" sourceFlashFilepath="../../../../MLP RIGS/CASE 2/Age_EoJ_Sugar_Stamp.fla" sourceLibraryItemHRef="SugarStamp/SugarStamp_HeadParts/SugarStamp_Eyes/SugarStamp_Highlights" sourceLastModified="1617467003" symbolType="graphic" lastModified="1617467003" sourceItemID="00000000-ffffffff">
+  <timeline>
+    <DOMTimeline name="SugarStamp_Highlights" layerDepthEnabled="true">
+      <layers>
+        <DOMLayer name="Layer_2" color="#9933CC" current="true" isSelected="true">
+          <frames>
+            <DOMFrame index="0" keyMode="9728">
+              <elements>
+                <DOMShape>
+                  <fills>
+                    <FillStyle index="1">
+                      <SolidColor color="#FFFFFF"/>
+                    </FillStyle>
+                  </fills>
+                  <edges>
+                    <Edge fillStyle0="1" edges="!76.5 -174.5[#1B.D8 #FFFF12.75 -23 -234!-23 -234[#FFFFAB.52 #FFFF12.87 -111.5 -163.5!-111.5 -163.5|-112 -162.5!-112 -162.5[-130.5625 -109.125 -115 -32!-115 -32[#FFFF9B.E5 #29.74 -61 92!-61 92|-60.5 92.5!-60.5 92.5[#FFFFF3.EB #9C.6C 40
+ 153!40 153[#66.94 #9C.C2 128 80.5!128 80.5[#93.82 #1C.04 132 -48!132 -48|132 -48.5!132 -48.5[#74.15 #FFFF85.3F 77 -174!77 -174|76.5 -174.5!-168 190[-174 214 -164 240!-164 240[-155 265 -135 273!-135 273[-115 283 -98 272!-98 272[-80 261
+ -75 235!-75 235[-70 211 -79 186!-79 186[-89 160 -108 152!-108 152[-127 143 -144 153!-144 153[-162 165 -168 190"/>
+                  </edges>
+                </DOMShape>
+              </elements>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+      </layers>
+    </DOMTimeline>
+  </timeline>
+</DOMSymbolItem>
