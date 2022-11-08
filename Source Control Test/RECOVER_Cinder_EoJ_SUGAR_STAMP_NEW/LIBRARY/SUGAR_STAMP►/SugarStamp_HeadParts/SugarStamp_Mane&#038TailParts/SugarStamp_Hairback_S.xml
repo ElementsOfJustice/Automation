@@ -1,0 +1,92 @@
+<DOMSymbolItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ns.adobe.com/xfl/2008/" name="SUGAR_STAMP►/SugarStamp_HeadParts/SugarStamp_Mane&amp;#038TailParts/SugarStamp_Hairback_S" itemID="60689ffe-000003f2" symbolType="graphic" lastModified="1617469438">
+  <timeline>
+    <DOMTimeline name="SugarStamp_Hairback_S" layerDepthEnabled="true">
+      <layers>
+        <DOMLayer name="Layer_3" color="#FF800A">
+          <frames>
+            <DOMFrame index="0" keyMode="9728">
+              <elements>
+                <DOMShape>
+                  <strokes>
+                    <StrokeStyle index="1">
+                      <SolidStroke scaleMode="normal" weight="4" joints="miter">
+                        <fill>
+                          <SolidColor color="#48A8A8"/>
+                        </fill>
+                      </SolidStroke>
+                    </StrokeStyle>
+                  </strokes>
+                  <edges>
+                    <Edge strokeStyle="1" edges="!522 59[516 33 617 -372!617 -372[715 -768 700 -788!700 -788[488 -1068 196 -983!196 -983[-104 -896 -375 -451!-375 -451[-540 -179 -638 168!-638 168[-751 567 -656 720!-656 720[-547 894 -398 966!-398 966[-242 1040 -114 965!-114 965[69 858
+ 294 585!294 585[565 255 522 59"/>
+                    <Edge cubics="!700 -788(;422,-1154 -8,-1054 -375,-451q700 -788Q488 -1068q196 -983Q-104 -896q-375 -451);"/>
+                    <Edge cubics="!-375 -451(;-564,-140 -794,498 -656,720q-375 -451Q-540 -179q-638 168Q-751 567q-656 720);"/>
+                    <Edge cubics="!-656 720(;-515,946 -289,1067 -114,965q-656 720Q-547 894q-398 966Q-242 1040q-114 965);"/>
+                    <Edge cubics="!-114 965(;60,863 587,355 522,59q-114 965Q69 858q294 585Q565 255q522 59);"/>
+                    <Edge cubics="!522 59(;509,1 728,-751 700,-788q522 59Q516 33q617 -372Q715 -768q700 -788);"/>
+                  </edges>
+                </DOMShape>
+              </elements>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+        <DOMLayer name="Layer_2" color="#9933CC" current="true" isSelected="true">
+          <frames>
+            <DOMFrame index="0" keyMode="9728">
+              <elements>
+                <DOMShape>
+                  <strokes>
+                    <StrokeStyle index="1">
+                      <SolidStroke scaleMode="normal" weight="7.6" joints="miter">
+                        <fill>
+                          <SolidColor color="#F5DEFF"/>
+                        </fill>
+                        <VariablePointWidth>
+                          <WidthMarker position="0" left="0.263157894736842" right="0.263157894736842" type="corner"/>
+                          <WidthMarker position="0.545028686523438" left="0.5" right="0.5"/>
+                          <WidthMarker position="0.799530029296875" left="0.276315789473684" right="0.276315789473684"/>
+                          <WidthMarker position="1" left="0.263157894736842" right="0.263157894736842" type="corner"/>
+                        </VariablePointWidth>
+                      </SolidStroke>
+                    </StrokeStyle>
+                  </strokes>
+                  <edges>
+                    <Edge strokeStyle="1" edges="
+!147 -562[22 -529 -104 -452!-104 -452[-357 -298 -362 -79!-362 -79[-365 46 -407 174!-407 174[-419 207 -492 386!-492 386[-596 641 -545 859"/>
+                    <Edge cubics="!147 -562(147,-562;147,-562 -354,-430 -362,-79q147 -562Q22 -529q-104 -452Q-357 -298q-362 -79);"/>
+                    <Edge cubics="!-362 -79(;-371,305 -638,464 -545,859q-362 -79Q-365 46q-407 174Q-419 207q-492 386Q-596 641q-545 859);"/>
+                  </edges>
+                </DOMShape>
+              </elements>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+        <DOMLayer name="Layer_1" color="#00FFFF">
+          <frames>
+            <DOMFrame index="0" keyMode="9728">
+              <elements>
+                <DOMShape>
+                  <fills>
+                    <FillStyle index="1">
+                      <SolidColor color="#6DDCFC"/>
+                    </FillStyle>
+                  </fills>
+                  <edges>
+                    <Edge fillStyle0="1" edges="
+!522 59[516 33 617 -372!617 -372[715 -768 700 -788!700 -788[488 -1068 196 -983!196 -983[-104 -896 -375 -451!-375 -451[-540 -179 -638 168!-638 168[-751 567 -656 720!-656 720[-547 894 -398 966!-398 966[-242 1040 -114 965!-114 965[69 858
+ 294 585!294 585[565 255 522 59"/>
+                    <Edge cubics="!700 -788(;422,-1154 -8,-1054 -375,-451q700 -788Q488 -1068q196 -983Q-104 -896q-375 -451);"/>
+                    <Edge cubics="!-375 -451(;-564,-140 -794,498 -656,720q-375 -451Q-540 -179q-638 168Q-751 567q-656 720);"/>
+                    <Edge cubics="!-656 720(;-515,946 -289,1067 -114,965q-656 720Q-547 894q-398 966Q-242 1040q-114 965);"/>
+                    <Edge cubics="!-114 965(;60,863 587,355 522,59q-114 965Q69 858q294 585Q565 255q522 59);"/>
+                    <Edge cubics="!522 59(;509,1 728,-751 700,-788q522 59Q516 33q617 -372Q715 -768q700 -788);"/>
+                  </edges>
+                </DOMShape>
+              </elements>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+      </layers>
+    </DOMTimeline>
+  </timeline>
+</DOMSymbolItem>

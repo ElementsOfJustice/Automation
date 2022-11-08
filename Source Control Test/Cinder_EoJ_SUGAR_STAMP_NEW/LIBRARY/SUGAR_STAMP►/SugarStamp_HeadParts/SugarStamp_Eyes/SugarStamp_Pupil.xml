@@ -1,0 +1,27 @@
+<DOMSymbolItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://ns.adobe.com/xfl/2008/" name="SUGAR_STAMP►/SugarStamp_HeadParts/SugarStamp_Eyes/SugarStamp_Pupil" itemID="60689633-000002b6" sourceFlashFilepath="../../../../MLP RIGS/CASE 2/Age_EoJ_Sugar_Stamp.fla" sourceLibraryItemHRef="SugarStamp/SugarStamp_HeadParts/SugarStamp_Eyes/SugarStamp_Pupil" sourceLastModified="1617466931" symbolType="graphic" lastModified="1617466931" sourceItemID="00000000-ffffffff">
+  <timeline>
+    <DOMTimeline name="SugarStamp_Pupil" layerDepthEnabled="true">
+      <layers>
+        <DOMLayer name="Layer_1" color="#4FFF4F" outline="true" current="true" isSelected="true" useOutlineView="true">
+          <frames>
+            <DOMFrame index="0" keyMode="9728">
+              <elements>
+                <DOMShape>
+                  <fills>
+                    <FillStyle index="1">
+                      <SolidColor/>
+                    </FillStyle>
+                  </fills>
+                  <edges>
+                    <Edge fillStyle1="1" edges="!249 -191.5[#120.C4 -62.515625 243.5 88!243.5 88[#C6.4C #EE.01 94.5 322!94.5 322[-8.53125 #198.0C -109 378!-109 378[-209.6875 #15B.7C -249.5 218.5!-249.5 218.5[#FFFEDF.F2 #5B.34 -242.5 -59!-242.5 -59[#FFFF3A.EA #FFFF2E.AF -94 -295!-94
+ -295[#9.BE #FFFE84.A5 110 -349!110 -349[#D2.68 #FFFEC1.35 249 -191.5"/>
+                  </edges>
+                </DOMShape>
+              </elements>
+            </DOMFrame>
+          </frames>
+        </DOMLayer>
+      </layers>
+    </DOMTimeline>
+  </timeline>
+</DOMSymbolItem>
