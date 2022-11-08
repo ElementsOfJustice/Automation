@@ -83,6 +83,7 @@ var masterInvestigationArray = {
 "Rainbow": ["RAINBOW_DASH", "RIGS/VECTOR CHARACTERS/RBD►/RBD►Scaled"],
 "Applejack": ["APPLEJACK", "RIGS/VECTOR CHARACTERS/APPLEJACK►/AJ►Scaled"],
 "Sweetie": ["SWEETIE_BELLE", "RIGS/VECTOR CHARACTERS/SWEETIE_BELLE►/SB►Scaled"],
+"Sweetie Belle": ["SWEETIE_BELLE", "RIGS/VECTOR CHARACTERS/SWEETIE_BELLE►/SB►Scaled"],
 "Rarity": ["RARITY", "RIGS/VECTOR CHARACTERS/RARITY►/Rarity►Scaled"],
 "Apollo": ["APOLLO_JUSTICE", "RIGS/RASTER CHARACTERS/APOLLO - FRONT/JUSTICE - FRONT"],
 "Trucy": ["TRUCY_WRIGHT", "RIGS/RASTER CHARACTERS/TRUCY - FRONT/TRUCY - FRONT"],
@@ -97,7 +98,8 @@ var masterInvestigationArray = {
 "Guard #3": ["GUARD1", "RIGS/VECTOR CHARACTERS/White_Guard_Components/White_Guard►Scaled"],
 "Sonata": ["SONATA", "RIGS/VECTOR CHARACTERS/SonataDefense►/SonataDefense►Scaled"],
 "Sugar Stamp": ["SUGARSTAMP", "RIGS/VECTOR CHARACTERS/SUGAR_STAMP►/SugarStamp_Scaled"],
-"Private Eye": ["PRIVATE_EYE", "RIGS/VECTOR CHARACTERS/PRIVATE_EYE►/Private►Scaled"]
+"Private Eye": ["PRIVATE_EYE", "RIGS/VECTOR CHARACTERS/PRIVATE_EYE►/Private►Scaled"],
+"Equity": ["EQUITY", "RIGS/VECTOR CHARACTERS/EquityArmored►/EquityArmored►Scaled"]
 };
  
 /*

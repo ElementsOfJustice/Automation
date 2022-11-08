@@ -26,6 +26,7 @@ from fuzzywuzzy import process
 import sys
 import re
 import os
+import codecs
 
 import os.path
 
@@ -113,6 +114,7 @@ except:
     exit()
 
 with open(sys.argv[1], "r", encoding="utf8") as file:
+    
 
     to_write = ""
     cur_voice_line = 1
@@ -131,7 +133,7 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
     arr_sceneData = []
 
     for line in file:
-
+        
         new_line = line
         flag_isSpeakertag = False
 
@@ -202,7 +204,7 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
         if not flag_runFirst:
             #export dialogue data
             #print("dialogue" + " " + str_lineId + " "  + str_speaker + " "  + str_dialogue + " " + "(" + str_pose + ")")
-
+            str_dialogue = str_dialogue.replace("’", "'")
             arr_tmpData = ["dialogue", str_lineId, str_speaker, str_dialogue, str_pose]
             arr_sceneData.append(arr_tmpData)
             #print("Calculated Pose\n")
@@ -212,7 +214,7 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
         to_write+=new_line
 
     try:
-        dest_file = open(sys.argv[1].replace(".txt", "_ae_markup.txt"), "w")
+        dest_file = codecs.open(sys.argv[1].replace(".txt", "_ae_markup.txt"), "w", "utf-8")
 
     except:
         print("Invalid destination file, abort.")
@@ -222,7 +224,7 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
     dest_file.close()
 
     try:
-        dest_file = open(sys.argv[1].replace(".txt", "_sceneGeneration.txt"), "w")
+        dest_file = codecs.open(sys.argv[1].replace(".txt", "_sceneGeneration.txt"), "w", "utf-8")
 
     except:
         print("Invalid destination file, abort.")
