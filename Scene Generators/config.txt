@@ -94,10 +94,12 @@ var masterInvestigationArray = {
 "Luna": ["LUNA", "RIGS/VECTOR CHARACTERS/tmp_Luna"],
 "Guard #2": ["GUARD2", "RIGS/VECTOR CHARACTERS/Black_Guard_Components/Black_Guard►Scaled"],
 "Fair Devotion": ["FAIRDEVOTION", "RIGS/VECTOR CHARACTERS/FAIR_DEVOTION►/Devotion►Scaled"],
-"Guard #1": ["GUARD1", "RIGS/VECTOR CHARACTERS/White_Guard_Components/White_Guard►Scaled"],
-"Guard #3": ["GUARD1", "RIGS/VECTOR CHARACTERS/White_Guard_Components/White_Guard►Scaled"],
+"Guard #1": ["GUARD1", "RIGS/VECTOR CHARACTERS/STERLING►/SterlingSpade►Scaled"],
+"Sterling Spade": ["GUARD1", "RIGS/VECTOR CHARACTERS/STERLING►/SterlingSpade►Scaled"],
+"Guard #3": ["GUARD3", "RIGS/VECTOR CHARACTERS/CINNAMON_SWIRL►/Cinnamon►Scaled"],
+"Cinnamon Swirl": ["GUARD3", "RIGS/VECTOR CHARACTERS/CINNAMON_SWIRL►/Cinnamon►Scaled"],
 "Sonata": ["SONATA", "RIGS/VECTOR CHARACTERS/SonataDefense►/SonataDefense►Scaled"],
-"Sugar Stamp": ["SUGARSTAMP", "RIGS/VECTOR CHARACTERS/SUGAR_STAMP►/SugarStamp_Scaled"],
+"Sugar Stamp": ["SUGARSTAMP", "tmp_Dummysymbol"],
 "Private Eye": ["PRIVATE_EYE", "RIGS/VECTOR CHARACTERS/PRIVATE_EYE►/Private►Scaled"],
 "Equity": ["EQUITY", "RIGS/VECTOR CHARACTERS/EquityArmored►/EquityArmored►Scaled"]
 };

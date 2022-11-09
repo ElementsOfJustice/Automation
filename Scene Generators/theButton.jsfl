@@ -669,11 +669,11 @@ function addRigsInvestgation() {
         if (character == sDefense) {
             continue;
         }
-        if(masterInvestigationArray[character] === undefined) {
+        if (masterInvestigationArray[character] === undefined) {
             missingRigs.push(character);
             continue;
         }
-        switchActive(masterInvestigationArray[character][0]);   
+        switchActive(masterInvestigationArray[character][0]);
         fl.getDocumentDOM().getTimeline().currentFrame = 0;
         // select current frame
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
@@ -705,15 +705,16 @@ Description:
 function sculptInvestgation() {
     var uniqueChars = getCharacters();
     for (var i = speakertagArray.length - 2; i >= 0; i--) {
+        var isPov = speakertagArray[i] == sDefense;
         if (speakertagArray[i] == sDefense && i != 0) {
             var tempI = i;
-            while(tempI > 0 && speakertagArray[tempI] == sDefense) {
+            while (tempI > 0 && speakertagArray[tempI] == sDefense) {
                 tempI--;
             }
             speakertagArray[i] = (tempI != 0) ? speakertagArray[tempI] : speakertagArray[i];
         }
         for (var j = 0; j < uniqueChars.length; j++) {
-            if(masterInvestigationArray[uniqueChars[j]] === undefined) {
+            if (masterInvestigationArray[uniqueChars[j]] === undefined) {
                 continue;
             }
             var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterInvestigationArray[uniqueChars[j]][0]);
@@ -725,7 +726,9 @@ function sculptInvestgation() {
                 fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
                 // select current frame
                 fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-                fl.getDocumentDOM().deleteSelection();
+                if (fl.getDocumentDOM().getTimeline().getFrameProperty("elements").length != 0) {
+                    fl.getDocumentDOM().deleteSelection();
+                }
             }
 
             else if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
@@ -741,20 +744,22 @@ function sculptInvestgation() {
                 } else {
                     fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
                 }
-                var poseFrameNum = getPoseFromEmotion(layerIndex, i);
-                fl.trace("FINAL POSE NUM IS: " + poseFrameNum)
+                if (!isPov) {
+                    var poseFrameNum = getPoseFromEmotion(layerIndex, i);
+                    fl.trace("FINAL POSE NUM IS: " + poseFrameNum)
 
-                if (poseFrameNum != -1) {
-                    fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
-                } else {
-                    fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = 0
-                }
+                    if (poseFrameNum != -1) {
+                        fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
+                    } else {
+                        fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = 0
+                    }
 
-                //write pose to frame name
-                //fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
+                    //write pose to frame name
+                    //fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
 
-                if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
-                    fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
+                    if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
+                        fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
+                    }
                 }
 
                 if (speakertagArray[i] != speakertagArray[i + 1]) {

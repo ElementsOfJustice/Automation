@@ -224,22 +224,23 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
     dest_file.close()
 
     try:
-        dest_file = codecs.open(sys.argv[1].replace(".txt", "_sceneGeneration.txt"), "w", "utf-8")
+        dest_file = [codecs.open(sys.argv[1].replace(".txt", "_Scene_Generation_S" + str(i+1) + ".txt"), "w", "utf-8") for i in range(scene)]
 
     except:
         print("Invalid destination file, abort.")
         exit()
-
-    dest_file.write("var sceneData = \n[")
+    for i in range(scene):
+        dest_file[i].write("var sceneData = \n[")
 
     for i in arr_sceneData:
         if i != arr_sceneData[-1]:
-            dest_file.write("\n" + str(i) + ",")
+            sceneIndex = int(re.sub(r"s(\d*).*", r"\1", i[1])) - 1
+            dest_file[sceneIndex].write("\n" + str(i) + ",")
         else:
-            dest_file.write("\n" + str(i))
+            dest_file[sceneIndex].write("\n" + str(i))
+    for i in range(scene):
+        dest_file[i].write("\n];") 
+        dest_file[i].close()
 
-    dest_file.write("\n];")
-
-    dest_file.close()
 
     print("Execution completed successfully.")

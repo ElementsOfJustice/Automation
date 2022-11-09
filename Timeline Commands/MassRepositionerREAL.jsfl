@@ -33,15 +33,17 @@ function setup() {
 
 setup();
 // prompt the user for a number of frames to shift by
-// var X = parseFloat(prompt("Enter the X coordinate to set to"));
-// var Y = parseFloat(prompt("Enter the Y coordinate to set to"));
+var X = parseFloat(prompt("Enter the X coordinate to set to"));
+var Y = parseFloat(prompt("Enter the Y coordinate to set to"));
 
 
 for (var i = startingFrame; i < endFrame - 1; i++) {
     if (fl.getDocumentDOM().getTimeline().layers[layer].frames[i].startFrame == i) {
         // Move the frame (the most important line of the script)
         // set the last frame property to what it already is plus the frames to shift by
-        fl.getDocumentDOM().getTimeline().layers[layer].frames[i].elements[0].x = 2346.8;
-        fl.getDocumentDOM().getTimeline().layers[layer].frames[i].elements[0].y = -335.95;
+        if (fl.getDocumentDOM().getTimeline().layers[layer].frames[i].elements.length > 0) {
+            fl.getDocumentDOM().getTimeline().layers[layer].frames[i].elements[0].x = X;
+            fl.getDocumentDOM().getTimeline().layers[layer].frames[i].elements[0].y = Y;
+        }
     }
 }
