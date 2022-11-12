@@ -23,8 +23,8 @@ resetSelection(selLayer, 0);
 var curFrame = 0, numFrames = fl.getDocumentDOM().getTimeline().getLayerProperty("frames").length;
 while(curFrame < numFrames - 1) {
     if(fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements.length > 0) {
-        fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements[0].x = deltaX;
-        fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements[0].y = deltaY;
+        fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements[0].x += deltaX;
+        fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements[0].y += deltaY;
     }
     curFrame += fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].duration;
 }

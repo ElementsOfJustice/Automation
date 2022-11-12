@@ -39,8 +39,15 @@ function fixLinePath(cleanLinePath) {
 }
 
 function extendVoiceLine(duration) {
-	fl.getDocumentDOM().getTimeline().insertFrames(3 + (Math.ceil(fl.getDocumentDOM().frameRate * duration / 1000.0)) - 
-	fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("TEXT")].frames[fl.getDocumentDOM().getTimeline().currentFrame].duration, true);
+	fl.getDocumentDOM().getTimeline().insertFrames(3 + (Math.ceil(fl.getDocumentDOM().frameRate * duration / 1000.0)) -
+		fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("TEXT")].frames[fl.getDocumentDOM().getTimeline().currentFrame].duration, true);
+}
+function placeLine(attemptFile, frame) {
+	switchVox(frameName.split(" & ")[i].substring(7).replace(".flac", "").replace(" ", "_").toUpperCase() + "_VOX");
+	fl.getDocumentDOM().getTimeline().setSelectedFrames(frame, frame + 1);
+	fl.getDocumentDOM().importFile(attemptFile);
+	var duration = getDuration(fixLinePath(attemptFile));
+	extendVoiceLine(duration);
 }
 
 var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex("TEXT");
@@ -49,20 +56,19 @@ var frameArray = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames;
 var folderURI = fl.browseForFolderURL("Select the folder containing ALL voice lines.");
 
 var count = 0;
-
 while (fl.getDocumentDOM().getTimeline().currentFrame < fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("TEXT")].frames.length - 1) {
 	layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex("TEXT");
 	var frameName = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name;
-	var attemptFile = folderURI + "/" + frameName + ".flac";
-	if (FLfile.exists(attemptFile)) {
-		switchVox(frameName.substring(7).replace(".flac", "").replace(" ", "_").toUpperCase() + "_VOX");
-		fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-		fl.getDocumentDOM().importFile(attemptFile);
-
-		var duration = getDuration(fixLinePath(attemptFile));
-		extendVoiceLine(duration);
-	} else {
-		fl.trace("NOT FOUND: " + attemptFile);
+	var frame = fl.getDocumentDOM().getTimeline().currentFrame;
+	for (var i = 0; i < frameName.split(" & ").length; i++) {
+		var attemptFile = folderURI + "/" + frameName.split(" & ")[i] + ".flac";
+		if (FLfile.exists(attemptFile)) {
+			placeLine(attemptFile, frame);
+		} else if(FLfile.exists(attemptFile.replace(' ', '_'))) { // filename fuckups
+			placeLine(attemptFile.replace(' ', '_'), frame);
+		} else {
+			fl.trace("NOT FOUND: " + attemptFile);
+		}
 	}
 
 	switchVox("TEXT");
@@ -74,7 +80,7 @@ while (fl.getDocumentDOM().getTimeline().currentFrame < fl.getDocumentDOM().getT
 	//if(count == 2) 
 	//throw new Error ("Balls in yo jawz");
 
-	fl.getDocumentDOM().getTimeline().currentFrame = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[fl.getDocumentDOM().getTimeline().currentFrame].startFrame + 
-	fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[fl.getDocumentDOM().getTimeline().currentFrame].duration;
+	fl.getDocumentDOM().getTimeline().currentFrame = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[fl.getDocumentDOM().getTimeline().currentFrame].startFrame +
+		fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[fl.getDocumentDOM().getTimeline().currentFrame].duration;
 	count++;
 }

@@ -198,13 +198,13 @@ function getPoseFromEmotion(layerIndex, i) {
 
     for (var k = 0; k < objTl.frameCount; k++) {
         if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame)) {
-            fl.trace(objTl.frames[k].name + " : " + dialogueArray[i][3])
+            // fl.trace(objTl.frames[k].name + " : " + dialogueArray[i][3])
             tmpArray.push(levenshteinRatio(objTl.frames[k].name, dialogueArray[i][3]))
             if (spreadMax(tmpArray) == tmpArray[tmpArray.length - 1]) {
                 poseFrameNum = k
-                fl.trace("L RATIO IS: " + levenshteinRatio(objTl.frames[k].name, dialogueArray[i][3]))
-                fl.trace("SPREADMAX RETURNED " + spreadMax(tmpArray))
-                fl.trace("NEW MAXIMUM. K IS: " + k)
+                // fl.trace("L RATIO IS: " + levenshteinRatio(objTl.frames[k].name, dialogueArray[i][3]))
+                // fl.trace("SPREADMAX RETURNED " + spreadMax(tmpArray))
+                // fl.trace("NEW MAXIMUM. K IS: " + k)
             }
         }
     }
@@ -304,9 +304,11 @@ Description:
 */
 
 function getCharacters() { // gets unique characters (basically returns a set)
-    var unique = speakertagArray;
-    for (var i = 0; i < unique.length; i++) {
-        unique[i] = trim(unique[i]);
+    var unique = [];
+    for (var i = 0; i < speakertagArray.length; i++) {
+        for (var character in speakertagArray[i].split(" & ")) {
+            unique.push(trim(speakertagArray[i].split(" & ")[character]));
+        }
     }
     unique = unique.filter(function (value, index, self) {
         return self.indexOf(value) === index;
@@ -338,7 +340,7 @@ function addRigs() {
                 x: masterRigArray[uniqueChars[i]][2],
                 y: masterRigArray[uniqueChars[i]][3]
             }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
-            fl.trace(masterRigArray[uniqueChars[i]])
+            // fl.trace(masterRigArray[uniqueChars[i]])
             fl.getDocumentDOM().swapElement(masterRigArray[uniqueChars[i]][1]);
             fl.getDocumentDOM().setTransformationPoint({ x: 0, y: 0 });
             fl.getDocumentDOM().align('vertical center', true);
@@ -394,7 +396,7 @@ function sculpt() {
         //fl.trace(masterRigArray)
         //fl.trace(masterRigArray[uniqueChars[j]])
         for (var j = 0; j < uniqueChars.length; j++) {
-            fl.trace(masterRigArray[uniqueChars[j]][0])
+            // fl.trace(masterRigArray[uniqueChars[j]][0])
             if (masterRigArray[uniqueChars[j]][0] !== undefined) {
                 fl.getDocumentDOM().getTimeline().currentFrame = iFrameDuration * i;
 
@@ -459,7 +461,7 @@ function sculpt() {
                     //fl.trace("Selected Layer is " + masterRigArray[uniqueChars[j]][0] + " but it should be " + speakertagArray[i])
                     //fl.trace("Selected Sym for xSheet Browsing is: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
                     var poseFrameNum = getPoseFromEmotion(layerIndex, i);
-                    fl.trace("FINAL POSE NUM IS: " + poseFrameNum)
+                    // fl.trace("FINAL POSE NUM IS: " + poseFrameNum)
 
                     if (poseFrameNum != -1) {
                         fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
@@ -682,19 +684,46 @@ function addRigsInvestgation() {
             x: 0,
             y: 0
         }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
-        fl.trace(character);
-        fl.trace(masterInvestigationArray[character][1]);
+        // fl.trace(character);
+        // fl.trace(masterInvestigationArray[character][1]);
         fl.getDocumentDOM().swapElement(masterInvestigationArray[character][1]);
-        fl.getDocumentDOM().setTransformationPoint({ x: 0, y: 0 });
-        fl.getDocumentDOM().align('vertical center', true);
-        fl.getDocumentDOM().align('horizontal center', true);
+        // fl.getDocumentDOM().setTransformationPoint({ x: 0, y: 0 });
+        // fl.getDocumentDOM().align('vertical center', true);
+        // fl.getDocumentDOM().align('horizontal center', true);
         // fl.getDocumentDOM().setElementProperty('transformX', masterRigArray[uniqueChars[i]][2]);
         // fl.getDocumentDOM().setElementProperty('transformY', masterRigArray[uniqueChars[i]][3]);
+        fl.getDocumentDOM().setElementProperty("loop", "single frame");
         fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !true);
     }
     return missingRigs;
 }
+// helper function to get positions of mutliple onscreen characters
+function getAlignmentPos(totalChars, currentChar) {
+    var X = 0;
+    // case 1: even number of characters
+    if (totalChars % 2 == 0) {
+        var deltaX = fl.getDocumentDOM().width / totalChars;
+        var initialPlacement = (-1 * fl.getDocumentDOM().width / 2) + deltaX / 2;
+        fl.trace("initalPlacement: " + initialPlacement)
+        fl.trace("deltaX: " + deltaX)
+        fl.trace("totalChars: " + totalChars)
+        fl.trace("currentChar: " + currentChar)
+        X = initialPlacement + (currentChar * deltaX);
 
+    }
+    // case 2: odd number of characters
+    else {
+        // if (currentChar == (totalChars - 1) / 2) {
+        //     X = 0; // CENTER
+        // } else {
+            var deltaX = fl.getDocumentDOM().width / totalChars;
+            var initialPlacement = (-1 * fl.getDocumentDOM().width / 2) + deltaX / 2;
+            X = initialPlacement + (currentChar * deltaX);
+        // }
+    }
+    fl.trace("X: " + X);
+    return { x: X, y: 0 };
+}
 /*
 Function: sculptInvestigations
 Variables: None
@@ -713,13 +742,14 @@ function sculptInvestgation() {
             }
             speakertagArray[i] = (tempI != 0) ? speakertagArray[tempI] : speakertagArray[i];
         }
+        var characterIndex = 0; // for distributing multiple characters on screen
         for (var j = 0; j < uniqueChars.length; j++) {
             if (masterInvestigationArray[uniqueChars[j]] === undefined) {
                 continue;
             }
             var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterInvestigationArray[uniqueChars[j]][0]);
             fl.getDocumentDOM().getTimeline().currentFrame = iFrameDuration * i;
-            if ((i == 0) && (speakertagArray[i] != uniqueChars[j])) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
+            if ((i == 0) && (speakertagArray[i].indexOf(uniqueChars[j]) == -1)) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
                 switchActive(masterInvestigationArray[uniqueChars[j]][0]);
                 // select current frame
                 fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
@@ -731,9 +761,7 @@ function sculptInvestgation() {
                 }
             }
 
-            else if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
-                fl.trace(uniqueChars[j]);
-                fl.trace(masterInvestigationArray[uniqueChars[j]]);
+            else if (speakertagArray[i].indexOf(uniqueChars[j]) > -1) { // make keyframe on active character
                 switchActive(masterInvestigationArray[uniqueChars[j]][0]);
                 // if (fl.getDocumentDOM().getTimeline().getLayerProperty('visible')) {
                 //     fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !true);
@@ -744,9 +772,19 @@ function sculptInvestgation() {
                 } else {
                     fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
                 }
+                var numChars = speakertagArray[i].split(" & ").length;
+                numChars -= (speakertagArray[i].indexOf(sDefense) > -1) ? 1 : 0;
+                if (numChars > 1) { // multiple characters on screen, distribute them evenly
+                    fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+                    fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
+                    fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+                    fl.getDocumentDOM().moveSelectionBy(getAlignmentPos(numChars, characterIndex));
+                    fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !true);
+                    characterIndex++;
+                }
                 if (!isPov) {
                     var poseFrameNum = getPoseFromEmotion(layerIndex, i);
-                    fl.trace("FINAL POSE NUM IS: " + poseFrameNum)
+                    // fl.trace("FINAL POSE NUM IS: " + poseFrameNum)
 
                     if (poseFrameNum != -1) {
                         fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum

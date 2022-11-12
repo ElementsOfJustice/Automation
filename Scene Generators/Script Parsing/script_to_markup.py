@@ -137,8 +137,8 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
         new_line = line
         flag_isSpeakertag = False
 
-        if "SCENE " in line:
-            scene = int(line[line.index("SCENE ") + len("SCENE "):len(line) - 1])
+        if "SCENE " in line.upper():
+            scene = int(line.upper()[line.upper().index("SCENE ") + len("SCENE "):len(line) - 1])
             characters = [] # reset characters for new scene, probably redundant <= don't reset, let it build to maximize successful run if a character is undeclared by err in a later scene -S
             cur_voice_line = 1 # reset voice line count
 
