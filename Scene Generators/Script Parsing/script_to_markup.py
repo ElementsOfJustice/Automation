@@ -26,6 +26,7 @@ from fuzzywuzzy import process
 import sys
 import re
 import os
+import codecs
 
 import os.path
 
@@ -113,6 +114,7 @@ except:
     exit()
 
 with open(sys.argv[1], "r", encoding="utf8") as file:
+    
 
     to_write = ""
     cur_voice_line = 1
@@ -131,12 +133,12 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
     arr_sceneData = []
 
     for line in file:
-
+        
         new_line = line
         flag_isSpeakertag = False
 
-        if "SCENE " in line:
-            scene = int(line[line.index("SCENE ") + len("SCENE "):len(line) - 1])
+        if "SCENE " in line.upper():
+            scene = int(line.upper()[line.upper().index("SCENE ") + len("SCENE "):len(line) - 1])
             characters = [] # reset characters for new scene, probably redundant <= don't reset, let it build to maximize successful run if a character is undeclared by err in a later scene -S
             cur_voice_line = 1 # reset voice line count
 
@@ -202,7 +204,7 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
         if not flag_runFirst:
             #export dialogue data
             #print("dialogue" + " " + str_lineId + " "  + str_speaker + " "  + str_dialogue + " " + "(" + str_pose + ")")
-
+            str_dialogue = str_dialogue.replace("’", "'")
             arr_tmpData = ["dialogue", str_lineId, str_speaker, str_dialogue, str_pose]
             arr_sceneData.append(arr_tmpData)
             #print("Calculated Pose\n")
@@ -212,7 +214,7 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
         to_write+=new_line
 
     try:
-        dest_file = open(sys.argv[1].replace(".txt", "_ae_markup.txt"), "w")
+        dest_file = codecs.open(sys.argv[1].replace(".txt", "_ae_markup.txt"), "w", "utf-8")
 
     except:
         print("Invalid destination file, abort.")
@@ -222,22 +224,23 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
     dest_file.close()
 
     try:
-        dest_file = open(sys.argv[1].replace(".txt", "_sceneGeneration.txt"), "w")
+        dest_file = [codecs.open(sys.argv[1].replace(".txt", "_Scene_Generation_S" + str(i+1) + ".txt"), "w", "utf-8") for i in range(scene)]
 
     except:
         print("Invalid destination file, abort.")
         exit()
-
-    dest_file.write("var sceneData = \n[")
+    for i in range(scene):
+        dest_file[i].write("var sceneData = \n[")
 
     for i in arr_sceneData:
         if i != arr_sceneData[-1]:
-            dest_file.write("\n" + str(i) + ",")
+            sceneIndex = int(re.sub(r"s(\d*).*", r"\1", i[1])) - 1
+            dest_file[sceneIndex].write("\n" + str(i) + ",")
         else:
-            dest_file.write("\n" + str(i))
+            dest_file[sceneIndex].write("\n" + str(i))
+    for i in range(scene):
+        dest_file[i].write("\n];") 
+        dest_file[i].close()
 
-    dest_file.write("\n];")
-
-    dest_file.close()
 
     print("Execution completed successfully.")

@@ -57,24 +57,24 @@ function getPoseName(layer, frame) {
 function getBlinkInfo(layer, frame) {
     var poseName = getPoseName(layer, frame);
     var characterName = fl.getDocumentDOM().selection[0].libraryItem.name;
-    var firstFrameOfLipFlap = undefined;
-    var lipFlapLength = undefined;
+    var firstFrameOfBlink = undefined;
+    var blinkLength = undefined;
     var i = 0;
-    while (firstFrameOfLipFlap === undefined && lipFlapLength === undefined && i < fl.documents.length) {
-        firstFrameOfLipFlap = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[0];
-        lipFlapLength = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[1];
+    while (firstFrameOfBlink === undefined && blinkLength === undefined && i < fl.documents.length) {
+        firstFrameOfBlink = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[0];
+        blinkLength = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[1];
         i++
     }
-    if (firstFrameOfLipFlap === undefined || lipFlapLength === undefined) { // check to see if data is in the symbol name instead of the full path 
+    if (firstFrameOfBlink === undefined || blinkLength === undefined) { // check to see if data is in the symbol name instead of the full path 
         characterName = characterName.substring(characterName.lastIndexOf("/") + 1);
         i = 0;
-        while (firstFrameOfLipFlap === undefined && lipFlapLength === undefined && i < fl.documents.length) {
-            firstFrameOfLipFlap = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[0];
-            lipFlapLength = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[1];
+        while (firstFrameOfBlink === undefined && blinkLength === undefined && i < fl.documents.length) {
+            firstFrameOfBlink = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[0];
+            blinkLength = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[1];
             i++
         }
     }
-    return [firstFrameOfLipFlap, lipFlapLength];
+    return [firstFrameOfBlink, blinkLength];
 }
 
 //TODO: search for the blinking persistent data. If it does not exist, tell the user and quit

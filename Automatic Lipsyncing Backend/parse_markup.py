@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 import re
 import os
@@ -33,21 +34,21 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
             new_line = re.sub(r"[^a-zA-z-'’ \d:]", r" ", new_line)
             # remove stuttering
             new_line = re.sub(r"(.)-\1", r"\1", new_line)
-            if not os.path.exists(sys.argv[2]):
-                os.makedirs(sys.argv[2])
-            if not os.path.exists(sys.argv[2] + "/" + "SCENE " + str(scene)):
-                os.makedirs(sys.argv[2] + "/" + "SCENE " + str(scene))
-            if not os.path.exists(sys.argv[2] + "/" + "SCENE " + str(scene) + "/" + speaker_name):
-                os.makedirs(sys.argv[2] + "/" + "SCENE " + str(scene) + "/" + speaker_name)
             if len(new_line.strip()) > 0:
-                dest_file = open(sys.argv[2] + "/" + "SCENE " + str(scene) + "/" + speaker_name + "/" +  filename, "w")
-                dest_file.write(new_line.strip())
-                dest_file.close()
+                for real_filename in filename.split(" & "):
+                    real_speaker_name = re.sub(r"s\d*_\d*_(.[^_ ,]*)_?.*", r"\1", real_filename.strip())
+                    if not os.path.exists(sys.argv[2]):
+                        os.makedirs(sys.argv[2])
+                    if not os.path.exists(sys.argv[2] + "/" + "SCENE " + str(scene)):
+                        os.makedirs(sys.argv[2] + "/" + "SCENE " + str(scene))
+                    if not os.path.exists(sys.argv[2] + "/" + "SCENE " + str(scene) + "/" + real_speaker_name):
+                        os.makedirs(sys.argv[2] + "/" + "SCENE " + str(scene) + "/" + real_speaker_name)
+                    dest_file = open(sys.argv[2] + "/" + "SCENE " + str(scene) + "/" + real_speaker_name + "/" +  real_filename + ".txt", "w")
+                    dest_file.write(new_line.strip())
+                    dest_file.close()
 
             is_voice_line = False
         elif re.match(r"^s\d*_", line.strip()):
-            filename = str(line.strip() + ".txt")
+            filename = str(line.strip())
             scene = int(re.sub(r"s(\d*).*", r"\1", line.strip()).strip().replace("’", "'").lower())
             is_voice_line = True
-            # get only first name of first speaker
-            speaker_name = re.sub(r"s\d*_\d*_(.[^_ ,]*)_?.*", r"\1", line.strip()).strip().replace("’", "'").lower()

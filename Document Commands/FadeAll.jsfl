@@ -4,6 +4,7 @@ FIRST_FRAME_INDEX = 4; // indecies of frames for timeline.getSelectedFrames() fo
 SECOND_FRAME_INDEX = 1;
 SYMBOL_CONTENT_LAYER = 1;
 FADES_FOLDER_NAME = "FADES";
+CHARACTER_LAYER_FOLDERS_DISCRIMINATOR = "CHARACTERS";
 EMPTY = false;
 NOT_EMPTY = true;
 
@@ -28,6 +29,27 @@ function setup() {
     }
 }
 
+function getKeys(input) { // get array of start times from the words or phonemes
+    var arr = [];
+    for (var i in input) {
+        arr.push(i);
+    }
+    return arr;
+}
+
+function isEqual(a, b) {
+    return a == b;
+}
+
+function arrayContains(array, element, compare) {
+    for (var i = 0; i < array.length; i++) {
+        if (compare(array[i], element)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /*
 Function: resetSelection
 Variables:  
@@ -39,6 +61,25 @@ function resetSelection(layer, frame) {
     fl.getDocumentDOM().getTimeline().currentFrame = frame;
     // select frame on the layer and replace current selection
     fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true);
+}
+
+function resetSelectionMultiple(layers, frame) { // select multiple layers on a single frame
+    fl.getDocumentDOM().getTimeline().currentFrame = frame;
+    var selectionArr = [];
+    for (var i = 0; i < layers.length; i++) {
+        selectionArr.push(parseInt(layers[i]) * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+    }
+    fl.getDocumentDOM().getTimeline().setSelectedFrames(selectionArr, true);
+}
+
+function masterResetSelection(layers, frame) { // handle all reset selections
+    if (layers.length === undefined) {
+        resetSelection(layers, frame);
+    } else if (layers.length == 1) {
+        resetSelection(layers[0], frame);
+    } else {
+        resetSelectionMultiple(layers, frame);
+    }
 }
 
 function selectOrMakeKeyframe(layer, frame) {
@@ -78,6 +119,29 @@ function makeFadeSymbol(layer, frame, name) {
     return [mat, tp]; // return alignment matrix and tp
 }
 
+function insertNewFrames(layers, frame) { // insert new frames for a fade
+    masterResetSelection(layers, frame - 1);
+    fl.getDocumentDOM().getTimeline().removeFrames(); // remove one frame to line up the content keyframe
+    fl.getDocumentDOM().getTimeline().insertFrames(FADE_LENGTH + (BETWEEN_FADE_LENGTH / 2), true); // insert (fade length + half the frames of emptiness between fades) frames on every layer
+    masterResetSelection(layers, frame - 2); // go to frame before fade in, guaranteed to leave fadeouts unaffected
+    fl.getDocumentDOM().getTimeline().insertFrames(); // re-insert deleted frame
+}
+
+function removeConflictingFrames(layers, frame) {
+    for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
+        var indexIsDifferentLayerFromFadingOne = false;
+        if (layers.length === undefined) {
+            indexIsDifferentLayerFromFadingOne = (i != layers);
+        } else {
+            indexIsDifferentLayerFromFadingOne = !arrayContains(layers, i, isEqual);
+        }
+        if (fl.getDocumentDOM().getTimeline().layers[i].parentLayer != null && fl.getDocumentDOM().getTimeline().layers[i].parentLayer.name.indexOf(CHARACTER_LAYER_FOLDERS_DISCRIMINATOR) != -1 && (indexIsDifferentLayerFromFadingOne) && fl.getDocumentDOM().getTimeline().layers[i].frames[frame - 2].elements.length > 0) {
+            resetSelection(i, frame - 2);
+            fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(); // remove conflicting frames
+        }
+    }
+}
+
 /*
 Function: fadeSetup
 Variables:  
@@ -88,19 +152,35 @@ Variables:
     tp    [a transformation point]
 Description: 
 */
-function fadeSetup(layer, frame, name, mat, tp) {
-    resetSelection(layer, frame);
+function fadeSetup(layers, frame, names, mats, tps) {
+    masterResetSelection(layers, frame);
     fl.getDocumentDOM().setElementProperty('symbolType', 'movie clip'); // convert the frame to movie clip beforehand (this fixes a really weird glitch)
-    fl.getDocumentDOM().swapElement(FADES_FOLDER_NAME + "/" + name); // put fading symbol on the timeline
-    if (CHANGE_TRANSFORMATION_POINT) { // if the flag is set to true
-        fl.getDocumentDOM().setTransformationPoint(tp); // set the tp to the passed in variable
+    if (layers.length === undefined) {
+        fl.getDocumentDOM().swapElement(FADES_FOLDER_NAME + "/" + names); // put fading symbol on the timeline
+        if (CHANGE_TRANSFORMATION_POINT) { // if the flag is set to true
+            fl.getDocumentDOM().setTransformationPoint(tps); // set the tp to the passed in variable
+        }
+        fl.getDocumentDOM().setElementProperty('matrix', mats); // align new symbol
+        fl.getDocumentDOM().addFilter('dropShadowFilter'); // put the drop shadow filter on the fading symbol (necessary for this kind of fade)
+        fl.getDocumentDOM().setFilterProperty("strength", 0, 0); // set the drop shadow strength to 0
+    } else {
+        for (var i = 0; i < layers.length; i++) {
+            masterResetSelection(layers[i], frame);
+            fl.getDocumentDOM().swapElement(FADES_FOLDER_NAME + "/" + names[i]); // swap all symbols for simiultaneous fading
+            if (CHANGE_TRANSFORMATION_POINT) { // if the flag is set to true
+                fl.getDocumentDOM().setTransformationPoint(tps[i]); // set the tp to the passed in variable
+            }
+            fl.getDocumentDOM().setElementProperty('matrix', mats[i]); // align new symbol
+            fl.getDocumentDOM().addFilter('dropShadowFilter'); // put the drop shadow filter on the fading symbol (necessary for this kind of fade)
+            fl.getDocumentDOM().setFilterProperty("strength", 0, 0); // set the drop shadow strength to 0
+        }
+        masterResetSelection(layers, frame);
     }
-    fl.getDocumentDOM().setElementProperty('matrix', mat); // align new symbol
-    fl.getDocumentDOM().addFilter('dropShadowFilter'); // put the drop shadow filter on the fading symbol (necessary for this kind of fade)
-    fl.getDocumentDOM().setFilterProperty("strength", 0, 0); // set the drop shadow strength to 0
     if (CREATE_NEW_FRAMES) {
-        fl.getDocumentDOM().getTimeline().insertFrames(FADE_LENGTH + (BETWEEN_FADE_LENGTH / 2), true); // insert (fade length + half the frames of emptiness between fades) frames on every layer
+        insertNewFrames(layers, frame);
+        removeConflictingFrames(layers, frame);
     }
+    masterResetSelection(layers, frame);
 }
 
 /*
@@ -113,24 +193,23 @@ Variables:
     tp    [a transformation point]
 Description: Create a fade-in effect
 */
-function makeFadeIn(layer, frame, name, mat, tp) {
-    fadeSetup(layer, frame, name, mat, tp);
+function makeFadeIn(layers, frame, names, mats, tps) {
+    fadeSetup(layers, frame, names, mats, tps);
     if (CREATE_NEW_FRAMES && BETWEEN_FADE_LENGTH != 0) { // if there's no space between fades or if we're not making new frames, no need to run these.
         frame += BETWEEN_FADE_LENGTH / 2;
-        resetSelection(layer, frame); // go to beginning of fade 
+        masterResetSelection(layers, frame); // go to beginning of fade 
         fl.getDocumentDOM().getTimeline().insertKeyframe(); // create keyframe for beginning of fade
         frame -= BETWEEN_FADE_LENGTH / 2;
-        resetSelection(layer, frame); // go to where empty frames should be
+        masterResetSelection(layers, frame); // go to where empty frames should be
         fl.getDocumentDOM().deleteSelection(); // get it outta here
     }
     frame += FADE_LENGTH + BETWEEN_FADE_LENGTH / 2;
-    resetSelection(layer, frame); // go to end of fade
+    masterResetSelection(layers, frame); // go to end of fade
     fl.getDocumentDOM().getTimeline().insertKeyframe(); // put keyframe at end of fade
     frame -= FADE_LENGTH;
-    resetSelection(layer, frame); // go to beginning of fade
+    masterResetSelection(layers, frame); // go to beginning of fade
     fl.getDocumentDOM().setInstanceAlpha(0); // set alpha to zero
     fl.getDocumentDOM().getTimeline().createMotionTween(); // create tween for the fade
-
 }
 
 /*
@@ -143,23 +222,24 @@ Variables:
     tp    [a transformation point]
 Description: Create a fade-out effect
 */
-function makeFadeOut(layer, frame, name, mat, tp) {
+function makeFadeOut(layers, frame, name, mats, tps) {
     if (!CREATE_NEW_FRAMES) {
         frame -= FADE_LENGTH; // put cursor at appropriate spot if we're not making new frames   
     }
-    resetSelection(layer, frame);
+    masterResetSelection(layers, frame);
     fl.getDocumentDOM().getTimeline().insertKeyframe(); // insert keyframe at the cursor
-    fadeSetup(layer, frame, name, mat, tp);
+    fadeSetup(layers, frame, name, mats, tps);
     frame += FADE_LENGTH; // move to where end of fade is
-    resetSelection(layer, frame);
+    masterResetSelection(layers, frame);
     fl.getDocumentDOM().getTimeline().insertKeyframe(); // create keyframe for end of fade
     if (CREATE_NEW_FRAMES && BETWEEN_FADE_LENGTH != 0) {
-        fl.getDocumentDOM().getTimeline().insertBlankKeyframe(); // create blank keyframe for the emptiness between fades
+        masterResetSelection(layers, frame + 1);
+        fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(); // create blank keyframe for the emptiness between fades
     }
-    resetSelection(layer, frame); // inserting keyframes deselects everything, so it's most efficient to put this here
+    masterResetSelection(layers, frame); // inserting keyframes deselects everything, so it's most efficient to put this here
     fl.getDocumentDOM().setInstanceAlpha(0); // get it outta here
     frame -= FADE_LENGTH; // go to start of fade
-    resetSelection(layer, frame);
+    masterResetSelection(layers, frame);
     fl.getDocumentDOM().getTimeline().createMotionTween(); // create the tween for the fade
 }
 
@@ -208,6 +288,28 @@ function fadeIn(fadeInLayer, fadeInFrame, fadeInName) {
     makeFadeIn(fadeInLayer, fadeInFrame, fadeInName, info[0], info[1]); // make fade in
 }
 
+function fadeInMultiple(fadeInLayers, fadeInFrame, fadeInNames) {
+    var mats = [];
+    var tps = [];
+    for (var i = 0; i < fadeInLayers.length; i++) {
+        var info = makeFadeSymbol(fadeInLayers[i], fadeInFrame, fadeInNames[i]);
+        mats.push(info[0]);
+        tps.push(info[1]);
+    }
+    makeFadeIn(fadeInLayers, fadeInFrame, fadeInNames, mats, tps); // make fade in
+}
+
+function fadeOutMultiple(fadeOutLayers, fadeOutFrame, fadeOutNames) {
+    var mats = [];
+    var tps = [];
+    for (var i = 0; i < fadeOutLayers.length; i++) {
+        var info = makeFadeSymbol(fadeOutLayers[i], fadeOutFrame, fadeOutNames[i]);
+        mats.push(info[0]);
+        tps.push(info[1]);
+    }
+    makeFadeOut(fadeOutLayers, fadeOutFrame, fadeOutNames, mats, tps); // make fade in
+}
+
 function getUniqueNameIndex(name, index) {
     while (fl.getDocumentDOM().library.itemExists(FADES_FOLDER_NAME + "/" + name + " " + index)) {
         index++;
@@ -220,12 +322,80 @@ function selectNextKeyframe() {
     resetSelection(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame += currentTimelineFrame.duration - (fl.getDocumentDOM().getTimeline().currentFrame - currentTimelineFrame.startFrame));
 }
 
+function performFadeIn(layer, frame) {
+    resetSelection(layer, frame);
+    var nameIndex = 1;
+    var suggestedName = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedFrames()[0]].name + " Fade";
+    nameIndex = getUniqueNameIndex(suggestedName, nameIndex);
+    var curFrame = fl.getDocumentDOM().getTimeline().currentFrame; // save currentframe
+    selectNextKeyframe();
+    resetSelection(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame - 1);
+    selectOrMakeKeyframe(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame); // create new keyframe just in case
+    resetSelection(fl.getDocumentDOM().getTimeline().currentLayer, curFrame); // go back
+    fadeIn(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame, suggestedName + " " + nameIndex);
+}
+
+function performFadeOut(layer, frame) {
+    resetSelection(layer, frame - 1); // go to the previous frame, guaranteed to be non-empty
+    var nameIndex = 1;
+    var suggestedName = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedFrames()[0]].name + " Fade";
+    nameIndex = getUniqueNameIndex(suggestedName, nameIndex);
+    fadeOut(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame, suggestedName + " " + nameIndex);
+}
+
+function performSimultaneousFadeIns(layers, frame) {
+    masterResetSelection(layers, frame);
+    var suggestedNames = [];
+    var nameIndices = [];
+    var names = [];
+    for (var i = 0; i < layers.length; i++) {
+        masterResetSelection(layers[i], frame);
+        suggestedNames.push(fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedFrames()[0]].name + " Fade");
+        nameIndices.push(1);
+        nameIndices[i] = getUniqueNameIndex(suggestedNames[i], nameIndices[i]);
+        names.push(suggestedNames[i] + " " + nameIndices[i]);
+        selectNextKeyframe();
+        masterResetSelection(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame - 1);
+        selectOrMakeKeyframe(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame); // create new keyframe just in case
+    }
+    masterResetSelection(layers, frame);
+    fadeInMultiple(layers, frame, names);
+}
+
+function performSimultaneousFadeOuts(layers, frame) {
+    masterResetSelection(layers, frame - 1); // go to the previous frame, guaranteed to be non-empty
+    var suggestedNames = [];
+    var nameIndices = [];
+    var names = [];
+    for (var i = 0; i < layers.length; i++) {
+        masterResetSelection(layers[i], frame - 1);
+        suggestedNames.push(fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedFrames()[0]].name + " Fade");
+        nameIndices.push(1);
+        nameIndices[i] = getUniqueNameIndex(suggestedNames[i], nameIndices[i]);
+        names.push(suggestedNames[i] + " " + nameIndices[i]);
+    }
+    masterResetSelection(layers, frame - 1);
+    fadeOutMultiple(layers, frame - 1, names);
+}
+
+function sortMap(map) { // O(n*log(n)), should be fine
+    var keys = getKeys(map);
+    keys.sort(function (a, b) { return a - b; });
+    var newMap = {};
+    for (var i = 0; i < keys.length; i++) {
+        newMap[keys[i]] = map[keys[i]];
+    }
+    return newMap;
+}
+
 // assuming all relevant layers are selected, iterate through all frames, creating fades in and fades out when blank keyframes are reached
 fl.showIdleMessage(false);
 var confirmExecution = confirm("Confirm: Every character layer is selected that you want to fade");
 if (confirmExecution) {
     var startTime = new Date();
     var selectedLayers = fl.getDocumentDOM().getTimeline().getSelectedLayers(); // get selected layers
+    var fadeIns = {}; // SCEMA: {frame: [layer index 1, layer index 2...]}
+    var fadeOuts = {}; // SCEMA: {frame: [layer index 1, layer index 2...]}
     for (var i = 0; i < selectedLayers.length; i++) { // loop through each character layer
         // TODO: find blank keyframes, go before them and after them and make fades
         resetSelection(selectedLayers[i], 0); // go to first frame of the layer
@@ -238,26 +408,65 @@ if (confirmExecution) {
             if (state != newState) {
                 state = newState
                 if (state == EMPTY) { // case 1: empty keyframe after a non-empty keyframe
-                    resetSelection(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame - 1) // go to the previous frame, guaranteed to be non-empty
-                    var nameIndex = 1;
-                    var suggestedName = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedFrames()[0]].name + " Fade";
-                    nameIndex = getUniqueNameIndex(suggestedName, nameIndex);
-                    fadeOut(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame, suggestedName +  " " + nameIndex);
-                    selectNextKeyframe();
-                    selectNextKeyframe(); // go two keyframes forward
+                    if (fadeOuts[fl.getDocumentDOM().getTimeline().currentFrame] === undefined) {
+                        fadeOuts[fl.getDocumentDOM().getTimeline().currentFrame] = [i];
+                    } else {
+                        fadeOuts[fl.getDocumentDOM().getTimeline().currentFrame].push(i);
+                    }
                 } else {
-                    var nameIndex = 1;
-                    var suggestedName = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedFrames()[0]].name + " Fade";
-                    nameIndex = getUniqueNameIndex(suggestedName, nameIndex);
-                    var curFrame = fl.getDocumentDOM().getTimeline().currentFrame; // save currentframe
-                    selectNextKeyframe();
-                    resetSelection(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame - 1);
-                    selectOrMakeKeyframe(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame); // create new keyframe just in case
-                    resetSelection(fl.getDocumentDOM().getTimeline().currentLayer, curFrame); // go back
-                    fadeIn(fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame, suggestedName +  " " + nameIndex);
+                    if (fadeIns[fl.getDocumentDOM().getTimeline().currentFrame] === undefined) {
+                        fadeIns[fl.getDocumentDOM().getTimeline().currentFrame] = [i];
+                    } else {
+                        fadeIns[fl.getDocumentDOM().getTimeline().currentFrame].push(i);
+                    }
                 }
             }
         }
+    }
+    // fl.trace("fade ins: " + getKeys(fadeIns));
+    // fl.trace("fade outs: " + getKeys(fadeOuts));
+    // var strIn = "";
+    // var strOut = "";
+    fadeIns = sortMap(fadeIns); // sorting so that the offset makes sense
+    fadeOuts = sortMap(fadeOuts);
+    var inKeys = getKeys(fadeIns);
+    var outKeys = getKeys(fadeOuts);
+    var frameOffset = 0;
+    for (var i = 0; i < inKeys.length || i < outKeys.length; i++) {
+        // FADE INS:
+        if (inKeys[i] !== undefined) {
+            var frame = parseInt(inKeys[i]) + frameOffset; // fade in ith instance
+            var layers = fadeIns[inKeys[i]];
+            if (layers.length == 1) {
+                performFadeIn(selectedLayers[fadeIns[inKeys[i]][0]], frame);
+                frameOffset += (CREATE_NEW_FRAMES) ? (FADE_LENGTH + BETWEEN_FADE_LENGTH / 2) : 0;
+            } else {
+                layers = [];
+                for (var j = 0; j < fadeIns[inKeys[i]].length; j++) {
+                    layers.push(selectedLayers[fadeIns[inKeys[i]][j]]); // get layers to fade in
+                }
+                performSimultaneousFadeIns(layers, frame);
+                frameOffset += (CREATE_NEW_FRAMES) ? (FADE_LENGTH + BETWEEN_FADE_LENGTH / 2) : 0;
+            }
+        }
+        // FADE OUTS:
+        if (outKeys[i] === undefined) {
+            continue; // assuming there are always at least as many fade ins as fade outs, may break stuff :D
+        }
+        frame = parseInt(outKeys[i]) + frameOffset; // fade out ith instance
+        layers = fadeOuts[outKeys[i]];
+        if (layers.length == 1) {
+            performFadeOut(selectedLayers[fadeOuts[outKeys[i]][0]], frame);
+            frameOffset += (CREATE_NEW_FRAMES) ? (FADE_LENGTH + BETWEEN_FADE_LENGTH / 2) : 0;
+        } else {
+            layers = [];
+            for (var j = 0; j < fadeOuts[outKeys[i]].length; j++) {
+                layers.push(selectedLayers[fadeOuts[outKeys[i]][j]]); // get layers to fade in
+            }
+            performSimultaneousFadeOuts(layers, frame);
+            frameOffset += (CREATE_NEW_FRAMES) ? (FADE_LENGTH + BETWEEN_FADE_LENGTH / 2) : 0;
+        }
+        // strIn += "(" + inKeys[i] + ", " + fadeIns[inKeys[i]] + "), ";
     }
     var endTime = new Date();
     var timeDiff = endTime - startTime;

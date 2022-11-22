@@ -74,14 +74,24 @@ function getEndTimes(input) {
 
 function getLipFlapInfo(poseName) {
     var characterName = fl.getDocumentDOM().selection[0].libraryItem.name;
-    var firstFrameOfLipFlap = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".lipFlap")[0];
-    var lipFlapLength = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".lipFlap")[1];
-    if (firstFrameOfLipFlap == undefined || lipFlapLength == undefined) { // check to see if data is in the symbol name instead of the full path 
-        characterName = characterName.substring(characterName.lastIndexOf("/") + 1);
-        firstFrameOfLipFlap = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".lipFlap")[0];
-        lipFlapLength = fl.getDocumentDOM().getDataFromDocument(characterName + "." + poseName + ".lipFlap")[1];
+    var firstFrameOfLipFlap = undefined;
+    var lipFlapLength = undefined;
+    var i = 0;
+    while (firstFrameOfLipFlap === undefined && lipFlapLength === undefined && i < fl.documents.length) {
+        firstFrameOfLipFlap = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".lipFlap")[0];
+        lipFlapLength = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".lipFlap")[1];
+        i++
     }
-    return [firstFrameOfLipFlap, lipFlapLength]
+    if (firstFrameOfLipFlap === undefined || lipFlapLength === undefined) { // check to see if data is in the symbol name instead of the full path 
+        characterName = characterName.substring(characterName.lastIndexOf("/") + 1);
+        i = 0;
+        while (firstFrameOfLipFlap === undefined && lipFlapLength === undefined && i < fl.documents.length) {
+            firstFrameOfLipFlap = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".lipFlap")[0];
+            lipFlapLength = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".lipFlap")[1];
+            i++
+        }
+    }
+    return [firstFrameOfLipFlap, lipFlapLength];
 }
 
 function getLipSyncFrameArray(words, phonemes) { // helper function to compute where each syllable is in terms of frames
