@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import wave
 import string
 import json
@@ -6,39 +7,50 @@ import os
 
 from time import perf_counter
 from cProfile import label
-from matplotlib.lines import segment_hits
+# from matplotlib.lines import segment_hits
 import whisper
 
 import ahocorasick
 
 fullLine = "_________________"
 
-#this is nightmare shit code, but it's nightmare shit code that works
+# this is nightmare shit code, but it's nightmare shit code that works
 
 needles = [
-['dialogue', 's1_004_twilight', 'Twilight', 'It’s true. She was awfully determined to keep things to herself. Again.', 'NONE'],
-['dialogue', 's1_006_twilight', 'Twilight', 'I’m wondering if that was connected to how she was behaving earlier today.', 'NONE'],
-['dialogue', 's1_008_twilight', 'Twilight', 'Yeah, and how nonchalant she was.', 'NONE'],
-['dialogue', 's1_009_twilight', 'Twilight', 'Since Athena managed to surprise her, I think she must have been counting on not being asked to testify.', 'NONE'],
-['dialogue', 's1_012_twilight', 'Twilight', 'Agreed. I didn’t like making Sweetie Belle feel that way, either, but she’s definitely up to something. We can’t save her if she isn’t willing to speak.', 'NONE'],
-['dialogue', 's1_039_twilight', 'Twilight', 'One that Fair Devotion, Sugar Stamp, and Private Eye must ALL be aware of—that’s why you insisted we go down this route, isn’t it?', 'NONE'],
-['dialogue', 's1_043_twilight', 'Twilight', 'What, indeed…?', 'NONE'],
-['dialogue', 's1_067_twilight', 'Twilight', '!! B-but, the fact that the magazine cutouts match the tip… does that mean Diamond Tiara’s the one who actually sent it?', 'NONE'],
-['dialogue', 's1_079_twilight', 'Twilight', 'You managed to uncover quite a bit, Sonata! It must have taken you some time!', 'NONE'],
-['dialogue', 's1_095_twilight', 'Twilight', 'W-wha—Zecora?', 'NONE'],
-['dialogue', 's1_103_twilight', 'Twilight', 'Day-bloomers…', 'NONE'],
-['dialogue', 's1_117_twilight', 'Twilight', 'Local hospital? That must mean… Ponyville General Hospital.', 'NONE'],
-['dialogue', 's1_145_twilight', 'Twilight', 'Right. We’d better head inside, Athena.', 'NONE'],
-['dialogue', 's1_163_twilight', 'Twilight', 'A-Athena, we need to get going!', 'NONE']
+    ['dialogue', 's1_004_twilight', 'Twilight',
+        'It’s true. She was awfully determined to keep things to herself. Again.', 'NONE'],
+    ['dialogue', 's1_006_twilight', 'Twilight',
+        'I’m wondering if that was connected to how she was behaving earlier today.', 'NONE'],
+    ['dialogue', 's1_008_twilight', 'Twilight',
+        'Yeah, and how nonchalant she was.', 'NONE'],
+    ['dialogue', 's1_009_twilight', 'Twilight',
+        'Since Athena managed to surprise her, I think she must have been counting on not being asked to testify.', 'NONE'],
+    ['dialogue', 's1_012_twilight', 'Twilight',
+        'Agreed. I didn’t like making Sweetie Belle feel that way, either, but she’s definitely up to something. We can’t save her if she isn’t willing to speak.', 'NONE'],
+    ['dialogue', 's1_039_twilight', 'Twilight',
+        'One that Fair Devotion, Sugar Stamp, and Private Eye must ALL be aware of—that’s why you insisted we go down this route, isn’t it?', 'NONE'],
+    ['dialogue', 's1_043_twilight', 'Twilight', 'What, indeed…?', 'NONE'],
+    ['dialogue', 's1_067_twilight', 'Twilight',
+        '!! B-but, the fact that the magazine cutouts match the tip… does that mean Diamond Tiara’s the one who actually sent it?', 'NONE'],
+    ['dialogue', 's1_079_twilight', 'Twilight',
+        'You managed to uncover quite a bit, Sonata! It must have taken you some time!', 'NONE'],
+    ['dialogue', 's1_095_twilight', 'Twilight', 'W-wha—Zecora?', 'NONE'],
+    ['dialogue', 's1_103_twilight', 'Twilight', 'Day-bloomers…', 'NONE'],
+    ['dialogue', 's1_117_twilight', 'Twilight',
+        'Local hospital? That must mean… Ponyville General Hospital.', 'NONE'],
+    ['dialogue', 's1_145_twilight', 'Twilight',
+        'Right. We’d better head inside, Athena.', 'NONE'],
+    ['dialogue', 's1_163_twilight', 'Twilight',
+        'A-Athena, we need to get going!', 'NONE']
 ]
 
-#INPUT
+# INPUT
 
 model = whisper.load_model("tiny")
-audio_path = os.path.join(os.path.dirname(__file__), "audio\TS_208.wav")
+audio_path = os.path.join(os.path.dirname(__file__), "TS_208.wav")
 activeChar = "Twilight"
 
-#SPEECH TO TEXT
+# SPEECH TO TEXT
 
 t2_start = perf_counter()
 
@@ -47,10 +59,18 @@ strLines = result["text"]
 
 haystack = strLines.lower().translate(str.maketrans('', '', string.punctuation))
 
+charIndexToWordIndex = {}
+totalChars = 0
+for idx, word in enumerate(haystack.split()):
+    charIndexToWordIndex[totalChars] = idx
+    print(totalChars)
+    totalChars += len(word) + 1 # space xD
+
+
 print(fullLine)
 print(haystack)
 
-#AHO-CORASICK AUTOMATON GOES HERE
+# AHO-CORASICK AUTOMATON GOES HERE
 
 """ 
 
@@ -196,7 +216,8 @@ for x, n in enumerate(needles):
         print(fullLine)
         print("Current Needle:\t " + needles[x][1] + "\t " + needles[x][3])
 
-        needle = needles[x][3].lower().translate(str.maketrans('', '', string.punctuation))
+        needle = needles[x][3].lower().translate(
+            str.maketrans('', '', string.punctuation))
         for idx, key in enumerate(needle.split()):
 
             if len(key) <= minLength and chkFlag == False and idx < len(needle.split())-1:
@@ -212,62 +233,84 @@ for x, n in enumerate(needles):
 
         A.make_automaton()
 
-        #SORTING LOGIC GOES HERE
-        #there's a lot of arbitrary variable names, I'm sorry, i'm so sorry
+        # SORTING LOGIC GOES HERE
+        # there's a lot of arbitrary variable names, I'm sorry, i'm so sorry
 
         arrMatch = []
         flagFailed = True
 
-        #append WORD from haystack to arrMatch
+        # append WORD from haystack to arrMatch
         for end_index, (insert_order, original_value) in A.iter(haystack):
             start_index = end_index - len(original_value) + 1
             flagFailed = False
-            arrMatch.append([start_index, end_index, insert_order, original_value])
+            arrMatch.append(
+                [start_index, end_index, insert_order, original_value])
 
-        #flagFailed determines if a line is not present in the audio file,
-        #adds it to failedLines array for logging
+        # flagFailed determines if a line is not present in the audio file,
+        # adds it to failedLines array for logging
         if flagFailed:
             failedLines.append([needles[x][1], needles[x][3]])
 
-        #sort by start character index
+        # sort by start character index
         arrMatch = sorted(arrMatch, key=lambda i: i[0])
 
-        #break needle string down into list of words
+        # break needle string down into list of words
         compList = needles[x][3].split()
         arrFinal = []
 
-        #retarded iteration (he didn't know about enumerate...)
+        # retarded iteration (he didn't know about enumerate...)
         i = 0
         while i < len(arrMatch):
             for x, n in enumerate(compList):
-                #make all lowercase and remove punctuation (does this fuck up contractions?...)
-                needleWord = compList[x].lower().translate(str.maketrans('', '', string.punctuation))
+                # make all lowercase and remove punctuation (does this fuck up contractions?...)
+                needleWord = compList[x].lower().translate(
+                    str.maketrans('', '', string.punctuation))
 
                 if needleWord == arrMatch[i][3]:
-                    #if needleWord matches haystack word, append to arrFinal and specify n-th word in needle
-                    print("Match found. " + arrMatch[i][3] + " is the " + str(x+1) + " word in the string.")
+                    # if needleWord matches haystack word, append to arrFinal and specify n-th word in needle
+                    print(
+                        "Match found. " + arrMatch[i][3] + " is the " + str(x+1) + " word in the string.")
                     arrFinal.append([arrMatch[i][0], arrMatch[i][1], x+1])
                 elif " " in arrMatch[i][3]:
-                    #same as above, but catches combined words like 'would have' or 'the defense'
+                    # same as above, but catches combined words like 'would have' or 'the defense'
                     tmpSplit = arrMatch[i][3].split()
                     for word in tmpSplit:
                         if needleWord == word:
-                            print("Match found. " + word + " is the " + str(x+1) + " word in the string.")
-                            arrFinal.append([arrMatch[i][0], arrMatch[i][1], x+1])
+                            print("Match found. " + word + " is the " +
+                                  str(x+1) + " word in the string.")
+                            arrFinal.append(
+                                [arrMatch[i][0], arrMatch[i][1], x+1])
 
             print(arrMatch[i])
             i = i+1
 
-    #this is where the big boy algorithm goes that actually re-constructs the sentence
-    #make a length tolerance of 1.5 times the needle length rounded to an int, to weed out false positives
+    # this is where the big boy algorithm goes that actually re-constructs the sentence
+    # make a length tolerance of 1.5 times the needle length rounded to an int, to weed out false positives
     #arrFinal = sorted(arrFinal, key=lambda i: i[0])
-    #lenTolerance = round(len(needles[x][3])*1.5)
+    # lenTolerance = round(len(needles[x][3])*1.5)
 
+    size = len(needle.split())
+    startChar = None
+    endChar = None
+    curNumWord = 0
+    curSuccesiveMatches = 0
     for x, n in enumerate(arrFinal):
-        if x <= len(arrFinal)-1:
-            print("starChar " + str(arrFinal[x][0]), end = ' ')
-            print("endChar " + str(arrFinal[x][1]), end = ' ')
-            print("numWord " + str(arrFinal[x][2]))
+        startChar = arrFinal[x][0]
+        if(curNumWord < arrFinal[x][2]):
+            curSuccesiveMatches += 1
+        else:
+            curSuccesiveMatches = 0
+            startChar = arrFinal[x][0]
+        curNumWord = arrFinal[x][2]
+        if(curSuccesiveMatches >= size / 2):
+            print("partial match startChar: " + str(startChar))
+            print("partial match first word index: " + str(charIndexToWordIndex[startChar-1] - arrFinal[x][2] + 1)) # charIndexToWordIndex[startChar-1] - arrFinal[x][2] + 1 is start of partial match!!
+            print("partial match last word index: " + str(charIndexToWordIndex[startChar-1] - arrFinal[x][2] + size)) # charIndexToWordIndex[startChar-1] - arrFinal[x][2] + 1 is start of partial match!!
+            
+        print("starChar " + str(arrFinal[x][0]), end=' ')
+        print("endChar " + str(arrFinal[x][1]), end=' ')
+        print("numWord " + str(arrFinal[x][2]))
+
 
 t1_stop = perf_counter()
 
@@ -277,7 +320,7 @@ for x, n in enumerate(failedLines):
 print(fullLine)
 
 print("Whisper AI Transcription took: \t",
-                                        str(round(t2_stop-t2_start, 3)) + " seconds.")
+      str(round(t2_stop-t2_start, 3)) + " seconds.")
 
 print("Aho-Corasick search took: \t",
-                                        str(round(t1_stop-t1_start, 3)) + " seconds.")
+      str(round(t1_stop-t1_start, 3)) + " seconds.")

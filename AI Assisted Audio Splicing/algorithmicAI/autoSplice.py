@@ -525,9 +525,9 @@ sceneData = [
 ['dialogue', 's3_162_athena', 'Athena', '(I know that\'s good for us, but... why does it frighten me?)', 'NONE']
 ];
 
-model_path = "models/vosk-model-small-en-us-0.15"
-audio_filename = "audio/TS_208.wav"
-activeChar = "Twilight"
+model_path = "vosk-model-small-en-us-0.15"
+audio_filename = "SHORT_Judge208.wav"
+activeChar = "Judge"
 
 model = Model(model_path)
 wf = wave.open(audio_filename, "rb")
@@ -587,7 +587,7 @@ for x in sceneData:
                 continue
 
             #fuzzy substring matching, gets all takes from strLines
-            matches = find_near_matches(stripString, strLines, max_substitutions=15, max_insertions=0, max_deletions=0, max_l_dist=0)
+            matches = find_near_matches(stripString, strLines, max_deletions=5, max_insertions=5, max_substitutions=5)
             #print([strLines[m.start:m.end] for m in matches])                         #prints takes text
             #print([m.start for m in matches])                                        #prints indexes for the start char for each take
             #print([m.end for m in matches])                                          #prints indexes for the end char for each take

@@ -49,6 +49,7 @@ doc.importFile(imagePath);
 var evidenceName = prompt("Enter name of evidence");
 // create a new symbol with a type, name, and registration point
 doc.convertToSymbol("graphic", evidenceName, "center");
+//TODO: move to its own folder in the library
 // scale width and height of the evidence image
 an.getDocumentDOM().scaleSelection(trueWidth / timeline.layers[layer].frames[curFrame].elements[0].width, 1);
 an.getDocumentDOM().scaleSelection(1, trueHeight / timeline.layers[layer].frames[curFrame].elements[0].height);

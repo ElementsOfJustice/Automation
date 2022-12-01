@@ -82,6 +82,10 @@ var startTime = new Date();
 /******************************************************************************
                                 BASIC FUNCTIONS
 ******************************************************************************/
+// Exponential distribution CDF: mean of theta, function of t.
+function getBlinkProbability(theta, t) {
+    return 1 - Math.pow(Math.E, -1 * (t / theta));
+}
 
 function trim(input) { // stolen from java :D
     var len = input.length;
