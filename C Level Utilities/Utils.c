@@ -87,11 +87,12 @@ JSBool getFLACLength(JSContext* cx, JSObject* obj, unsigned int argc, jsval* arg
         return JS_TRUE; // return -1 as an error value so that it doesn't crash.
     }
     for (i = 0, max = 0x20; i < max && (c = getc(fp)) != EOF; i++) { // loop over first 32 bytes of the file
-        if ((i >= 0x12 && i <= 0x14) || (i >= 0x15 && i <= 0x19))
+        if ((i >= 0x12 && i <= 0x14) || (i >= 0x15 && i <= 0x19)) {
             if (i >= 0x12 && i <= 0x14) { // FLAC documentation says that the sample rate is from byte 0x12 to the first nibble of byte 0x14
                 sampleRate <<= (i == 0x14) ? 4 : 8;
                 sampleRate += (i == 0x14) ? c & 0b11110000 : c;
             }
+        }
         if (i >= 0x15 && i <= 0x19) { // FLAC documentation says that the number of samples is from the second nibble of byte 0x15 to the end of byte 0x19
             samples <<= 8;
             samples += (i == 0x15) ? c & 0b00001111 : c;
