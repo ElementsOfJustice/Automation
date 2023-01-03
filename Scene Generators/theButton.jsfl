@@ -346,12 +346,15 @@ function addRigs() {
             }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
             // fl.trace(masterRigArray[uniqueChars[i]])
             fl.getDocumentDOM().swapElement(masterRigArray[uniqueChars[i]][1]);
+            fl.getDocumentDOM().getTimeline().layers[selLayerIndex].setRigParentAtFrame(fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("BACKGROUNDS")], fl.getDocumentDOM().getTimeline().currentFrame);
             fl.getDocumentDOM().setTransformationPoint({ x: 0, y: 0 });
             fl.getDocumentDOM().align('vertical center', true);
             fl.getDocumentDOM().align('horizontal center', true);
             fl.getDocumentDOM().setElementProperty('transformX', masterRigArray[uniqueChars[i]][2]);
             fl.getDocumentDOM().setElementProperty('transformY', masterRigArray[uniqueChars[i]][3]);
             fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !true);
+        } else {
+            fl.trace("WARNING! UNDEFINED RIG: " + masterRigArray[uniqueChars[i]]);
         }
     }
 }
@@ -691,6 +694,7 @@ function addRigsInvestgation() {
         // fl.trace(character);
         // fl.trace(masterInvestigationArray[character][1]);
         fl.getDocumentDOM().swapElement(masterInvestigationArray[character][1]);
+        fl.getDocumentDOM().getTimeline().layers[selLayerIndex].setRigParentAtFrame(fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("BACKGROUNDS")], fl.getDocumentDOM().getTimeline().currentFrame);
         // fl.getDocumentDOM().setTransformationPoint({ x: 0, y: 0 });
         // fl.getDocumentDOM().align('vertical center', true);
         // fl.getDocumentDOM().align('horizontal center', true);
@@ -708,10 +712,10 @@ function getAlignmentPos(totalChars, currentChar) {
     if (totalChars % 2 == 0) {
         var deltaX = fl.getDocumentDOM().width / totalChars;
         var initialPlacement = (-1 * fl.getDocumentDOM().width / 2) + deltaX / 2;
-        fl.trace("initalPlacement: " + initialPlacement)
-        fl.trace("deltaX: " + deltaX)
-        fl.trace("totalChars: " + totalChars)
-        fl.trace("currentChar: " + currentChar)
+        // fl.trace("initalPlacement: " + initialPlacement)
+        // fl.trace("deltaX: " + deltaX)
+        // fl.trace("totalChars: " + totalChars)
+        // fl.trace("currentChar: " + currentChar)
         X = initialPlacement + (currentChar * deltaX);
 
     }
@@ -725,7 +729,7 @@ function getAlignmentPos(totalChars, currentChar) {
             X = initialPlacement + (currentChar * deltaX);
         // }
     }
-    fl.trace("X: " + X);
+    // fl.trace("X: " + X);
     return { x: X, y: 0 };
 }
 /*
@@ -1113,7 +1117,8 @@ if (guiPanel.dismiss == "accept") {
         var end = new Date();
         getTimeDiff(start, end);
         start = new Date();
-        addRigsInvestgation();
+        var missing = addRigsInvestgation();
+        fl.trace("Missing rigs: " + missing);
         end = new Date();
         getTimeDiff(start, end);
         start = new Date();

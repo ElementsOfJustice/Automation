@@ -8,6 +8,7 @@ Autoparent newly created layers to AUDIO folder.
 Convert all voice lines to Stream.
 Get all voice lines in a subset of folders
 ******************************************************************************/
+UPPER_FRAMECOUNT_LIMIT = 12000;
 
 function switchVox(layerVar) {
 	var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(layerVar);
@@ -83,4 +84,8 @@ while (fl.getDocumentDOM().getTimeline().currentFrame < fl.getDocumentDOM().getT
 	fl.getDocumentDOM().getTimeline().currentFrame = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[fl.getDocumentDOM().getTimeline().currentFrame].startFrame +
 		fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[fl.getDocumentDOM().getTimeline().currentFrame].duration;
 	count++;
+	if(fl.getDocumentDOM().getTimeline().frameCount > UPPER_FRAMECOUNT_LIMIT) {
+		fl.trace("Maximum number of frames reached. Ending execution.")
+		break;
+	}
 }
