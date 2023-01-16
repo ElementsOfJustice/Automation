@@ -8,7 +8,7 @@ Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 /*
 Function: resetSelection
 Variables:  
-    layer [integer(or should be) index of a layer ]
+    layer [integer(or should be) index of a layer]
     frame [integer index of a frame]
 Description: sets selection to the desired layer and frame
 */
@@ -21,7 +21,7 @@ function resetSelection(layer, frame) {
 /*
 Function: selectOrMakeKeyframe
 Variables:  
-    layer [integer(or should be) index of a layer ]
+    layer [integer(or should be) index of a layer]
     frame [integer index of a frame]
 Description: selects the keyframe if there's one there, or makes one if there isn't
 */
@@ -36,9 +36,16 @@ function selectOrMakeKeyframe(layer, frame) {
     }
 }
 
+/*
+Function: getPoseName
+Variables:  
+    layer [integer(or should be) index of a layer]
+    frame [integer index of a frame]
+Description: Returns the name of the pose
+*/
 function getPoseName(layer, frame) {
-    resetSelection(layer, frame);
-    if (fl.getDocumentDOM().selection[0] == undefined) {
+    resetSelection(layer, frame); // select layer & frame
+    if (fl.getDocumentDOM().selection[0] == undefined) { // if there is no selection
         return undefined;
     }
     var characterTimeline = fl.getDocumentDOM().selection[0].libraryItem.timeline; // get the timeline of the selected symbol
@@ -54,20 +61,32 @@ function getPoseName(layer, frame) {
     return characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].name;
 }
 
+/*
+Function: getBlinkInfo
+Variables:  
+    layer [integer(or should be) index of a layer]
+    frame [integer index of a frame]
+Description: Returns an array containing the first frame of a blink animation 
+    and the length of the blink animation
+*/
 function getBlinkInfo(layer, frame) {
     var poseName = getPoseName(layer, frame);
-    var characterName = fl.getDocumentDOM().selection[0].libraryItem.name;
-    var firstFrameOfBlink = undefined;
+    var characterName = fl.getDocumentDOM().selection[0].libraryItem.name; // gets the name of the character 
+    var firstFrameOfBlink = undefined; 
     var blinkLength = undefined;
     var i = 0;
+    // iterates through all open documents 
     while (firstFrameOfBlink === undefined && blinkLength === undefined && i < fl.documents.length) {
+        // attempt to retrieve the first frame of the blink and the blink length from the data in the document
         firstFrameOfBlink = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[0];
         blinkLength = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[1];
         i++
     }
+    // If the data is not found in the full path
     if (firstFrameOfBlink === undefined || blinkLength === undefined) { // check to see if data is in the symbol name instead of the full path 
         characterName = characterName.substring(characterName.lastIndexOf("/") + 1);
         i = 0;
+        // try again with the symbol name
         while (firstFrameOfBlink === undefined && blinkLength === undefined && i < fl.documents.length) {
             firstFrameOfBlink = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[0];
             blinkLength = fl.documents[i].getDataFromDocument(characterName + "." + poseName + ".blink")[1];
