@@ -61,8 +61,9 @@ function compileMap(charName, layerNum, iOffset) {
 			for (var j = elList.length - 1; j > 0; j--) { // loop through the element list
 				var el = elList[j - 1] // j-1 for dialogue, j for text.
 				if (fl.getDocumentDOM().getTimeline().layers[layerNum].frames[i + iOffset].elements.length != 0) { // if we've got some elements in our frame
-					// ?? Might need some explanation on these two variables ??
+					// first frame index
 					var ffIndex = fl.getDocumentDOM().getTimeline().layers[layerNum].frames[i + iOffset].elements[0].firstFrame + 1
+					// library index of the symbol
 					var itemIndex = doc.library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerNum].frames[i + iOffset].elements[0].libraryItem.name)
 
 					var poseName = doc.library.items[itemIndex].timeline.layers[0].frames[ffIndex].name;
