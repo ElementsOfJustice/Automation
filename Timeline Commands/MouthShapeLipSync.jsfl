@@ -10,8 +10,8 @@ FRAME_RATE = fl.getDocumentDOM().frameRate;
 OFFSET_MAP = {
     "No Talking" : 0,
     "Closed Mouth No Teeth" : 0,
-    "Open Mouth Big" : 7,
-    "Open Mouth Teeth" : 7,
+    "Open Mouth Big" : 6,
+    "Open Mouth Teeth" : 6,
     "Open Mouth Wide" : 16,
     "Open Mouth Round" : 16,
     "Closed Mouth Teeth" : 1,
@@ -20,7 +20,22 @@ OFFSET_MAP = {
     "Ajar Mouth Teeth Seperate" : 3
 }
 
+LENGTH_MAP = {
+    "No Talking" : 1,
+    "Closed Mouth No Teeth" : 1,
+    "Open Mouth Big" : 3,
+    "Open Mouth Teeth" : 3,
+    "Open Mouth Wide" : 3,
+    "Open Mouth Round" : 3,
+    "Closed Mouth Teeth" : 1,
+    "Ajar Mouth Tongue" : 1,
+    "Ajar Mouth Teeth Together" : 1,
+    "Ajar Mouth Teeth Seperate" : 1
+}
+
 DIPHTHONGS = ["AW", "AY", "OY"];
+
+SINGLE_FRAME_MOUTH_SHAPES = ["Ajar Mouth Teeth Together", "Closed Mouth No Teeth", "Closed Mouth Teeth", "Ajar Mouth Tongue", "Ajar Mouth Teeth Seperate", "No Talking"]; // mouth shapes that should be held on single frame
 
 PHONEME_TO_MOUTH_SHAPE = {
     "AA" : "Open Mouth Big",
@@ -114,7 +129,7 @@ function placeKeyframes(startFrame, layer, lipsyncMap) {
             fl.getDocumentDOM().getTimeline().insertKeyframe(); // this logic will replace extremely short phonemes with the next one   
         }
         resetSelection(layer, startFrame + Math.round((phonemeStartTime * FRAME_RATE)));
-        fl.getDocumentDOM().setElementProperty("loop", "loop");
+        fl.getDocumentDOM().setElementProperty("loop", "play once");
         var phoneme = phonemes[phonemeStartTime][WORD_PHONEME_INDEX].substring(0, 2);
         if (arrayContains(DIPHTHONGS, phoneme, isEqual)) {
             diphthongMap[fl.getDocumentDOM().getTimeline().currentFrame] = phoneme;
@@ -126,7 +141,11 @@ function placeKeyframes(startFrame, layer, lipsyncMap) {
             var frame = lipsyncMap[PHONEME_TO_MOUTH_SHAPE[phoneme]];
         }
         fl.getDocumentDOM().setElementProperty("firstFrame", poseStartFrame + frame);
-        fl.getDocumentDOM().setElementProperty("loop", "single frame");
+        fl.getDocumentDOM().setElementProperty("lastFrame", poseStartFrame + frame + LENGTH_MAP[PHONEME_TO_MOUTH_SHAPE[phoneme]]);
+        fl.getDocumentDOM().setElementProperty("loop", "play once");
+        if (arrayContains(SINGLE_FRAME_MOUTH_SHAPES, PHONEME_TO_MOUTH_SHAPE[phoneme], isEqual)) {
+            fl.getDocumentDOM().setElementProperty("loop", "single frame"); // set single frame for mouth shapes that only last for one frame
+        }
         mouthShapeMap[fl.getDocumentDOM().getTimeline().currentFrame] = PHONEME_TO_MOUTH_SHAPE[phoneme];
     }
     // handle diphthongs
@@ -143,16 +162,19 @@ function placeKeyframes(startFrame, layer, lipsyncMap) {
             }
             var firstFrame = lipsyncMap[DIPHTHONG_ORDERING[diphthongMap[frame]][i]];
             fl.getDocumentDOM().setElementProperty("firstFrame", poseStartFrame + firstFrame);
-            fl.getDocumentDOM().setElementProperty("loop", "single frame");
+            fl.getDocumentDOM().setElementProperty("loop", "loop");
             mouthShapeMap[fl.getDocumentDOM().getTimeline().currentFrame] = DIPHTHONG_ORDERING[diphthongMap[frame]][i];
             var framesToAdvanceBy = Math.round(fl.getDocumentDOM().getTimeline().layers[layer].frames[frame].duration / DIPHTHONG_ORDERING[diphthongMap[frame]].length);
             fl.getDocumentDOM().getTimeline().currentFrame += (framesToAdvanceBy <= 0) ? 1 : framesToAdvanceBy;
         }
     }
+    resetSelection(layer, startFrame + Math.round(getKeys(phonemes)[getKeys(phonemes).length - 1] * FRAME_RATE)); 
+    fl.getDocumentDOM().setElementProperty("loop", "single frame"); // set last phoneme to single frame
 }
 
 //MAIN
 // input validation
+fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock layer
 if (fl.getDocumentDOM().getTimeline().getSelectedFrames().length != 3 || fl.getDocumentDOM().getTimeline().getSelectedFrames()[2] - fl.getDocumentDOM().getTimeline().getSelectedFrames()[1] != 1) {
     throw new Error("Invalid selection. Select one frame that denotes the beginning of a character talking (first frame of the voice line audio).")
 }
@@ -163,7 +185,6 @@ if (xSheetLayerIndex == undefined) {
 }
 var poseFrame = fl.getDocumentDOM().getElementProperty("firstFrame");
 var poseStartFrame = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].startFrame;
-fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock layer
 var cfgPath = fl.browseForFileURL("select"); // get file for specific voice line
 fl.runScript(cfgPath);
 //actual execution
