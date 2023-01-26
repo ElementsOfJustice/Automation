@@ -4,6 +4,7 @@
 #include <Python.h>
 #include <stdlib.h>
 #include <string.h>
+#include <git2.h>
 
 double call_func(PyObject* func, double x, double y) {
     PyObject* args;
@@ -144,6 +145,37 @@ JSBool pythonTest(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, 
     return JS_TRUE;
 }
 
+JSBool updateOrDownloadCommandsRepo(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
+    unsigned int size = 0;
+    unsigned short* jsString = JS_ValueToString(cx, argv[0], &size);
+    char* pathName = malloc(size + 1);
+    for (int i = 0; i < size; i++) {
+        pathName[i] = (char)jsString[i];
+    }
+    pathName[size] = '\0';
+    JS_StringToValue(cx, pathName, size, rval);
+    git_libgit2_init();
+    git_repository* repo = NULL;
+    const char* url = "https://github.com/ElementsOfJustice/Automation";
+    if (git_repository_open_ext(NULL, pathName, GIT_REPOSITORY_OPEN_NO_SEARCH, NULL) == 0) {
+        /* directory looks like an openable repository */;
+        int error = git_repository_open(&repo, pathName);
+        git_remote* remote;
+        error = git_remote_create(&remote, repo, "origin", url);
+        error = git_remote_lookup(&remote, repo, "origin");
+        error = git_remote_fetch(remote, NULL, NULL, NULL);
+        git_checkout_options opts = GIT_CHECKOUT_OPTIONS_INIT;
+        opts.checkout_strategy = GIT_CHECKOUT_RECREATE_MISSING;
+        error = git_checkout_head(repo, &opts);
+    }
+    else {
+        int error = git_clone(&repo, url, pathName, NULL);
+    }
+    free(pathName);
+    git_libgit2_shutdown();
+    return JS_TRUE;
+}
+
 // MM_STATE is a macro that expands to some definitions that are
 // needed in order interact with Dreamweaver.  This macro must be
 // defined exactly once in your library
@@ -158,4 +190,5 @@ MM_Init()
     JS_DefineFunction(_T("getFLACLength"), getFLACLength, 1);
     JS_DefineFunction(_T("stringExample"), stringExample, 1);
     JS_DefineFunction(_T("pythonTest"), pythonTest, 2);
+    JS_DefineFunction(_T("updateOrDownloadCommandsRepo"), updateOrDownloadCommandsRepo, 1);
 }
