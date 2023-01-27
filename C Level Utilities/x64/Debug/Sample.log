@@ -1,6 +1,0 @@
-﻿  Sample.c
-  Source.c
-  Generating Code...
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1316,5): warning MSB8012: TargetPath(D:\Downloads\clevel_ext_sample\x64\Debug\Sample.dll) does not match the Linker's OutputFile property value (D:\Downloads\clevel_ext_sample\Debug\Sample.dll). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
-     Creating library .\Debug\Sample.lib and object .\Debug\Sample.exp
-  Sample.vcxproj -> D:\Downloads\clevel_ext_sample\x64\Debug\Sample.dll
