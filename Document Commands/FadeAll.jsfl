@@ -1,3 +1,10 @@
+/******************************************************************************
+FADE ALL
+Description: 
+
+
+******************************************************************************/
+
 FIRST_LAYER_INDEX = 3; // indecies of layers for timeline.getSelectedFrames() for multiple selections
 SECOND_LAYER_INDEX = 0;
 FIRST_FRAME_INDEX = 4; // indecies of frames for timeline.getSelectedFrames() for multiple selections
@@ -29,6 +36,7 @@ function setup() {
     }
 }
 
+/* Function: getKeys */
 function getKeys(input) { // get array of start times from the words or phonemes
     var arr = [];
     for (var i in input) {
@@ -37,10 +45,19 @@ function getKeys(input) { // get array of start times from the words or phonemes
     return arr;
 }
 
+/* Function to check if two items are equal */
 function isEqual(a, b) {
     return a == b;
 }
 
+/*
+Function: arrayContains
+Variables: 
+    array   [the input array to search in]
+    element [the element to search for]
+    compare [?? A function that compares the elements and returns a boolean ??]
+Description: Indicate whether the element is found in the array
+*/
 function arrayContains(array, element, compare) {
     for (var i = 0; i < array.length; i++) {
         if (compare(array[i], element)) {
@@ -63,14 +80,22 @@ function resetSelection(layer, frame) {
     fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true);
 }
 
-function resetSelectionMultiple(layers, frame) { // select multiple layers on a single frame
-    fl.getDocumentDOM().getTimeline().currentFrame = frame;
+/*
+Function: resetSelectionMultiple
+Variables:  
+    layer [array of layer incices]
+    frame [integer index of a frame]
+Description: select multiple layers on a single frame
+*/
+function resetSelectionMultiple(layers, frame) {
+    fl.getDocumentDOM().getTimeline().currentFrame = frame; // Set current frame to given frame
     var selectionArr = [];
     for (var i = 0; i < layers.length; i++) {
         selectionArr.push(parseInt(layers[i]) * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
     }
     fl.getDocumentDOM().getTimeline().setSelectedFrames(selectionArr, true);
 }
+
 
 function masterResetSelection(layers, frame) { // handle all reset selections
     if (layers.length === undefined) {
