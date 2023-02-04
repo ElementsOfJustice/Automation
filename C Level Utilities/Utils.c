@@ -263,6 +263,32 @@ JSBool commitLocalChange(JSContext* cx, JSObject* obj, unsigned int argc, jsval*
     return JS_TRUE;
 }
 
+JSBool renameFolder(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
+    char* oldPath, * newPath;
+    JSObject* args = JS_NewArrayObject(cx, argc, argv);
+    jsval arg1, arg2;
+    JS_GetElement(cx, args, 0, &arg1);
+    JS_GetElement(cx, args, 1, &arg2);
+    unsigned int size1 = 0, size2 = 0;
+    unsigned short* jsString1 = JS_ValueToString(cx, arg1, &size1);
+    unsigned short* jsString2 = JS_ValueToString(cx, arg2, &size2);
+    oldPath = malloc((size1 + 1) * sizeof(char));
+    newPath = malloc((size2 + 1) * sizeof(char));
+    for (int i = 0; i < size1; i++) {
+        oldPath[i] = (char)jsString1[i];
+    }
+    oldPath[size1] = '\0';
+    for (int i = 0; i < size2; i++) {
+        newPath[i] = (char)jsString2[i];
+    }
+    newPath[size2] = '\0';
+    rename(oldPath, newPath);
+    JS_StringToValue(cx, newPath, size2 + 1, rval);
+    free(oldPath);
+    free(newPath);
+    return JS_TRUE;
+}
+
 // MM_STATE is a macro that expands to some definitions that are
 // needed in order interact with Dreamweaver.  This macro must be
 // defined exactly once in your library
@@ -279,4 +305,5 @@ MM_Init()
     JS_DefineFunction(_T("pythonTest"), pythonTest, 2);
     JS_DefineFunction(_T("updateOrDownloadCommandsRepo"), updateOrDownloadCommandsRepo, 1);
     JS_DefineFunction(_T("commitLocalChange"), commitLocalChange, 1);
+    JS_DefineFunction(_T("renameFolder"), renameFolder, 2);
 }

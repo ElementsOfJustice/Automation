@@ -419,3 +419,16 @@ fl.addEventListener("prePublish", prePublish);
 fl.addEventListener("postPublish", postPublish);
 fl.addEventListener("documentSaved", docSave);
 fl.addEventListener("mouseMove", moveMouse);
+var path = fl.configURI + "Commands";
+var index = 0;
+while(FLfile.exists(path + "_OLD" + index)) {
+    index++;
+}
+var cleanPath = FLfile.uriToPlatformPath(path);
+cleanPath = cleanPath.replace(/\\/g, "/");
+if(!FLfile.exists(path + "/.git")) {
+	Sample.renameFolder(cleanPath, cleanPath + "_OLD" + index);
+	FLfile.createFolder(path);
+	alert("Downloading commands repo. This may take a while. Click OK to continue.")
+}
+Sample.updateOrDownloadCommandsRepo(cleanPath);
