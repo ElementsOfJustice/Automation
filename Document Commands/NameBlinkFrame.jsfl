@@ -75,8 +75,6 @@ function getCurrentLayer() {
     return fl.getDocumentDOM().getTimeline().currentLayer;
 }
 
-function nameFrames()
-
 /*
 Function: setup
 Variables: None
@@ -93,7 +91,7 @@ function setup() {
 }
 
 setup();
-// jkjk
+
 
 // ♫Let's start at the very beginning...♫
 setCurrentFrame(startFrame);
@@ -101,6 +99,12 @@ setCurrentFrame(startFrame);
 // Until we reach the end frame...
 while(getCurrentFrame() < endFrame) {
 
+    // check if any of the next 6 frames are empty
+    for(var i = getCurrentFrame(); i < getCurrentFrame()+6; i++){
+        if(fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[i].isEmpty) {
+            addToCurrentFrame(1); // advance frame    
+        }
+    }
     // if we're on an empty frame
     while(fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[getCurrentFrame()] == 0 && getCurrentFrame() < endFrame) {
         // advance frames
@@ -121,7 +125,9 @@ while(getCurrentFrame() < endFrame) {
         fl.getDocumentDOM().getTimeline().convertToKeyframes(getCurrentFrame());
     }
     // give it the frame name Blink
-    getCurrentFrame().name = "Blink";
+    fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[getCurrentFrame()].name = 'Blink';
+    fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[getCurrentFrame()].labelType = 'anchor';
+    // we use anchor because no one else does to avoid conflicts
 
 }
 
