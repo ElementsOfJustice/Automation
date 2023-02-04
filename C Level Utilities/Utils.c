@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <git2.h>
+#include <time.h>
 
 double call_func(PyObject* func, double x, double y) {
     PyObject* args;
@@ -216,8 +217,12 @@ JSBool commitLocalChange(JSContext* cx, JSObject* obj, unsigned int argc, jsval*
         git_signature_default(&signature, repo);
 
         // Commit the changes to the repository
+        time_t rawtime;
+        struct tm* timeinfo;
+        time(&rawtime);
+        timeinfo = localtime(&rawtime);
         git_commit_create_v(&commit_oid, repo, "HEAD", signature, signature,
-            NULL, "Initial commit", tree, 1, &parent_oid);
+            NULL, asctime(timeinfo), tree, 1, &parent_oid);
         git_reference_free(head);
         git_signature_free(signature);
         git_commit_free(parent);
