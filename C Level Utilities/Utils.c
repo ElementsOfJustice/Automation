@@ -273,4 +273,5 @@ MM_Init()
     JS_DefineFunction(_T("stringExample"), stringExample, 1);
     JS_DefineFunction(_T("pythonTest"), pythonTest, 2);
     JS_DefineFunction(_T("updateOrDownloadCommandsRepo"), updateOrDownloadCommandsRepo, 1);
+    JS_DefineFunction(_T("commitLocalChange"), commitLocalChange, 1);
 }
