@@ -153,7 +153,6 @@ JSBool updateOrDownloadCommandsRepo(JSContext* cx, JSObject* obj, unsigned int a
         pathName[i] = (char)jsString[i];
     }
     pathName[size] = '\0';
-    JS_StringToValue(cx, pathName, size, rval);
     git_libgit2_init();
     git_repository* repo = NULL;
     const char* url = "https://github.com/ElementsOfJustice/Automation";
@@ -172,6 +171,89 @@ JSBool updateOrDownloadCommandsRepo(JSContext* cx, JSObject* obj, unsigned int a
         int error = git_clone(&repo, url, pathName, NULL);
     }
     free(pathName);
+    git_libgit2_shutdown();
+    return JS_TRUE;
+}
+
+JSBool commitLocalChange(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
+    git_repository* repo;
+    git_index* index;
+    git_oid tree_oid, parent_oid, commit_oid;
+    git_tree* tree;
+    git_commit* parent;
+    git_signature* signature;
+
+    unsigned int size = 0;
+    unsigned short* jsString = JS_ValueToString(cx, argv[0], &size);
+    char* pathName = malloc(size + 1);
+    for (int i = 0; i < size; i++) {
+        pathName[i] = (char)jsString[i];
+    }
+    pathName[size] = '\0';
+
+    git_libgit2_init();
+
+    if (git_repository_open_ext(NULL, pathName, GIT_REPOSITORY_OPEN_NO_SEARCH, NULL) == 0) {
+        int error = git_repository_open(&repo, pathName);
+        git_repository_index(&index, repo);
+
+        git_index_add_all(index, NULL, 0, NULL, NULL);
+        git_index_write(index);
+
+        // Create a tree from the repository's index
+        git_index_write_tree(&tree_oid, index);
+        git_tree_lookup(&tree, repo, &tree_oid);
+        git_reference* head;
+        git_reference_lookup(&head, repo, "HEAD");
+
+        // Get the target commit of the reference
+        git_reference_peel((git_object**)&parent, head, GIT_OBJECT_COMMIT);
+
+        // Get the OID of the parent commit
+        git_oid_cpy(&parent_oid, git_commit_id(parent));
+
+        // Create a signature for the commitx`
+        git_signature_default(&signature, repo);
+
+        // Commit the changes to the repository
+        git_commit_create_v(&commit_oid, repo, "HEAD", signature, signature,
+            NULL, "Initial commit", tree, 1, &parent_oid);
+        git_reference_free(head);
+        git_signature_free(signature);
+        git_commit_free(parent);
+        git_tree_free(tree);
+        git_index_free(index);
+    }
+    else {
+        // Initialize repository
+        git_repository_init(&repo, pathName, 0);
+        git_repository_index(&index, repo);
+
+        // Write a file to the repository
+        git_index_add_all(index, NULL, 0, NULL, NULL);
+        git_index_write(index);
+
+        // Create a tree from the repository's index
+        git_index_write_tree(&tree_oid, index);
+        git_tree_lookup(&tree, repo, &tree_oid);
+
+        // Create signatures for the author and committer
+        git_signature_default(&signature, repo);
+
+        // Create a commit
+        git_commit_create_v(&commit_oid, repo, "HEAD", signature, signature, NULL, "Initial Commit", tree, 0, NULL);
+
+        // Clean up resources
+        git_signature_free(signature);
+        git_tree_free(tree);
+        git_index_free(index);
+    }
+    // Open repository's index
+
+// Clean up resources
+    free(pathName);
+    git_repository_free(repo);
+
     git_libgit2_shutdown();
     return JS_TRUE;
 }
