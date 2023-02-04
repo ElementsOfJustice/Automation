@@ -1,4 +1,7 @@
 # Elements of Justice Automation
+
+![alt text](https://yt3.googleusercontent.com/kFFzj3A9QfKp4Kiex9m874pxrl0Hm0nKSx7ahmSiGibm66ipncNLZMSqm3gxiV3JYwN8pLqL=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj)
+
 Elements of Justice is an ongoing Flash-animated Ace Attorney x My Little Pony crossover webseries. With nearly sixty volunteer team members, EoJ has turned to automation to lighten the load on video editors and increase productivity.
 
 These scripts are written in JavaScript Flash. JSFL is ["an API that extends regular JavaScript to include the Flash Document Object Model"](https://fileinfo.com/extension/jsfl#:~:text=Script%20written%20in%20Flash%20JavaScript,the%20Adobe%20Animate%20authoring%20environment.).
