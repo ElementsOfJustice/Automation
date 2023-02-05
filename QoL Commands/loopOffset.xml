@@ -1,0 +1,12 @@
+<dialog title="Loop Offset" buttons="accept, cancel">
+
+	<label value="Polarity and Offset" control="iName"/>
+	<hbox>
+	<menulist id = "opMode" width="60"> <menupop>
+		<menuitem label="+" selected="true" value="positive" />
+		<menuitem label="-" selected="false" value="negative" />
+	</menupop> </menulist>
+	<textbox id="numOffset" size="24" value="100" width="50" />
+	</hbox>
+	
+</dialog>

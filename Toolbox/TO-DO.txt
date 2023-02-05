@@ -1,0 +1,5 @@
+Conform all the interjection inserters into one file, make a dynamic XML panel with a drop-down
+to select which interjection to insert. Interjections will be dynamically populated from the 
+scene file.
+
+Less code, one keybind, more functionality
