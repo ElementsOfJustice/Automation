@@ -276,9 +276,7 @@ docChanged = function () {
 
 docSave = function () {
 	if (sessionCommit && !autoSave) {
-
-		fl.trace("Committed change to version history.");
-
+		
 		var path = fl.getDocumentDOM().path;
 		var fileType = path.substring(path.length - 3);
 		var fileName = fl.getDocumentDOM().name.substring(0, fl.getDocumentDOM().name.length - 4);
@@ -316,9 +314,10 @@ moveMouse = function () {
 		autoSave = true;
 		fl.getDocumentDOM().saveAsCopy(toSave);
 		var tmpPath = FLfile.uriToPlatformPath(toSave.substring(0, toSave.lastIndexOf("/")));
-		fl.trace(tmpPath.replace(/\\/g, "/"));
-		fl.trace("TmpPath is " + tmpPath.replace(/\\/g, "/"));
+		//fl.trace(tmpPath.replace(/\\/g, "/"));
+		//fl.trace("TmpPath is " + tmpPath.replace(/\\/g, "/"));
 		try {
+		fl.trace("Committed change to version history.");
 		Sample.commitLocalChange(tmpPath);
 		} catch(e) {
 			fl.trace("CRITICAL ERROR: " + e.stack);
@@ -419,6 +418,7 @@ fl.addEventListener("prePublish", prePublish);
 fl.addEventListener("postPublish", postPublish);
 fl.addEventListener("documentSaved", docSave);
 fl.addEventListener("mouseMove", moveMouse);
+
 var path = fl.configURI + "Commands";
 var index = 0;
 while(FLfile.exists(path + "_OLD" + index)) {
@@ -429,6 +429,7 @@ cleanPath = cleanPath.replace(/\\/g, "/");
 if(!FLfile.exists(path + "/.git")) {
 	Sample.renameFolder(cleanPath, cleanPath + "_OLD" + index);
 	FLfile.createFolder(path);
-	alert("Downloading commands repo. This may take a while. Click OK to continue.")
+	//alert("Downloading commands repo. This may take a while. Click OK to continue.")
 }
+
 Sample.updateOrDownloadCommandsRepo(cleanPath);
