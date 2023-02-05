@@ -98,24 +98,26 @@ setCurrentFrame(startFrame);
 
 // Until we reach the end frame...
 while(getCurrentFrame() < endFrame) {
+    // pick a number of frames via gamma distribution for eyes to remain open 
+    var stare = gammaVariable(mean, k) * FPS
+    if((getCurrentFrame() + stare) >= endFrame) { // if we've gone outside of our selection, we're done
+        break;
+    }
+    addToCurrentFrame(Math.round(stare));
 
     // check if any of the next 6 frames are empty
     for(var i = getCurrentFrame(); i < getCurrentFrame()+6; i++){
-        if(fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[i].isEmpty) {
-            addToCurrentFrame(1); // advance frame    
+        if(fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[i].isEmpty) { // if any of them are
+            setCurrentFrame(i); // go to that frame
         }
     }
-    // if we're on an empty frame
+    // if we're still on an empty frame even after all that mess, advance so long as we're still in our selection
     while(fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[getCurrentFrame()] == 0 && getCurrentFrame() < endFrame) {
         // advance frames
         addToCurrentFrame(1);
     }
-    if(getCurrentFrame() >= endFrame) { // if we've gone outside of our selection, we're done
-        break;
-    }
+
     
-    // pick a frame via gamma distribution, 
-    addToCurrentFrame(Math.floor(gammaVariable(mean, k) * FPS));
     
     // if the current frame isn't the first frame in a frame sequence, make a note of that
     var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame;
