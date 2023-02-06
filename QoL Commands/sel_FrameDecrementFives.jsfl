@@ -1,19 +1,7 @@
-﻿var doc = fl.getDocumentDOM();
-var timeline = doc.getTimeline();
-var layer = timeline.getSelectedLayers();
-var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
-var frameArray = fl.getDocumentDOM().getTimeline().layers[layer].frames;
-var n = frameArray.length;
+﻿var frameSelection = fl.getDocumentDOM().getTimeline().getSelectedFrames();
+var element = fl.getDocumentDOM().getTimeline().layers[frameSelection[0]].frames[frameSelection[1]+1].elements[0];
+var firstFrame = element.firstFrame - 5;
 
-var frameSelection = timeline.getSelectedFrames();
-var selLayerIndex = frameSelection[0];
-var startFrame = frameSelection[1]+1;
-var endFrame = frameSelection[2];
-
-for (i = 0; i < n; i++) {
-	if ((i==frameArray[i].startFrame) && (frameArray[i].isEmpty == false)) {
-		var elList = frameArray[i].elements
-			for (var j = 0; j < elList.length; j++) {
-				var el = elList[j]
-					el.firstFrame = el.firstFrame - 5
-}	}	}
+if (element.elementType == "instance") {
+	fl.getDocumentDOM().setElementProperty('firstFrame', firstFrame);
+}

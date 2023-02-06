@@ -1,0 +1,1 @@
+﻿fl.getDocumentDOM().selectNone();

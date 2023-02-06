@@ -13,3 +13,10 @@ if (layerNum < fl.getDocumentDOM().getTimeline().layerCount - 1) {
 	selFrames[0] = fl.getDocumentDOM().getTimeline().currentLayer
 	fl.getDocumentDOM().getTimeline().setSelectedFrames(selFrames)
 }
+
+if (layerNum == fl.getDocumentDOM().getTimeline().layerCount - 1) {
+	selFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames()
+	fl.getDocumentDOM().getTimeline().setSelectedLayers(0)
+	selFrames[0] = fl.getDocumentDOM().getTimeline().currentLayer
+	fl.getDocumentDOM().getTimeline().setSelectedFrames(selFrames)
+}
