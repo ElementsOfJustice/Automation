@@ -19,12 +19,14 @@ function resetSelection(layer, frame) {
 
 var selLayer = fl.getDocumentDOM().getTimeline().currentLayer;
 var deltaX = parseFloat(prompt("x to set to")), deltaY = parseFloat(prompt("y to set to"));
-resetSelection(selLayer, 0);
-var curFrame = 0, numFrames = fl.getDocumentDOM().getTimeline().getLayerProperty("frames").length;
-while(curFrame < numFrames - 1) {
-    if(fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements.length > 0) {
-        fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements[0].x = deltaX;
-        fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements[0].y = deltaY;
+if (deltaX !== undefined && deltaY !== undefined && !isNaN(deltaX) && !isNaN(deltaY)) {
+    resetSelection(selLayer, 0);
+    var curFrame = 0, numFrames = fl.getDocumentDOM().getTimeline().getLayerProperty("frames").length;
+    while (curFrame < numFrames - 1) {
+        if (fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements.length > 0) {
+            fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements[0].x = deltaX;
+            fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements[0].y = deltaY;
+        }
+        curFrame += fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].duration;
     }
-    curFrame += fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].duration;
 }
