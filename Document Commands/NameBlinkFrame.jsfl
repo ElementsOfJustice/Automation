@@ -100,7 +100,7 @@ setCurrentFrame(startFrame);
 while(getCurrentFrame() < endFrame) {
     // pick a number of frames via gamma distribution for eyes to remain open 
     var stare = gammaVariable(mean, k) * FPS
-    if((getCurrentFrame() + stare) >= endFrame) { // if we've gone outside of our selection, we're done
+    if((getCurrentFrame() + stare + 6) >= endFrame) { // if we've gone outside of our selection, we're done
         break;
     }
     addToCurrentFrame(Math.round(stare));
