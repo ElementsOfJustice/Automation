@@ -29,20 +29,20 @@ function getHash(variableName) {
 /*
 Function: findFirstFrameWithSymbol
 Variables: 
-    layerIndex	What layer are you searching on
+	layerIndex	What layer are you searching on
 Description: Return the frame number that the first graphic symbol occurs on.
 */
 
 findFirstFrameWithSymbol = function (layerIndex) {
-  var frameArray = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames;
-  
-  for (var i = 0; i < frameArray.length; i++) {
-    if (frameArray[i].elements.length > 0 && frameArray[i].elements[0].elementType == "instance") {
-      return i;
-    }
-  }
-  
-  return -1;
+	var frameArray = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames;
+
+	for (var i = firstFrame; i < lastFrame; i++) {
+		if (frameArray[i].elements.length > 0 && frameArray[i].elements[0].elementType == "instance" && frameArray[i].elements[0].symbolType == "graphic") {
+			return i;
+		}
+	}
+
+	return -1;
 }
 
 //Setup
@@ -56,14 +56,35 @@ fl.getDocumentDOM().getTimeline().layers[layer].locked = false; // unlock layer
 
 var frameArray = fl.getDocumentDOM().getTimeline().layers[layer].frames;
 
-for (var i = firstFrame; i < lastFrame; i += frameArray[i].duration) { // iterate over all keyframes
+
+var curLibraryItem = "";
+for (var i = firstFrame; i < lastFrame - 1; i += (frameArray[i].duration - (i - frameArray[i].startFrame))) { // iterate over all keyframes
 	if (i == frameArray[i].startFrame) {
 		if (frameArray[i].isEmpty == false) {
 			//if there is content
-			toWrite.push(i - firstFrame, frameArray[i].elements[0].firstFrame, frameArray[i].elements[0].lastFrame, frameArray[i].elements[0].loop);
+			symbolIsDifferent = (frameArray[i].elements[0].libraryItem.name != curLibraryItem);
+			curLibraryItem = frameArray[i].elements[0].libraryItem.name;
+			var mat = frameArray[i].elements[0].matrix;
+			var matString = mat.a + "|" + mat.b + "|" + mat.c + "|" + mat.d + "|" + mat.tx + "|" + mat.ty;
+			var libraryPathToWrite = (symbolIsDifferent) ? curLibraryItem : "";
+			var symbolType = frameArray[i].elements[0].symbolType;
+			var tweenType = frameArray[i].tweenType;
+			var tweenEasing = frameArray[i].getCustomEase();
+			var tweenEasingStr = "";
+			if (tweenEasing !== undefined) {
+				for (var k = 0; k < tweenEasing.length; k++) {
+					tweenEasingStr += tweenEasing[k].x + "|" + tweenEasing[k].y + "|";
+				}
+				tweenEasingStr = tweenEasingStr.substring(0, tweenEasingStr.length - 1);
+			}
+			var frameName = frameArray[i].name;
+			var frameLabelType = frameArray[i].labelType;
+			var symbolAlpha = frameArray[i].elements[0].colorAlphaPercent;
+			// SCHEMA: frame, loop startFrame, loop lastFrame, loop type, library path, matrix, symbol type, tween type, tween easing, frame label, label type, alpha
+			toWrite.push(i - firstFrame, frameArray[i].elements[0].firstFrame, frameArray[i].elements[0].lastFrame, frameArray[i].elements[0].loop, libraryPathToWrite, matString, symbolType, tweenType, tweenEasingStr, frameName, frameLabelType, symbolAlpha);
 		} else if (frameArray[i].isEmpty == true) {
 			//blank keyframe
-			toWrite.push(i - firstFrame, -1, -1, -1);
+			toWrite.push(i - firstFrame, -1, -1, -1, "", "", "", "", "", "", "", "");
 		}
 	}
 };
@@ -88,16 +109,6 @@ var copyItem = fl.getDocumentDOM().getTimeline().layers[layer].frames[findFirstF
 
 */
 
-//Push element name
-toWrite.push(fl.getDocumentDOM().library.findItemIndex(copyItem.libraryItem.name));
-
-//This is utterly fucking retarded
-toWrite.push(copyItem.matrix.a);
-toWrite.push(copyItem.matrix.b);
-toWrite.push(copyItem.matrix.c);
-toWrite.push(copyItem.matrix.d);
-toWrite.push(copyItem.matrix.tx);
-toWrite.push(copyItem.matrix.ty);
 
 //Is the frame after the selection a keyframe?
 if (lastFrame + 1 < frameArray.length) {
@@ -109,7 +120,6 @@ if (lastFrame + 1 < frameArray.length) {
 
 //Document data doesn't take a normal array, but it will take a string. It's up to hyperpaste to decode.
 var dataString = toWrite.join(',');
-
 //Save to hash HYPERCOPY. As a repeatable function, we don't use checks, we'll let it be overwritten easily.
 //fl.trace(dataString);
 setHash("HYPERCOPY", dataString, "string");
