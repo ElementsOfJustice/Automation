@@ -29,7 +29,8 @@ multiple symbols will be the slowest.
 
 NUM_PARAMS = 12;
 fl.showIdleMessage(false);
-
+if (!fl.getDocumentDOM().library.itemExists("tmp_Dummysymbol"))
+	fl.getDocumentDOM().library.addNewItem("graphic", "tmp_Dummysymbol")
 var selectedFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames();
 var layer = selectedFrames[0];
 var firstFrame = selectedFrames[1];
@@ -42,16 +43,20 @@ Description: Split the string by comma and store it in an array. Code is natural
 to be friendly further on.
 */
 function parseString(str) {
-	var arr = str.split(',');
+	var arrSplit = str.split(',¤,');
 	var result = [];
+	for (var i = 0; i < arrSplit.length; i++) {
+		var tempResult = [];
+		var arr = arrSplit[i].split(",");
+		for (var j = 0; j < arr.length - 1; j += NUM_PARAMS) {
+			tempResult.push(parseInt(arr[j]), parseInt(arr[j + 1]), parseInt(arr[j + 2]), arr[j + 3], arr[j + 4], arr[j + 5], arr[j + 6], arr[j + 7], arr[j + 8], arr[j + 9], arr[j + 10], arr[j + 11]);
+		}
+		var isFrameEmpty = (arr[arr.length - 1] === "true");
 
-	for (var i = 0; i < arr.length - 1; i += NUM_PARAMS) {
-		result.push(parseInt(arr[i]), parseInt(arr[i + 1]), parseInt(arr[i + 2]), arr[i + 3], arr[i + 4], arr[i + 5], arr[i + 6], arr[i + 7], arr[i + 8], arr[i + 9], arr[i + 10], arr[i + 11]);
+		tempResult.push(isFrameEmpty);
+		result.push(tempResult);
 	}
 
-	var isFrameEmpty = (arr[arr.length - 1] === "true");
-
-	result.push(isFrameEmpty);
 	return result;
 }
 
@@ -96,136 +101,144 @@ function getEaseCurve(input) {
 	return curve;
 }
 
-// Setup, reverse selection if it's backwards
-if (firstFrame > lastFrame) {
-	var temp = lastFrame;
-	lastFrame = firstFrame;
-	firstFrame = temp;
-}
-
-// Unlock the layer
-fl.getDocumentDOM().getTimeline().layers[layer].locked = false;
-
-// Decode hypercopy data
-var data = parseString(getHash("HYPERCOPY"));
-fl.getDocumentDOM().getTimeline().setSelectedFrames(firstFrame, firstFrame + data[data.length - (NUM_PARAMS + 1)]);
-an.getDocumentDOM().getTimeline().clearKeyframes();
-
-var prevData = [];
-
-// This next region of code reconstructs the portion of the timeline selected according to the copy data. 
-// Takes in a variable number of parameters. At the time of writing, there are currently twelve.
-
-/*
-INDEX			PARAMETER
- 01		...	 Frame number offset from the start frame of the selection.
- 02		...	 The loop startFrame.
- 03		...	 The loop lastFrame.
- 04		...	 The loop type.
- 05		...	 The library path of the symbol being considered.
- 06		...	 The transformation matrix of the object. The matrix is a string encoding an array like "a|b|c|d|tx|ty".
- 07		...	 The symbol type, either Graphic or MovieClip.
- 08		...	 The tween type, if any.
- 09		...	 The tween easing. [THIS IS PROBLEMATIC]
- 10		...	 The frame name.
- 11		...	 The frame label type.
- 12		..	 Frame alpha.
-*/
-
-for (var i = 0; i < data.length - 1; i += NUM_PARAMS) {
-
-	//If we're a blank keyframe, skip processing.
-	if (data[i + 1] == -1) {
-		continue;
+var fullData = parseString(getHash("HYPERCOPY"));
+for (var l = 0; l < fullData.length; l++) {
+	fl.getDocumentDOM().getTimeline().currentLayer = layer + l;
+	var data = fullData[l];
+	// Setup, reverse selection if it's backwards
+	if (firstFrame > lastFrame) {
+		var temp = lastFrame;
+		lastFrame = firstFrame;
+		firstFrame = temp;
 	}
 
-	var focusedFrame = fl.getDocumentDOM().getTimeline().layers[layer].frames[firstFrame + data[i]]
+	// Unlock the layer
+	fl.getDocumentDOM().getTimeline().layers[layer + l].locked = false;
 
-	//Convert to keyframe and place item (This is never run, clean up this code later)
-	if (focusedFrame == focusedFrame.startFrame) {
+	// Decode hypercopy data
 
-		//If there is a pre-existing keyframe, select it and add item there.
-		fl.getDocumentDOM().getTimeline().setSelectedFrames(firstFrame, firstFrame);
+	fl.getDocumentDOM().getTimeline().setSelectedFrames(firstFrame, parseInt(firstFrame + data[data.length - (NUM_PARAMS + 1)]));
+	an.getDocumentDOM().getTimeline().clearKeyframes();
 
-		var libraryPath = data[i + 4];
-		var matInfo = data[i + 5];
+	var prevData = [];
 
-		if (libraryPath != "" && matInfo != "") {
-			pasteInPlace(library, matInfo);
+	// This next region of code reconstructs the portion of the timeline selected according to the copy data. 
+	// Takes in a variable number of parameters. At the time of writing, there are currently twelve.
+
+	/*
+	INDEX			PARAMETER
+	 01		...	 Frame number offset from the start frame of the selection.
+	 02		...	 The loop startFrame.
+	 03		...	 The loop lastFrame.
+	 04		...	 The loop type.
+	 05		...	 The library path of the symbol being considered.
+	 06		...	 The transformation matrix of the object. The matrix is a string encoding an array like "a|b|c|d|tx|ty".
+	 07		...	 The symbol type, either Graphic or MovieClip.
+	 08		...	 The tween type, if any.
+	 09		...	 The tween easing. [THIS IS PROBLEMATIC]
+	 10		...	 The frame name.
+	 11		...	 The frame label type.
+	 12		...	 Frame alpha.
+	*/
+
+	for (var i = 0; i < data.length - 1; i += NUM_PARAMS) {
+
+		//If we're a blank keyframe, skip processing.
+		if (data[i + 1] == -1) {
+			continue;
 		}
+		var focusedFrame = fl.getDocumentDOM().getTimeline().layers[layer + l].frames[firstFrame + data[i]]
 
-		fl.getDocumentDOM().getTimeline().setSelectedFrames(selectedFrames);
+		//Convert to keyframe and place item (This is never run, clean up this code later)
+		if (focusedFrame == focusedFrame.startFrame) {
 
-	} else {
-		var libraryPath = data[i + 4];
+			//If there is a pre-existing keyframe, select it and add item there.
+			fl.getDocumentDOM().getTimeline().setSelectedFrames(firstFrame, firstFrame);
 
-		if (libraryPath != "") {
-			fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(firstFrame + data[i]);
-			pasteInPlace(libraryPath);
+			var libraryPath = data[i + 4];
+			var matInfo = data[i + 5];
+
+			if (libraryPath != "" && matInfo != "") {
+				pasteInPlace(library, matInfo);
+			}
+
+			fl.getDocumentDOM().getTimeline().setSelectedFrames(selectedFrames);
+
 		} else {
-			fl.getDocumentDOM().getTimeline().convertToKeyframes(firstFrame + data[i]);
+			var libraryPath = data[i + 4];
+
+			if (libraryPath != "") {
+				if (firstFrame + data[i] != 0) {
+					fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(firstFrame + data[i]);
+				}
+				pasteInPlace(libraryPath);
+			} else {
+				if (firstFrame + data[i] != 0) {
+					fl.getDocumentDOM().getTimeline().convertToKeyframes(firstFrame + data[i]);
+				}
+			}
+		}
+
+		fl.getDocumentDOM().getTimeline().layers[layer + l].visible = false;
+
+		// If the next value is a number, it's a frame number, and we'll use it as the second frame.
+		var focusedFrame = fl.getDocumentDOM().getTimeline().layers[layer + l].frames[firstFrame + data[i]]
+
+		// Set the first frame of the focused frame to the next number in the data array.
+		if (!isNaN(data[i + 1]))
+			focusedFrame.elements[0].firstFrame = data[i + 1]
+
+		if (!isNaN(data[i + 2]))
+			focusedFrame.elements[0].lastFrame = data[i + 2]
+
+		if (data[i + 3] != "" && data[i + 3] != undefined && data[i + 3] != null)
+			focusedFrame.elements[0].loop = data[i + 3]
+
+		// Get the matrix info array, and split it into its parts.
+		var tmpMatrix = focusedFrame.elements[0].matrix;
+		var matInfo = data[i + 5].split("|")
+
+		// Parse the matrix
+		tmpMatrix.a = parseFloat(matInfo[0])
+		tmpMatrix.b = parseFloat(matInfo[1])
+		tmpMatrix.c = parseFloat(matInfo[2])
+		tmpMatrix.d = parseFloat(matInfo[3])
+
+		// Update the matrix of the focused element to the one from the copy data, and update the position of the element to the one from the copy data.
+		focusedFrame.elements[0].matrix = tmpMatrix;
+		focusedFrame.elements[0].x = parseFloat(matInfo[4])
+		focusedFrame.elements[0].y = parseFloat(matInfo[5])
+		focusedFrame.elements[0].symbolType = data[i + 6];
+		focusedFrame.name = data[i + 9];
+		focusedFrame.labelType = data[i + 10];
+
+		// Set the alpha of the layer to the value of the alpha channel in the copy data.
+		focusedFrame.elements[0].colorAlphaPercent = parseInt(data[i + 11]);
+
+		// Reset layer visibility
+		fl.getDocumentDOM().getTimeline().layers[layer + l].visible = true;
+
+	}
+
+	//Does a separate tween pass.
+	for (var i = 0; i < data.length - 1; i += NUM_PARAMS) {
+		var focusedFrame = fl.getDocumentDOM().getTimeline().layers[layer + l].frames[firstFrame + data[i]];
+
+		if (data[i + 7] == "motion") {
+			fl.getDocumentDOM().getTimeline().createMotionTween(firstFrame + data[i]);
+		}
+
+		if (data[i + 8] != "") {
+			focusedFrame.setCustomEase("all", getEaseCurve(data[i + 8]));
 		}
 	}
 
-	fl.getDocumentDOM().getTimeline().layers[layer].visible = false;
+	//Backwards sculpt function for blank keyframes.
+	for (var i = data.length - (NUM_PARAMS + 1); i > 0; i -= NUM_PARAMS) {
 
-	// If the next value is a number, it's a frame number, and we'll use it as the second frame.
-	var focusedFrame = fl.getDocumentDOM().getTimeline().layers[layer].frames[firstFrame + data[i]]
-
-	// Set the first frame of the focused frame to the next number in the data array.
-	if (!isNaN(data[i + 1]))
-		focusedFrame.elements[0].firstFrame = data[i + 1]
-
-	if (!isNaN(data[i + 2]))
-		focusedFrame.elements[0].lastFrame = data[i + 2]
-
-	if (data[i + 3] != "" && data[i + 3] != undefined && data[i + 3] != null)
-		focusedFrame.elements[0].loop = data[i + 3]
-
-	// Get the matrix info array, and split it into its parts.
-	var tmpMatrix = focusedFrame.elements[0].matrix;
-	var matInfo = data[i + 5].split("|")
-
-	// Parse the matrix
-	tmpMatrix.a = parseFloat(matInfo[0])
-	tmpMatrix.b = parseFloat(matInfo[1])
-	tmpMatrix.c = parseFloat(matInfo[2])
-	tmpMatrix.d = parseFloat(matInfo[3])
-
-	// Update the matrix of the focused element to the one from the copy data, and update the position of the element to the one from the copy data.
-	focusedFrame.elements[0].matrix = tmpMatrix;
-	focusedFrame.elements[0].x = parseFloat(matInfo[4])
-	focusedFrame.elements[0].y = parseFloat(matInfo[5])
-	focusedFrame.elements[0].symbolType = data[i + 6];
-	focusedFrame.name = data[i + 9];
-	focusedFrame.labelType = data[i + 10];
-
-	// Set the alpha of the layer to the value of the alpha channel in the copy data.
-	focusedFrame.elements[0].colorAlphaPercent = parseInt(data[i + 11]);
-
-	// Reset layer visibility
-	fl.getDocumentDOM().getTimeline().layers[layer].visible = true;
-
-}
-
-//Does a separate tween pass.
-for (var i = 0; i < data.length - 1; i += NUM_PARAMS) {
-	var focusedFrame = fl.getDocumentDOM().getTimeline().layers[layer].frames[firstFrame + data[i]];
-
-	if (data[i + 7] == "motion") {
-		fl.getDocumentDOM().getTimeline().createMotionTween(firstFrame + data[i]);
-	}
-
-	if (data[i + 8] != "") {
-		focusedFrame.setCustomEase("all", getEaseCurve(data[i + 8]));
-	}
-}
-
-//Backwards sculpt function for blank keyframes.
-for (var i = data.length - (NUM_PARAMS + 1); i > 0; i -= NUM_PARAMS) {
-	
-	//If we're a blank keyframe, work here.
-	if (data[i + 1] == -1) {
-		fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(firstFrame + data[i]);
+		//If we're a blank keyframe, work here.
+		if (data[i + 1] == -1) {
+			fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(firstFrame + data[i]);
+		}
 	}
 }
