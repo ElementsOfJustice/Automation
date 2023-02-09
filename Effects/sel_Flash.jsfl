@@ -38,14 +38,19 @@ if (!fl.getDocumentDOM().library.itemExists(flashPath)) {
 	throw new Error("Missing file path. Opened file does not have a flash symbol at location " + flashPath);
 }
 
-fl.getDocumentDOM().getTimeline().layers[selectedFrames[0]].visible = true;
-fl.getDocumentDOM().getTimeline().layers[selectedFrames[0] - 1].visible = true;
+//If a FLASH layer exists, do it there regardless of input selection. If not, use input.
+if (fl.getDocumentDOM().getTimeline().findLayerIndex("FLASH") !== undefined) {
+	layer = fl.getDocumentDOM().getTimeline().findLayerIndex("FLASH")
+}
+
+fl.getDocumentDOM().getTimeline().layers[layer].visible = true;
+fl.getDocumentDOM().getTimeline().layers[layer].locked = false;
 
 //Do the flash
-fl.getDocumentDOM().getTimeline().setSelectedLayers(selectedFrames[0]);
+fl.getDocumentDOM().getTimeline().setSelectedLayers(layer[0]);
 
 //Select start of selected frames
-selectOrMakeKeyframe(selectedFrames[0], selectedFrames[1])
+selectOrMakeKeyframe(layer, selectedFrames[1])
 
 //Use a static path for the symbol, cause this will be in every file starting from Case 3
 fl.getDocumentDOM().addItem({
