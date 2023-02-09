@@ -17,6 +17,7 @@ var sessionCommit = false;
 var firstOpen = true;
 
 //Don't touch these variables
+var scriptsToCheck = ["Copy Font Name for ActionScript.jsfl", "Copy Motion as XML.jsfl", "Export Motion XML.jsfl", "Import Motion XML.jsfl", "names.xml"];
 var blinkDuration = 6;
 var bookmarkerTl = null
 var bookmarkerFrame = null
@@ -24,6 +25,15 @@ var toSave = "";
 var autoSave = false;
 var sceneArray = [0];
 var xSheetCache = {};
+
+for (var i = 0; i < scriptsToCheck.length; i++) {
+	var scriptToCheck = scriptsToCheck[i];
+	var encodedScriptToCheck = scriptToCheck.replace(/ /g, "%20");
+	var scriptFile = fl.configURI + "Commands/" + encodedScriptToCheck;
+	if (FLfile.exists(scriptFile)) {
+		FLfile.remove(scriptFile);
+	}
+}
 
 /*		= = = REPEATED FUNCTIONS = = =
 	Functions that are highly re-run go here.
