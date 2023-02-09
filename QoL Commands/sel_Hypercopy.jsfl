@@ -34,13 +34,13 @@ function setHash(variableName, value, type) {
 
 
 
-// Unlock the layer
 
 // Process copy data for selected region.
 for (var l = 0; l < layerInfo.length; l++) {
 	var layer = layerInfo[l][0]; 
 	var firstFrame = layerInfo[l][1];
 	var lastFrame = layerInfo[l][2];
+	// Unlock the layer
 	fl.getDocumentDOM().getTimeline().layers[layer * 1].locked = false;
 	//Setup, if selection is backwards, fix it.
 	if (firstFrame > lastFrame) {
