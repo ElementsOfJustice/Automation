@@ -148,6 +148,7 @@ if (guiPanel.dismiss == "accept") {
 
 		//Reset selection
 		fl.getDocumentDOM().getTimeline().currentFrame = curFrame;
+		startingFrame = curFrame;
 
 		for (var i = startingFrame; i < (startingFrame + range) - 1; i++) {
 			var randX = Math.random() - 0.5;
