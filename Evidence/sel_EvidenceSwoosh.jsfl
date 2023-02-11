@@ -15,7 +15,7 @@ var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
 // store indexes of frames selected by the user
 var frameSelection = doc.getTimeline().getSelectedFrames();
 var selLayerIndex = frameSelection[0];
-var startFrame = frameSelection[1]+1;
+var startFrame = frameSelection[1];
 var endFrame = frameSelection[2];
 var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
 
@@ -32,6 +32,7 @@ function setup() {
         endFrame = startFrame;
         startFrame = temp;
     }
+    fl.getDocumentDOM().getTimeline().currentFrame = startFrame;
     fl.getDocumentDOM().getTimeline().layers[selLayerIndex * 1].locked = false; // unlock layer
 }
 
