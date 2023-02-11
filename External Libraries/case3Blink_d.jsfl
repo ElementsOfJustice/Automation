@@ -145,25 +145,32 @@ current-frame-dependent. We use a cache to minimize the accessing of rigs. Wow! 
 blinkFrameIndex = function (leftEye, rigFolder) {
 
 	// Dumb that we shift this around, but use the Unicode arrow for library instance, underscore for timeline movieClip
-	leftEye = leftEye.replace("_", "►")
 
-	// Get the current pose name
+	leftEye = leftEye.replace("_", "►")
+	leftEye = rigFolder.substring(0, rigFolder.lastIndexOf('/')) + "/" + leftEye;
+	
+	// Get the current pose name from the rig
 	var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
 	var ffIndex = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()].frames[curFrame].elements[0].firstFrame + 1;
 	var itemIndex = fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()].frames[curFrame].elements[0].libraryItem.name);
 	var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
 	var poseName = objTl.frames[ffIndex - 1].name;
-
+	
+	// Load the eyes
+	var itemIndex = fl.getDocumentDOM().library.findItemIndex(leftEye);
+	var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
+		
 	// Get blinking symbols in library (lead with the leftEye)
-	var xSheetCacheKey = rigFolder + "/" + leftEye;
-	if (!xSheetCache[xSheetCacheKey]) {
+/*	var xSheetCacheKey = rigFolder + "/" + leftEye;
+	if (xSheetCache[xSheetCacheKey]) {
 		var itemIndex = fl.getDocumentDOM().library.findItemIndex(xSheetCacheKey);
 		xSheetCache[xSheetCacheKey] = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
-	}
-
-	objTl = xSheetCache[xSheetCacheKey];
-
+		objTl = xSheetCache[xSheetCacheKey];
+	}*/
+	
+	// Check the pose name between rig and eyes.
 	for (var k = 0; k < objTl.frameCount; k++) {
+		//fl.trace(k + " " + objTl.frames[k].name);
 		if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame) && (objTl.frames[k].name == poseName)) {
 			return (k + 1);
 		}
