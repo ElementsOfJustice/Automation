@@ -30,7 +30,7 @@ int resolve_refish(git_annotated_commit** commit, git_repository* repo, const ch
 
 void check_lg2(int error, const char* message, const char* extra)
 {
-	const git_error* lg2err;
+//	lg2err;
 	const char* lg2msg = "", * lg2spacer = "";
 
 	if (!error)
@@ -195,7 +195,7 @@ static int perform_fastforward(git_repository* repo, const git_oid* target_oid, 
 		return -1;
 	}
 
-	ff_checkout_options.checkout_strategy = GIT_CHECKOUT_SAFE;
+	ff_checkout_options.checkout_strategy = GIT_CHECKOUT_FORCE;
 	err = git_checkout_tree(repo, target, &ff_checkout_options);
 	if (err != 0) {
 		fprintf(stderr, "failed to checkout HEAD reference\n");
@@ -307,7 +307,7 @@ cleanup:
 int lg2_merge(git_repository* repo)
 {
 	int argc = 2;
-	char** argv[2] = { "merge", "origin" };
+	char** argv[2] = { "merge", "origin/main" };
 	struct merge_options opts;
 	git_index* index;
 	git_repository_state_t state;
@@ -361,7 +361,7 @@ int lg2_merge(git_repository* repo)
 		merge_opts.flags = 0;
 		merge_opts.file_flags = GIT_MERGE_FILE_STYLE_DIFF3;
 
-		checkout_opts.checkout_strategy = GIT_CHECKOUT_FORCE | GIT_CHECKOUT_ALLOW_CONFLICTS;
+		checkout_opts.checkout_strategy = GIT_CHECKOUT_FORCE;
 
 		if (preference & GIT_MERGE_PREFERENCE_FASTFORWARD_ONLY) {
 			printf("Fast-forward is preferred, but only a merge is possible\n");
@@ -430,7 +430,7 @@ JSBool getFLACLength(JSContext* cx, JSObject* obj, unsigned int argc, jsval* arg
     return JS_TRUE;
 }
 // Takes in a string from JSFL and returns it to JSFL
-JSBool stringExample(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
+JSBool stringExample(JSContext* cx, JSObject* obj, unsigned int fargc, jsval* argv, jsval* rval) {
     unsigned int size = 0;
     unsigned short* jsString = JS_ValueToString(cx, argv[0], &size);
     char* toReturn = malloc(size + 1);
@@ -457,60 +457,60 @@ static int gitPull(const char* repoPath) {
     git_reference* remote_head = NULL;
     git_commit* head_commit = NULL;
     git_reference* head = NULL;
+	git_error* err = NULL;
 
     int error = git_remote_lookup(&remote, repo, "origin");
     if (error < 0) {
-        const git_error* err = giterr_last();
+        err = giterr_last();
         printf("Error looking up remote: %d/%s\n", err->klass, err->message);
         goto cleanup;
     }
 
     error = git_remote_fetch(remote, NULL, &fetch_opts, NULL);
     if (error < 0) {
-        const git_error* err = giterr_last();
+        err = giterr_last();
         printf("Error fetching from remote: %d/%s\n", err->klass, err->message);
         goto cleanup;
     }
 
     git_checkout_index(repo, NULL, &checkout_opts);
     if (error < 0) {
-        const git_error* err = giterr_last();
+        err = giterr_last();
         printf("Error checking out index: %d/%s\n", err->klass, err->message);
         goto cleanup;
     }
 
     error = git_repository_head(&head, repo);
     if (error < 0) {
-        const git_error* err = giterr_last();
+        err = giterr_last();
         printf("Error getting HEAD reference: %d/%s\n", err->klass, err->message);
         goto cleanup;
     }
 
     error = git_commit_lookup(&head_commit, repo, git_reference_target(head));
     if (error < 0) {
-        const git_error* err = giterr_last();
+        err = giterr_last();
         printf("Error looking up HEAD commit: %d/%s\n", err->klass, err->message);
         goto cleanup;
     }
 
     error = git_reference_lookup(&remote_head, repo, "refs/remotes/origin/main");
     if (error < 0) {
-        const git_error* err = giterr_last();
+        err = giterr_last();
         printf("Error looking up remote HEAD reference: %d/%s\n", err->klass, err->message);
         goto cleanup;
     }
 
     error = git_commit_lookup(&remote_head_commit, repo, git_reference_target(remote_head));
     if (error < 0) {
-        const git_error* err = giterr_last();
+        err = giterr_last();
         printf("Error looking up remote HEAD commit: %d/%s\n", err->klass, err->message);
         goto cleanup;
     }
 
-    char** args[2] = { "merge", "origin" };
-    error = lg2_merge(repo, 2, args);
+    error = lg2_merge(repo);
     if (error < 0) {
-        const git_error* err = giterr_last();
+        err = giterr_last();
         printf("Error: %d/%s\n", err->klass, err->message);
         goto cleanup;
     }
