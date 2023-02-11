@@ -4,8 +4,10 @@ Description:
 
 ******************************************************************************/
 
-if (an.getDocumentDOM().getElementProperty('loop') == 'single frame') {
-	an.getDocumentDOM().setElementProperty('loop', 'loop');
-} else {
-an.getDocumentDOM().setElementProperty('loop', 'single frame');
+if (fl.getDocumentDOM().getElementProperty('loop') == 'single frame') {
+	fl.getDocumentDOM().setElementProperty('loop', 'loop');
+} else if (fl.getDocumentDOM().getElementProperty('loop') == 'loop') {
+	fl.getDocumentDOM().setElementProperty('loop', 'loop reverse');
+} else if (fl.getDocumentDOM().getElementProperty('loop') == 'loop reverse') {
+	fl.getDocumentDOM().setElementProperty('loop', 'single frame');
 }
