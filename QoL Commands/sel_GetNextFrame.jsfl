@@ -1,23 +1,22 @@
 ﻿var selectedFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames();
 var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
-var isAltDown = fl.tools.altIsDown;
 
 if (selectedFrames[1] === undefined) {
 	fl.getDocumentDOM().getTimeline().setSelectedFrames(curFrame, curFrame);
 	var selectedFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames();
 }
 
-var range = Math.abs(selectedFrames[1] - selectedFrames[2]);
 var layer = selectedFrames[0];
-
 var maxFrames = fl.getDocumentDOM().getTimeline().layers[layer].frameCount;
-var curFrame1 = Math.max(selectedFrames[1] + range, 0);
-var curFrame2 = Math.min(selectedFrames[2] + range, maxFrames - 1);
+var range = Math.abs(selectedFrames[1] - selectedFrames[2]);
 
-if (selectedFrames[1] != (maxFrames - 1)) {
-	fl.getDocumentDOM().getTimeline().setSelectedFrames(curFrame1, curFrame2);
-	fl.getDocumentDOM().getTimeline().currentFrame = curFrame1;
-} else { 
-	fl.getDocumentDOM().getTimeline().setSelectedFrames(0, 0);
-	fl.getDocumentDOM().getTimeline().currentFrame = 0;
+var tmpArray = [];
+
+for (var i = 0; i < fl.getDocumentDOM().getTimeline().getSelectedFrames().length; i += 3) {
+	selFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames();
+	tmpArray.push(selFrames[i]);
+	tmpArray.push(Math.max(selFrames[i + 1] + range, 0));
+	tmpArray.push(Math.min(selFrames[i + 2] + range, maxFrames - 1));
 }
+
+fl.getDocumentDOM().getTimeline().setSelectedFrames(tmpArray);

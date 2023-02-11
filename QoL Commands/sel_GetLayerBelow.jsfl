@@ -1,22 +1,27 @@
 ﻿var layerNum = fl.getDocumentDOM().getTimeline().currentLayer;
 var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
 
-var selFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames()
+var selFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames();
+
+function returnInt(num) {
+	if (num === fl.getDocumentDOM().getTimeline().layerCount - 1) {
+		return 0;
+	} else {
+		return num + 1;
+	}
+}
 
 if (selFrames[1] == undefined) {
 	fl.getDocumentDOM().getTimeline().setSelectedFrames(curFrame, curFrame)
 }
 
-if (layerNum < fl.getDocumentDOM().getTimeline().layerCount - 1) {
-	selFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames()
-	fl.getDocumentDOM().getTimeline().setSelectedLayers(layerNum + 1)
-	selFrames[0] = fl.getDocumentDOM().getTimeline().currentLayer
-	fl.getDocumentDOM().getTimeline().setSelectedFrames(selFrames)
+var tmpArray = [];
+
+for (var i = 0; i < fl.getDocumentDOM().getTimeline().getSelectedFrames().length; i += 3) {
+	selFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames();
+	tmpArray.push(returnInt(selFrames[i]));
+	tmpArray.push(selFrames[i + 1]);
+	tmpArray.push(selFrames[i + 2]);
 }
 
-if (layerNum == fl.getDocumentDOM().getTimeline().layerCount - 1) {
-	selFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames()
-	fl.getDocumentDOM().getTimeline().setSelectedLayers(0)
-	selFrames[0] = fl.getDocumentDOM().getTimeline().currentLayer
-	fl.getDocumentDOM().getTimeline().setSelectedFrames(selFrames)
-}
+fl.getDocumentDOM().getTimeline().setSelectedFrames(tmpArray);
