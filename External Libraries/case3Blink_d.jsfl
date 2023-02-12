@@ -161,12 +161,13 @@ blinkFrameIndex = function (leftEye, rigFolder) {
 	var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
 
 	// Get blinking symbols in library (lead with the leftEye)
-	/*	var xSheetCacheKey = rigFolder + "/" + leftEye;
+	var xSheetCacheKey = rigFolder + "/" + leftEye;
+	
 	if (xSheetCache[xSheetCacheKey]) {
 		var itemIndex = fl.getDocumentDOM().library.findItemIndex(xSheetCacheKey);
 		xSheetCache[xSheetCacheKey] = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
 		objTl = xSheetCache[xSheetCacheKey];
-	}*/
+	}
 
 	// Check the pose name between rig and eyes.
 	for (var k = 0; k < objTl.frameCount; k++) {

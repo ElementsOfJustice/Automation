@@ -1,10 +1,10 @@
-TYPEFACE_NAME = "Suburga 2"; // sometimes it's "Suburga 2 Semicondensed Regular", other times it's "Suburga 2" Swap it if this script isn't working.
+﻿TYPEFACE_NAME = "Suburga 2 Semicondensed Regular"; // sometimes it's "Suburga 2 Semicondensed Regular", other times it's "Suburga 2" Swap it if this script isn't working.
 FRAMES_BETWEEN_LETTERS = 3;
 FRAMES_BETWEEN_WORDS = 6;
 TEXT_LAYER_1 = "txt1";
 TEXT_LAYER_2 = "txt2";
 SFX_LAYER = "sfx_1";
-TYPEWRITER_SFX_NAME = "sfx-typewriter.wav";
+TYPEWRITER_SFX_NAME = "AUDIO/SFX/sfx-typewriter.wav";
 AVERAGE_CHARACTER_WIDTH = 20;
 
 

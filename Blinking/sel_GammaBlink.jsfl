@@ -30,7 +30,6 @@ function gammaVariable(mean, k) {
     return sum;
 }
 
-
 /*
 Function: testDistribution
 Variables: 
@@ -76,6 +75,37 @@ function getCurrentLayer() {
 }
 
 /*
+Function: resetSelection
+Variables:  
+    layer [integer(or should be) index of a layer ]
+    frame [integer index of a frame]
+Description: sets selection to the desired layer and frame
+*/
+function resetSelection(layer, frame) {
+    fl.getDocumentDOM().getTimeline().currentFrame = frame;
+    // select frame on the layer and replace current selection
+    fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true);
+}
+
+/*
+Function: selectOrMakeKeyframe
+Variables:  
+    layer [integer(or should be) index of a layer ]
+    frame [integer index of a frame]
+Description: selects the keyframe if there's one there, or makes one if there isn't
+*/
+function selectOrMakeKeyframe(layer, frame) {
+    resetSelection(layer, frame); // select layer and frame
+    // if the current frame isn't the first frame in a frame sequence, make a note of that
+    var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame; 
+    // if it isn't...
+    if (!isKeyFrame) {
+        fl.getDocumentDOM().getTimeline().insertKeyframe(); // keyframe for new position
+        resetSelection(layer, frame); // select layer and frame
+    }
+}
+
+/*
 Function: setup
 Variables: None
 Description: If the user makes a frame selection from right to left instead of 
@@ -91,7 +121,6 @@ function setup() {
 }
 
 setup();
-
 
 // ♫Let's start at the very beginning...♫
 setCurrentFrame(startFrame);
@@ -111,14 +140,13 @@ while(getCurrentFrame() < endFrame) {
             setCurrentFrame(i); // go to that frame
         }
     }
+
     // if we're still on an empty frame even after all that mess, advance so long as we're still in our selection
     while(fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[getCurrentFrame()] == 0 && getCurrentFrame() < endFrame) {
         // advance frames
         addToCurrentFrame(1);
     }
 
-    
-    
     // if the current frame isn't the first frame in a frame sequence, make a note of that
     var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame;
     // if it's not
