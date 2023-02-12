@@ -1,1 +1,0 @@
-Make sure dependencies aren't broken, go ahead and move blink tech in with lipsyncing

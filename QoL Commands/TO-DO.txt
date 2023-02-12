@@ -1,2 +1,0 @@
-Resolve XML dependencies, confirm the code prefixes are an accurate representation of the 
-code input, confirm all code is functional.
