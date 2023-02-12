@@ -148,26 +148,26 @@ blinkFrameIndex = function (leftEye, rigFolder) {
 
 	leftEye = leftEye.replace("_", "►")
 	leftEye = rigFolder.substring(0, rigFolder.lastIndexOf('/')) + "/" + leftEye;
-	
+
 	// Get the current pose name from the rig
 	var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
 	var ffIndex = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()].frames[curFrame].elements[0].firstFrame + 1;
 	var itemIndex = fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()].frames[curFrame].elements[0].libraryItem.name);
 	var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
 	var poseName = objTl.frames[ffIndex - 1].name;
-	
+
 	// Load the eyes
 	var itemIndex = fl.getDocumentDOM().library.findItemIndex(leftEye);
 	var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
-		
+
 	// Get blinking symbols in library (lead with the leftEye)
-/*	var xSheetCacheKey = rigFolder + "/" + leftEye;
+	/*	var xSheetCacheKey = rigFolder + "/" + leftEye;
 	if (xSheetCache[xSheetCacheKey]) {
 		var itemIndex = fl.getDocumentDOM().library.findItemIndex(xSheetCacheKey);
 		xSheetCache[xSheetCacheKey] = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
 		objTl = xSheetCache[xSheetCacheKey];
 	}*/
-	
+
 	// Check the pose name between rig and eyes.
 	for (var k = 0; k < objTl.frameCount; k++) {
 		//fl.trace(k + " " + objTl.frames[k].name);
@@ -281,10 +281,34 @@ docOpen = function () {
 docChanged = function () {
 	fl.outputPanel.clear();
 	fl.trace(daemonName + " is running.")
-	fl.trace('Changed Document ' + fl.getDocumentDOM().name + "]");
+	fl.trace('Changed Document ' + "[" + fl.getDocumentDOM().name + "]");
 	fl.trace('Description: ' + fl.getDocumentDOM().description);
 	fl.getDocumentDOM().forceSimple = true;
 	getMemory();
+}
+
+injectKeybinds = function (inputFile, writeFile) {
+	var readPath = inputFile.replace(/ /g, "%20");
+	var keyData = FLfile.read(readPath);
+	var count = 0;
+
+	for (var i = fl.configURI.length - 2; i >= 0; i--) {
+		if (fl.configURI[i] === "/") {
+			count++;
+		}
+		if (count === 6) {
+			keymapPath = fl.configURI.slice(0, i + 1) + "AppData/Roaming/Adobe/Animate/2022/Shortcuts";
+			break;
+		}
+	}
+
+	URI = keymapPath + "/" + writeFile;
+
+	if (FLfile.write(URI, keyData)) {
+		//Successful
+	} else {
+		alert("Keymap injection failed.");
+	}
 }
 
 //			= = = DOCUMENT SAVE = = =
@@ -293,7 +317,7 @@ docChanged = function () {
 
 docSave = function () {
 	if (sessionCommit && !autoSave) {
-		
+
 		var path = fl.getDocumentDOM().path;
 		var fileType = path.substring(path.length - 3);
 		var fileName = fl.getDocumentDOM().name.substring(0, fl.getDocumentDOM().name.length - 4);
@@ -309,7 +333,7 @@ docSave = function () {
 			} else {
 				FLfile.remove(newFileName)
 			}
-		
+
 			toSave = newFileName;
 
 			//fl.getDocumentDOM().close();
@@ -334,9 +358,9 @@ moveMouse = function () {
 		//fl.trace(tmpPath.replace(/\\/g, "/"));
 		//fl.trace("TmpPath is " + tmpPath.replace(/\\/g, "/"));
 		try {
-		fl.trace("Committed change to version history.");
-		Sample.commitLocalChange(tmpPath);
-		} catch(e) {
+			fl.trace("Committed change to version history.");
+			Sample.commitLocalChange(tmpPath);
+		} catch (e) {
 			fl.trace("CRITICAL ERROR: " + e.stack);
 			fl.trace(e.name);
 			fl.trace(e.message);
@@ -428,6 +452,7 @@ postPublish = function () {
 	whatever else you want here as well.
 */
 
+injectKeybinds((fl.configURI + "Commands" + "/" + "External Libraries" + "/" + "C3VEKeys.xml"), "Case 3 Video Editor Keybinds.xml");
 fl.addEventListener("documentOpened", docOpen);
 fl.addEventListener("documentChanged", docChanged);
 //fl.addEventListener("frameChanged", frameChange);
@@ -438,12 +463,12 @@ fl.addEventListener("mouseMove", moveMouse);
 
 var path = fl.configURI + "Commands";
 var index = 0;
-while(FLfile.exists(path + "_OLD" + index)) {
-    index++;
+while (FLfile.exists(path + "_OLD" + index)) {
+	index++;
 }
 var cleanPath = FLfile.uriToPlatformPath(path);
 cleanPath = cleanPath.replace(/\\/g, "/");
-if(!FLfile.exists(path + "/.git")) {
+if (!FLfile.exists(path + "/.git")) {
 	Sample.renameFolder(cleanPath, cleanPath + "_OLD" + index);
 	FLfile.createFolder(path);
 	//alert("Downloading commands repo. This may take a while. Click OK to continue.")
