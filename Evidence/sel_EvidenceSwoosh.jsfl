@@ -5,6 +5,9 @@ Description:
 Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 ******************************************************************************/
 
+DURATION = 50;
+
+
 // get the adobe animate doc object
 var doc = fl.getDocumentDOM();
 // set scriptPath to "/path/../EvidenceSwoosh.jsfl"
@@ -34,6 +37,14 @@ function setup() {
     }
     fl.getDocumentDOM().getTimeline().currentFrame = startFrame;
     fl.getDocumentDOM().getTimeline().layers[selLayerIndex * 1].locked = false; // unlock layer
+    if(endFrame - startFrame < 20) {
+        endFrame = startFrame + DURATION;
+        if(endFrame >= fl.getDocumentDOM().getTimeline().layers[selLayerIndex * 1].frameCount) 
+            throw new Error("Selection too close to end of timeline.");
+        fl.getDocumentDOM().getTimeline().setSelectedFrames(startFrame, endFrame);
+        fl.getDocumentDOM().getTimeline().currentFrame = startFrame;
+    }
+    fl.getDocumentDOM().getTimeline().clearKeyframes();
 }
 
 setup();
@@ -126,3 +137,5 @@ doc.getTimeline().createMotionTween();
 an.getDocumentDOM().getTimeline().setFrameProperty('easeType', 5, 9, 0);
 // Insert a blank keyframe so the animation stops
 doc.getTimeline().convertToBlankKeyframes(endFrame + 1);
+
+fl.getDocumentDOM().getTimeline().setSelectedFrames(frameSelection);
