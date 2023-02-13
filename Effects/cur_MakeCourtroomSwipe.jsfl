@@ -91,6 +91,7 @@ function alignStartToBackground(backgroundX, characterLayer, startFrame, length)
 
 function alignEndToBackground(backgroundX, characterLayer, startFrame, length) {
     resetSelection(characterLayer, startFrame + length);
+    fl.getDocumentDOM().getTimeline().layers[characterLayer * 1].locked = false;
     var characterX = fl.getDocumentDOM().getElementProperty("x");
     for (var i = 0; i < length; i++) {
         selectOrMakeKeyframe(characterLayer, fl.getDocumentDOM().getTimeline().currentFrame); // advance to next frame and make keyframe
@@ -149,6 +150,7 @@ Description:
 */
 function handleDesksAndParentDestinationCharactersFullSwipe(destinationCharacterLayers) {
     resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME), startFrame + (SWIPE_LENGTH / 2)); // select desks layer in the middle of the tween
+    fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME) * 1].locked = false;
     var backgroundX = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME)].frames[startFrame + SWIPE_LENGTH].elements[0].matrix.tx;
     fl.getDocumentDOM().getTimeline().removeFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + (SWIPE_LENGTH / 2)); // remove half the length in frames (get non-empty keyframes at the playhead)
     fl.getDocumentDOM().getTimeline().insertFrames((SWIPE_LENGTH / 2)); // put the frames back (this mimicks a resize span)
@@ -164,6 +166,7 @@ function handleDesksAndParentDestinationCharactersFullSwipe(destinationCharacter
 
 function handleDesksAndParentDestinationCharactersHalfSwipe(destinationCharacterLayers) {
     resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME), startFrame + (SWIPE_LENGTH / 2)); // select desks layer in the middle of the tween
+    fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME) * 1].locked = false;
     var backgroundX = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME)].frames[startFrame + SWIPE_LENGTH].elements[0].matrix.tx;
     fl.getDocumentDOM().getTimeline().removeFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + (SWIPE_LENGTH / 2)); // remove half the length in frames (get non-empty keyframes at the playhead)
     fl.getDocumentDOM().getTimeline().insertFrames((SWIPE_LENGTH / 2)); // put the frames back (this mimicks a resize span)
