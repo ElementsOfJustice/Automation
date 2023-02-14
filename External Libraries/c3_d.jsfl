@@ -12,7 +12,7 @@
 */
 
 //Vanity Variables
-var daemonName = "Elements of Justice utility daemon";
+var daemonName = "Elements of Justice Case 3 daemon";
 var sessionCommit = false;
 var firstOpen = true;
 
@@ -162,7 +162,7 @@ blinkFrameIndex = function (leftEye, rigFolder) {
 
 	// Get blinking symbols in library (lead with the leftEye)
 	var xSheetCacheKey = rigFolder + "/" + leftEye;
-	
+
 	if (xSheetCache[xSheetCacheKey]) {
 		var itemIndex = fl.getDocumentDOM().library.findItemIndex(xSheetCacheKey);
 		xSheetCache[xSheetCacheKey] = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
@@ -259,8 +259,22 @@ runBlinking = function (layerIndex) {
 	by changing focus.
 */
 
+vanityDisplay = function () {
+	fl.trace("   _____ ____   _____  ");
+	fl.trace("  / ____|___ \\ |  __  \\ ");
+	fl.trace(" | |      __) || |  | |");
+	fl.trace(" | |     |__ < | |  | |");
+	fl.trace(" | |____ ___) || |__| |");
+	fl.trace("  \\_____|____/ |_____/ ");
+	fl.trace("           ______      ");
+	fl.trace("          |______|     ");
+}
+
 docOpen = function () {
 	fl.outputPanel.clear();
+	fl.trace("");
+	vanityDisplay();
+	fl.trace("");
 	fl.trace(daemonName + " is running.")
 	fl.trace('Opened Document [' + fl.getDocumentDOM().name + "]");
 	fl.trace('Description: ' + fl.getDocumentDOM().description);
@@ -281,6 +295,9 @@ docOpen = function () {
 
 docChanged = function () {
 	fl.outputPanel.clear();
+	fl.trace("");
+	vanityDisplay();
+	fl.trace("");
 	fl.trace(daemonName + " is running.")
 	fl.trace('Changed Document ' + "[" + fl.getDocumentDOM().name + "]");
 	fl.trace('Description: ' + fl.getDocumentDOM().description);
