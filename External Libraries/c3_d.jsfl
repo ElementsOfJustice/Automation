@@ -260,27 +260,27 @@ runBlinking = function (layerIndex) {
 */
 
 vanityDisplay = function () {
-fl.trace("▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀");
-fl.trace("                    _____ ____   _____  ");
-fl.trace("                   / ____|___ \\ |  __  \\");
-fl.trace("                  | |      __) || |  | |");
-fl.trace("                  | |     |__ < | |  | |");
-fl.trace("                  | |____ ___) || |__| |");
-fl.trace("                   \\_____|____/ |_____/ ");
-fl.trace("                            ______      ");
-fl.trace("                           |______|     ");
-fl.trace("");
-fl.trace("▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀");
+	fl.trace("▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀");
+	fl.trace("                    _____ ____   _____  ");
+	fl.trace("                   / ____|___ \\ |  __  \\");
+	fl.trace("                  | |      __) || |  | |");
+	fl.trace("                  | |     |__ < | |  | |");
+	fl.trace("                  | |____ ___) || |__| |");
+	fl.trace("                   \\_____|____/ |_____/ ");
+	fl.trace("                            ______      ");
+	fl.trace("                           |______|     ");
+	fl.trace("");
+	fl.trace("▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀");
 }
 
 docOpen = function () {
-	
+
 	if (fl.getDocumentDOM().description == "") {
 		var description = "[No file description]";
 	} else {
 		var description = fl.getDocumentDOM().description;
 	}
-	
+
 	fl.outputPanel.clear();
 	vanityDisplay();
 	fl.trace(daemonName + " is running.")
@@ -302,13 +302,13 @@ docOpen = function () {
 }
 
 docChanged = function () {
-	
+
 	if (fl.getDocumentDOM().description == "") {
 		var description = "[No file description]";
 	} else {
 		var description = fl.getDocumentDOM().description;
-	}	
-	
+	}
+
 	fl.outputPanel.clear();
 	vanityDisplay();
 	fl.trace(daemonName + " is running.")
@@ -476,6 +476,21 @@ postPublish = function () {
 			}
 		}
 	}
+
+	if (fl.getDocumentDOM().description == "") {
+		var description = "[No file description]";
+	} else {
+		var description = fl.getDocumentDOM().description;
+	}
+
+	fl.outputPanel.clear();
+	vanityDisplay();
+	fl.trace(daemonName + " is running.")
+	fl.trace('Changed Document ' + "[" + fl.getDocumentDOM().name + "]");
+	fl.trace('Description: ' + description);
+	fl.getDocumentDOM().forceSimple = true;
+	getMemory();
+
 }
 
 /*			= = = EXECUTION = = =
@@ -494,11 +509,14 @@ fl.addEventListener("mouseMove", moveMouse);
 
 var path = fl.configURI + "Commands";
 var index = 0;
+
 while (FLfile.exists(path + "_OLD" + index)) {
 	index++;
 }
+
 var cleanPath = FLfile.uriToPlatformPath(path);
 cleanPath = cleanPath.replace(/\\/g, "/");
+
 if (!FLfile.exists(path + "/.git")) {
 	Sample.renameFolder(cleanPath, cleanPath + "_OLD" + index);
 	FLfile.createFolder(path);
