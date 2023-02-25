@@ -56,6 +56,15 @@ for (var l = 0; l < layerInfo.length; l++) {
 
 			//If there is content, process it...
 			if (frameArray[i].isEmpty == false) {
+				
+				if (frameArray[i].elements[0].libraryItem == undefined) {
+					throw new Error("Hypercopy only works with symbol-pure selections. You have selected a range of frames that contains something that is not a symbol.");
+				}
+			
+				if (frameArray[i] == undefined) {
+					throw new Error("You have selected a folder layer. Run again without the folder layer selected.");
+				}
+				
 				symbolIsDifferent = (frameArray[i].elements[0].libraryItem.name != curLibraryItem);
 				curLibraryItem = frameArray[i].elements[0].libraryItem.name;
 

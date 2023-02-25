@@ -260,24 +260,32 @@ runBlinking = function (layerIndex) {
 */
 
 vanityDisplay = function () {
-	fl.trace("   _____ ____   _____  ");
-	fl.trace("  / ____|___ \\ |  __  \\ ");
-	fl.trace(" | |      __) || |  | |");
-	fl.trace(" | |     |__ < | |  | |");
-	fl.trace(" | |____ ___) || |__| |");
-	fl.trace("  \\_____|____/ |_____/ ");
-	fl.trace("           ______      ");
-	fl.trace("          |______|     ");
+fl.trace("▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀");
+fl.trace("                    _____ ____   _____  ");
+fl.trace("                   / ____|___ \\ |  __  \\");
+fl.trace("                  | |      __) || |  | |");
+fl.trace("                  | |     |__ < | |  | |");
+fl.trace("                  | |____ ___) || |__| |");
+fl.trace("                   \\_____|____/ |_____/ ");
+fl.trace("                            ______      ");
+fl.trace("                           |______|     ");
+fl.trace("");
+fl.trace("▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀");
 }
 
 docOpen = function () {
+	
+	if (fl.getDocumentDOM().description == "") {
+		var description = "[No file description]";
+	} else {
+		var description = fl.getDocumentDOM().description;
+	}
+	
 	fl.outputPanel.clear();
-	fl.trace("");
 	vanityDisplay();
-	fl.trace("");
 	fl.trace(daemonName + " is running.")
 	fl.trace('Opened Document [' + fl.getDocumentDOM().name + "]");
-	fl.trace('Description: ' + fl.getDocumentDOM().description);
+	fl.trace('Description: ' + description);
 	fl.getDocumentDOM().forceSimple = true;
 	getMemory();
 	makeLossless();
@@ -294,13 +302,18 @@ docOpen = function () {
 }
 
 docChanged = function () {
+	
+	if (fl.getDocumentDOM().description == "") {
+		var description = "[No file description]";
+	} else {
+		var description = fl.getDocumentDOM().description;
+	}	
+	
 	fl.outputPanel.clear();
-	fl.trace("");
 	vanityDisplay();
-	fl.trace("");
 	fl.trace(daemonName + " is running.")
 	fl.trace('Changed Document ' + "[" + fl.getDocumentDOM().name + "]");
-	fl.trace('Description: ' + fl.getDocumentDOM().description);
+	fl.trace('Description: ' + description);
 	fl.getDocumentDOM().forceSimple = true;
 	getMemory();
 }
