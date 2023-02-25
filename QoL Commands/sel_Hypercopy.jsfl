@@ -37,7 +37,7 @@ function setHash(variableName, value, type) {
 
 // Process copy data for selected region.
 for (var l = 0; l < layerInfo.length; l++) {
-	var layer = layerInfo[l][0]; 
+	var layer = layerInfo[l][0];
 	var firstFrame = layerInfo[l][1];
 	var lastFrame = layerInfo[l][2];
 	// Unlock the layer
@@ -52,19 +52,20 @@ for (var l = 0; l < layerInfo.length; l++) {
 	var frameArray = fl.getDocumentDOM().getTimeline().layers[layer].frames;
 	var curLibraryItem = "";
 	for (var i = firstFrame; i < lastFrame; i += (frameArray[i].duration - (i - frameArray[i].startFrame))) { // iterate over all keyframes
+
+		if (frameArray[i] == undefined) {
+			throw new Error("You have selected a folder layer. Run again without the folder layer selected.");
+		}
+
 		if (i == frameArray[i].startFrame) {
 
 			//If there is content, process it...
 			if (frameArray[i].isEmpty == false) {
-				
+
 				if (frameArray[i].elements[0].libraryItem == undefined) {
 					throw new Error("Hypercopy only works with symbol-pure selections. You have selected a range of frames that contains something that is not a symbol.");
 				}
-			
-				if (frameArray[i] == undefined) {
-					throw new Error("You have selected a folder layer. Run again without the folder layer selected.");
-				}
-				
+
 				symbolIsDifferent = (frameArray[i].elements[0].libraryItem.name != curLibraryItem);
 				curLibraryItem = frameArray[i].elements[0].libraryItem.name;
 
@@ -98,7 +99,7 @@ for (var l = 0; l < layerInfo.length; l++) {
 			}
 		}
 	}
-	if(l < layerInfo.length - 1) {
+	if (l < layerInfo.length - 1) {
 		toWrite.push("¤"); // layer symbol
 	}
 }
