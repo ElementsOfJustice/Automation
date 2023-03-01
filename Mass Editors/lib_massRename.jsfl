@@ -3,13 +3,7 @@ MASS RENAME
 Description: Uniformly rename selected files in the Animate Library
 ******************************************************************************/
 
-// create some variables
-// set scriptPath to "/path/../autoTypewriter.jsfl"
-var scriptPath = fl.scriptURI;
-// set dirURL to the path up to the last / character (i.e. just the path)
-var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
-// Creates a GUI window in Animate using the given XML file
-var guiPanel = fl.getDocumentDOM().xmlPanel(dirURL+"/massRename.xml");
+var guiPanel = fl.getDocumentDOM().xmlPanelFromString('<dialog title="The Mass Renamer" buttons="accept, cancel"><label value="Rename Operation" control="iName"/><menulist id = "opMode"> <menupop><menuitem label="Suffix and Prefix" selected="false" value="opNo1" /><menuitem label="Enumerate Selection" selected="false" value="opNo2" /><menuitem label="Find and Replace" selected="true" value="opNo3" /></menupop> </menulist><spacer /><label id="boxLabel1" value="Find/Prefix" control="iName" /><textbox id="txtbox_one" size="24" value="" /><spacer /><label id="boxLabel2" value="Replace/Suffix" control="iName" /><textbox id="txtbox_two" size="24" value="" /><spacer /><spacer /></dialog>');
 
 // If the user pushes "ok" as opposed to "cancel"
 if(guiPanel.dismiss == "accept") {
