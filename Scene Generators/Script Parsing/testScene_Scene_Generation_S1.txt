@@ -1,0 +1,27 @@
+var sceneData = 
+[
+['dialogue', 's1_001_twilight', 'Twilight', "Apple Bloom's right.", '+HAT'],
+['dialogue', 's1_002_twilight', 'Twilight', 'I know everypony is upset, but we need to focus on the case at hoof. Arguing like this is going to get us nowhere.', '-BRF'],
+['dialogue', 's1_003_twilight', 'Twilight', "You shouldn't put the blame on yourself, Athena. I took part in this as well.", '-RGT'],
+['dialogue', 's1_004_twilight', 'Twilight', "None of us want to see a friend accused of a crime they didn't commit. So I promise, we'll also make sure that Sweetie Belle gets the acquittal she deserves.", '-HRT'],
+['dialogue', 's1_005_twilight', 'Twilight', 'And Athena by mine…!', 'R'],
+['dialogue', 's1_006_twilight', 'Twilight', 'We will prove her innocence together!', '+R'],
+['dialogue', 's1_007_twilight', 'Twilight', "We won't let you down, Rarity!", 'RT'],
+['dialogue', 's1_008_twilight', 'Twilight', 'Well, we know that clones were involved.', ''],
+['dialogue', 's1_009_twilight', 'Twilight', "Maybe it'll help if we go over Royal Order's movements that night? ", 'C'],
+['dialogue', 's1_010_twilight', 'Twilight', 'Everything that we know and need to know center around figuring out what he did and where he did them. ', '+T'],
+['dialogue', 's1_011_twilight', 'Twilight', 'How about when he first got home? We know that that was when he learned what Turning Page was doing from Fair Devotion. ', '+C'],
+['dialogue', 's1_012_twilight', 'Twilight', 'And we know what happened on the way there…', 'A'],
+['dialogue', 's1_013_twilight', 'Twilight', 'Exactly. We managed to establish that that was ONE of the Royal Order clones. ', 'T'],
+['dialogue', 's1_014_twilight', 'Twilight', "The crash resulted in the scooter breaking and the left handlebar stabbing Royal Order's head.", '-BRAFS'],
+['dialogue', 's1_015_twilight', 'Twilight', 'No. That stab wound must not have been fatal since, based on the blood trail, that that Royal Order managed to stand and head over to the Nightmare Night statue.', '-BRFST'],
+['dialogue', 's1_016_twilight', 'Twilight', "THAT was where he was killed. Impaled on the statue's base, somehow. The timberwolves in the area then ate the body, and lapped up all the blood afterwards.", '-BFT'],
+['dialogue', 's1_017_twilight', 'Twilight', "That's… where we believe Sugar Stamp was involved. The imprint on the bottom of the wagon matches the badge on her mail bag. ", '-BA'],
+['dialogue', 's1_018_twilight', 'Twilight', 'We think she transported the items from the crossroads…', ''],
+['dialogue', 's1_019_twilight', 'Twilight', "Scootaloo and Turning Page might be there, too, so we should talk to them as well. Maybe we could even speak to Zecora, if she's there.", '+'],
+['dialogue', 's1_020_twilight', 'Twilight', "There's also the Everfree Forest. Now that we know that the clearing and crossroads were involved, we'll need to investigate them thoroughly.", ''],
+['dialogue', 's1_021_twilight', 'Twilight', 'Applejack? What about you?', 'TC'],
+['dialogue', 's1_022_twilight', 'Twilight', "In which case, we'd better get going—", '-BF'],
+['dialogue', 's1_023_twilight', 'Twilight', "Just a sec. Spike, you don't mind…", '+FTT'],
+['dialogue', 's1_024_twilight', 'Twilight', "We'll do our best, Spike! Okay, everyone. Let's get going!", 'RF']
+];

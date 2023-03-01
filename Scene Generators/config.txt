@@ -77,7 +77,7 @@ Arg6 - align top left
 var masterInvestigationArray = {
 "Twilight": ["TWILIGHT_SPARKLE", "RIGS/VECTOR CHARACTERS/TWILIGHT_SPARKLE►/Twilight►Scaled"],
 "Fluttershy": ["FLUTTERSHY", "RIGS/VECTOR CHARACTERS/FLUTTERSHY►/Fluttershy_Scaled"],
-"Apple Bloom": ["APPLE_BLOOM", "RIGS/VECTOR CHARACTERS/APPLE_BLOOM►/AB►Scaled"],
+"Apple Bloom": ["APPLE_BLOOM", "RIGS/VECTOR CHARACTERS/APPLE_BLOOM►/APPLE_BLOOM►Scaled", 0, 0, false],
 "Turning": ["TURNING_PAGE", "RIGS/VECTOR CHARACTERS/TURNING_PAGE►/TP►Scaled"],
 "Scootaloo": ["SCOOTALOO", "RIGS/VECTOR CHARACTERS/SCOOTALOO►/ST►Scaled"],
 "Rainbow": ["RAINBOW_DASH", "RIGS/VECTOR CHARACTERS/RBD►/RBD►Scaled"],

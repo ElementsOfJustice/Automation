@@ -1,34 +1,27 @@
 /******************************************************************************
-                        EOJ SCENE GENERATOR (9/18/22)
+                        EOJ SCENE GENERATOR (2/27/23)
 
 Description: Makes EoJ scenes from scratch. The beating heart of the video
 editing process.
 
 Issues:
-- Parallel array schema is terrible and doesn't encode for things that have since
-been automated.
 - Why are the witnesses commented out? Do witnesses work at all?
 - Desk placement only works with symbols. Convert all attorney desks to symbols
 in the template FLA and reverse hardcode workaround in config.txt
 - First time BG placement in court mode is wack
-- Text does strange stuff. Sometimes it is Suburga regular, sometimes othe properties
+- Text does strange stuff. Sometimes it is Suburga regular, sometimes the properties
 of the text are really bad. Hardcode font and the VA setting to force it to be
 correct
+- WE NEED AN AAI STYLE generator predicated on courtroom mode.
+- Intelligent debug print
 
 To-Do:
-- Add connecting features (Evidence, Typewriter, Screenshakes, Flashes)
-- Re-write plaintext parser to include these features
 - On generation, add the AE line ID to text using persistent data and add the VOX
 line on runtime.
-- How do we handle emotionEngine? Do we integrate it at all? When it is wrong, it 
-is very wrong. Accept/deny per-line is a start, but adds tedium
-- Incorporate investigation makeFades
 - Dynamic rig obtaining. Instead of old, out of date libraries, we keep the rigs
 in a folder and the scene generator imports the rigs on runtime. This automatically
 ensures the rigs are up-to-date on every run.
-- Get Joe to comment every function. Each one needs an in-depth description,
-and even if he justs adds these kinds of headers to each function, that is good.
-- put dialogue in textboxes every n frames, put da characters on screen
+- Make sure you comment every function
 
 ******************************************************************************/
 
@@ -82,12 +75,15 @@ var startTime = new Date();
 /******************************************************************************
                                 BASIC FUNCTIONS
 ******************************************************************************/
-// Exponential distribution CDF: mean of theta, function of t.
-function getBlinkProbability(theta, t) {
-    return 1 - Math.pow(Math.E, -1 * (t / theta));
-}
 
-function trim(input) { // stolen from java :D
+/*
+Function: trim
+Variables: 
+    input string
+Description: ES5-compatible backport of the trim operator.
+*/
+
+function trim(input) {
     var len = input.length;
     var st = 0;
     var val = input;
@@ -101,6 +97,13 @@ function trim(input) { // stolen from java :D
     return ((st > 0) || (len < input.length)) ? input.substring(st, len) : input;
 }
 
+/*
+Function: switchActive
+Variables: 
+    layerVar int
+Description: More intelligent layer switching function.
+*/
+
 function switchActive(layerVar) {
     var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(layerVar);
     if (layerIndex == null) {
@@ -111,6 +114,12 @@ function switchActive(layerVar) {
     propertiesLayer = fl.getDocumentDOM().getTimeline().layers[layerIndex];
 }
 
+/*
+Function: dialogueFormat
+Variables: None
+Description: Format the selected text to be normal talking text.
+*/
+
 function dialogueFormat() {
     fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2 Semi-condensed Regular");
     fl.getDocumentDOM().setElementTextAttr("size", 40);
@@ -119,12 +128,24 @@ function dialogueFormat() {
     fl.getDocumentDOM().setElementTextAttr("lineSpacing", 1);
 }
 
+/*
+Function: speakerFormat
+Variables: None
+Description: Format the speakertag text with the default settings.
+*/
+
 function speakerFormat() {
     fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2 Semi-condensed Regular");
     fl.getDocumentDOM().setElementTextAttr("size", 42);
     fl.getDocumentDOM().setElementTextAttr("fillColor", 0xffffff);
     fl.getDocumentDOM().setElementTextAttr("letterSpacing", 2);
 }
+
+/*
+Function: thinkingFormat
+Variables: None
+Description: Format the selected text to be "thinking" text.
+*/
 
 function thinkingFormat() {
     fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2 Semi-condensed Regular");
@@ -133,6 +154,14 @@ function thinkingFormat() {
     fl.getDocumentDOM().setElementTextAttr("letterSpacing", 2);
     fl.getDocumentDOM().setElementTextAttr("lineSpacing", 1);
 }
+
+/*
+Function: levenshteinRatio
+Variables: 
+    s string
+    t string
+Description: ES5-compatible Levenshtein ratio function where s and t are input strings.
+*/
 
 function levenshteinRatio(s, t) {
     var d = []; //2d matrix
@@ -184,6 +213,88 @@ function levenshteinRatio(s, t) {
     return ((s.length + t.length - d[n][m]) / (s.length + t.length));
 }
 
+/*
+Function: emotionAverage
+Variables: 
+    str1    string
+    str2    string
+Description: Averages out two emotionEngine abstractions for an in-between emotion.
+*/
+
+function emotionAverage(str1, str2) {
+    // create a map to keep track of character counts
+    var charMap = {};
+
+    // loop through the first string and update charMap accordingly
+    for (var i = 0; i < str1.length; i++) {
+        if (charMap[str1[i]] === undefined) {
+            charMap[str1[i]] = 1;
+        } else {
+            charMap[str1[i]]++;
+        }
+    }
+
+    // loop through the second string and update charMap accordingly
+    for (var j = 0; j < str2.length; j++) {
+        if (charMap[str2[j]] === undefined) {
+            charMap[str2[j]] = 1;
+        } else {
+            charMap[str2[j]]++;
+        }
+    }
+
+    // remove opposites and limit the number of each character
+    var result = '';
+    if (charMap['+'] > charMap['-']) {
+        charMap['+'] -= charMap['-'];
+        charMap['-'] = 0;
+    } else {
+        charMap['-'] -= charMap['+'];
+        charMap['+'] = 0;
+    }
+    if (charMap['B'] > charMap['H']) {
+        charMap['B'] -= charMap['H'];
+        charMap['H'] = 0;
+    } else {
+        charMap['H'] -= charMap['B'];
+        charMap['B'] = 0;
+    }
+    if (charMap['F'] > charMap['T']) {
+        charMap['F'] -= charMap['T'];
+        charMap['T'] = 0;
+    } else {
+        charMap['T'] -= charMap['F'];
+        charMap['F'] = 0;
+    }
+    if (charMap['C'] > 1) {
+        charMap['C'] = 1;
+    }
+    for (var char in charMap) {
+        if (charMap[char] > 2) {
+            charMap[char] = 2;
+        }
+        for (var i = 0; i < charMap[char]; i++) {
+            result += char;
+        }
+    }
+
+    // sort the characters in the result string
+    result = result.split('').sort(function (a, b) {
+        var order = '++--HHBBRRAAGGFFSSTTC';
+        return order.indexOf(a) - order.indexOf(b);
+    }).join('');
+
+    // return the result string
+    return result;
+}
+
+/*
+Function: spreadMax
+Variables: 
+    arr []
+Description: ES5-compatible backport of the spread operator.
+*/
+
 function spreadMax(arr) {
 
     var result = arr.reduce(function (a, b) {
@@ -192,6 +303,53 @@ function spreadMax(arr) {
 
     return result;
 }
+
+/*
+Function: getTimeDiff
+Variables:
+Descriptions:
+    Gets the time difference. Useful for telling how long each step
+    takes to execute and which rigs are bloated.
+*/
+
+function getTimeDiff(startTime, endTime) {
+    timeDiff = endTime - startTime;
+    timeDiff /= 1000;
+    var seconds = Math.round(timeDiff);
+
+    if (timeDiff < 60) {
+        fl.trace("Time Elapsed: " + seconds + " seconds.");
+    }
+
+    if (timeDiff > 60) {
+        var minutes = Math.floor(timeDiff / 60);
+        var seconds = timeDiff - minutes * 60;
+        fl.trace("Time Elapsed: " + minutes + " minutes and " + seconds + " seconds");
+    }
+}
+
+/*
+Function: getBlinkProbability
+Variables:
+    theta   ?
+    t       ?
+Descriptions:
+    Returns the probability of a blink occuring.
+*/
+
+function getBlinkProbability(theta, t) {
+    return 1 - Math.pow(Math.E, -1 * (t / theta));
+}
+
+/*
+Function: getPoseFromEmotion
+Variables:
+    layerIndex  int
+    i           int
+Descriptions:
+    Selects a pose from a character layer and frame number i. We use L-ratio
+    to match the line's emotion to the emotionEngine data for the rig.
+*/
 
 function getPoseFromEmotion(layerIndex, i) {
     var itemIndex = fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
@@ -202,18 +360,15 @@ function getPoseFromEmotion(layerIndex, i) {
 
     for (var k = 0; k < objTl.frameCount; k++) {
         if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame)) {
-            // fl.trace(objTl.frames[k].name + " : " + dialogueArray[i][3])
             tmpArray.push(levenshteinRatio(objTl.frames[k].name, dialogueArray[i][3]))
             if (spreadMax(tmpArray) == tmpArray[tmpArray.length - 1]) {
                 poseFrameNum = k
-                // fl.trace("L RATIO IS: " + levenshteinRatio(objTl.frames[k].name, dialogueArray[i][3]))
-                // fl.trace("SPREADMAX RETURNED " + spreadMax(tmpArray))
-                // fl.trace("NEW MAXIMUM. K IS: " + k)
             }
         }
     }
     return poseFrameNum;
 }
+
 /******************************************************************************
                             COURTROOM FUNCTIONS
 ******************************************************************************/
@@ -388,9 +543,16 @@ function generateWitnessBools(speakerTagIndex) {
 
 }
 
+/*
+Function: poseAutomation
+Variables: 
+    layerIndex  int
+    i           int
+Description: 
+    Pose automation based on LeXmo emotions and L-ratio algorithm.
+*/
 
 function poseAutomation(layerIndex, i) {
-    // POSE AUTOMATION //
 
     //fl.trace("Layer Index: " + layerIndex)
     //fl.trace("Frame: " + fl.getDocumentDOM().getTimeline().currentFrame)
@@ -399,8 +561,8 @@ function poseAutomation(layerIndex, i) {
 
     //fl.trace("Selected Layer is " + masterRigArray[uniqueChars[j]][0] + " but it should be " + speakertagArray[i])
     //fl.trace("Selected Sym for xSheet Browsing is: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
+
     var poseFrameNum = getPoseFromEmotion(layerIndex, i);
-    // fl.trace("FINAL POSE NUM IS: " + poseFrameNum)
 
     if (poseFrameNum != -1) {
         fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
@@ -408,9 +570,7 @@ function poseAutomation(layerIndex, i) {
         fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = 0
     }
 
-    //write pose to frame name
-    //fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
-
+    //WARNING! CASE 2 HARDCODING AHEAD!
     if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
         fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
     }
@@ -423,6 +583,16 @@ function poseAutomation(layerIndex, i) {
     }
 
 }
+
+/*
+Function: removeAbsentCharactersAndDoPoseAutomation
+Variables: 
+    uniqueChars []
+    i           int
+Description: 
+    Removes nonexistent characters so we do not return an error
+    by trying to access symbols and library items that do not exist!
+*/
 
 function removeAbsentCharactersAndDoPoseAutomation(uniqueChars, i) {
     for (var j = 0; j < uniqueChars.length; j++) {
@@ -481,14 +651,13 @@ function removeAbsentCharactersAndDoPoseAutomation(uniqueChars, i) {
                     fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
                 }
 
-               poseAutomation(layerIndex, i);
+                poseAutomation(layerIndex, i);
 
             }
 
         }
     }
 }
-
 
 /*
 Function: sculpt
@@ -573,30 +742,6 @@ function placeBGs() {
         }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
         fl.getDocumentDOM().swapElement(courtmodeBackgroundsArray[speakertagArray[i]][0]);
         fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
-    }
-}
-
-/*
-Function: getTimeDiff
-Variables:
-Descriptions:
-    Gets the time difference. Useful for telling how long each step
-    takes to execute and which rigs are bloated.
-*/
-
-function getTimeDiff(startTime, endTime) {
-    timeDiff = endTime - startTime;
-    timeDiff /= 1000;
-    var seconds = Math.round(timeDiff);
-
-    if (timeDiff < 60) {
-        fl.trace("Time Elapsed: " + seconds + " seconds.");
-    }
-
-    if (timeDiff > 60) {
-        var minutes = Math.floor(timeDiff / 60);
-        var seconds = timeDiff - minutes * 60;
-        fl.trace("Time Elapsed: " + minutes + " minutes and " + seconds + " seconds");
     }
 }
 
@@ -704,8 +849,12 @@ function addRigsInvestgation() {
             x: 0,
             y: 0
         }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
-        // fl.trace(character);
-        // fl.trace(masterInvestigationArray[character][1]);
+
+        if (!fl.getDocumentDOM().library.itemExists(masterInvestigationArray[character][1])) {
+            alert('The configuration file has an invalid entry. Attempt to parse rig path \n' + masterInvestigationArray[character][1] + ' \nyielded no rig. Please update the configuration file to a valid entry for this rig.');
+            throw new Error('Aborting...');
+        }
+
         fl.getDocumentDOM().swapElement(masterInvestigationArray[character][1]);
         // fl.getDocumentDOM().getTimeline().layers[selLayerIndex].setRigParentAtFrame(fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("BACKGROUNDS")], fl.getDocumentDOM().getTimeline().currentFrame);
         // fl.getDocumentDOM().setTransformationPoint({ x: 0, y: 0 });
@@ -718,7 +867,16 @@ function addRigsInvestgation() {
     }
     return missingRigs;
 }
-// helper function to get positions of mutliple onscreen characters
+
+/*
+Function: getAlignmentPos
+Variables: 
+    totalChars  int
+    currentChar int
+Description:
+    Intelligently spaces the position of multiple on-screen characters.
+*/
+
 function getAlignmentPos(totalChars, currentChar) {
     var X = 0;
     // case 1: even number of characters
@@ -737,14 +895,15 @@ function getAlignmentPos(totalChars, currentChar) {
         // if (currentChar == (totalChars - 1) / 2) {
         //     X = 0; // CENTER
         // } else {
-            var deltaX = fl.getDocumentDOM().width / totalChars;
-            var initialPlacement = (-1 * fl.getDocumentDOM().width / 2) + deltaX / 2;
-            X = initialPlacement + (currentChar * deltaX);
+        var deltaX = fl.getDocumentDOM().width / totalChars;
+        var initialPlacement = (-1 * fl.getDocumentDOM().width / 2) + deltaX / 2;
+        X = initialPlacement + (currentChar * deltaX);
         // }
     }
     // fl.trace("X: " + X);
     return { x: X, y: 0 };
 }
+
 /*
 Function: sculptInvestigations
 Variables: None
@@ -754,6 +913,7 @@ Description:
 
 function sculptInvestgation() {
     var uniqueChars = getCharacters();
+
     for (var i = speakertagArray.length - 2; i >= 0; i--) {
         var isPov = speakertagArray[i] == sDefense;
         if (speakertagArray[i] == sDefense && i != 0) {
@@ -764,6 +924,7 @@ function sculptInvestgation() {
             speakertagArray[i] = (tempI != 0) ? speakertagArray[tempI] : speakertagArray[i];
         }
         var characterIndex = 0; // for distributing multiple characters on screen
+
         for (var j = 0; j < uniqueChars.length; j++) {
             if (masterInvestigationArray[uniqueChars[j]] === undefined) {
                 continue;
@@ -803,22 +964,12 @@ function sculptInvestgation() {
                     fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !true);
                     characterIndex++;
                 }
+
                 if (!isPov) {
-                    var poseFrameNum = getPoseFromEmotion(layerIndex, i);
-                    // fl.trace("FINAL POSE NUM IS: " + poseFrameNum)
+                    //Then do pose automation...
 
-                    if (poseFrameNum != -1) {
-                        fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
-                    } else {
-                        fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = 0
-                    }
+                    poseAutomation(layerIndex, i)
 
-                    //write pose to frame name
-                    //fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
-
-                    if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
-                        fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
-                    }
                 }
 
                 if (speakertagArray[i] != speakertagArray[i + 1]) {
@@ -833,111 +984,16 @@ function sculptInvestgation() {
 }
 
 /******************************************************************************
-                            CREATIVE FUNCTIONS
-******************************************************************************/
-
-/*
-Function: evidence
-Variables:
-    png        []
-    type       []
-    side       []
-    descriptor []
-Description:
-    Takes in whether evidence is being presented or obtained. Will also take in
-    a PNG and what side of the screen to appear on, or if evidence is obtained,
-    what the descriptor is. Side and descriptor are mutually exclusive.
-*/
-
-function evidence(png, type, side, descriptor) {
-
-}
-
-/*
-Function: screenshake
-Variables:
-    sfx []
-    cue []
-Description:
-    Will apply a random screenshake. If a SFX is provided, will cross-reference
-    the standards for which SFX require screenshakes AND flashes and will
-    automatically flash if required. Screenshakes may happen on the middle
-    of a word and so need to be linked to lipsync data to tell when in a 
-    voice line that happens.
-*/
-
-function screenshake(sfx, cue) {
-
-}
-
-/*
-Function: flash
-Variables:
-    sfx []
-    cue []
-Description:
-    Applies a simple white flash on the flash layer.
-    Always white, max opacity is always 50%.
-
-    The flash occurs on the cue and can be provided with a SFX
-*/
-
-function flash(sfx, cue) {
-
-}
-
-/*
-Function: fade
-Variables:
-    duration []
-    inOut    []
-Description:
-    Fades out the standard amount of frames on the flash layer.
-    Always black.
-*/
-
-function fade(duration, inOut) {
-
-}
-
-/*
-Function: typewriter
-Variables:
-    type     []
-    contents []
-Description:
-    Connor's autotypewriter script. Allows scene intros to be done
-    automatically. If intro type, make a new Scene that is the first
-    in the Scene order and enter the typewriter there. If evidence,
-    do not change playhead location.
-*/
-
-function typewriter(type, contents) {
-
-}
-
-/*
-Function: pan
-Variables: 
-    destination []
-Description:
-    Courtroom swipe over to the desired position.
-*/
-
-function pan(destination) {
-
-}
-
-/******************************************************************************
                                 >>>MAIN<<<
 ******************************************************************************/
+
 /******************************************************************************
                                 INVOKE GUI
 ******************************************************************************/
 
 var scriptPath = fl.scriptURI;
 var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
-var guiPanel = fl.xmlPanelFromString("<dialog title=\"Elements of Justice Generator (3.36.22)\" buttons=\"accept, cancel\"> <label value=\"Viewing Mode:\" control=\"iName\"/><menulist id = \"viewMode\"> <menupop>    <menuitem label=\"Courtroom Mode\" selected=\"true\" value=\"courtMode\" />    <menuitem label=\"Investigation Mode\" selected=\"false\" value=\"investigationMode\" />    <menuitem label=\"AAI Mode\" selected=\"false\" value=\"aaiMode\" /></menupop> </menulist><spacer /><label value=\"Defense/POV Character Name:\" control=\"iName\" /><textbox id=\"panel_sDefense\" size=\"24\" value=\"Athena\" /><spacer /><label value=\"Prosecutor Name:\" control=\"iName\" /><textbox id=\"panel_sProsecutor\" size=\"24\" value=\"Luna\" /><spacer /><label value=\"Judge Name:\" control=\"iName\" /><textbox id=\"panel_sJudge\" size=\"24\" value=\"Judge\" /><spacer /><label value=\"Cocouncil Name:\" control=\"iName\" /><textbox id=\"panel_sCocouncil\" size=\"24\" value=\"Twilight\" /><spacer /><label value=\"Witness No. 1 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness1\" size=\"24\" value=\"\" /><spacer /><label value=\"Witness No. 2 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness2\" size=\"24\" value=\"Diamond\" /><spacer /><label value=\"Witness No. 3 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness3\" size=\"24\" value=\"Silver Spoon\" /><spacer /><label value=\"Witness No. 4 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness4\" size=\"24\" value=\"\" /><spacer /><label value=\"Witness No. 5 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness5\" size=\"24\" value=\"\" /><spacer /><separator /><label value=\"Select Array File\" control=\"iName\" /><choosefile id=\"selectedJSON\" type=\"open\" pathtype=\"absolute\" literal=\"false\" required=\"true\" /><checkbox id=\"panel_writeReport\" label=\"Write Report?\" checked=\"true\" /><spacer /></dialog>");
+var guiPanel = fl.xmlPanelFromString("<dialog title=\"Elements of Justice Generator (2.27.23)\" buttons=\"accept, cancel\"> <label value=\"Viewing Mode:\" control=\"iName\"/><menulist id = \"viewMode\"> <menupop>    <menuitem label=\"Courtroom Mode\" selected=\"true\" value=\"courtMode\" />    <menuitem label=\"Investigation Mode\" selected=\"false\" value=\"investigationMode\" />    <menuitem label=\"AAI Mode\" selected=\"false\" value=\"aaiMode\" /></menupop> </menulist><spacer /><label value=\"Defense/POV Character Name:\" control=\"iName\" /><textbox id=\"panel_sDefense\" size=\"24\" value=\"Athena\" /><spacer /><label value=\"Prosecutor Name:\" control=\"iName\" /><textbox id=\"panel_sProsecutor\" size=\"24\" value=\"Luna\" /><spacer /><label value=\"Judge Name:\" control=\"iName\" /><textbox id=\"panel_sJudge\" size=\"24\" value=\"Judge\" /><spacer /><label value=\"Cocouncil Name:\" control=\"iName\" /><textbox id=\"panel_sCocouncil\" size=\"24\" value=\"Twilight\" /><spacer /><label value=\"Witness No. 1 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness1\" size=\"24\" value=\"\" /><spacer /><label value=\"Witness No. 2 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness2\" size=\"24\" value=\"Diamond\" /><spacer /><label value=\"Witness No. 3 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness3\" size=\"24\" value=\"Silver Spoon\" /><spacer /><label value=\"Witness No. 4 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness4\" size=\"24\" value=\"\" /><spacer /><label value=\"Witness No. 5 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness5\" size=\"24\" value=\"\" /><spacer /><separator /><label value=\"Select Array File\" control=\"iName\" /><choosefile id=\"selectedJSON\" type=\"open\" pathtype=\"absolute\" literal=\"false\" required=\"true\" /><checkbox id=\"panel_writeReport\" label=\"Write Report?\" checked=\"true\" /><spacer /></dialog>");
 
 if (guiPanel.dismiss == "accept") {
 
@@ -974,6 +1030,90 @@ if (guiPanel.dismiss == "accept") {
     ******************************************************************************/
 
     /*
+    Remove inappropriate emotions.
+    */
+
+    // Loop through sceneData in batches of 10
+    for (var i = 0; i < sceneData.length; i += 10) {
+        var tempSum = "";
+        var counts = {};
+        var leastCommonLetters = [];
+
+        // Add the fifth elements of the current batch of 20 arrays together
+        for (var j = i; j < i + 20 && j < sceneData.length; j++) {
+            tempSum += sceneData[j][4];
+        }
+
+        // Count the occurrences of each letter in the temporary variable
+        for (var k = 0; k < tempSum.length; k++) {
+            var letter = tempSum.charAt(k);
+            counts[letter] = counts[letter] ? counts[letter] + 1 : 1;
+        }
+
+        // Find the three least common letters
+        var leastCommonLetters = [];
+        var minCounts = [Infinity, Infinity, Infinity];
+        for (var letter in counts) {
+            var count = counts[letter];
+            if (count < minCounts[0]) {
+                leastCommonLetters[2] = leastCommonLetters[1];
+                leastCommonLetters[1] = leastCommonLetters[0];
+                leastCommonLetters[0] = letter;
+                minCounts[2] = minCounts[1];
+                minCounts[1] = minCounts[0];
+                minCounts[0] = count;
+            } else if (count < minCounts[1] && count > minCounts[0]) {
+                leastCommonLetters[2] = leastCommonLetters[1];
+                leastCommonLetters[1] = letter;
+                minCounts[2] = minCounts[1];
+                minCounts[1] = count;
+            } else if (count < minCounts[2] && count > minCounts[1]) {
+                leastCommonLetters[2] = letter;
+                minCounts[2] = count;
+            }
+        }
+
+        fl.trace(leastCommonLetters)
+
+        // Remove the two least common letters from the 20 arrays
+        for (var j = i; j < i + 20 && j < sceneData.length; j++) {
+            sceneData[j][4] = sceneData[j][4].replace(new RegExp("[" + leastCommonLetters.join("") + "]", "g"), "");
+        }
+    }
+
+
+    /*
+    This section smooths out emotionEngine data.
+    */
+
+    // Loop through the sceneData array starting from the second element (index 1)
+    // Create an empty array to store the averaged emotions
+  /*   var averagedEmotions = [];
+
+    for (var i = 1; i < sceneData.length - 1; i++) {
+        // Check if the third element between the current and previous arrays are equivalent
+        if (sceneData[i][2] === sceneData[i - 1][2]) {
+            // If they are equivalent, call the emotionAverage function on the two 5th elements
+            var avgEmotion = emotionAverage(sceneData[i - 1][4], sceneData[i][4]);
+
+            // Store the averaged emotion in the temporary array
+            averagedEmotions[i] = avgEmotion;
+        } else {
+            // If they are not equivalent, store an empty string in the temporary array
+            averagedEmotions[i] = "";
+        }
+    }
+
+    // Update the sceneData array with the averaged emotions
+    for (var i = 1; i < sceneData.length - 1; i++) {
+        // Check if the temporary array has an averaged emotion at this index
+        if (averagedEmotions[i] !== "") {
+            // Update the current array's 5th element with the averaged emotion
+            sceneData[i][4] = averagedEmotions[i];
+        }
+    }
+ */
+    /*
     Dialogue Array
     
     All the entries in the scene data array that are prefixed with "dialogue" will
@@ -1006,89 +1146,6 @@ if (guiPanel.dismiss == "accept") {
         speakertagArray[i] = (dialogueArray[i][0])
     }
 
-    /*
-    Pan Array
-    
-    sceneData[0] will determine if we are panning
-    sceneData[1] will determine the pan destination
-    */
-
-    for (var i = 0; i < sceneData.length; i++) {
-
-        if (sceneData[i][0] == "pan") {
-            //issue: what step do we run this on and how do we tell the function where to pan? We lose our step order after we pull from the scene data array!!!
-            // Do we include what sceneData i we are on? That way we don't lose the original scene data order.
-            // Even shittier idea, discriminate arrays as we iterate dialogueArray and match dialogueArray[i] to the type we're doing to be in sync
-            pan(sceneData[i][1])
-        }
-
-    }
-
-    /*
-    Fade Array
-    
-    sceneData[0] will determine if we are fading
-    sceneData[1] will determine if we are fading in or out
-    */
-
-    var defaultFadeLength = 12; //declare this a million years ago
-
-    for (var i = 0; i < sceneData.length; i++) {
-
-        if (sceneData[i][0] == "fade") {
-            fade(defaultFadeLength, sceneData[i][1])
-        }
-
-    }
-
-    /*
-    Flash 
-    */
-
-    for (var i = 0; i < sceneData.length; i++) {
-
-        if (sceneData[i][0] == "flash") {
-            flash(sfx, cue)
-        }
-
-    }
-
-    /*
-    Screenshake 
-    */
-
-    for (var i = 0; i < sceneData.length; i++) {
-
-        if (sceneData[i][0] == "screenshake") {
-            screenshake(sfx, cue) //screenshake with default settings always
-        }
-
-    }
-
-    /*
-    Evidence
-    
-    sceneData[0] will determine if we are evidence
-    sceneData[1] will determine if we are presenting or obtaining
-    sceneData[2] will determine the png name
-    sceneData[3] the side of the evidence if we're presenting
-    sceneData[4] the text data of the evidence if we're obtaining it
-    
-    If we obtain the evidence, invoke typewriter with the text data of 'sceneData[2] added to Court Record.'
-    
-    */
-
-    for (var i = 0; i < sceneData.length; i++) {
-
-        if (sceneData[i][0] == "evidence") {
-            evidence(sceneData[i][1], sceneData[i][2], sceneData[i][3], sceneData[i][4])
-            //evidence function needs to be polymorphic for obtain vs present
-        }
-
-    }
-
-
-
     /******************************************************************************
                                     MAIN EXECUTION
     ******************************************************************************/
@@ -1119,7 +1176,7 @@ if (guiPanel.dismiss == "accept") {
         getTimeDiff(start, end);
 
     }
-
+    //reportTrace function
     if (viewMode == "investigationMode") {
         sProsecutor = null;
         sJudge = null;
@@ -1150,11 +1207,11 @@ timeDiff /= 1000;
 var seconds = Math.round(timeDiff);
 
 if (timeDiff < 60) {
-    fl.trace("Time Elapsed: " + seconds + " seconds.");
+    fl.trace("SCENE GENERATION TIME ELAPSED: " + seconds + " seconds.");
 }
 
 if (timeDiff > 60) {
     var minutes = Math.floor(timeDiff / 60);
     var seconds = timeDiff - minutes * 60;
-    fl.trace("Time Elapsed: " + minutes + " minutes and " + seconds + " seconds");
+    fl.trace("SCENE GENERATION TIME ELAPSED: " + minutes + " minutes and " + seconds + " seconds");
 } 
