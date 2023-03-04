@@ -43,7 +43,7 @@ The computer then decides which pose it should use for a certain line of dialogu
 
 So a computer-generated emotion like `-BRRGF` would match to a more simple emotion for which a pose likely exists, something like `-RR` or `-BF`.
 
-When notating poses, keep the emotions simple, as complicated and contradictory poses will not come up often, or at all, if your notation is invalid. For this purpose, do not use obviously mutually exclusive emotions in a pose's notation. -+HB makes no sense, as all emotions cancel out. Also beware to follow the order of operations, or the computer will miscalculate what pose it wishes to pick. So a pose notated `+RBBBCC` is wrong, because `B` goes before `R`, there can only be two of each emotion, and only one of a `C`.
+When notating poses, keep the emotions simple, as complicated and contradictory poses will not come up often, or at all, if your notation is invalid. For this purpose, do not use obviously mutually exclusive emotions in a pose's notation. `-+HB` makes no sense, as all emotions cancel out. Also beware to follow the order of operations, or the computer will miscalculate what pose it wishes to pick. So a pose notated `+RBBBCC` is wrong, because `B` goes before `R`, there can only be two of each emotion, and only one of a `C`.
 
 If there are any questions, or if any of this is explained poorly, it's because it's a very weird pipeline that took months to make. Text me if you have any inquiries.
 
