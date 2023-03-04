@@ -6,12 +6,12 @@ As of March 2023 the Scene Generation script is able to place rigs, backgrounds 
 
 The file named config.txt contains JS arrays that reference assets, or program functions. A list of arrays and arguments already exist in the configuration file, but the currently used arrays will be listed here as well.
 
-*courtmodeBackgroundsArray
-*masterRigArray
-*masterInvestigationArray
-*masterDeskArray
-*nameswapArray
-*letterSpacingArray
+courtmodeBackgroundsArray<br>
+masterRigArray<br>
+masterInvestigationArray<br>
+masterDeskArray<br>
+nameswapArray<br>
+letterSpacingArray<br>
 
 ## Emotion Engine ##
 
@@ -21,29 +21,29 @@ For each pose in a rig, there is an abstract, human emotion. We use the LeXmo di
 
 This LeXmo version uses the following emotions, which can be doubled, unless otherwise specified:
 
-`+` describes an overall positive emotion.
-`-` describes an overall negative emotion.
-H describes an overall happy emotion.
-B describes an overall sad emotion.
-R describes an overall angry emotion.
-G describes an overall disgusted emotion.
-F describes an overall afraid emotion.
-S describes an overall surprised emotion.
-T describes an overall trusting emotion.
+`+` describes an overall positive emotion.<br>
+`-` describes an overall negative emotion.<br>
+`H` describes an overall happy emotion.<br>
+`B` describes an overall sad emotion.<br>
+`R` describes an overall angry emotion.<br>
+`G` describes an overall disgusted emotion.<br>
+`F` describes an overall afraid emotion.<br>
+`S` describes an overall surprised emotion.<br>
+`T` describes an overall trusting emotion.<br>
 
-C indicates thinking, and there is **no doubled version** for this emotion.
+`C` indicates thinking, and there is **no doubled version** for this emotion.<br>
 
 So a fully maxed out emotion, (which would be impossible, as described in a bit) would have the format:
 
-**++--HHBBRRGGFFSSTTC**
+`++--HHBBRRGGFFSSTTC`
 
 The computer calculates emotions during the script markup, using multidimensional sentiment analysis. This means for each line of dialogue, the computer will try and assess what emotions are contained within the text, **not** the voice actor's performance.
 
 The computer then decides which pose it should use for a certain line of dialogue by matching what emotions it determined are being expressed in the dialogue, to the closest emotion declared in the rig, by a specific pose.
 
-So a computer-generated emotion like -BRRGF would match to a more simple emotion for which a pose likely exists, something like -RR or -BF.
+So a computer-generated emotion like `-BRRGF` would match to a more simple emotion for which a pose likely exists, something like `-RR` or `-BF`.
 
-When notating poses, keep the emotions simple, as complicated and contradictory poses will not come up often, or at all, if your notation is invalid. For this purpose, do not use obviously mutually exclusive emotions in a pose's notation. -+HB makes no sense, as all emotions cancel out. Also beware to follow the order of operations, or the computer will miscalculate what pose it wishes to pick. So a pose notated +RBBBCC is wrong, because B goes before R, there can only be two of each emotion, and only one of a C.
+When notating poses, keep the emotions simple, as complicated and contradictory poses will not come up often, or at all, if your notation is invalid. For this purpose, do not use obviously mutually exclusive emotions in a pose's notation. -+HB makes no sense, as all emotions cancel out. Also beware to follow the order of operations, or the computer will miscalculate what pose it wishes to pick. So a pose notated `+RBBBCC` is wrong, because `B` goes before `R`, there can only be two of each emotion, and only one of a `C`.
 
 If there are any questions, or if any of this is explained poorly, it's because it's a very weird pipeline that took months to make. Text me if you have any inquiries.
 
