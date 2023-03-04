@@ -6,12 +6,12 @@ As of March 2023 the Scene Generation script is able to place rigs, backgrounds 
 
 The file named config.txt contains JS arrays that reference assets, or program functions. A list of arrays and arguments already exist in the configuration file, but the currently used arrays will be listed here as well.
 
-courtmodeBackgroundsArray
-masterRigArray
-masterInvestigationArray
-masterDeskArray
-nameswapArray
-letterSpacingArray
+*courtmodeBackgroundsArray
+*masterRigArray
+*masterInvestigationArray
+*masterDeskArray
+*nameswapArray
+*letterSpacingArray
 
 ## Emotion Engine ##
 
@@ -21,8 +21,8 @@ For each pose in a rig, there is an abstract, human emotion. We use the LeXmo di
 
 This LeXmo version uses the following emotions, which can be doubled, unless otherwise specified:
 
-+ describes an overall positive emotion.
-- describes an overall negative emotion.
+`+` describes an overall positive emotion.
+`-` describes an overall negative emotion.
 H describes an overall happy emotion.
 B describes an overall sad emotion.
 R describes an overall angry emotion.
