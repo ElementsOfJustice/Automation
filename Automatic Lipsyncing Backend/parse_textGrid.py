@@ -53,7 +53,7 @@ def main():
     # for each file in the directory...
     for folder in os.listdir(directory):
         foldername = os.fsdecode(folder)
-        for file in os.listdir(os.fsencode(directory_name + "\\" + foldername)):
+        for file in os.listdir(os.fsencode(directory_name + "/" + foldername)):
             filename = os.fsdecode(file)
             scene_number = re.sub(r"s(\d*)_.*", r"\1", filename.strip())
             writeParsedFile(directory_name + "/" + foldername + "/" + filename,
