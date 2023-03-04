@@ -43,7 +43,13 @@ Description: Split the string by comma and store it in an array. Code is natural
 to be friendly further on.
 */
 function parseString(str) {
+	
+	try {
 	var arrSplit = str.split(',¤,');
+	} catch (error) {
+		alert("Hypercopy and hyperpaste do not work cross-document.")
+	};
+
 	var result = [];
 	for (var i = 0; i < arrSplit.length; i++) {
 		var tempResult = [];

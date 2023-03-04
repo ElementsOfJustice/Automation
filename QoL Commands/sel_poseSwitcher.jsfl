@@ -1,4 +1,4 @@
-﻿var xmlStr1 = ' <dialog title="Posepicker" buttons="accept, cancel"> <label value="Pick Pose" control="iName"/> <menulist id = "poseList"> <menupop>'
+﻿var xmlStr1 = ' <dialog title="Pose Switcher" buttons="accept, cancel"> <label value="Pick Pose" control="iName"/> <menulist id = "poseList"> <menupop>'
 var xmlStr2 = '	</menupop> </menulist> </dialog>'
 
 fl.getDocumentDOM().getTimeline().currentFrame = fl.getDocumentDOM().getTimeline().getSelectedFrames()[1];
