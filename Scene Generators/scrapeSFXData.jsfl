@@ -1,3 +1,17 @@
+function trim(input) {
+    var len = input.length;
+    var st = 0;
+    var val = input;
+
+    while ((st < len) && (val.charAt(st) <= ' ')) {
+        st++;
+    }
+    while ((st < len) && (val.charAt(len - 1) <= ' ')) {
+        len--;
+    }
+    return ((st > 0) || (len < input.length)) ? input.substring(st, len) : input;
+}
+
 function findAllLayerIndicesBySubstring(layerName) {
     var toReturn = [];
     for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
@@ -9,7 +23,6 @@ function findAllLayerIndicesBySubstring(layerName) {
 }
 
 
-// TODO: iterate through all text keyframes, copy data, then go to sfx
 // var confirmed = confirm("Confirm: Text layer is called \"TEXT\" and every sfx layer starts with \"SFX\".");
 var textLayerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex("TEXT");
 if (textLayerIndex == undefined) {
@@ -19,8 +32,23 @@ var sfxLayerIndices = findAllLayerIndicesBySubstring("SFX");
 if (sfxLayerIndices.length == 0) {
     throw new Error("Error: no sfx layers found.");
 }
-
 var textLayer = fl.getDocumentDOM().getTimeline().layers[textLayerIndex];
+// idempotent preprocessing: clear extraneous keyframes from text (same text back to back, not good)
+var prevText = "";
+fl.getDocumentDOM().getTimeline().currentLayer = textLayerIndex * 1;
+for(var i = 0; i < textLayer.frames.length; i += textLayer.frames[i].duration - (i - textLayer.frames[i].startFrame)) {
+    if(textLayer.frames[i].elements.length == 0) {
+        continue; // ignore empty text keyframes...
+    }
+    var curText = textLayer.frames[i].elements[0].getTextString();
+    if(curText == prevText) {
+        // clear keyframe of duplicate text
+        fl.getDocumentDOM().getTimeline().clearKeyframes(i);
+    }
+    prevText = curText;
+}
+
+
 for (var i = 0; i < textLayer.frames.length; i += textLayer.frames[i].duration - (i - textLayer.frames[i].startFrame)) {
     var curKeyframeDuration = textLayer.frames[i].duration;
     if(textLayer.frames[i].elements.length == 0) {
@@ -34,7 +62,6 @@ for (var i = 0; i < textLayer.frames.length; i += textLayer.frames[i].duration -
     var sfxs = [];
     for (var j = 0; j < sfxLayerIndices.length; j++) {
         var curSfxLayer = fl.getDocumentDOM().getTimeline().layers[sfxLayerIndices[j]];
-        // todo: make sfx during a line of text into an array so mulitple sfx per line is supported
         for (var k = i; k < i + curKeyframeDuration; k += curSfxLayer.frames[k].duration - (k - curSfxLayer.frames[k].startFrame)) {
             var isKeyFrame = k == curSfxLayer.frames[k].startFrame;
             if(isKeyFrame && curSfxLayer.frames[k].soundLibraryItem != null) {
@@ -43,5 +70,6 @@ for (var i = 0; i < textLayer.frames.length; i += textLayer.frames[i].duration -
             }
         }
     }
-    fl.trace("\"" + curSpeaker + "\",\"" + curText + "\"," + ((sfxs.length == 0) ? "" : "\"" + sfxs + "\""));
+    if(curSpeaker === undefined) curSpeaker = "";
+    fl.trace("\"" + trim(curSpeaker) + "\",\"" + trim(curText) + "\"," + ((sfxs.length == 0) ? "" : "\"" + sfxs + "\""));
 }
