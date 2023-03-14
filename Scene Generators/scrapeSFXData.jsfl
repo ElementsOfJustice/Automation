@@ -43,5 +43,5 @@ for (var i = 0; i < textLayer.frames.length; i += textLayer.frames[i].duration -
             }
         }
     }
-    fl.trace(curSpeaker + " says " + "\"" + curText + "\"" + " with " + ((sfxs.length == 0) ? "no sfx" : sfxs));
+    fl.trace("\"" + curSpeaker + "\",\"" + curText + "\"," + ((sfxs.length == 0) ? "no sfx" : "[" + sfxs + "]"));
 }
