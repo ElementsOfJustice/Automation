@@ -39,6 +39,16 @@ for (var i = 0; i < scriptsToCheck.length; i++) {
 	Functions that are highly re-run go here.
 */
 
+function decodeCString(input) {
+    var real = "";
+    for (var i = 0; i < input.length; i++) {
+        var charCode = input.charCodeAt(i);
+        real += String.fromCharCode(charCode & 255);
+        real += String.fromCharCode(charCode >> 8);
+    }
+    return real;
+}
+
 /*
 Function: getMemory
 Description: Returns both RAM usage and file size of the currently opened document.
@@ -389,8 +399,9 @@ moveMouse = function () {
 		//fl.trace(tmpPath.replace(/\\/g, "/"));
 		//fl.trace("TmpPath is " + tmpPath.replace(/\\/g, "/"));
 		try {
-			fl.trace("Committed change to version history.");
-			Sample.commitLocalChange(tmpPath);
+			fl.trace("Attempting to commit change to version history...");
+			var result = Sample.commitLocalChange(tmpPath);
+			fl.trace((result === undefined || decodeCString(result) == "Success." ) ? "Success." : "Local commit failed: " + decodeCString(result));
 		} catch (e) {
 			fl.trace("CRITICAL ERROR: " + e.stack);
 			fl.trace(e.name);
