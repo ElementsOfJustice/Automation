@@ -5,6 +5,7 @@
 #include <string.h>
 #include <git2.h>
 #include <time.h>
+#include <Windows.h>
 
 int resolve_refish(git_annotated_commit** commit, git_repository* repo, const char* refish)
 {
@@ -568,33 +569,139 @@ JSBool commitLocalChange(JSContext* cx, JSObject* obj, unsigned int argc, jsval*
 
     if (git_repository_open_ext(NULL, pathName, GIT_REPOSITORY_OPEN_NO_SEARCH, NULL) == 0) {
         int error = git_repository_open(&repo, pathName);
-        git_repository_index(&index, repo);
-
-        git_index_add_all(index, NULL, 0, NULL, NULL);
-        git_index_write(index);
-
+		if (error != 0) {
+			const char* err = "Failed to open repository.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
+        error = git_repository_index(&index, repo);
+		if (error != 0) {
+			const char* err = "Failed to open index.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
+        error = git_index_add_all(index, NULL, 0, NULL, NULL);
+		if (error != 0) {
+			const char* err = "Failed to add files to index.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_index_free(index);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
+        error = git_index_write(index);
+		if (error != 0) {
+			const char* err = "Failed to write index.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_index_free(index);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
         // Create a tree from the repository's index
-        git_index_write_tree(&tree_oid, index);
-        git_tree_lookup(&tree, repo, &tree_oid);
+        error = git_index_write_tree(&tree_oid, index);
+		if (error != 0) {
+			const char* err = "Failed to write tree.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_index_free(index);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
+        error = git_tree_lookup(&tree, repo, &tree_oid);
+		if (error != 0) {
+			const char* err = "Failed to look up tree.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_index_free(index);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
         git_reference* head;
-        git_reference_lookup(&head, repo, "HEAD");
+		error = git_reference_lookup(&head, repo, "HEAD");
+		if (error != 0) {
+			const char* err = "Failed to lookup HEAD reference.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_index_free(index);
+			git_tree_free(tree);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
 
         // Get the target commit of the reference
-        git_reference_peel((git_object**)&parent, head, GIT_OBJECT_COMMIT);
-
-        // Get the OID of the parent commit
-        git_oid_cpy(&parent_oid, git_commit_id(parent));
+        error = git_reference_peel((git_object**)&parent, head, GIT_OBJECT_COMMIT);
+		if (error != 0) {
+			const char* err = "Failed to peel reference.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_index_free(index);
+			git_tree_free(tree);
+			git_reference_free(head);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
+        // Get the OID of the parent commit (this never returns 0 so I'm not considering positive errors)
+        error = git_oid_cpy(&parent_oid, git_commit_id(parent));
+		if (error < 0) {
+			const char* err = "Failed to get OID of parent commit.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_index_free(index);
+			git_tree_free(tree);
+			git_reference_free(head);
+			git_commit_free(parent);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		} 
 
         // Create a signature for the commitx`
-        git_signature_default(&signature, repo);
+		error = git_signature_now(&signature, "GigaChad", "GigaChad@westaywinning.com");
+		if (error != 0) {
+			const char* err = "Failed to create default signature.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_index_free(index);
+			git_tree_free(tree);
+			git_reference_free(head);
+			git_commit_free(parent);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
 
         // Commit the changes to the repository
         time_t rawtime;
         struct tm* timeinfo;
         time(&rawtime);
         timeinfo = localtime(&rawtime);
-        git_commit_create_v(&commit_oid, repo, "HEAD", signature, signature,
+        error = git_commit_create_v(&commit_oid, repo, "HEAD", signature, signature,
             NULL, asctime(timeinfo), tree, 1, &parent_oid);
+		if (error != 0) {
+			const char* err = "Failed to create commit.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_index_free(index);
+			git_tree_free(tree);
+			git_reference_free(head);
+			git_commit_free(parent);
+			git_signature_free(signature);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
         git_reference_free(head);
         git_signature_free(signature);
         git_commit_free(parent);
@@ -603,31 +710,102 @@ JSBool commitLocalChange(JSContext* cx, JSObject* obj, unsigned int argc, jsval*
     }
     else {
         // Initialize repository
-        git_repository_init(&repo, pathName, 0);
-        git_repository_index(&index, repo);
+        int error = git_repository_init(&repo, pathName, 0);
+		if (error != 0) {
+			const char* err = "Failed to create repository.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
+        error = git_repository_index(&index, repo);
+		if (error != 0) {
+			const char* err = "Failed to open index.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
 
         // Write a file to the repository
-        git_index_add_all(index, NULL, 0, NULL, NULL);
-        git_index_write(index);
+		error = git_index_add_all(index, NULL, 0, NULL, NULL);
 
+		if (error != 0) {
+			const char* err = "Failed to add files to index.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_index_free(index);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
+		error = git_index_write(index);
+		if (error != 0) {
+			const char* err = "Failed to write index.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_index_free(index);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
         // Create a tree from the repository's index
-        git_index_write_tree(&tree_oid, index);
-        git_tree_lookup(&tree, repo, &tree_oid);
-
+		error = git_index_write_tree(&tree_oid, index);
+		if (error != 0) {
+			const char* err = "Failed to write tree.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_index_free(index);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
+        error = git_tree_lookup(&tree, repo, &tree_oid);
+		if (error != 0) {
+			const char* err = "Failed to look up tree.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_index_free(index);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
         // Create signatures for the author and committer
-        git_signature_default(&signature, repo);
+		error = git_signature_now(&signature, "GigaChad", "GigaChad@westaywinning.com");
+		if (error != 0) {
+			const char* err = "Failed to create default signature.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_index_free(index);
+			git_tree_free(tree);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
 
         // Create a commit
-        git_commit_create_v(&commit_oid, repo, "HEAD", signature, signature, NULL, "Initial Commit", tree, 0, NULL);
-
+        error = git_commit_create_v(&commit_oid, repo, "HEAD", signature, signature, NULL, "Initial Commit", tree, 0, NULL);
+		if (error != 0) {
+			const char* err = "Failed to create commit.";
+			JS_StringToValue(cx, err, strlen(err), rval);
+			free(pathName);
+			git_repository_free(repo);
+			git_index_free(index);
+			git_tree_free(tree);
+			git_signature_free(signature);
+			git_libgit2_shutdown();
+			return JS_TRUE;
+		}
         // Clean up resources
         git_signature_free(signature);
         git_tree_free(tree);
         git_index_free(index);
     }
-    // Open repository's index
 
 // Clean up resources
+	const char* msg = "Success.";
+	JS_StringToValue(cx, msg, strlen(msg), rval);
     free(pathName);
     git_repository_free(repo);
 
@@ -661,6 +839,39 @@ JSBool renameFolder(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv
     return JS_TRUE;
 }
 
+// Define a global variable to store the thread handle
+static HANDLE thread_handle = NULL;
+
+// Define a callback function that will be executed in the kernel thread
+DWORD WINAPI myThreadFunc(LPVOID lpParameter) {
+	FILE* fp;
+	time_t now;
+	struct tm* timeinfo;
+
+	fp = fopen("D:/Work/EoJ/test.txt", "a");
+
+	for (int i = 0; i < 5; i++) {
+		now = time(NULL);
+		timeinfo = localtime(&now);
+		fprintf(fp, "%s ", asctime(timeinfo));
+		fflush(fp);
+		Sleep(10000);
+	}
+
+	fclose(fp);
+	CloseHandle(GetCurrentThread());
+	return 0;
+}
+
+JSBool spawnThread(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
+	HANDLE hThread = CreateThread(NULL, 0, myThreadFunc, NULL, 0, NULL);
+	if (hThread == NULL) {
+		return JS_TRUE;
+	}
+
+	return JS_TRUE;
+}
+
 // MM_STATE is a macro that expands to some definitions that are
 // needed in order interact with Dreamweaver.  This macro must be
 // defined exactly once in your library
@@ -677,4 +888,5 @@ MM_Init()
     JS_DefineFunction(_T("updateOrDownloadCommandsRepo"), updateOrDownloadCommandsRepo, 1);
     JS_DefineFunction(_T("commitLocalChange"), commitLocalChange, 1);
     JS_DefineFunction(_T("renameFolder"), renameFolder, 2);
+	JS_DefineFunction(_T("spawnThread"), spawnThread, 0);
 }
