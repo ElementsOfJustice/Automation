@@ -8,6 +8,7 @@ var sceneArray = [0];
 var tmpKeys = [];
 
 fl.getDocumentDOM().selectNone();
+fl.showIdleMessage(false);
 fl.outputPanel.clear();
 
 //Compile timeline index of scenes, where scenes are arbitrarially defined as a timeline containing
@@ -133,7 +134,7 @@ autoEyeSet = function (layerIndex) {
 
 	for (var i = 0; i < frames.length - 1; i++) {
 
-		if (i == 0) {
+		if ((i == 0) && (!fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].isEmpty)) {
 			//First Frame of Layer
 			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].labelType = "anchor";
 			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].name = "CutOpen";
@@ -182,6 +183,8 @@ runBlinking = function (layerIndex) {
 
 	rigFolder = rigPath;
 
+	var startTime = new Date();
+
 	for (i = 0; i < frameArray.length; i++) {
 		if ((i == frameArray[i].startFrame) && (frameArray[i].isEmpty == false) && (frameArray[i].labelType == "anchor")) {
 			fl.getDocumentDOM().getTimeline().currentFrame = i
@@ -228,6 +231,22 @@ runBlinking = function (layerIndex) {
 			}
 		}
 	}
+
+	var endTime = new Date();
+	timeDiff = endTime - startTime;
+	timeDiff /= 1000;
+	var seconds = Math.round(timeDiff);
+
+	if (timeDiff < 60) {
+		alert("TIME ELAPSED: " + seconds + " seconds.");
+	}
+
+	if (timeDiff > 60) {
+		var minutes = Math.floor(timeDiff / 60);
+		var seconds = timeDiff - minutes * 60;
+		alert("TIME ELAPSED: " + minutes + " minutes and " + seconds + " seconds");
+	}
+
 }
 
 //For each scene, runBlinking on each child layer of VECTOR_CHARACTERS
@@ -237,9 +256,13 @@ for (var a = 0; a < sceneArray.length; a++) {
 	for (var b = 0; b < fl.getDocumentDOM().timelines[currentTimeline].layerCount; b++) {
 		if (fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer !== null) {
 			if (fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer.name == "VECTOR_CHARACTERS") {
-				//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Run your code.
-				autoEyeSet(b);
-				runBlinking(b);
+				if (fl.getDocumentDOM().timelines[currentTimeline].layers[b].layerType == "normal") {
+					//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Run your code.
+
+					autoEyeSet(b);
+					runBlinking(b);
+
+				}
 			}
 		}
 	}
@@ -255,10 +278,12 @@ for (var i = 0; i < sceneArray.length; i++) {
 	for (var j = 0; j < fl.getDocumentDOM().timelines[currentTimeline].layerCount; j++) {
 		if (fl.getDocumentDOM().timelines[currentTimeline].layers[j].parentLayer !== null) {
 			if (fl.getDocumentDOM().timelines[currentTimeline].layers[j].parentLayer.name == "VECTOR_CHARACTERS") {
-				//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Erase your code.
-				var frameArray = fl.getDocumentDOM().getTimeline().layers[j].frames;
-				for (k = 0; k < frameArray.length; k++) {
-					frameArray[k].actionScript = ""
+				if (fl.getDocumentDOM().timelines[currentTimeline].layers[j].layerType == "normal") {
+					//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Erase your code.
+					var frameArray = fl.getDocumentDOM().getTimeline().layers[j].frames;
+					for (k = 0; k < frameArray.length; k++) {
+						frameArray[k].actionScript = ""
+					}
 				}
 			}
 		}
