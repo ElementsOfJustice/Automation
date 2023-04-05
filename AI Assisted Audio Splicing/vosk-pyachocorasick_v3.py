@@ -24,8 +24,9 @@ import jellyfish
 
 from time import perf_counter
 from vosk import Model, KaldiRecognizer, SetLogLevel
-from nltk.translate.bleu_score import sentence_bleu
+from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 
+from termcolor import colored
 import Word as custom_Word
 
 def soundex(word):
@@ -63,24 +64,72 @@ def levenshtein_distance(s1, s2):
 def string_similarity(s1, s2):
     return 1 - (levenshtein_distance(s1, s2) / max(len(s1), len(s2)))
 
-def jaro_winkler(s1, s2):
-    return jellyfish.jaro_winkler(s1, s2)
-
 def bleu_4(reference, candidate):
-    weights = (0.25, 0.25, 0.25, 0.25)
-    return sentence_bleu([reference], candidate, weights)
+    smoothie = SmoothingFunction().method4
+    weights = (0.25, 0.25, 0.25, 0.25) #4-gram order!
+    return sentence_bleu([reference], candidate, weights, smoothing_function=smoothie)
+
+def get_word_at_nth_char(string, n, offset=0):
+    words = string.split()
+    start = 0
+    for i, word in enumerate(words):
+        end = start + len(word)
+        if n <= end:
+            return words[min(i + offset, len(words) - 1)]
+        start = end + 1
+    return None
+
+def remove_last_space(string):
+    if string[-1] == ' ':
+        return string[:-1]
+    else:
+        return string
 
 def find_matches(haystack, needle):
+    needle = remove_last_space(needle)
     matches = []
     match_indices = []
+    last_needle_word = needle.split()[-1]
+
     for i in range(len(haystack) - len(needle) + 1):
-        if string_similarity(soundex(haystack[i:i+len(needle)]), soundex(needle)) > 0.9:
-            if haystack[i:i+len(needle)] == needle or bleu_4(haystack[i:i+len(needle)], needle) > 0.75:
-                start_index = i
-                end_index = i + len(needle) - 1
-                if not match_indices or start_index > match_indices[-1][1]:
-                    match_indices.append((start_index, end_index))
-                    matches.append(haystack[i:i+len(needle)])
+        if (string_similarity(soundex(haystack[i:i+len(needle)]), soundex(needle)) > 0.9 and
+            (haystack[i:i+len(needle)] == needle or bleu_4(haystack[i:i+len(needle)], needle) > 0.75)):
+
+            end_index = i + len(needle) - 1
+            last_match_word = get_word_at_nth_char(haystack, end_index)
+
+            while haystack[end_index] != " ":
+                end_index += 1
+            end_index -= 1
+
+            if last_match_word != last_needle_word:
+                char_count = 0
+                for offset in range(-3, 3):
+                    word = get_word_at_nth_char(haystack, end_index, offset)
+
+                    if offset > 0:
+                        char_count += (len(word) + 1)
+                    elif offset < 0:
+                        char_count -= (len(word) + 1)
+                    else:
+                        char_count = 0
+
+                    if word == last_needle_word:
+                        end_index = end_index + char_count
+                        last_match_word = word
+                        continue
+
+            while end_index < len(haystack) and haystack[end_index] != ' ':
+                end_index += 1
+            if end_index >= len(haystack) or haystack[end_index-1] != ' ':
+                while end_index < len(haystack) and haystack[end_index] != ' ':
+                    end_index += 1
+                end_index -= 1
+
+            if not match_indices or i > match_indices[-1][1]:
+                match_indices.append((i, end_index + 1))
+                matches.append(haystack[i:(end_index + 1)])
+
     return matches
 
 def remove_stuttering(text):
@@ -110,7 +159,7 @@ charIndexToWordIndex = {}
 totalChars = 0
 idx = 0
 haystack = ""
-fullLine = "________________________________________________________________________________________________________________________________________________________"
+fullLine = "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
 
 # INPUT
 if not len(sys.argv) > 1:
@@ -211,7 +260,8 @@ for x, n in enumerate(needles):
         lineID = needles[x][1]
         needle = needles[x][3]
 
-        needle = remove_stuttering(remove_stuttering(needle)).replace("-", " ").replace("“", "").replace("”", "")
+        needle = re.sub(r'\[.*?\]', '', needle)
+        needle = remove_stuttering(remove_stuttering(needle)).replace("-", " ").replace("“", "").replace("”", "").replace("’", "'")
         needle = needle.lower().translate(str.maketrans('', '', string.punctuation)).replace("…" , "").replace("—", " ")
         needle = remove_leading_space(needle)
 
@@ -220,8 +270,8 @@ for x, n in enumerate(needles):
             continue
 
         if complexPrint:
-            print(fullLine)
-            print("Current Needle:\t " + needles[x][1] + "\t " + "|" + needle + "|")
+            print(colored(fullLine, 'grey', attrs=['bold']))
+            print(colored('Current Needle:\t', 'yellow') + needles[x][1] + " " + "'" + needle + "'")
 
         arrMatch = []
         flagFailed = True
@@ -233,7 +283,7 @@ for x, n in enumerate(needles):
                 startIndex = haystack.find(i)
 
                 if complexPrint:
-                    print("Match: " + i)
+                    print(colored('Haystack Match: ', 'green') + i)
 
                 if startIndex in charIndexToWordIndex:
                     lineSize = len(needle.split())
@@ -244,22 +294,22 @@ for x, n in enumerate(needles):
                     allLines.append([str(round(list_of_Words[start_word_index].get_start() - 0.25, 3)), str(round(list_of_Words[end_word_index-1].get_end() + 0.75, 3)), lineID])
 
                     if complexPrint:
-                        print("Match Successful")
+                        print(colored('! Match Successful !', 'green', attrs=['bold']))
                 else:
                     failedLines.append([needles[x][1], needle])
                     if complexPrint:
-                        print("Unique Match Failed " + i)
+                        print(colored('X Unique Match Failed X', 'red', attrs=['bold']))
 
         else:
             if complexPrint:
-                print("No Matches")
+                print(colored('X No Matches X', 'red', attrs=['bold']))
 
             failedLines.append([needles[x][1], needle])
 
         t1_stop = perf_counter()
 
 if complexPrint:
-    print(fullLine)
+    print(colored(fullLine, 'grey', attrs=['bold']))
 
 try:
     dest_file = codecs.open(sys.argv[1].replace(".txt", "_autoLabel.txt"), "w", "utf-8")
@@ -276,7 +326,7 @@ allLines.sort(key=lambda x: float(x[0]))
 #Superbad merging is caused by the sliding window find matches method. Fix this with GPT later.
 
 #Merge labels
-""" i = 0
+i = 0
 while i < len(allLines) - 1:
     j = i + 1
     while j < len(allLines):
@@ -286,7 +336,7 @@ while i < len(allLines) - 1:
             allLines[j][0] = str(round(middle_point, 3))
             break
         j += 1
-    i += 1 """
+    i += 1
 
 #Prune False Positives
 label_counts = {}
@@ -317,6 +367,7 @@ failedLines = sorted(failedLines, key=lambda x: int(x[0].split("_")[1]))
 
 if complexPrint:
     print("Accuracy is %" + str(round((((characterCount-len(failedLines))/characterCount) * 100), 2)))
+    print("\n")
 
 #Print
 for i in range(len(allLines)):
@@ -326,7 +377,7 @@ for i in range(len(allLines)):
 for x, n in enumerate(failedLines):
     toWrite.append(str("Failed Line: \t" + failedLines[x][0] + "\t" + failedLines[x][1] + "\n"))
     if complexPrint:
-        print("Failed Line: \t" + failedLines[x][0] + "\t" + failedLines[x][1])
+        print(colored("Failed Line: \t", 'red') + failedLines[x][0] + "\t" + failedLines[x][1])
 
 for x in toWrite:
     dest_file.write(x)
@@ -334,7 +385,7 @@ for x in toWrite:
 dest_file.close()
 
 print()
-print("Finished.")
+print(colored("Finished!", 'green', attrs=['bold']))
 print()
 
 print("VOSK Transcription took: \t",
