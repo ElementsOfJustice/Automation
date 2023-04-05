@@ -7,7 +7,7 @@ Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 ******************************************************************************/
 
 DURATION = 200;
-
+SCALE = fl.getDocumentDOM().width / 1280.0;
 // get the adobe animate file and info inside
 var doc = fl.getDocumentDOM();
 var timeline = doc.getTimeline();
@@ -16,8 +16,8 @@ var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
 var frameArray = fl.getDocumentDOM().getTimeline().layers[layer].frames;
 
 // Store Width and Height
-var trueWidth = 928;
-var trueHeight = 477;
+var trueWidth = 928.0 * SCALE;
+var trueHeight = 477.0 * SCALE;
 
 // get frames selected by the user
 var frameSelection = doc.getTimeline().getSelectedFrames();
@@ -94,7 +94,7 @@ an.getDocumentDOM().align('vertical center', true);
 an.getDocumentDOM().align('right', true);
 // we want to make the evidence offscreen and vertically centered
 // the evidence is currently all the way to the right and vertically centered
-an.getDocumentDOM().moveSelectionBy({ x: 918, y: 0 }); // move the object the rest of the way off screen
+an.getDocumentDOM().moveSelectionBy({ x: 918 * SCALE, y: 0 }); // move the object the rest of the way off screen
 doc.getTimeline().currentFrame += 10; // advance playhead by 10
 selectOrMakeKeyframe(fl.getDocumentDOM().getTimeline().getSelectedLayers(), fl.getDocumentDOM().getTimeline().currentFrame);
 // select the current frame
@@ -117,7 +117,7 @@ doc.getTimeline().currentFrame = endFrame;
 selectOrMakeKeyframe(fl.getDocumentDOM().getTimeline().getSelectedLayers(), fl.getDocumentDOM().getTimeline().currentFrame);
 // select current frame
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame + 1);
-an.getDocumentDOM().moveSelectionBy({ x: 0, y: 536 }); // move the selection 536 downward
+an.getDocumentDOM().moveSelectionBy({ x: 0, y: 536 * SCALE }); // move the selection 536 downward
 doc.getTimeline().currentFrame -= 10; // reverse playhead by 10
 selectOrMakeKeyframe(fl.getDocumentDOM().getTimeline().getSelectedLayers(), fl.getDocumentDOM().getTimeline().currentFrame);
 // select the current frame
