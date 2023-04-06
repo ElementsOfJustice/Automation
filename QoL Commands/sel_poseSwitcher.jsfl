@@ -30,25 +30,35 @@ function setup() {
 	fl.getDocumentDOM().getTimeline().layers[selLayerIndex * 1].locked = false; // unlock layer
 }
 
+/*
+Function: roundDownToHundred
+Variables: num
+Description: Rounds down to the next hundred.
+*/
+function roundDownToHundred(num) {
+  return Math.floor(num/100) * 100;
+}
+
 setup();
 
-var focus = fl.getDocumentDOM().getTimeline().layers[layerNum].frames[curFrame].elements[0]
+var focus = fl.getDocumentDOM().getTimeline().layers[layerNum].frames[startingFrame].elements[0]
 
 if (focus !== undefined) {
 	if (focus.elementType == "instance") {
 		var ffIndex = focus.firstFrame + 1
 		var itemIndex = fl.getDocumentDOM().library.findItemIndex(focus.libraryItem.name)
+		
 		if (fl.getDocumentDOM().library.items[itemIndex].timeline !== undefined) {
 			var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0]
 			var poseName = objTl.frames[ffIndex - 1].name;
 
-			if (curFrame != fl.getDocumentDOM().getTimeline().layers[layerNum].frames[curFrame].startFrame) {
-				fl.getDocumentDOM().getTimeline().convertToKeyframes(curFrame);
+			if (startingFrame != fl.getDocumentDOM().getTimeline().layers[layerNum].frames[startingFrame].startFrame) {
+				fl.getDocumentDOM().getTimeline().convertToKeyframes(startingFrame);
 			}
 
 			for (var k = 0; k < objTl.frameCount; k++) {
 				if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame)) {
-					if (ffIndex != k + 1) {
+					if (roundDownToHundred(ffIndex) != k + 1) {
 						var selStr = '<menuitem label="' + objTl.frames[k].name + '" selected="false" value="' + k + '"/>';
 						totalSelStr = totalSelStr.concat(selStr);
 					} else {
@@ -61,7 +71,7 @@ if (focus !== undefined) {
 			var guiPanel = fl.xmlPanelFromString(xmlStr1 + totalSelStr + xmlStr2);
 
 			if (guiPanel.dismiss == "accept") {
-				delta = (parseInt(guiPanel.poseList) - fl.getDocumentDOM().getTimeline().layers[layerNum].frames[curFrame].elements[0].firstFrame);
+				delta = (roundDownToHundred(parseInt(guiPanel.poseList)) - roundDownToHundred(fl.getDocumentDOM().getTimeline().layers[layerNum].frames[startingFrame].elements[0].firstFrame));
 			}
 		}
 	}
