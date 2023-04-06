@@ -58,6 +58,7 @@ function selectOrMakeKeyframe(layer, frame) {
 // main
 var selectedLayer = fl.getDocumentDOM().getTimeline().getSelectedLayers();
 var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
+selectOrMakeKeyframe(selectedLayer, curFrame);
 var initX = fl.getDocumentDOM().getElementProperty("x");
 fl.getDocumentDOM().align('horizontal center', true);
 var deltaX = initX - fl.getDocumentDOM().getElementProperty("x");

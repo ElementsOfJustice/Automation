@@ -83,6 +83,7 @@ Description:
 */
 function createTween(witnessLayerIndex) {
     var startFrame = fl.getDocumentDOM().getTimeline().currentFrame;
+    selectOrMakeKeyframe(witnessLayerIndex, startFrame);
     fl.getDocumentDOM().getTimeline().insertFrames(SWIPE_LENGTH - 1, true); // insert frames to all layers
     // resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), startFrame); // select background
     // // if the current frame isn't the first frame in a frame sequence, make a note of that
@@ -92,7 +93,7 @@ function createTween(witnessLayerIndex) {
     //     fl.getDocumentDOM().getTimeline().insertKeyframe(); // put keyframe for start of swipe
     // }
     fl.getDocumentDOM().getTimeline().layers[witnessLayerIndex].locked = false; // unlock witness layer
-    resetSelection(witnessLayerIndex, fl.getDocumentDOM().getTimeline().currentFrame); //reset the selection
+    selectOrMakeKeyframe(witnessLayerIndex, fl.getDocumentDOM().getTimeline().currentFrame); //reset the selection
     var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
     var initX = fl.getDocumentDOM().getElementProperty("x");
     fl.getDocumentDOM().align('horizontal center', true);
