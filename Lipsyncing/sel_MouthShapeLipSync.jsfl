@@ -141,7 +141,7 @@ function placeKeyframes(startFrame, layer, lipsyncMap) {
             var frame = lipsyncMap[PHONEME_TO_MOUTH_SHAPE[phoneme]];
         }
         fl.getDocumentDOM().setElementProperty("firstFrame", poseStartFrame + frame);
-        fl.getDocumentDOM().setElementProperty("lastFrame", poseStartFrame + frame + LENGTH_MAP[PHONEME_TO_MOUTH_SHAPE[phoneme]]);
+        fl.getDocumentDOM().setElementProperty("lastFrame", poseStartFrame + frame + LENGTH_MAP[PHONEME_TO_MOUTH_SHAPE[phoneme]] - 1);
         fl.getDocumentDOM().setElementProperty("loop", "play once");
         if (arrayContains(SINGLE_FRAME_MOUTH_SHAPES, PHONEME_TO_MOUTH_SHAPE[phoneme], isEqual)) {
             fl.getDocumentDOM().setElementProperty("loop", "single frame"); // set single frame for mouth shapes that only last for one frame

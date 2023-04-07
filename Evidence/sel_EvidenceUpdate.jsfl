@@ -7,6 +7,7 @@ Tutorial Available in the MEGA: https://mega.nz/fm/qlIkjDSA
 ******************************************************************************/
 
 DURATION = 300;
+SCALE = fl.getDocumentDOM().width / 1280.0;
 
 // get the adobe animate doc object and data inside
 var doc = fl.getDocumentDOM();
@@ -15,8 +16,8 @@ var layer = timeline.getSelectedLayers();
 var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
 var frameArray = fl.getDocumentDOM().getTimeline().layers[layer].frames;
 
-var trueWidth = 928;
-var trueHeight = 477;
+var trueWidth = 928 * SCALE;
+var trueHeight = 477 * SCALE;
 
 // store indexes of frames selected by the user
 var frameSelection = doc.getTimeline().getSelectedFrames();
@@ -62,7 +63,7 @@ doc.setElementProperty("height", trueHeight);
 doc.setElementProperty("width", trueWidth);
 an.getDocumentDOM().align('vertical center', true);
 an.getDocumentDOM().align('right', true);
-an.getDocumentDOM().moveSelectionBy({x:918, y:0}); // make the evidence offscren and vertically centered
+an.getDocumentDOM().moveSelectionBy({x:918 * SCALE, y:0}); // make the evidence offscren and vertically centered
 doc.getTimeline().currentFrame += 10; // advance playhead 10 frames
 doc.getTimeline().insertKeyframe(); // << in current layer at current playhead
 // select current frame
@@ -84,8 +85,8 @@ doc.getTimeline().insertKeyframe(); // << in current layer at current playhead
 // select current frame
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
 // ?? the evidence image will flash white ??
-doc.setElementProperty("height", 543);
-doc.setElementProperty("width", 1056);
+doc.setElementProperty("height", 543 * SCALE);
+doc.setElementProperty("width", 1056 * SCALE);
 doc.setInstanceTint('#ffffff', 100);
 doc.getTimeline().currentFrame -= 9; // reverse playhead 9 frames
 // select current frame
@@ -109,8 +110,8 @@ evidenceName = prompt("Enter name of updated evidence");
 doc.convertToSymbol("graphic", evidenceName, "center");
 // select current frame
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1); 
-doc.setElementProperty("height", 543);
-doc.setElementProperty("width", 1056);
+doc.setElementProperty("height", 543 * SCALE);
+doc.setElementProperty("width", 1056 * SCALE);
 // place the new evidence dead center
 an.getDocumentDOM().align('vertical center', true);
 an.getDocumentDOM().align('horizontal center', true);
@@ -140,7 +141,7 @@ doc.getTimeline().insertKeyframe(); // in current layer at current playhead
 // select current frame
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1);
 // by the end frame, move the evidence downward off screen
-an.getDocumentDOM().moveSelectionBy({x:0, y:536});
+an.getDocumentDOM().moveSelectionBy({x:0, y:536 * SCALE});
 doc.getTimeline().currentFrame -= 10; // reverse playhead 10 frames
 doc.getTimeline().insertKeyframe(); // in current layer at current playhead
 // select current frame
