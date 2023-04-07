@@ -84,6 +84,9 @@ DIPHTHONG_ORDERING = {
 	"OY": ["Open Mouth Round", "Open Mouth Teeth"]
 }
 
+//An array of all timeline indexes that contain a VECTOR_CHARACTERS layer. Effectively all scenes.
+var sceneArray = [];
+
 function getKeys(input) { // get array of start times from the words or phonemes
 	var arr = [];
 	for (var i in input) {
@@ -106,13 +109,6 @@ function arrayContains(array, element, compare) {
 	return false;
 }
 
-/*
-Function: resetSelection
-Variables:  
-	layer [integer(or should be) index of a layer ]
-	frame [integer index of a frame]
-Description: sets selection to the desired layer and frame
-*/
 function resetSelection(layer, frame) {
 	fl.getDocumentDOM().getTimeline().currentFrame = frame;
 	// select frame on the layer and replace current selection
@@ -172,24 +168,94 @@ function placeKeyframes(startFrame, layer, lipsyncMap) {
 	fl.getDocumentDOM().setElementProperty("loop", "single frame"); // set last phoneme to single frame
 }
 
-//MAIN
-// input validation
-fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers() * 1].locked = false; // unlock layer
+//MAIN EXECUTION
 
-if (fl.getDocumentDOM().getTimeline().getSelectedFrames().length != 3 || fl.getDocumentDOM().getTimeline().getSelectedFrames()[2] - fl.getDocumentDOM().getTimeline().getSelectedFrames()[1] != 1) {
-	throw new Error("Invalid selection. Select one frame that denotes the beginning of a character talking (first frame of the voice line audio).")
+var cfgFolderPath = fl.browseForFolderURL("Select the folder where all CFGs for this scene are located.");
+
+//Compile an array of all timelines with a layer called VECTOR_CHARACTERS
+for (i = 1, total = fl.getDocumentDOM().timelines.length; i < total; i++) {
+	for (j = 0, layerCount = fl.getDocumentDOM().timelines[i].layers.length; j < layerCount; j++) {
+		if (fl.getDocumentDOM().timelines[i].layers[j].name === "VECTOR_CHARACTERS") {
+			sceneArray.push(i);
+			break;
+		}
+	}
 }
-var characterTimeline = fl.getDocumentDOM().selection[0].libraryItem.timeline; // get the timeline of the selected symbol
-var xSheetLayerIndex = characterTimeline.findLayerIndex("xSheet");
 
-if (xSheetLayerIndex == undefined) {
-	xSheetLayerIndex = 0; // assume it's at 0 if somehow it doesn't find it
+//Iterate through all scenes
+for (var i = 0; i < sceneArray.length; i++) {
+	fl.getDocumentDOM().currentTimeline = sceneArray[i];
+	var currentTimeline = sceneArray[i];
+	
+	//Iterate through all layers of all scenes, and find VECTOR_CHARACTERS folder.
+	for (var j = 0; j < fl.getDocumentDOM().timelines[currentTimeline].layerCount; j++) {
+		if (fl.getDocumentDOM().timelines[currentTimeline].layers[j].parentLayer !== null) {
+			if (fl.getDocumentDOM().timelines[currentTimeline].layers[j].parentLayer.name == "VECTOR_CHARACTERS") {
+				
+				//Reset the sound array
+				var layerSoundArray = [];
+				
+				//Unlock and unhide operating layer
+				fl.getDocumentDOM().timelines[currentTimeline].layers[j].visible = true;
+				fl.getDocumentDOM().timelines[currentTimeline].layers[j].locked = false;
+				
+				//The audio layer for which we will seek voice lines
+				var audioSeekLayer = fl.getDocumentDOM().timelines[currentTimeline].layers[j].name.toUpperCase() + "_VOX";
+				
+				//Find the audio layer for the current character layer
+				for (var k = 0; k < fl.getDocumentDOM().timelines[currentTimeline].layerCount; k++) {
+					
+					if (fl.getDocumentDOM().timelines[currentTimeline].layers[k].name == audioSeekLayer) {
+						//Once on the audio layer, compile an array of the frames where all voice lines occur
+						for (var l = 1; l < fl.getDocumentDOM().timelines[currentTimeline].layers[k].frames.length; l++) {
+							//Only consider the first frame of a sound keyframe
+							if(l == fl.getDocumentDOM().timelines[currentTimeline].layers[k].frames[l].startFrame) {
+								//If the frame has audio content, add it to the array
+								if(fl.getDocumentDOM().timelines[currentTimeline].layers[k].frames[l].soundName != null) {
+									//Push the frame number the sound occured on and the soundName
+									//WARNING! HARDCODED SLICE LENGTH OF 5 TO CORRESPOND TO STRING '.FLAC'! OTHER AUDIO TYPES WILL FUCK UP!!!
+									layerSoundArray.push([l, fl.getDocumentDOM().timelines[currentTimeline].layers[k].frames[l].soundName.slice(0, -5)]);
+								}
+							}
+						}						
+					}		
+				}
+			
+				//Actual lipsync execution occurs here
+				for (var k = 1; k < fl.getDocumentDOM().timelines[currentTimeline].layers[j].frames.length; k++) {
+					for (var x = 0; x < layerSoundArray.length; x++) {
+						if (layerSoundArray[x][0] === k) {
+							var voiceLine = layerSoundArray[x][1];
+												
+							fl.getDocumentDOM().getTimeline().currentFrame = k;
+							//fl.trace("attempting selection on layer " + fl.getDocumentDOM().getTimeline().layers[j].name + " on frame " + k + ".");	
+							fl.getDocumentDOM().selection = fl.getDocumentDOM().getTimeline().layers[j].frames[k].elements;
+
+							//Standard procedure...
+							var characterTimeline = fl.getDocumentDOM().selection[0].libraryItem.timeline;
+							var xSheetLayerIndex = characterTimeline.findLayerIndex("xSheet");
+							
+							if (xSheetLayerIndex == undefined) {
+								xSheetLayerIndex = 0;
+							}
+						
+							var poseFrame = fl.getDocumentDOM().getElementProperty("firstFrame");
+							var poseStartFrame = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].startFrame;
+							var cfgPath =  cfgFolderPath + "/" + voiceLine + ".cfg";
+						
+							fl.runScript(cfgPath);
+							placeKeyframes(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().getSelectedLayers(), OFFSET_MAP, poseStartFrame);
+							
+							break;
+						}
+					}
+				}
+			
+				//fl.trace(layerSoundArray);
+				
+				//Re-enable layer visibility
+				fl.getDocumentDOM().timelines[currentTimeline].layers[j].visible = true;
+			}
+		}
+	}
 }
-
-var poseFrame = fl.getDocumentDOM().getElementProperty("firstFrame");
-var poseStartFrame = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].startFrame;
-var cfgPath = fl.browseForFileURL("select"); // get file for specific voice line
-
-fl.runScript(cfgPath);
-//actual execution
-placeKeyframes(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().getSelectedLayers(), OFFSET_MAP, poseStartFrame);
