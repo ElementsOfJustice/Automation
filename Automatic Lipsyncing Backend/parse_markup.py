@@ -36,7 +36,7 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
             new_line = re.sub(r"(.)-\1", r"\1", new_line)
             if len(new_line.strip()) > 0:
                 for real_filename in filename.split(" & "):
-                    real_speaker_name = re.sub(r"s\d*_\d*_(.[^_ ,]*)_?.*", r"\1", real_filename.strip())
+                    real_speaker_name = re.sub(r"s\d*_\d*_(.*)_?.*", r"\1", real_filename.strip())
                     if not os.path.exists(sys.argv[2]):
                         os.makedirs(sys.argv[2])
                     if not os.path.exists(sys.argv[2] + "/" + "SCENE " + str(scene)):
