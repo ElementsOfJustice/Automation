@@ -173,7 +173,7 @@ function placeKeyframes(startFrame, layer, lipsyncMap) {
 var cfgFolderPath = fl.browseForFolderURL("Select the folder where all CFGs for this scene are located.");
 
 //Compile an array of all timelines with a layer called VECTOR_CHARACTERS
-for (i = 1, total = fl.getDocumentDOM().timelines.length; i < total; i++) {
+for (i = 0, total = fl.getDocumentDOM().timelines.length; i < total; i++) {
 	for (j = 0, layerCount = fl.getDocumentDOM().timelines[i].layers.length; j < layerCount; j++) {
 		if (fl.getDocumentDOM().timelines[i].layers[j].name === "VECTOR_CHARACTERS") {
 			sceneArray.push(i);
@@ -181,7 +181,6 @@ for (i = 1, total = fl.getDocumentDOM().timelines.length; i < total; i++) {
 		}
 	}
 }
-
 //Iterate through all scenes
 for (var i = 0; i < sceneArray.length; i++) {
 	fl.getDocumentDOM().currentTimeline = sceneArray[i];
@@ -189,9 +188,9 @@ for (var i = 0; i < sceneArray.length; i++) {
 	
 	//Iterate through all layers of all scenes, and find VECTOR_CHARACTERS folder.
 	for (var j = 0; j < fl.getDocumentDOM().timelines[currentTimeline].layerCount; j++) {
+		// fl.trace(j + ": " + fl.getDocumentDOM().timelines[currentTimeline].layers[j].name); 	
 		if (fl.getDocumentDOM().timelines[currentTimeline].layers[j].parentLayer !== null) {
 			if (fl.getDocumentDOM().timelines[currentTimeline].layers[j].parentLayer.name == "VECTOR_CHARACTERS") {
-				
 				//Reset the sound array
 				var layerSoundArray = [];
 				
@@ -220,7 +219,7 @@ for (var i = 0; i < sceneArray.length; i++) {
 						}						
 					}		
 				}
-			
+				// fl.trace(j);
 				//Actual lipsync execution occurs here
 				for (var k = 1; k < fl.getDocumentDOM().timelines[currentTimeline].layers[j].frames.length; k++) {
 					for (var x = 0; x < layerSoundArray.length; x++) {
@@ -229,27 +228,27 @@ for (var i = 0; i < sceneArray.length; i++) {
 												
 							fl.getDocumentDOM().getTimeline().currentFrame = k;
 							//fl.trace("attempting selection on layer " + fl.getDocumentDOM().getTimeline().layers[j].name + " on frame " + k + ".");	
-							fl.getDocumentDOM().selection = fl.getDocumentDOM().getTimeline().layers[j].frames[k].elements;
+							// fl.getDocumentDOM().selection = fl.getDocumentDOM().getTimeline().layers[j].frames[k].elements;
 
 							//Standard procedure...
-							var characterTimeline = fl.getDocumentDOM().selection[0].libraryItem.timeline;
+							var characterTimeline = fl.getDocumentDOM().getTimeline().layers[j].frames[k].elements[0].libraryItem.timeline;
 							var xSheetLayerIndex = characterTimeline.findLayerIndex("xSheet");
 							
 							if (xSheetLayerIndex == undefined) {
 								xSheetLayerIndex = 0;
 							}
 						
-							var poseFrame = fl.getDocumentDOM().getElementProperty("firstFrame");
+							var poseFrame = fl.getDocumentDOM().getTimeline().layers[j].frames[k].elements[0].firstFrame;
 							var poseStartFrame = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].startFrame;
 							var cfgPath =  cfgFolderPath + "/" + voiceLine + ".cfg";
 						
 							fl.runScript(cfgPath);
-							placeKeyframes(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().getSelectedLayers(), OFFSET_MAP, poseStartFrame);
+							placeKeyframes(k, j, OFFSET_MAP, poseStartFrame);
 							
 							break;
 						}
 					}
-				}
+				} 
 			
 				//fl.trace(layerSoundArray);
 				
