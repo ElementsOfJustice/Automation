@@ -7,6 +7,8 @@ END_INDEX = 0;
 WORD_PHONEME_INDEX = 1;
 FRAME_RATE = fl.getDocumentDOM().frameRate;
 
+fl.showIdleMessage(false); 
+
 OFFSET_MAP = {
 	"No Talking": 0,
 	"Closed Mouth No Teeth": 0,
@@ -219,7 +221,7 @@ for (var i = 0; i < sceneArray.length; i++) {
 						}						
 					}		
 				}
-				// fl.trace(j);
+
 				//Actual lipsync execution occurs here
 				for (var k = 1; k < fl.getDocumentDOM().timelines[currentTimeline].layers[j].frames.length; k++) {
 					for (var x = 0; x < layerSoundArray.length; x++) {
@@ -227,8 +229,6 @@ for (var i = 0; i < sceneArray.length; i++) {
 							var voiceLine = layerSoundArray[x][1];
 												
 							fl.getDocumentDOM().getTimeline().currentFrame = k;
-							//fl.trace("attempting selection on layer " + fl.getDocumentDOM().getTimeline().layers[j].name + " on frame " + k + ".");	
-							// fl.getDocumentDOM().selection = fl.getDocumentDOM().getTimeline().layers[j].frames[k].elements;
 
 							//Standard procedure...
 							var characterTimeline = fl.getDocumentDOM().getTimeline().layers[j].frames[k].elements[0].libraryItem.timeline;

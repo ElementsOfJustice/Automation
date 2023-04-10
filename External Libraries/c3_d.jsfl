@@ -367,18 +367,17 @@ docSave = function () {
 
 		if (fileType.toUpperCase() == "FLA") {
 			//File is FLA
-			var newFileName = folderPath.replace('.fla', '/' + fileName + '.xfl');
+			var driveLetter = folderPath.substring(8, 9);
+			var newFileName = ("file:///" + driveLetter + '|/VHC' + '/' + fileName);
 
-			if (!FLfile.exists(folderPath.substring(0, folderPath.length - 4))) {
-				FLfile.createFolder(folderPath.substring(0, folderPath.length - 4))
+			if (!FLfile.exists(newFileName)) {
+				FLfile.createFolder(newFileName)
 			} else {
-				FLfile.remove(newFileName)
+				FLfile.remove(newFileName + "/" + fileName + ".xfl")
 			}
 
 			toSave = newFileName;
 
-			//fl.getDocumentDOM().close();
-			//fl.openDocument(newFileName);
 		} else if (fileType.toUpperCase() == "XFL") {
 			//File is XFL
 		}
@@ -394,10 +393,9 @@ docSave = function () {
 moveMouse = function () {
 	if (toSave != "") {
 		autoSave = true;
-		fl.getDocumentDOM().saveAsCopy(toSave);
-		var tmpPath = FLfile.uriToPlatformPath(toSave.substring(0, toSave.lastIndexOf("/")));
-		//fl.trace(tmpPath.replace(/\\/g, "/"));
-		//fl.trace("TmpPath is " + tmpPath.replace(/\\/g, "/"));
+		fl.getDocumentDOM().saveAsCopy(toSave+".xfl");
+		var tmpPath = FLfile.uriToPlatformPath(toSave);
+
 		try {
 			fl.trace("Attempting to commit change to version history...");
 			var result = Sample.commitLocalChange(tmpPath);
