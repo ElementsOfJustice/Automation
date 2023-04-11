@@ -204,7 +204,7 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
         if not flag_runFirst:
             #export dialogue data
             #print("dialogue" + " " + str_lineId + " "  + str_speaker + " "  + str_dialogue + " " + "(" + str_pose + ")")
-            str_dialogue = str_dialogue.replace("’", "'")
+            #str_dialogue = str_dialogue.replace("’", "'")
             arr_tmpData = ["dialogue", str_lineId, str_speaker, str_dialogue, str_pose]
             arr_sceneData.append(arr_tmpData)
             #print("Calculated Pose\n")
