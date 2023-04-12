@@ -6,6 +6,7 @@
 #include <git2.h>
 #include <time.h>
 #include <Windows.h>
+#include <shlwapi.h>
 
 int resolve_refish(git_annotated_commit** commit, git_repository* repo, const char* refish)
 {
@@ -560,15 +561,39 @@ JSBool commitLocalChange(JSContext* cx, JSObject* obj, unsigned int argc, jsval*
     unsigned int size = 0;
     unsigned short* jsString = JS_ValueToString(cx, argv[0], &size);
     char* pathName = malloc(size + 1);
+	if (pathName == NULL) {
+		const char* err = "malloc failed! fuckyou!";
+		JS_StringToValue(cx, err, strlen(err), rval);
+		return JS_TRUE;
+	}
     for (int i = 0; i < size; i++) {
         pathName[i] = (char)jsString[i];
     }
-    pathName[size] = '\0';
+	pathName[size] = '\0';
 
-    git_libgit2_init();
-
-    if (git_repository_open_ext(NULL, pathName, GIT_REPOSITORY_OPEN_NO_SEARCH, NULL) == 0) {
-        int error = git_repository_open(&repo, pathName);
+	if (!PathFileExistsA(pathName)) { // invalid file path..?
+		const char* err = "Invalid path. Retry.";
+		JS_StringToValue(cx, err, strlen(err), rval);
+		free(pathName);
+		return JS_TRUE;
+	}
+    int error = git_libgit2_init();
+	if (error != 1) {
+		const char* err = "Failed to initialize libgit2.";
+		JS_StringToValue(cx, err, strlen(err), rval);
+		free(pathName);
+		return JS_TRUE;
+	}
+	int open_err = git_repository_open_ext(NULL, pathName, GIT_REPOSITORY_OPEN_NO_SEARCH, NULL);
+	if (open_err == -1) {
+		const char* err = "Weird repo corruption?";
+		JS_StringToValue(cx, err, strlen(err), rval);
+		free(pathName);
+		git_libgit2_shutdown();		
+		return JS_TRUE;
+	}
+    if (open_err == 0) {
+        error = git_repository_open(&repo, pathName);
 		if (error != 0) {
 			const char* err = "Failed to open repository.";
 			JS_StringToValue(cx, err, strlen(err), rval);
@@ -712,8 +737,10 @@ JSBool commitLocalChange(JSContext* cx, JSObject* obj, unsigned int argc, jsval*
         // Initialize repository
         int error = git_repository_init(&repo, pathName, 0);
 		if (error != 0) {
+			char str[500];
 			const char* err = "Failed to create repository.";
-			JS_StringToValue(cx, err, strlen(err), rval);
+			snprintf(str, sizeof(str), "%s %s %d %d", pathName, err, error, open_err);
+			JS_StringToValue(cx, str, strlen(str), rval);
 			free(pathName);
 			git_libgit2_shutdown();
 			return JS_TRUE;
