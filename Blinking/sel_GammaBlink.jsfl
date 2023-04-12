@@ -5,7 +5,7 @@
  ActionScript will later be used to make the blinking actually happen.
  ******************************************************************************/
 
-var mean = 5; // average seconds between human blinks
+var mean = parseInt(prompt("Insert the average seconds between blinks. Default is 5.", "5"))
 var k = 25;
 var FPS = fl.getDocumentDOM().frameRate;
 
@@ -165,3 +165,5 @@ while (getCurrentFrame() < endFrame) {
 		// we use anchor because no one else does to avoid conflicts
 	}
 }
+
+fl.getDocumentDOM().getTimeline().setSelectedFrames(frameSelection);
