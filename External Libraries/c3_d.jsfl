@@ -210,7 +210,9 @@ docSave = function () {
 			var newFileName = ("file:///" + driveLetter + '|/VHC' + '/' + fileName);
 
 			if (!FLfile.exists(newFileName)) {
-				FLfile.createFolder(newFileName)
+				if(!FLfile.createFolder(newFileName)) {
+					throw new Error("Error: VHC folder creation failed!");
+				}
 			} else {
 				FLfile.remove(newFileName + "/" + fileName + ".xfl")
 			}
@@ -237,16 +239,16 @@ moveMouse = function () {
 		var result = "Retry";
 		var retryCount = 0;
 		var success = false;
-		while (result.indexOf("Retry") != -1 && retryCount < 50) {
+		while (result.indexOf("Retry") != -1 && retryCount < 5) {
 			try {
 				fl.trace("Attempting to commit change to version history...");
-				result = decodeCString(Sample.commitLocalChange(tmpPath));
-				if (result === undefined || result == "Success.") {
+				result = Sample.commitLocalChange(tmpPath);
+				if (result === undefined || result.indexOf("Success.") != -1) {
 					success = true;
-					fl.trace("Success.");
+					fl.trace(result);
 				}
 				else {
-					fl.trace("Local commit failed at path " + tmpPath + ": " + decodeCString(result));
+					fl.trace("Local commit failed at path " + tmpPath + ": " + result + ": " + decodeCString(result));
 				}
 			} catch (e) {
 				fl.trace("CRITICAL ERROR: " + e.stack);
