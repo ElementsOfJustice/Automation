@@ -134,7 +134,9 @@ static int resolve_heads(git_repository* repo, struct merge_options* opts)
 	git_annotated_commit** annotated = calloc(opts->heads_count, sizeof(git_annotated_commit*));
 	size_t annotated_count = 0, i;
 	int err = 0;
-
+	if (annotated == NULL) {
+		return -1;
+	}
 	for (i = 0; i < opts->heads_count; i++) {
 		err = resolve_refish(&annotated[annotated_count++], repo, opts->heads[i]);
 		if (err != 0) {
@@ -284,6 +286,9 @@ static int create_merge_commit(git_repository* repo, git_index* index, struct me
 
 	err = git_reference_peel((git_object**)&parents[0], head_ref, GIT_OBJECT_COMMIT);
 	check_lg2(err, "failed to peel head reference", NULL);
+	if (parents == NULL) {
+		return -1;
+	}
 	for (i = 0; i < opts->annotated_count; i++) {
 		git_commit_lookup(&parents[i + 1], repo, git_annotated_commit_id(opts->annotated[i]));
 	}
@@ -397,14 +402,27 @@ JSBool getFLACLength(JSContext* cx, JSObject* obj, unsigned int argc, jsval* arg
 {
     unsigned int wasteOfMemory = 0; // I suck with C but this works to create a string ;-;
     unsigned short* x = JS_ValueToString(cx, argv[0], &wasteOfMemory);
-    char* filename = (char*)malloc(wasteOfMemory + 1); // allocate memory for filename
+	const unsigned int MAX_ITER = 50;
+	unsigned int iter = 0;
+	while (x == NULL && iter < MAX_ITER) {
+		x = JS_ValueToString(cx, argv[0], &wasteOfMemory);
+		iter++;
+	}
+	if (x == NULL) {
+		const unsigned short* err = L"Value passed is still NULL after FIFTY (50) retries. It hates us so much.";
+		JS_StringToValue(cx, err, wcslen(err), rval);
+		return JS_TRUE;
+	}
+    char* filename = malloc((size_t) wasteOfMemory + 1); // allocate memory for filename
+	wcstombs(filename, x, (size_t) wasteOfMemory + 1);
+	if (filename == NULL) {
+		const unsigned short* err = L"malloc failed (eyeroll).";
+		JS_StringToValue(cx, err, wcslen(err), rval);
+		return JS_TRUE;
+	}
     FILE* fp; // prepare file to read from
     int c, i, max; // looping variables
     unsigned long sampleRate = 0, samples = 0; // file metadata variables
-    for (int i = 0; i < wasteOfMemory; i++) {
-        filename[i] = (char)x[i]; // get filename 
-    }
-    filename[wasteOfMemory] = '\0'; // null terminator at the end of string
     int err = fopen_s(&fp, filename, "rb"); // open the file
     if (err != 0) {
         *rval = JS_IntegerToValue(-1);
@@ -435,13 +453,7 @@ JSBool getFLACLength(JSContext* cx, JSObject* obj, unsigned int argc, jsval* arg
 JSBool stringExample(JSContext* cx, JSObject* obj, unsigned int fargc, jsval* argv, jsval* rval) {
     unsigned int size = 0;
     unsigned short* jsString = JS_ValueToString(cx, argv[0], &size);
-    char* toReturn = malloc(size + 1);
-    for (int i = 0; i < size; i++) {
-        toReturn[i] = (char)jsString[i];
-    }
-    toReturn[size] = '\0';
-    JS_StringToValue(cx, toReturn, size, rval);
-    free(toReturn);
+    JS_StringToValue(cx, jsString, size, rval);
     return JS_TRUE;
 }
 
@@ -530,11 +542,24 @@ cleanup:
 JSBool updateOrDownloadCommandsRepo(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
     unsigned int size = 0;
     unsigned short* jsString = JS_ValueToString(cx, argv[0], &size);
-    char* pathName = malloc(size + 1);
-    for (int i = 0; i < size; i++) {
-        pathName[i] = (char)jsString[i];
-    }
-    pathName[size] = '\0';
+	const unsigned int MAX_ITER = 50;
+	unsigned int i = 0;
+	while (jsString == NULL && i < MAX_ITER) {
+		jsString = JS_ValueToString(cx, argv[0], &size);
+		i++;
+	}
+	if (jsString == NULL) {
+		const unsigned short* err = L"Value passed is still NULL after FIFTY (50) retries. It hates us so much.";
+		JS_StringToValue(cx, err, wcslen(err), rval);
+		return JS_TRUE;
+	}
+    char* pathName = malloc((size_t) size + 1);
+	if (pathName == NULL) {
+		const unsigned short* err = L"malloc failed (eyeroll).";
+		JS_StringToValue(cx, err, wcslen(err), rval);
+		return JS_TRUE;
+	}
+	wcstombs(pathName, jsString, (size_t) size + 1);
     git_libgit2_init();
     git_repository* repo = NULL;
     const char* url = "https://github.com/ElementsOfJustice/Automation";
@@ -544,166 +569,185 @@ JSBool updateOrDownloadCommandsRepo(JSContext* cx, JSObject* obj, unsigned int a
     else {
         int error = git_clone(&repo, url, pathName, NULL);
     }
-    free(pathName);
+	free(pathName);
     git_repository_free(repo);
     git_libgit2_shutdown();
     return JS_TRUE;
 }
 
 JSBool commitLocalChange(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
-    git_repository* repo;
-    git_index* index;
-    git_oid tree_oid, parent_oid, commit_oid;
-    git_tree* tree;
-    git_commit* parent;
-    git_signature* signature;
+	git_repository* repo;
+	git_index* index;
+	git_oid tree_oid, parent_oid, commit_oid;
+	git_tree* tree;
+	git_commit* parent;
+	git_signature* signature;
 
-    unsigned int size = 0;
-    unsigned short* jsString = JS_ValueToString(cx, argv[0], &size);
-    char* pathName = malloc(size + 1);
-	if (pathName == NULL) {
-		const char* err = "malloc failed! fuckyou!";
-		JS_StringToValue(cx, err, strlen(err), rval);
+	unsigned int size = 0;
+	unsigned short* widePathName = JS_ValueToString(cx, argv[0], &size);
+	const unsigned int MAX_ITER = 50;
+	unsigned int i = 0;
+	while (widePathName == NULL && i < MAX_ITER) {
+		widePathName = JS_ValueToString(cx, argv[0], &size);
+		i++;
+	}
+	if (widePathName == NULL) {
+		const unsigned short* err = L"Value passed is still NULL after FIFTY (50) retries. It hates us so much.";
+		JS_StringToValue(cx,  err, wcslen(err), rval);
 		return JS_TRUE;
 	}
-    for (int i = 0; i < size; i++) {
-        pathName[i] = (char)jsString[i];
-    }
-	pathName[size] = '\0';
 
+	char* pathName = malloc((size_t) size + 1);
+	wcstombs(pathName, widePathName, (size_t) size + 1);
+	if (pathName == NULL) {
+		const unsigned short* err = L"wcstombs made pathName null :(";
+		JS_StringToValue(cx, err, wcslen(err), rval);
+		free(pathName);
+		return JS_TRUE;
+	}
 	if (!PathFileExistsA(pathName)) { // invalid file path..?
-		const char* err = "Invalid path. Retry.";
-		JS_StringToValue(cx, err, strlen(err), rval);
+		const unsigned short* err = L"Invalid path. Retry.";
+		unsigned short str[500];
+		unsigned short* wideName = malloc((strlen(pathName) + 1) * sizeof(unsigned short));
+		if (wideName == NULL) { // final malloc failed (eyeroll)
+			JS_StringToValue(cx, err, wcslen(err), rval);
+			free(pathName);
+			return JS_TRUE;
+		}
+		mbstowcs(wideName, pathName, (strlen(pathName) + 1));
+		wideName[strlen(pathName)] = L'\0';
+		swprintf(str, sizeof(str) / sizeof(unsigned short), L"%ls: %ls", wideName, err);
+		JS_StringToValue(cx, str, wcslen(str), rval);
 		free(pathName);
 		return JS_TRUE;
 	}
     int error = git_libgit2_init();
 	if (error != 1) {
-		const char* err = "Failed to initialize libgit2.";
-		JS_StringToValue(cx, err, strlen(err), rval);
+		const unsigned short* err = L"Failed to initialize libgit2.";
+		JS_StringToValue(cx,  err, wcslen(err), rval);
 		free(pathName);
 		return JS_TRUE;
 	}
 	int open_err = git_repository_open_ext(NULL, pathName, GIT_REPOSITORY_OPEN_NO_SEARCH, NULL);
 	if (open_err == -1) {
-		const char* err = "Weird repo corruption?";
-		JS_StringToValue(cx, err, strlen(err), rval);
+		const unsigned short* err = L"Weird repo corruption?";
+		JS_StringToValue(cx,  err, wcslen(err), rval);
+		git_libgit2_shutdown();	
 		free(pathName);
-		git_libgit2_shutdown();		
 		return JS_TRUE;
 	}
     if (open_err == 0) {
         error = git_repository_open(&repo, pathName);
 		if (error != 0) {
-			const char* err = "Failed to open repository.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to open repository.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
         error = git_repository_index(&index, repo);
 		if (error != 0) {
-			const char* err = "Failed to open index.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to open index.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
         error = git_index_add_all(index, NULL, 0, NULL, NULL);
 		if (error != 0) {
-			const char* err = "Failed to add files to index.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to add files to index.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_index_free(index);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
         error = git_index_write(index);
 		if (error != 0) {
-			const char* err = "Failed to write index.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to write index.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_index_free(index);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
         // Create a tree from the repository's index
         error = git_index_write_tree(&tree_oid, index);
 		if (error != 0) {
-			const char* err = "Failed to write tree.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to write tree.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_index_free(index);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
         error = git_tree_lookup(&tree, repo, &tree_oid);
 		if (error != 0) {
-			const char* err = "Failed to look up tree.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to look up tree.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_index_free(index);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
         git_reference* head;
 		error = git_reference_lookup(&head, repo, "HEAD");
 		if (error != 0) {
-			const char* err = "Failed to lookup HEAD reference.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to lookup HEAD reference.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_index_free(index);
 			git_tree_free(tree);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
 
         // Get the target commit of the reference
         error = git_reference_peel((git_object**)&parent, head, GIT_OBJECT_COMMIT);
 		if (error != 0) {
-			const char* err = "Failed to peel reference.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to peel reference.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_index_free(index);
 			git_tree_free(tree);
 			git_reference_free(head);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
         // Get the OID of the parent commit (this never returns 0 so I'm not considering positive errors)
         error = git_oid_cpy(&parent_oid, git_commit_id(parent));
 		if (error < 0) {
-			const char* err = "Failed to get OID of parent commit.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to get OID of parent commit.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_index_free(index);
 			git_tree_free(tree);
 			git_reference_free(head);
 			git_commit_free(parent);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		} 
 
         // Create a signature for the commitx`
 		error = git_signature_now(&signature, "GigaChad", "GigaChad@westaywinning.com");
 		if (error != 0) {
-			const char* err = "Failed to create default signature.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to create default signature.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_index_free(index);
 			git_tree_free(tree);
 			git_reference_free(head);
 			git_commit_free(parent);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
 
@@ -715,9 +759,8 @@ JSBool commitLocalChange(JSContext* cx, JSObject* obj, unsigned int argc, jsval*
         error = git_commit_create_v(&commit_oid, repo, "HEAD", signature, signature,
             NULL, asctime(timeinfo), tree, 1, &parent_oid);
 		if (error != 0) {
-			const char* err = "Failed to create commit.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to create commit.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_index_free(index);
 			git_tree_free(tree);
@@ -725,6 +768,7 @@ JSBool commitLocalChange(JSContext* cx, JSObject* obj, unsigned int argc, jsval*
 			git_commit_free(parent);
 			git_signature_free(signature);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
         git_reference_free(head);
@@ -737,21 +781,31 @@ JSBool commitLocalChange(JSContext* cx, JSObject* obj, unsigned int argc, jsval*
         // Initialize repository
         int error = git_repository_init(&repo, pathName, 0);
 		if (error != 0) {
-			char str[500];
-			const char* err = "Failed to create repository.";
-			snprintf(str, sizeof(str), "%s %s %d %d", pathName, err, error, open_err);
-			JS_StringToValue(cx, str, strlen(str), rval);
+			unsigned short str[500];
+			const unsigned short* err = L"Failed to create repository.";
+			unsigned short* wideName = malloc((strlen(pathName) + 1) * sizeof(unsigned short));
+			if (wideName == NULL) { // final malloc failed (eyeroll)
+				JS_StringToValue(cx, err, wcslen(err), rval);
+				free(pathName);
+				git_libgit2_shutdown();
+				return JS_TRUE;
+			}
+			mbstowcs(wideName, pathName, (strlen(pathName) + 1));
+			wideName[strlen(pathName)] = L'\0';
+			swprintf(str, sizeof(str) / sizeof(unsigned short), L"%ls %ls %d %d", wideName, err, error, open_err);
+			JS_StringToValue(cx, str, wcslen(str), rval);
+			free(wideName);
 			free(pathName);
 			git_libgit2_shutdown();
 			return JS_TRUE;
 		}
         error = git_repository_index(&index, repo);
 		if (error != 0) {
-			const char* err = "Failed to open index.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to open index.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
 
@@ -759,83 +813,94 @@ JSBool commitLocalChange(JSContext* cx, JSObject* obj, unsigned int argc, jsval*
 		error = git_index_add_all(index, NULL, 0, NULL, NULL);
 
 		if (error != 0) {
-			const char* err = "Failed to add files to index.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to add files to index.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_index_free(index);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
 		error = git_index_write(index);
 		if (error != 0) {
-			const char* err = "Failed to write index.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to write index.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_index_free(index);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
         // Create a tree from the repository's index
 		error = git_index_write_tree(&tree_oid, index);
 		if (error != 0) {
-			const char* err = "Failed to write tree.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to write tree.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_index_free(index);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
         error = git_tree_lookup(&tree, repo, &tree_oid);
 		if (error != 0) {
-			const char* err = "Failed to look up tree.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to look up tree.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_index_free(index);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
         // Create signatures for the author and committer
 		error = git_signature_now(&signature, "GigaChad", "GigaChad@westaywinning.com");
 		if (error != 0) {
-			const char* err = "Failed to create default signature.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to create default signature.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_index_free(index);
 			git_tree_free(tree);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
 
         // Create a commit
         error = git_commit_create_v(&commit_oid, repo, "HEAD", signature, signature, NULL, "Initial Commit", tree, 0, NULL);
 		if (error != 0) {
-			const char* err = "Failed to create commit.";
-			JS_StringToValue(cx, err, strlen(err), rval);
-			free(pathName);
+			const unsigned short* err = L"Failed to create commit.";
+			JS_StringToValue(cx,  err, wcslen(err), rval);
 			git_repository_free(repo);
 			git_index_free(index);
 			git_tree_free(tree);
 			git_signature_free(signature);
 			git_libgit2_shutdown();
+			free(pathName);
 			return JS_TRUE;
 		}
         // Clean up resources
         git_signature_free(signature);
         git_tree_free(tree);
-        git_index_free(index);
+		git_index_free(index);
     }
 
 // Clean up resources
-	const char* msg = "Success.";
-	JS_StringToValue(cx, msg, strlen(msg), rval);
-    free(pathName);
+	unsigned short str[500];
+	unsigned short* msg = L"Success.";
+	unsigned short* wideName = malloc((strlen(pathName) + 1) * sizeof(unsigned short));
+	if (wideName == NULL) { // final malloc failed (eyeroll)
+		JS_StringToValue(cx, msg, wcslen(msg), rval);
+		free(pathName);
+		git_libgit2_shutdown();
+		return JS_TRUE;
+	}
+	mbstowcs(wideName, pathName, (strlen(pathName) + 1));
+	wideName[strlen(pathName)] = L'\0';
+	swprintf(str, sizeof(str) / sizeof(unsigned short), L"%ls: %ls", wideName, msg);
+	JS_StringToValue(cx, str, wcslen(str), rval);
     git_repository_free(repo);
-
+	free(pathName);
+	free(wideName);
     git_libgit2_shutdown();
     return JS_TRUE;
 }
@@ -843,26 +908,50 @@ JSBool commitLocalChange(JSContext* cx, JSObject* obj, unsigned int argc, jsval*
 JSBool renameFolder(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
     char* oldPath, * newPath;
     JSObject* args = JS_NewArrayObject(cx, argc, argv);
-    jsval arg1, arg2;
+    jsval arg1 = -1, arg2 = -1;
     JS_GetElement(cx, args, 0, &arg1);
     JS_GetElement(cx, args, 1, &arg2);
     unsigned int size1 = 0, size2 = 0;
     unsigned short* jsString1 = JS_ValueToString(cx, arg1, &size1);
     unsigned short* jsString2 = JS_ValueToString(cx, arg2, &size2);
-    oldPath = malloc((size1 + 1) * sizeof(char));
-    newPath = malloc((size2 + 1) * sizeof(char));
-    for (int i = 0; i < size1; i++) {
-        oldPath[i] = (char)jsString1[i];
-    }
-    oldPath[size1] = '\0';
-    for (int i = 0; i < size2; i++) {
-        newPath[i] = (char)jsString2[i];
-    }
-    newPath[size2] = '\0';
-    rename(oldPath, newPath);
-    JS_StringToValue(cx, newPath, size2 + 1, rval);
+
+	const unsigned int MAX_ITER = 50;
+	int iter = 0;
+	while ((jsString1 == NULL || jsString2 == NULL) && iter < MAX_ITER) {
+		jsString1 = JS_ValueToString(cx, arg1, &size1);
+		jsString2 = JS_ValueToString(cx, arg2, &size2);
+		iter++;
+	}
+	if (jsString1 == NULL || jsString2 == NULL) {
+		const unsigned short* err = L"Value passed is still NULL after FIFTY (50) retries. It hates us so much.";
+		JS_StringToValue(cx, err, wcslen(err), rval);
+		return JS_TRUE;
+	}
+
+    oldPath = malloc((size_t) size1 + 1);
+    newPath = malloc((size_t) size2 + 1);
+	wcstombs(oldPath, jsString1, (size_t) size1 + 1);
+	wcstombs(newPath, jsString2, (size_t) size2 + 1);
+	if (oldPath == NULL || newPath == NULL) {
+		const unsigned short* err = L"malloc failed (eyeroll).";
+		JS_StringToValue(cx, err, wcslen(err), rval);
+		return JS_TRUE;
+	}
+    int success = rename(oldPath, newPath);
+	int error = errno;
+	unsigned short* returnString = malloc((strlen(newPath)+ 1) * sizeof(unsigned short));
+	if (returnString == NULL) { // malloc failed
+		free(oldPath);
+		free(newPath);
+		return JS_TRUE;
+	}
+	mbstowcs(returnString, newPath, (strlen(newPath) + 1));
+	unsigned short str[500];
+	swprintf(str, sizeof(str) / sizeof(unsigned short), L"%ls: %d %d", returnString, success, error);
+    JS_StringToValue(cx, str, wcslen(str), rval);
     free(oldPath);
     free(newPath);
+
     return JS_TRUE;
 }
 
