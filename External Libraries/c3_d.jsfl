@@ -393,17 +393,31 @@ docSave = function () {
 moveMouse = function () {
 	if (toSave != "") {
 		autoSave = true;
-		fl.getDocumentDOM().saveAsCopy(toSave+".xfl");
+		fl.getDocumentDOM().saveAsCopy(toSave + ".xfl");
 		var tmpPath = FLfile.uriToPlatformPath(toSave);
-
-		try {
-			fl.trace("Attempting to commit change to version history...");
-			var result = Sample.commitLocalChange(tmpPath);
-			fl.trace((result === undefined || decodeCString(result) == "Success." ) ? "Success." : "Local commit failed: " + decodeCString(result));
-		} catch (e) {
-			fl.trace("CRITICAL ERROR: " + e.stack);
-			fl.trace(e.name);
-			fl.trace(e.message);
+		var result = "Retry";
+		var retryCount = 0;
+		var success = false;
+		while (result.indexOf("Retry") != -1 && retryCount < 50) {
+			try {
+				fl.trace("Attempting to commit change to version history...");
+				result = decodeCString(Sample.commitLocalChange(tmpPath));
+				if (result === undefined || result == "Success.") {
+					success = true;
+					fl.trace("Success.");
+				}
+				else {
+					fl.trace("Local commit failed at path " + tmpPath + ": " + decodeCString(result));
+				}
+			} catch (e) {
+				fl.trace("CRITICAL ERROR: " + e.stack);
+				fl.trace(e.name);
+				fl.trace(e.message);
+			}
+			retryCount++;
+		}
+		if(!success) {
+			alert("Local Commit failed after " + retryCount + " retries.");
 		}
 		autoSave = false;
 		toSave = "";
