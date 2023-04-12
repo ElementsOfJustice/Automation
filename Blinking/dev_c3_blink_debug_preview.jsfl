@@ -183,8 +183,6 @@ runBlinking = function (layerIndex) {
 
 	rigFolder = rigPath;
 
-	var startTime = new Date();
-
 	for (i = 0; i < frameArray.length; i++) {
 		if ((i == frameArray[i].startFrame) && (frameArray[i].isEmpty == false) && (frameArray[i].labelType == "anchor")) {
 			fl.getDocumentDOM().getTimeline().currentFrame = i
@@ -231,22 +229,6 @@ runBlinking = function (layerIndex) {
 			}
 		}
 	}
-
-	var endTime = new Date();
-	timeDiff = endTime - startTime;
-	timeDiff /= 1000;
-	var seconds = Math.round(timeDiff);
-
-	if (timeDiff < 60) {
-		alert("TIME ELAPSED: " + seconds + " seconds.");
-	}
-
-	if (timeDiff > 60) {
-		var minutes = Math.floor(timeDiff / 60);
-		var seconds = timeDiff - minutes * 60;
-		alert("TIME ELAPSED: " + minutes + " minutes and " + seconds + " seconds");
-	}
-
 }
 
 //For each scene, runBlinking on each child layer of VECTOR_CHARACTERS
