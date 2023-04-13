@@ -5,7 +5,7 @@
  ActionScript will later be used to make the blinking actually happen.
  ******************************************************************************/
 
-var mean = parseInt(prompt("Insert the average seconds between blinks. Default is 5.", "5"))
+var mean = parseFloat(prompt("Insert the average seconds between blinks. Default is 5.", "5.0"))
 var k = 25;
 var FPS = fl.getDocumentDOM().frameRate;
 
