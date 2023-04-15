@@ -16,10 +16,10 @@ VoiceLineProcessor/model/
 getLineId.jsfl
 VoiceLineProcessor
 Scene\ Generators/Script\ Parsing/Scripts
-C Level Utilities/.vs
-C Level Utilities/Debug
-C Level Utilities/Release
-C Level Utilities/x64
+C++ Level Utilities/.vs
+C++ Level Utilities/Debug
+C++ Level Utilities/Release
+C++ Level Utilities/x64
 AI Assisted Audio Splicing/audio
 AI Assisted Audio Splicing/models
 AI Assisted Audio Splicing/scriptData

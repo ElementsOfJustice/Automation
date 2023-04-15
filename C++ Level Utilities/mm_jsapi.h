@@ -1,21 +1,22 @@
+extern "C" {
 #ifndef _MM_JSAPI_H_
 #define _MM_JSAPI_H_
 
-/*****************************************************************************
- * Public data types
- ****************************************************************************/
+    /*****************************************************************************
+     * Public data types
+     ****************************************************************************/
 
-typedef struct JSContext JSContext;
-typedef struct JSObject JSObject;
-typedef long jsval;
+    typedef struct JSContext JSContext;
+    typedef struct JSObject JSObject;
+    typedef long jsval;
 #ifndef JSBool
-typedef long JSBool;
+    typedef long JSBool;
 #endif
 
-typedef JSBool (*JSNative)(JSContext *cx, JSObject *obj, unsigned int argc, 
-    jsval *argv, jsval *rval); 
+    typedef JSBool(*JSNative)(JSContext* cx, JSObject* obj, unsigned int argc,
+        jsval* argv, jsval* rval);
 
-/* Possible values for JSBool */
+    /* Possible values for JSBool */
 #define JS_TRUE 1
 #define JS_FALSE 0
 
@@ -25,14 +26,14 @@ typedef JSBool (*JSNative)(JSContext *cx, JSObject *obj, unsigned int argc,
  * Public functions
  ****************************************************************************/
 
-/* JSBool JS_DefineFunction(unsigned short *name, JSNative call, unsigned int nargs) */
+ /* JSBool JS_DefineFunction(wchar_t*name, JSNative call, unsigned int nargs) */
 #define JS_DefineFunction(n, c, a) \
     (mmEnv.defineFunction ? (*(mmEnv.defineFunction))(mmEnv.libObj, n, c, a) \
                           : JS_FALSE)
 
-/* unsigned short *JS_ValueToString(JSContext *cx, jsval v, unsigned int *pLength) */
+/* wchar_t*JS_ValueToString(JSContext *cx, jsval v, unsigned int *pLength) */
 #define JS_ValueToString(c, v, l) \
-    (mmEnv.valueToString  ? (*(mmEnv.valueToString))(c, v, l) : (unsigned short *)0)
+    (mmEnv.valueToString  ? (*(mmEnv.valueToString))(c, v, l) : (wchar_t*)0)
 
 /* unsigned char *JS_ValueToBytes(JSContext *cx, jsval v, unsigned int *pLength) */
 #define JS_ValueToBytes(c, v, l) \
@@ -54,7 +55,7 @@ typedef JSBool (*JSNative)(JSContext *cx, JSObject *obj, unsigned int argc,
 #define JS_ValueToObject(c, v, o) \
     (mmEnv.valueToObject  ? (*(mmEnv.valueToObject))(c, v, o) : JS_FALSE)
 
-/* JSBool JS_StringToValue(JSContext *cx, unsigned short *bytes, uint sz, jsval *vp); */
+/* JSBool JS_StringToValue(JSContext *cx, wchar_t*bytes, uint sz, jsval *vp); */
 #define JS_StringToValue(c, b, s, v) \
     (mmEnv.stringToValue  ? (*(mmEnv.stringToValue))(c, b, s, v) : JS_FALSE)
 
@@ -75,9 +76,9 @@ typedef JSBool (*JSNative)(JSContext *cx, JSObject *obj, unsigned int argc,
 /* jsval JS_ObjectToValue(JSObject *obj); */
 #define JS_ObjectToValue(ov)        ((jsval)(ov))
 
-/* unsigned short *JS_ObjectType(JSObject *obj); */
+/* wchar_t*JS_ObjectType(JSObject *obj); */
 #define JS_ObjectType(o) \
-    (mmEnv.objectType     ? (*(mmEnv.objectType))(o) : (unsigned short *)0)
+    (mmEnv.objectType     ? (*(mmEnv.objectType))(o) : (wchar_t*)0)
 
 /* JSObject *JS_NewArrayObject(JSContext *cx, unsigned int length, jsval *v) */
 #define JS_NewArrayObject(c, l, v) \
@@ -95,13 +96,13 @@ typedef JSBool (*JSNative)(JSContext *cx, JSObject *obj, unsigned int argc,
 #define JS_SetElement(c, o, i, v) \
     (mmEnv.setElement     ? (*(mmEnv.setElement))(c, o, i, v) : JS_FALSE)
 
-/* JSBool JS_ExecuteScript(JSContext *cx, JSObject *obj, unsigned short *script,
+/* JSBool JS_ExecuteScript(JSContext *cx, JSObject *obj, wchar_t*script,
  *     unsigned int sz, jsval *rval) */
 #define JS_ExecuteScript(c, o, s, z, r) \
     (mmEnv.executeScript  ? (*(mmEnv.executeScript))(c, o, s, z, _T(__FILE__), \
         __LINE__, r) : JS_FALSE)
 
-/* JSBool JS_ReportError(JSContext *cx, unsigned short *error, unsigned int sz) */
+ /* JSBool JS_ReportError(JSContext *cx, wchar_t*error, unsigned int sz) */
 #define JS_ReportError(c, e, s) \
     (mmEnv.reportError    ? (*(mmEnv.reportError))(c, e, s) : JS_FALSE)
 
@@ -111,46 +112,46 @@ typedef JSBool (*JSNative)(JSContext *cx, JSObject *obj, unsigned int argc,
  * Private data types, macros, and globals
  ****************************************************************************/
 
-typedef struct {
-    JSObject *libObj;
-    JSBool (*defineFunction)(JSObject *libObj, unsigned short *name, JSNative call,
-        unsigned int nargs);
-    unsigned short *(*valueToString)(JSContext *cx, jsval v, unsigned int *pLength);
-    unsigned char *(*valueToBytes)(JSContext *cx, jsval v, unsigned int *pLength);
-    JSBool (*valueToInteger)(JSContext *cx, jsval v, long *lp);
-    JSBool (*valueToDouble)(JSContext *cx, jsval v, double *dp);
-    JSBool (*valueToBoolean)(JSContext *cx, jsval v, JSBool *bp);
-    JSBool (*valueToObject)(JSContext *cx, jsval v, JSObject **op);
-    JSBool (*stringToValue)(JSContext *cx, unsigned short *b, unsigned int sz, jsval *vp);
-    JSBool (*bytesToValue)(JSContext *cx, unsigned char *b, unsigned int sz, jsval *vp);
-    JSBool (*doubleToValue)(JSContext *cx, double dv, jsval *vp);
-    unsigned short *(*objectType)(JSObject *obj);
-    JSObject *(*newArrayObject)(JSContext *cx, unsigned int length, jsval *vp);
-    long (*getArrayLength)(JSContext *cx, JSObject *obj);
-    JSBool (*getElement)(JSContext *cx, JSObject *obj, unsigned int idx,
-        jsval *vp);
-    JSBool (*setElement)(JSContext *cx, JSObject *obj, unsigned int idx,
-        jsval *vp);
-    JSBool (*executeScript)(JSContext *cx, JSObject *obj, unsigned short *script,
-        unsigned int sz, unsigned short *file, unsigned int lineNum, jsval *rval);
-    JSBool (*reportError)(JSContext *cx, unsigned short *error, unsigned int sz);
-} MM_Environment;
+    typedef struct {
+        JSObject* libObj;
+        JSBool(*defineFunction)(JSObject* libObj, wchar_t* name, JSNative call,
+            unsigned int nargs);
+        wchar_t* (*valueToString)(JSContext* cx, jsval v, unsigned int* pLength);
+        unsigned char* (*valueToBytes)(JSContext* cx, jsval v, unsigned int* pLength);
+        JSBool(*valueToInteger)(JSContext* cx, jsval v, long* lp);
+        JSBool(*valueToDouble)(JSContext* cx, jsval v, double* dp);
+        JSBool(*valueToBoolean)(JSContext* cx, jsval v, JSBool* bp);
+        JSBool(*valueToObject)(JSContext* cx, jsval v, JSObject** op);
+        JSBool(*stringToValue)(JSContext* cx, wchar_t* b, unsigned int sz, jsval* vp);
+        JSBool(*bytesToValue)(JSContext* cx, unsigned char* b, unsigned int sz, jsval* vp);
+        JSBool(*doubleToValue)(JSContext* cx, double dv, jsval* vp);
+        wchar_t* (*objectType)(JSObject* obj);
+        JSObject* (*newArrayObject)(JSContext* cx, unsigned int length, jsval* vp);
+        long (*getArrayLength)(JSContext* cx, JSObject* obj);
+        JSBool(*getElement)(JSContext* cx, JSObject* obj, unsigned int idx,
+            jsval* vp);
+        JSBool(*setElement)(JSContext* cx, JSObject* obj, unsigned int idx,
+            jsval* vp);
+        JSBool(*executeScript)(JSContext* cx, JSObject* obj, wchar_t* script,
+            unsigned int sz, wchar_t* file, unsigned int lineNum, jsval* rval);
+        JSBool(*reportError)(JSContext* cx, wchar_t* error, unsigned int sz);
+    } MM_Environment;
 
-extern MM_Environment mmEnv;
+    extern MM_Environment mmEnv;
 
-// Declare the external entry point and linkage
+    // Declare the external entry point and linkage
 #ifdef _WIN32
 #   ifndef _MAC  
     // Windows
-    __declspec( dllexport ) void MM_InitWrapper( MM_Environment *env, unsigned int envSize );
+    __declspec(dllexport) void MM_InitWrapper(MM_Environment* env, unsigned int envSize);
 #   else
     // Mac with MSVC++ Win32 portability lib
-    extern void MM_InitWrapper( MM_Environment *env, unsigned int envSize );
+    extern void MM_InitWrapper(MM_Environment* env, unsigned int envSize);
 #   endif
 #else
     // Codewarrior
 #   pragma export on    
-    extern void MM_InitWrapper( MM_Environment *env, unsigned int envSize );
+    extern void MM_InitWrapper(MM_Environment* env, unsigned int envSize);
 #   pragma export off
 #endif
 
@@ -180,6 +181,7 @@ extern MM_Environment mmEnv;
       /* Call user's MM_Init function */                                        \
       MM_Init();                                                                \
     }                                                                           \
-                                                                             
+
 #endif /* _MM_JSAPI_H_ */
 
+}
