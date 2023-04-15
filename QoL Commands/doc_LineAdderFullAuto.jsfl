@@ -22,7 +22,7 @@ function switchVox(layerVar) {
 function getDuration(linePath) {
 	var duration = -1, attempts = 0;
 	while (duration == -1 && attempts < 200) {
-		duration = Utils.getFLACLength(linePath);
+		duration = getFLACLength(linePath);
 		attempts++;
 	}
 	if (attempts == 200) {

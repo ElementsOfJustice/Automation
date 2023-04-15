@@ -35,7 +35,7 @@ function getDuration(linePath) {
 	// Note that Utils.getFLACLength requires the Utils DLL to be in the External Libraries folder.
 	var duration = -1, attempts = 0;
 	while (duration == -1 && attempts < 200) {
-		duration = Utils.getFLACLength(linePath);
+		duration = getFLACLength(linePath);
 		attempts++;
 	}
 	if (attempts == 200) {

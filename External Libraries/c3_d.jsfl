@@ -39,14 +39,41 @@ for (var i = 0; i < scriptsToCheck.length; i++) {
 	Functions that are highly re-run go here.
 */
 
-function decodeCString(input) {
-    var real = "";
-    for (var i = 0; i < input.length; i++) {
-        var charCode = input.charCodeAt(i);
-        real += String.fromCharCode(charCode & 255);
-        real += String.fromCharCode(charCode >> 8);
-    }
-    return real;
+function stringToCFunctionString(input) {
+	var arr = "";
+	for(var i = 0; i < input.length; i++) {
+		arr += input.charCodeAt(i) + ", ";
+	}
+	return arr.substring(0, arr.length - 2);
+}
+
+/*		= = = WRAPPER FUNCTIONS = = =
+	Wrapper functions for the C++ library go here.
+*/
+const DLL_NAME = "Sample";
+function stringExample(input) {
+	var execString = DLL_NAME + ".stringExample" + "(" + stringToCFunctionString(input) + ");";
+	return eval(execString);
+}
+
+function renameFolder(oldPath, newPath) {
+	var execString = DLL_NAME + ".renameFolder(" + stringToCFunctionString(oldPath + "?" + newPath) + ");"; // use "?" as delimiter between arguments
+	return eval(execString);
+}
+
+function updateOrDownloadCommandsRepo(pathName) {
+	var execString = DLL_NAME + ".updateOrDownloadCommandsRepo(" + stringToCFunctionString(pathName) + ");";
+	return eval(execString);
+}
+
+function getFLACLength(pathName) {
+	var execString = DLL_NAME + ".getFLACLength(" + stringToCFunctionString(pathName) + ");";
+	return eval(execString);
+}
+
+function commitLocalChange(pathName) {
+	var execString = DLL_NAME + ".commitLocalChange(" + stringToCFunctionString(pathName) + ");";
+	return eval(execString);
 }
 
 /*
@@ -211,7 +238,7 @@ docSave = function () {
 
 			if (!FLfile.exists(newFileName)) {
 				if(!FLfile.createFolder(newFileName)) {
-					throw new Error("Error: VHC folder creation failed!");
+					alert("Warning: VHC folder creation failed!");
 				}
 			} else {
 				FLfile.remove(newFileName + "/" + fileName + ".xfl")
@@ -232,23 +259,27 @@ docSave = function () {
  */
 
 moveMouse = function () {
-	if (toSave != "") {
+	if (toSave !== "" && toSave !== undefined) {
 		autoSave = true;
 		fl.getDocumentDOM().saveAsCopy(toSave + ".xfl");
 		var tmpPath = FLfile.uriToPlatformPath(toSave);
+		if(tmpPath === undefined || tmpPath === null || tmpPath == "") {
+			fl.trace("FLfile.uriToPlatformPath failed!");
+			return;
+		}
 		var result = "Retry";
 		var retryCount = 0;
 		var success = false;
-		while (result.indexOf("Retry") != -1 && retryCount < 5) {
+		while ((!success || result.indexOf("Retry")) != -1 && retryCount < 5) {
 			try {
 				fl.trace("Attempting to commit change to version history...");
-				result = Sample.commitLocalChange(tmpPath);
+				result = commitLocalChange(tmpPath);
 				if (result === undefined || result.indexOf("Success.") != -1) {
 					success = true;
 					fl.trace(result);
 				}
 				else {
-					fl.trace("Local commit failed at path " + tmpPath + ": " + result + ": " + decodeCString(result));
+					fl.trace("Local commit failed at path " + tmpPath + ": " + result);
 				}
 			} catch (e) {
 				fl.trace("CRITICAL ERROR: " + e.stack);
@@ -302,8 +333,7 @@ var cleanPath = FLfile.uriToPlatformPath(path);
 cleanPath = cleanPath.replace(/\\/g, "/");
 
 if (!FLfile.exists(path + "/.git")) {
-	Sample.renameFolder(cleanPath, cleanPath + "_OLD" + index);
+	renameFolder(cleanPath, cleanPath + "_OLD" + index);
 	FLfile.createFolder(path);
 }
-
-Sample.updateOrDownloadCommandsRepo(cleanPath);
+updateOrDownloadCommandsRepo(cleanPath);
