@@ -1,4 +1,4 @@
-/******************************************************************************
+﻿/******************************************************************************
 MASS FRAME SHIFTER
 Description: Shift selected frames by a number of frames specified by the user.
 ******************************************************************************/
@@ -33,7 +33,7 @@ function setup() {
 
 setup();
 // prompt the user for a number of frames to shift by
-var delta = parseInt(prompt("Enter the frames to shift each keyframe by (positive = forward, negatve = backward)"));
+var delta = parseInt(prompt("Enter the value to shift firstFrame by:"));
 
 if (delta !== undefined && !isNaN(delta)) {
 	for (var i = startingFrame; i < endFrame - 1; i++) {
