@@ -80,6 +80,7 @@ LENGTH_MAP = {
 }
 
 MOUTH_SHAPE_MAP = {
+	"Closed Mouth" : "No Talking",
 	"F": "Closed Mouth Teeth",
 	"A": "Open Mouth Big",
 	"IH": "Open Mouth Teeth",
