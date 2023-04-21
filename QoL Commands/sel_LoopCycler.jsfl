@@ -17,7 +17,7 @@ function playSound(input) {
 	return eval(execString);
 }
 
-fl.trace(FLfile.uriToPlatformPath(fl.configURI) + "Commands\\Notifications\\Loop.wav");
+//fl.trace(FLfile.uriToPlatformPath(fl.configURI) + "Commands\\Notifications\\Loop.wav");
 
 if (fl.getDocumentDOM().getElementProperty('loop') == 'single frame') {
 	fl.getDocumentDOM().setElementProperty('loop', 'loop');
