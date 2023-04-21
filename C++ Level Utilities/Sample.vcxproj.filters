@@ -32,7 +32,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Utils.cpp">
+    <ClCompile Include="Sound.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
