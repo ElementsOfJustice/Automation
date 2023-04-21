@@ -73,7 +73,7 @@ JSBool playSound(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, j
     auto wideStr = stringToWide(str);
 
     std::thread t([wideStr]() {
-        PlaySound(wideStr, NULL, SND_FILENAME | SND_SYNC);
+        PlaySound(wideStr, NULL, SND_FILENAME | SND_ASYNC);
     });
 
     t.detach();
