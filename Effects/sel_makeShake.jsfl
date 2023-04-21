@@ -59,7 +59,7 @@ if (guiPanel.dismiss == "accept") {
 
     // Save the current matrix for the current frame
     for (var l = 0; l < timeline.layers.length; l++) {
-        if (fl.getDocumentDOM().getTimeline().layers[l].layerType == "normal" && fl.getDocumentDOM().getTimeline().layers[l].name != "TEXT" && !fl.getDocumentDOM().getTimeline().layers[l].frames[timeline.currentFrame].isEmpty) {
+        if (fl.getDocumentDOM().getTimeline().layers[l].layerType == "normal" && fl.getDocumentDOM().getTimeline().layers[l].name != "TEXT" && fl.getDocumentDOM().getTimeline().layers[l].name != "FLASH" && !fl.getDocumentDOM().getTimeline().layers[l].frames[timeline.currentFrame].isEmpty) {
             var mat = timeline.layers[l].frames[timeline.currentFrame].elements[0].matrix;
             fl.getDocumentDOM().getTimeline().layers[l].locked = false; // unlock layer
             // from the starting frame to the ending frame...

@@ -12,8 +12,8 @@ var flashRange = 5;
 var prefix = "AUDIO/SFX/";
 var flashPath = "OTHER ASSETS/Standard_Flash";
 
-var flashOnly = ["sfx-huh", "sfx-high", "sfx-higher", "sfx-highest", "sfx-low", "sfx-lightbulb", "sfx-damage", "sfx-dramaticshock", "sfx-hit1", "sfx-punch", "sfx-punch2", "sfx-shocked", "sfx-shouting", "sfx-stab", "sfx-stab2"];
-var shakeOnly = ["sfx-deskslam", "sfx-thud", "sfx-thud2", "sfx-damage", "sfx-dramaticshock", "sfx-hit1", "sfx-punch", "sfx-punch2", "sfx-shocked", "sfx-shouting", "sfx-stab", "sfx-stab2"];
+var flashOnly = ["sfx-huh", "sfx-high", "sfx-higher", "sfx-highest", "sfx-low", "sfx-lightbulb", "sfx-damage", "sfx-dramaticshock", "sfx-hit1", "sfx-punch", "sfx-punch2", "sfx-shocked", "sfx-shouting", "sfx-stab", "sfx-stab2", "sfx-furious"];
+var shakeOnly = ["sfx-deskslam", "sfx-thud", "sfx-thud2", "sfx-damage", "sfx-dramaticshock", "sfx-hit1", "sfx-punch", "sfx-punch2", "sfx-shocked", "sfx-shouting", "sfx-stab", "sfx-stab2", "sfx-furious"];
 var shakeIgnoreLayer = ["FLASH", "INTERJECTION", "FADE", "GAVEL", "EVIDENCE", "TEXT"];
 
 /*
@@ -142,7 +142,7 @@ if (guiPanel.dismiss == "accept") {
 	if (doShake) {
 
 		var range = 10;
-		var intensity = 20;
+		var intensity = 10;
 		var taperOff = true;
 		var shakeOffsets = [];
 
