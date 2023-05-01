@@ -34,9 +34,9 @@ function findFirstNonEmptyKeyframeIndexInRange(timeline, layer, firstFrame, last
     return -1;
 }
 function keyClean(timeline) {
-    
+
     for (var i = 0; i < timeline.layers.length; i++) {
-        if(timeline.layers[i].layerType == "folder") {
+        if (timeline.layers[i].layerType == "folder") {
             continue;
         }
         fl.trace("NOW CLEANING: " + timeline.name);
@@ -115,13 +115,16 @@ function keyClean(timeline) {
         totalCleared += framesToClear.length;
     }
 }
-fl.showIdleMessage(false);
-var totalCleared = 0;
-var symbols = ["button", "graphic", "movie clip"];
-for(var i = 0; i < fl.getDocumentDOM().library.items.length; i++) {
-    var item = fl.getDocumentDOM().library.items[i];
-    if (symbols.indexOf(item.itemType) > -1) {
-        keyClean(item.timeline);
+var execute = confirm("This operation will clear all redundant keyframes in EVERY LIBRARY ITEM. Continue?");
+if (execute) {
+    fl.showIdleMessage(false);
+    var totalCleared = 0;
+    var symbols = ["button", "graphic", "movie clip"];
+    for (var i = 0; i < fl.getDocumentDOM().library.items.length; i++) {
+        var item = fl.getDocumentDOM().library.items[i];
+        if (symbols.indexOf(item.itemType) > -1) {
+            keyClean(item.timeline);
+        }
     }
+    alert("Number of keyframes cleared: " + totalCleared);
 }
-alert("Number of keyframes cleared: " + totalCleared);
