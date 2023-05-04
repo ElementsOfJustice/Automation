@@ -49,15 +49,19 @@ function resetSelection(layer, frame) {
 setup();
 
 var selLayer = fl.getDocumentDOM().getTimeline().currentLayer;
-var deltaX = parseFloat(prompt("Set X:")), deltaY = parseFloat(prompt("Set Y:"));
+var deltaX = parseFloat(prompt("Set X (leave blank to keep same):")), deltaY = parseFloat(prompt("Set Y (leave blank to keep same):"));
 
-if (deltaX !== undefined && deltaY !== undefined && !isNaN(deltaX) && !isNaN(deltaY)) {
+if ((deltaX !== undefined || deltaY !== undefined) && (!isNaN(deltaX) || !isNaN(deltaY))) {
     resetSelection(selLayer, 0);
     var curFrame = startingFrame, numFrames = endFrame + 1;
     while (curFrame < numFrames - 1) {
         if (fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements.length > 0) {
-            fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements[0].x = deltaX;
-            fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements[0].y = deltaY;
+            var curX = fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements[0].x;
+            var curY = fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements[0].y;
+            var xIsNaN = (deltaX === undefined|| isNaN(deltaX));
+            var yIsNaN = (deltaY === undefined|| isNaN(deltaY));
+            fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements[0].x = (xIsNaN) ? curX : deltaX;
+            fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements[0].y = (yIsNaN) ? curY : deltaY;
         }
         curFrame += fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].duration;
     }
