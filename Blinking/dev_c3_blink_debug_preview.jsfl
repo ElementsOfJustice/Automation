@@ -1,4 +1,5 @@
 ﻿/*
+/*
 	CASE 3 BLINK DAEMON DEBUG
 */
 var blinkDuration = 6;
@@ -241,7 +242,10 @@ for (var a = 0; a < sceneArray.length; a++) {
 				if (fl.getDocumentDOM().timelines[currentTimeline].layers[b].layerType == "normal") {
 					//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Run your code.
 
-					autoEyeSet(b);
+					if (fl.getDocumentDOM().timelines[currentTimeline].layers[b].name != "LUNA") {
+						autoEyeSet(b);
+					}
+
 					runBlinking(b);
 
 				}
