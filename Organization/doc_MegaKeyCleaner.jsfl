@@ -72,6 +72,7 @@ function keyClean(timeline) {
             var prevDuration = timeline.layers[layerIndex].frames[firstFrame].duration;
             var prevStartFrame = timeline.layers[layerIndex].frames[firstFrame].startFrame;
             var prevMatrix = timeline.layers[layerIndex].frames[firstFrame].elements[0].matrix;
+            var prevHasNoTween = timeline.layers[layerIndex].frames[firstFrame].tweenType == "none";
             for (var j = firstFrame + prevDuration; j < lastFrame; j += prevDuration) {
                 if (timeline.layers[layerIndex].frames[j].isEmpty) {
                     prevFirstFrame = undefined;
@@ -79,6 +80,7 @@ function keyClean(timeline) {
                     prevDuration = timeline.layers[layerIndex].frames[j].duration;
                     prevStartFrame = undefined;
                     prevMatrix = undefined;
+                    prevHasNoTween = true;
                     prevFrame = j;
                     continue; // ignore empty keyframes  
                 }
@@ -87,7 +89,11 @@ function keyClean(timeline) {
                 var curDuration = timeline.layers[layerIndex].frames[j].duration;
                 var curStartFrame = timeline.layers[layerIndex].frames[j].startFrame;
                 var curMatrix = timeline.layers[layerIndex].frames[j].elements[0].matrix;
-                if (timeline.layers[layerIndex].frames[j].actionScript == "" && timeline.layers[layerIndex].frames[j].elements[0].elementType == "instance" && timeline.layers[layerIndex].frames[j].elements[0].symbolType == "graphic") {
+                var hasNoActionScript = timeline.layers[layerIndex].frames[j].actionScript == "";
+                var isInstance = timeline.layers[layerIndex].frames[j].elements[0].elementType == "instance";
+                var isGraphic = timeline.layers[layerIndex].frames[j].elements[0].symbolType == "graphic";
+                var curHasNoTween = timeline.layers[layerIndex].frames[j].tweenType == "none";
+                if (hasNoActionScript && isInstance && isGraphic && curHasNoTween && prevHasNoTween) {
                     if (prevDuration == 1 && curDuration == 1 && prevFirstFrame == curFirstFrame - 1 && matrixEquals(prevMatrix, curMatrix)) { // frame by frame sequence moment
                         timeline.layers[layerIndex].frames[prevFrame].elements[0].loop = "loop"; // should have a cascade effect
                         framesToClear.push(j);
@@ -105,6 +111,7 @@ function keyClean(timeline) {
                 prevDuration = curDuration;
                 prevStartFrame = curStartFrame;
                 prevMatrix = curMatrix;
+                prevHasNoTween = curHasNoTween;
                 prevFrame = j;
             }
         }
