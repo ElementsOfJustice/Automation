@@ -77,7 +77,6 @@ current-frame-dependent. We use a cache to minimize the accessing of rigs. Wow! 
 */
 
 blinkFrameIndex = function (leftEye, rigFolder) {
-
 	// Dumb that we shift this around, but use the Unicode arrow for library instance, underscore for timeline movieClip
 	leftEye = leftEye.replace("_", "►")
 	leftEye = rigFolder.substring(0, rigFolder.lastIndexOf('/')) + "/" + leftEye;
@@ -94,7 +93,7 @@ blinkFrameIndex = function (leftEye, rigFolder) {
 	var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
 
 	// Check the pose name between rig and eyes.
-	for (var k = 0; k < objTl.frameCount; k++) {
+	for (var k = 0; k < objTl.frameCount; k+= objTl.frames[k].duration) {
 		//fl.trace(k + " " + objTl.frames[k].name);
 		if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame) && (objTl.frames[k].name == poseName)) {
 			return (k + 1);
