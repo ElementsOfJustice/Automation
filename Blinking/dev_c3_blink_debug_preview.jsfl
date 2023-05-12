@@ -26,10 +26,10 @@ for (i = 1, total = fl.getDocumentDOM().timelines.length; i < total; i++) {
 /*
 Function: findFirstFrameWithSymbol
 Variables: 
-    layerIndex	What layer to search
+	layerIndex	What layer to search
 Description: Return the frame number of the first occurance of any graphic symbol.
 */
-findFirstFrameWithSymbol = function(layerIndex) {
+findFirstFrameWithSymbol = function (layerIndex) {
 	var frameArray = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames;
 
 	for (var i = 0; i < frameArray.length; i++) {
@@ -48,20 +48,20 @@ Variables:
 Description: Rounds down to the next hundred.
 */
 function roundDownToHundred(num) {
-  return Math.floor(num/100) * 100;
+	return Math.floor(num / 100) * 100;
 }
 
 /*
 Function: checkRange
 Variables: 
-    arr		xSheetCache
+	arr		xSheetCache
 	num1	First Frame #1
 	num2	First Frame #2
 Description: Returns true if two frame's firstFrames share the same pose.
 */
 function checkRange(arr, num1, num2) {
 	var rangeStart, rangeEnd;
-	
+
 	for (var i = 0; i < arr.length; i++) {
 		if (num1 >= arr[i] && num1 <= arr[i + 1]) {
 			rangeStart = arr[i];
@@ -69,61 +69,62 @@ function checkRange(arr, num1, num2) {
 		}
 	}
 
-	if (num2 >= rangeStart && num2 <= rangeEnd) {
+	/*if (num2 >= rangeStart && num2 <= rangeEnd) {
 		return true;
 	} else {
 		return false;
-	}
+	}*/ // WHAT IS THIS CRAP
+	return (num2 >= rangeStart && num2 <= rangeEnd);
 }
 
 /*
 Function: findKey
 Variables: 
-    arr		xSheetCache
+	arr		xSheetCache
 	num1	First Frame #1
 	num2	First Frame #2
 Description: Returns true if two frame's firstFrames share the same pose.
 */
 
 function findKey(number, dictionary) {
-  var keys = [];
+	var keys = [];
 
-  for (var key in dictionary) {
-    if (dictionary.hasOwnProperty(key)) {
-      keys.push(Number(key));
-    }
-  }
+	for (var key in dictionary) {
+		if (dictionary.hasOwnProperty(key)) {
+			keys.push(Number(key));
+		}
+	}
 
-  keys.sort(function(a, b) {
-    return a - b;
-  });
+	keys.sort(function (a, b) {
+		return a - b;
+	});
 
-  for (var i = keys.length - 1; i >= 0; i--) {
-    var key = keys[i];
+	for (var i = keys.length - 1; i >= 0; i--) {
+		var key = keys[i];
 
-    if (number >= key) {
-      return key;
-    }
-  }
+		if (number >= key) {
+			return key;
+		}
+	}
 
-  return null;
+	return null;
 }
 
 /*
 Function: blinkFrameIndex
 Variables: 
-    leftEye   We make the reasonable assumption both eyes are synchronized, so we work with only one eye
-    rigFolder The location of the rig folder, used to find the movieClip
+	leftEye   We make the reasonable assumption both eyes are synchronized, so we work with only one eye
+	rigFolder The location of the rig folder, used to find the movieClip
 Description: Return the blink frame index for a given pose of a given rig by checking the xSheet. This is
 current-frame-dependent. We use a cache to minimize the accessing of rigs. Wow! So fast!
 */
 
-blinkFrameIndex = function(leftEye, rigFolder, currentFrame, layerIndex, xSheetCache) {
+blinkFrameIndex = function (leftEye, rigFolder, currentFrame, layerIndex, xSheetCache) {
 
 	//► for the library instance Char►BlinkLeft, underscore for the timeline movieclip instance, Char_BlinkLeft.
 	leftEye = leftEye.replace("_", "►");
 	leftEye = rigFolder.substring(0, rigFolder.lastIndexOf('/')) + "/" + leftEye;
-	
+
 	//In-scope timeline vars.
 	var timeline = fl.getDocumentDOM().getTimeline();
 
@@ -146,19 +147,19 @@ blinkFrameIndex = function(leftEye, rigFolder, currentFrame, layerIndex, xSheetC
 /*
 Function: autoEyeSet
 Variables: 
-    layerIndex	What layer are we blinking on
+	layerIndex	What layer are we blinking on
 Description: Automatically apply cutOpen frame anchors to detected
 pose changes.
 */
 
-autoEyeSet = function(layerIndex) {
+autoEyeSet = function (layerIndex) {
 
 	var firstGraphicInstance = findFirstFrameWithSymbol(layerIndex);
 
 	if (firstGraphicInstance == -1) {
-		return
+		return;
 	}
-	
+
 	//In-scope timeline vars.	
 	var timeline = fl.getDocumentDOM().getTimeline();
 	var layer = timeline.layers[layerIndex];
@@ -186,9 +187,9 @@ autoEyeSet = function(layerIndex) {
 			frames[i].labelType = "anchor";
 			frames[i].name = "CutOpen";
 		}
-	
+
 		//Next two operations check if a pre-existing anchor label exists, and if it does, does nothing. This allows human users to circumvent the automatic labelling. 
-	
+
 		if ((frames[i].isEmpty) && (!frames[i + 1].isEmpty) && (!frames[i].labelType == "anchor")) {
 			//CutOpen if we go from no content to content from one frame to the next.
 			frames[i + 1].labelType = "anchor";
@@ -208,11 +209,11 @@ autoEyeSet = function(layerIndex) {
 /*
 Function: runBlinking
 Variables: 
-    layerIndex	What layer are we blinking on
+	layerIndex	What layer are we blinking on
 Description: Run the blinking code for all markers on a layer.
 */
 
-runBlinking = function(layerIndex) {
+runBlinking = function (layerIndex) {
 
 	var firstGraphicInstance = findFirstFrameWithSymbol(layerIndex);
 
@@ -237,7 +238,7 @@ runBlinking = function(layerIndex) {
 	var itemIndex = fl.getDocumentDOM().library.findItemIndex(rigPath);
 	var character_xSheet = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
 
-	for (var k = 0; k < character_xSheet.frames.length; k++) {
+	for (var k = 0; k < character_xSheet.frames.length; k+= character_xSheet.frames[k].duration - (k - character_xSheet.frames[k].startFrame)) {
 		var character_xSheetEntry = character_xSheet.frames[k];
 		if (character_xSheetEntry.labelType === "name" && k === character_xSheetEntry.startFrame) {
 			xSheetCache[k] = character_xSheetEntry.name;
@@ -296,18 +297,17 @@ for (var a = 0; a < sceneArray.length; a++) {
 	fl.getDocumentDOM().currentTimeline = sceneArray[a];
 	var currentTimeline = sceneArray[a];
 	for (var b = 0; b < fl.getDocumentDOM().timelines[currentTimeline].layerCount; b++) {
-		if (fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer !== null) {
-			if (fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer.name == "VECTOR_CHARACTERS") {
-				if (fl.getDocumentDOM().timelines[currentTimeline].layers[b].layerType == "normal") {
-					//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Run your code.
-					autoEyeSet(b);
-					runBlinking(b);
-				}
-			}
+		var parentLayerIsNull = fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer === null;
+		var layerIsNotVectorCharacters = fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer.name !== "VECTOR_CHARACTERS";
+		var layerTypeIsNotNormal = fl.getDocumentDOM().timelines[currentTimeline].layers[b].layerType !== "normal";
+		if (parentLayerIsNull || layerIsNotVectorCharacters || layerTypeIsNotNormal) {
+			continue;
 		}
+		//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Run your code.
+		autoEyeSet(b);
+		runBlinking(b);
 	}
 }
-
 //Test movie, as opposed to test scene. This new implementation of blinking tech is resistant to testing scenes!
 fl.getDocumentDOM().testMovie();
 
@@ -316,16 +316,16 @@ for (var i = 0; i < sceneArray.length; i++) {
 	fl.getDocumentDOM().currentTimeline = sceneArray[i];
 	var currentTimeline = sceneArray[i];
 	for (var j = 0; j < fl.getDocumentDOM().timelines[currentTimeline].layerCount; j++) {
-		if (fl.getDocumentDOM().timelines[currentTimeline].layers[j].parentLayer !== null) {
-			if (fl.getDocumentDOM().timelines[currentTimeline].layers[j].parentLayer.name == "VECTOR_CHARACTERS") {
-				if (fl.getDocumentDOM().timelines[currentTimeline].layers[j].layerType == "normal") {
-					//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Erase your code.
-					var frameArray = fl.getDocumentDOM().getTimeline().layers[j].frames;
-					for (k = 0; k < frameArray.length; k++) {
-						frameArray[k].actionScript = ""
-					}
-				}
-			}
+		var parentLayerIsNull = fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer === null;
+		var layerIsNotVectorCharacters = fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer.name !== "VECTOR_CHARACTERS";
+		var layerTypeIsNotNormal = fl.getDocumentDOM().timelines[currentTimeline].layers[b].layerType !== "normal";
+		if (parentLayerIsNull || layerIsNotVectorCharacters || layerTypeIsNotNormal) {
+			continue;
+		}
+		//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Erase your code.
+		var frameArray = fl.getDocumentDOM().getTimeline().layers[j].frames;
+		for (k = 0; k < frameArray.length; k++) {
+			frameArray[k].actionScript = ""
 		}
 	}
 }
