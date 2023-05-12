@@ -34,12 +34,12 @@ function findFirstNonEmptyKeyframeIndexInRange(timeline, layer, firstFrame, last
     return -1;
 }
 function keyClean(timeline) {
-
+    
+    fl.trace("NOW CLEANING: " + timeline.name);
     for (var i = 0; i < timeline.layers.length; i++) {
         if (timeline.layers[i].layerType == "folder") {
             continue;
         }
-        fl.trace("NOW CLEANING: " + timeline.name);
         var layerIndex = i;
         var firstFrame = 0;
         var lastFrame = timeline.layers[i].frameCount;

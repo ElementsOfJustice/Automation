@@ -1,10 +1,10 @@
 ﻿/*
-/*
-	CASE 3 BLINK DAEMON DEBUG
+	CASE 3 BLINK PREVIEW
 */
-var blinkDuration = 6;
 var bookmarkerTl = fl.getDocumentDOM().currentTimeline;
 var bookmarkerFrame = fl.getDocumentDOM().getTimeline().currentFrame;
+
+var blinkDuration = 6;
 var sceneArray = [0];
 var tmpKeys = [];
 
@@ -12,9 +12,8 @@ fl.getDocumentDOM().selectNone();
 fl.showIdleMessage(false);
 fl.outputPanel.clear();
 
-//Compile timeline index of scenes, where scenes are arbitrarially defined as a timeline containing
-//a VECTOR_CHARACTERS folder. There is no fl.getDocumentDOM().scenes array... Too bad!
-
+//Compile timeline index of scenes, where scenes are defined as a timeline containing
+//a VECTOR_CHARACTERS folder.
 for (i = 1, total = fl.getDocumentDOM().timelines.length; i < total; i++) {
 	for (j = 0, layerCount = fl.getDocumentDOM().timelines[i].layers.length; j < layerCount; j++) {
 		if (fl.getDocumentDOM().timelines[i].layers[j].name === "VECTOR_CHARACTERS") {
@@ -27,11 +26,10 @@ for (i = 1, total = fl.getDocumentDOM().timelines.length; i < total; i++) {
 /*
 Function: findFirstFrameWithSymbol
 Variables: 
-    layerIndex	What layer are you searching on
-Description: Return the frame number that the first graphic symbol occurs on.
+    layerIndex	What layer to search
+Description: Return the frame number of the first occurance of any graphic symbol.
 */
-
-findFirstFrameWithSymbol = function (layerIndex) {
+findFirstFrameWithSymbol = function(layerIndex) {
 	var frameArray = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames;
 
 	for (var i = 0; i < frameArray.length; i++) {
@@ -44,27 +42,71 @@ findFirstFrameWithSymbol = function (layerIndex) {
 }
 
 /*
+Function: roundDownToHundred
+Variables: 
+	num int
+Description: Rounds down to the next hundred.
+*/
+function roundDownToHundred(num) {
+  return Math.floor(num/100) * 100;
+}
+
+/*
 Function: checkRange
 Variables: 
     arr		xSheetCache
 	num1	First Frame #1
 	num2	First Frame #2
-Description: Returns true or false if two frame's firstFrames share the same pose.
+Description: Returns true if two frame's firstFrames share the same pose.
 */
-
 function checkRange(arr, num1, num2) {
 	var rangeStart, rangeEnd;
+	
 	for (var i = 0; i < arr.length; i++) {
 		if (num1 >= arr[i] && num1 <= arr[i + 1]) {
 			rangeStart = arr[i];
 			rangeEnd = arr[i + 1];
 		}
 	}
+
 	if (num2 >= rangeStart && num2 <= rangeEnd) {
 		return true;
 	} else {
 		return false;
 	}
+}
+
+/*
+Function: findKey
+Variables: 
+    arr		xSheetCache
+	num1	First Frame #1
+	num2	First Frame #2
+Description: Returns true if two frame's firstFrames share the same pose.
+*/
+
+function findKey(number, dictionary) {
+  var keys = [];
+
+  for (var key in dictionary) {
+    if (dictionary.hasOwnProperty(key)) {
+      keys.push(Number(key));
+    }
+  }
+
+  keys.sort(function(a, b) {
+    return a - b;
+  });
+
+  for (var i = keys.length - 1; i >= 0; i--) {
+    var key = keys[i];
+
+    if (number >= key) {
+      return key;
+    }
+  }
+
+  return null;
 }
 
 /*
@@ -76,26 +118,25 @@ Description: Return the blink frame index for a given pose of a given rig by che
 current-frame-dependent. We use a cache to minimize the accessing of rigs. Wow! So fast!
 */
 
-blinkFrameIndex = function (leftEye, rigFolder) {
+blinkFrameIndex = function(leftEye, rigFolder, currentFrame, layerIndex, xSheetCache) {
 
-	// Dumb that we shift this around, but use the Unicode arrow for library instance, underscore for timeline movieClip
-	leftEye = leftEye.replace("_", "►")
+	//► for the library instance Char►BlinkLeft, underscore for the timeline movieclip instance, Char_BlinkLeft.
+	leftEye = leftEye.replace("_", "►");
 	leftEye = rigFolder.substring(0, rigFolder.lastIndexOf('/')) + "/" + leftEye;
+	
+	//In-scope timeline vars.
+	var timeline = fl.getDocumentDOM().getTimeline();
 
-	// Get the current pose name from the rig
-	var curFrame = fl.getDocumentDOM().getTimeline().currentFrame;
-	var ffIndex = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()].frames[curFrame].elements[0].firstFrame + 1;
-	var itemIndex = fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()].frames[curFrame].elements[0].libraryItem.name);
-	var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
-	var poseName = objTl.frames[ffIndex - 1].name;
+	//Get the current pose from the character.
+	var firstFrame = timeline.layers[layerIndex].frames[currentFrame].elements[0].firstFrame + 1;
+	var poseName = xSheetCache[findKey(firstFrame, xSheetCache)];
 
-	// Load the eyes
+	//Load the eyes
 	var itemIndex = fl.getDocumentDOM().library.findItemIndex(leftEye);
 	var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
 
-	// Check the pose name between rig and eyes.
+	//Return the frame there is a match in xSheet entries between BlinkLeft and the character.
 	for (var k = 0; k < objTl.frameCount; k++) {
-		//fl.trace(k + " " + objTl.frames[k].name);
 		if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame) && (objTl.frames[k].name == poseName)) {
 			return (k + 1);
 		}
@@ -110,48 +151,55 @@ Description: Automatically apply cutOpen frame anchors to detected
 pose changes.
 */
 
-autoEyeSet = function (layerIndex) {
+autoEyeSet = function(layerIndex) {
 
-	fl.getDocumentDOM().getTimeline().setSelectedLayers(layerIndex);
 	var firstGraphicInstance = findFirstFrameWithSymbol(layerIndex);
 
 	if (firstGraphicInstance == -1) {
 		return
 	}
+	
+	//In-scope timeline vars.	
+	var timeline = fl.getDocumentDOM().getTimeline();
+	var layer = timeline.layers[layerIndex];
+	var frames = layer.frames;
 
-	var itemIndex = fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[firstGraphicInstance].elements[0].libraryItem.name);
+	//Reference the character's xSheet we are about to consider.
+	var itemIndex = fl.getDocumentDOM().library.findItemIndex(frames[firstGraphicInstance].elements[0].libraryItem.name);
 	var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
-	var objTlFrameCount = objTl.frames.length;
-	var frames = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames;
 
 	var xSheetCache = [];
 
-	for (var k = 0; k < objTlFrameCount; k++) {
+	//Make a cache of that character's xSheet. We reference the cache instead of loading the character many times.
+	for (var k = 0; k < objTl.frames.length; k++) {
 		var objTlFrame = objTl.frames[k];
 		if (objTlFrame.labelType === "name" && k === objTlFrame.startFrame) {
 			xSheetCache.push(k);
 		}
 	}
 
+	//For all frames on the layer we are running autoEyeSet on, automatically apply the bare minimum blink instructions.
 	for (var i = 0; i < frames.length - 1; i++) {
 
-		if ((i == 0) && (!fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].isEmpty)) {
-			//First Frame of Layer
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].labelType = "anchor";
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].name = "CutOpen";
+		if ((i == 0) && (!frames[i].isEmpty)) {
+			//CutOpen on the first frame of a character layer if it has content.
+			frames[i].labelType = "anchor";
+			frames[i].name = "CutOpen";
+		}
+	
+		//Next two operations check if a pre-existing anchor label exists, and if it does, does nothing. This allows human users to circumvent the automatic labelling. 
+	
+		if ((frames[i].isEmpty) && (!frames[i + 1].isEmpty) && (!frames[i].labelType == "anchor")) {
+			//CutOpen if we go from no content to content from one frame to the next.
+			frames[i + 1].labelType = "anchor";
+			frames[i + 1].name = "CutOpen";
 		}
 
-		if ((fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].isEmpty) && (!fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + 1].isEmpty)) {
-			//If we go from no content to content.
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + 1].labelType = "anchor";
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + 1].name = "CutOpen";
-		}
-
-		if ((!fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].isEmpty) && (!fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + 1].isEmpty)) {
-			if (!checkRange(xSheetCache, fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].firstFrame, fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + 1].elements[0].firstFrame)) {
-				//If a change in poses is detected within content.
-				fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + 1].labelType = "anchor";
-				fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + 1].name = "CutOpen";
+		if ((!frames[i].isEmpty) && (!frames[i + 1].isEmpty) && (checkRange(xSheetCache, xSheetCache[-1], frames[i + 1].elements[0].firstFrame)) && (!frames[i].labelType == "anchor")) {
+			if (!checkRange(xSheetCache, frames[i].elements[0].firstFrame, frames[i + 1].elements[0].firstFrame)) {
+				//CutOpen on pose changes.
+				frames[i + 1].labelType = "anchor";
+				frames[i + 1].name = "CutOpen";
 			}
 		}
 	}
@@ -164,30 +212,41 @@ Variables:
 Description: Run the blinking code for all markers on a layer.
 */
 
-runBlinking = function (layerIndex) {
+runBlinking = function(layerIndex) {
 
-	fl.getDocumentDOM().getTimeline().setSelectedLayers(layerIndex);
 	var firstGraphicInstance = findFirstFrameWithSymbol(layerIndex);
 
 	if (firstGraphicInstance == -1) {
 		return
 	}
 
+	var xSheetCache = {};
+
+	//Get the library folder of the character we are running blinking code on.
 	var timeline = fl.getDocumentDOM().getTimeline();
 	var frameArray = timeline.layers[layerIndex].frames;
 	var rigPath = timeline.layers[layerIndex].frames[firstGraphicInstance].elements[0].libraryItem.name;
 	var rigFolder = rigPath.substring(rigPath.lastIndexOf('/') + 1);
 	rigFolder = rigFolder.substring(0, rigFolder.indexOf('►')) + "►";
 
+	//Get the instance names of the blinking movieclips for the character we are running blinking code on.
 	var leftEye = (rigFolder + "BlinkLeft").replace("►", "_");
 	var rightEye = (rigFolder + "BlinkRight").replace("►", "_");
 
-	rigFolder = rigPath;
+	//Make a cache of our character's xSheet. We reference the cache instead of loading the character many times.
+	var itemIndex = fl.getDocumentDOM().library.findItemIndex(rigPath);
+	var character_xSheet = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
+
+	for (var k = 0; k < character_xSheet.frames.length; k++) {
+		var character_xSheetEntry = character_xSheet.frames[k];
+		if (character_xSheetEntry.labelType === "name" && k === character_xSheetEntry.startFrame) {
+			xSheetCache[k] = character_xSheetEntry.name;
+		}
+	}
 
 	for (i = 0; i < frameArray.length; i++) {
 		if ((i == frameArray[i].startFrame) && (frameArray[i].isEmpty == false) && (frameArray[i].labelType == "anchor")) {
-			fl.getDocumentDOM().getTimeline().currentFrame = i
-			var blinkFrame = blinkFrameIndex(leftEye, rigFolder);
+			var blinkFrame = blinkFrameIndex(leftEye, rigPath, i, layerIndex, xSheetCache);
 
 			//BLINK
 			if (frameArray[i].name == "Blink") {
@@ -241,20 +300,15 @@ for (var a = 0; a < sceneArray.length; a++) {
 			if (fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer.name == "VECTOR_CHARACTERS") {
 				if (fl.getDocumentDOM().timelines[currentTimeline].layers[b].layerType == "normal") {
 					//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Run your code.
-
-					if (fl.getDocumentDOM().timelines[currentTimeline].layers[b].name != "LUNA") {
-						autoEyeSet(b);
-					}
-
+					autoEyeSet(b);
 					runBlinking(b);
-
 				}
 			}
 		}
 	}
 }
 
-//Test movie, as opposed to test scene. This new implementation of blinking tech is resistant to scenes!!!
+//Test movie, as opposed to test scene. This new implementation of blinking tech is resistant to testing scenes!
 fl.getDocumentDOM().testMovie();
 
 //AS3 Cleanup

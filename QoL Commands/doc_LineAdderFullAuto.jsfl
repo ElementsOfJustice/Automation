@@ -10,6 +10,19 @@ Get all voice lines in a subset of folders
 ******************************************************************************/
 UPPER_FRAMECOUNT_LIMIT = 12000;
 
+function stringToCFunctionString(input) {
+	var arr = "";
+	for(var i = 0; i < input.length; i++) {
+		arr += input.charCodeAt(i) + ", ";
+	}
+	return arr.substring(0, arr.length - 2);
+}
+
+function getFLACLength(pathName) {
+	var execString = "Sample.getFLACLength(" + stringToCFunctionString(pathName) + ");";
+	return eval(execString);
+}
+
 function switchVox(layerVar) {
 	var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(layerVar);
 	if (layerIndex == null) {
