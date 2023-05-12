@@ -7,7 +7,7 @@ if(poseLength !== undefined && firstOffset !== undefined) {
     while(curFrame < fl.getDocumentDOM().getTimeline().frameCount) {
         var curSel = [];
         for(var i = 0; i < selFrames.length / 3; i++) {
-            if(fl.getDocumentDOM().getTimeline().layers[selFrames[3*i]].frames[curFrame].isEmpty) {
+            if(fl.getDocumentDOM().getTimeline().layers[selFrames[3*i]].layerType !== "folder" && fl.getDocumentDOM().getTimeline().layers[selFrames[3*i]].frames[curFrame].isEmpty) {
                 curSel.push(selFrames[3*i]);
                 curSel.push(curFrame);
                 curSel.push(curFrame + 1);
