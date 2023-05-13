@@ -37,7 +37,7 @@ var delta = parseInt(prompt("Enter the value to shift firstFrame by:"));
 
 if (delta !== undefined && !isNaN(delta)) {
 	for (var i = startingFrame; i < endFrame - 1; i++) {
-		if (fl.getDocumentDOM().getTimeline().layers[layer].frames[i].startFrame == i) {
+		if (!fl.getDocumentDOM().getTimeline().layers[layer].frames[i].isEmpty && fl.getDocumentDOM().getTimeline().layers[layer].frames[i].startFrame == i) {
 			// Move the frame (the most important line of the script)
 			fl.getDocumentDOM().getTimeline().layers[layer].frames[i].elements[0].firstFrame += delta;
 			// set the last frame property to what it already is plus the frames to shift by
