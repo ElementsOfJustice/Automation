@@ -355,7 +355,7 @@ function syncMane(layerIndex) {
 			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i-1].actionScript += "\nthis.maneFrame = Luna_mane.currentFrame;\n this.tailFrame = Luna_tail.currentFrame;";
 			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].actionScript += "\nthis.Luna_mane.gotoAndPlay((this.maneFrame + 1) % this.Luna_mane.totalFrames);\nthis.Luna_tail.gotoAndPlay((this.tailFrame + 1) % this.Luna_tail.totalFrames);";
 		}
-
+		previousSymbol = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].libraryItem.name;
 	}
 }
 
