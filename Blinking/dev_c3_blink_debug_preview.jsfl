@@ -37,11 +37,15 @@ findFirstFrameWithSymbol = function (layerIndex) {
 	var frameArray = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames;
 
 	for (var i = 0; i < frameArray.length; i++) {
-		if (frameArray[i].elements.length > 0 && frameArray[i].elements[0].elementType == "instance") {
+		var frameHasElements = frameArray[i].elements.length > 0;
+		if(!frameHasElements) continue;
+		var elementIsInstance = frameArray[i].elements[0].elementType == "instance";
+		if(!elementIsInstance) continue;
+		var instanceNameContainsPose = frameArray[i].elements[0].libraryItem.name.indexOf("Pose") != -1;
+		if (instanceNameContainsPose) {
 			return i;
 		}
 	}
-
 	return -1;
 }
 
@@ -176,9 +180,8 @@ function autoEyeSet(layerIndex) {
 
 	//For all frames on the layer we are running autoEyeSet on, automatically apply the bare minimum blink instructions.
 	for (var i = 0; i < frames.length - 1; i++) {
-
-		if ((i == 0) && (!frames[i].isEmpty)) {
-			//CutOpen on the first frame of a character layer if it has content.
+		if ((i == 0) && (!frames[i].isEmpty) && frames[i].elements[0].libraryItem.name.indexOf("Pose") != -1) {
+			//CutOpen on the first frame of a character layer if it has content. 
 			frames[i].labelType = "anchor";
 			frames[i].name = "CutOpen";
 		}
@@ -334,6 +337,28 @@ function runBlinking(layerIndex) {
 	}
 }
 
+function syncMane(layerIndex) {
+	// TODO: search for symbol changes, and then add Luna_mane.gotoAndPlay and Luna_tail.gotoAndPlay
+	var previousSymbol = undefined;
+	for(var i = 0; i < fl.getDocumentDOM().getTimeline().layers[layerIndex].frameCount; i+= fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].duration) {
+		if(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].isEmpty) {
+			previousSymbol = undefined;
+			continue;
+		}
+		if(previousSymbol === undefined) {
+			previousSymbol = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].libraryItem.name;
+			continue;
+		}
+		if(previousSymbol != fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].libraryItem.name) { // symbol is... le changed!
+			fl.getDocumentDOM().getTimeline().convertToKeyframes(i - 1); // keyframe previous frame
+			tmpKeys.push([layerIndex, i-1])
+			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i-1].actionScript += "\nthis.maneFrame = Luna_mane.currentFrame;\n this.tailFrame = Luna_tail.currentFrame;";
+			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].actionScript += "\nthis.Luna_mane.gotoAndPlay((this.maneFrame + 1) % this.Luna_mane.totalFrames);\nthis.Luna_tail.gotoAndPlay((this.tailFrame + 1) % this.Luna_tail.totalFrames);";
+		}
+
+	}
+}
+
 //For each scene, runBlinking on each child layer of VECTOR_CHARACTERS
 for (var a = 0; a < sceneArray.length; a++) {
 	fl.getDocumentDOM().currentTimeline = sceneArray[a];
@@ -355,12 +380,14 @@ for (var a = 0; a < sceneArray.length; a++) {
 		//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Run your code.
 		autoEyeSet(b);
 		runBlinking(b);
+		if(fl.getDocumentDOM().timelines[currentTimeline].layers[b].name.toUpperCase().indexOf("LUNA") != -1) {
+			syncMane(b);
+		}
 	}
 }
 
 //Test movie, as opposed to test scene. This new implementation of blinking tech is resistant to testing scenes!
 fl.getDocumentDOM().testMovie();
-
 //AS3 Cleanup
 for (var i = 0; i < sceneArray.length; i++) {
 	fl.getDocumentDOM().currentTimeline = sceneArray[i];
@@ -393,7 +420,6 @@ for (var i = 0; i < tmpKeys.length; i++) {
 	fl.getDocumentDOM().getTimeline().setSelectedLayers(tmpKeys[i][0]);
 	fl.getDocumentDOM().getTimeline().clearKeyframes(tmpKeys[i][1], tmpKeys[i][1]);
 }
-
 //Put you back where you were.
 fl.getDocumentDOM().currentTimeline = bookmarkerTl;
 fl.getDocumentDOM().getTimeline().currentFrame = bookmarkerFrame;
