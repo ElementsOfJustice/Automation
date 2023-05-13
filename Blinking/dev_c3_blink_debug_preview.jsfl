@@ -1,5 +1,9 @@
 ﻿/*
 	CASE 3 BLINK PREVIEW
+	
+	TODO:
+	Fix all single-letter variables. It's horrendously inconsistent.
+	
 */
 var bookmarkerTl = fl.getDocumentDOM().currentTimeline;
 var bookmarkerFrame = fl.getDocumentDOM().getTimeline().currentFrame;
@@ -69,12 +73,7 @@ function checkRange(arr, num1, num2) {
 		}
 	}
 
-	/*if (num2 >= rangeStart && num2 <= rangeEnd) {
-		return true;
-	} else {
-		return false;
-	}*/ // WHAT IS THIS CRAP
-	return (num2 >= rangeStart && num2 <= rangeEnd);
+return (num2 >= rangeStart && num2 <= rangeEnd);
 }
 
 /*
@@ -85,7 +84,6 @@ Variables:
 	num2	First Frame #2
 Description: Returns true if two frame's firstFrames share the same pose.
 */
-
 function findKey(number, dictionary) {
 	var keys = [];
 
@@ -118,8 +116,7 @@ Variables:
 Description: Return the blink frame index for a given pose of a given rig by checking the xSheet. This is
 current-frame-dependent. We use a cache to minimize the accessing of rigs. Wow! So fast!
 */
-
-blinkFrameIndex = function (leftEye, rigFolder, currentFrame, layerIndex, xSheetCache) {
+function blinkFrameIndex(leftEye, rigFolder, currentFrame, layerIndex, xSheetCache) {
 
 	//► for the library instance Char►BlinkLeft, underscore for the timeline movieclip instance, Char_BlinkLeft.
 	leftEye = leftEye.replace("_", "►");
@@ -151,9 +148,9 @@ Variables:
 Description: Automatically apply cutOpen frame anchors to detected
 pose changes.
 */
-
-autoEyeSet = function (layerIndex) {
-
+function autoEyeSet(layerIndex) {
+	
+	var xSheetCache = [];
 	var firstGraphicInstance = findFirstFrameWithSymbol(layerIndex);
 
 	if (firstGraphicInstance == -1) {
@@ -168,8 +165,6 @@ autoEyeSet = function (layerIndex) {
 	//Reference the character's xSheet we are about to consider.
 	var itemIndex = fl.getDocumentDOM().library.findItemIndex(frames[firstGraphicInstance].elements[0].libraryItem.name);
 	var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
-
-	var xSheetCache = [];
 
 	//Make a cache of that character's xSheet. We reference the cache instead of loading the character many times.
 	for (var k = 0; k < objTl.frames.length; k++) {
@@ -207,21 +202,55 @@ autoEyeSet = function (layerIndex) {
 }
 
 /*
+Function: AS3_Constructor
+Variables: 
+	leftEye			
+	rightEye		
+	blinkFrame		
+	blinkDuration	
+	instruction		
+Description: Automatically apply cutOpen frame anchors to detected
+pose changes.
+*/
+function AS3_Constructor(leftEye, rightEye, blinkFrame, blinkDuration, instruction) {
+	
+	if (instruction == "Blink") {
+		return leftEye + ".gotoAndPlay(" + blinkFrame + ");\n" + rightEye + ".gotoAndPlay(" + blinkFrame + ");";
+	}
+
+	if (instruction == "AnimClose") {
+		return leftEye + ".gotoAndPlay(" + blinkFrame + ");\n" + rightEye + ".gotoAndPlay(" + blinkFrame + ");";
+	}
+
+	if (instruction == "AnimOpen") {
+		return leftEye + ".gotoAndPlay(" + (blinkFrame + (blinkDuration / 2)) + ");\n" + rightEye + ".gotoAndPlay(" + (blinkFrame + (blinkDuration / 2)) + ");";
+	}
+
+	if (instruction == "CutOpen") {
+		return leftEye + ".gotoAndStop(" + blinkFrame + ");\n" + rightEye + ".gotoAndStop(" + blinkFrame + ");";
+	}
+
+	if (instruction == "CutClosed") {
+		return leftEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");\n" + rightEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");";
+	}
+
+}
+
+/*
 Function: runBlinking
 Variables: 
 	layerIndex	What layer are we blinking on
 Description: Run the blinking code for all markers on a layer.
 */
-
-runBlinking = function (layerIndex) {
-
+function runBlinking(layerIndex) {
+	
+	var xSheetCache = {};
 	var firstGraphicInstance = findFirstFrameWithSymbol(layerIndex);
+	fl.getDocumentDOM().getTimeline().currentLayer = layerIndex;
 
 	if (firstGraphicInstance == -1) {
 		return
 	}
-
-	var xSheetCache = {};
 
 	//Get the library folder of the character we are running blinking code on.
 	var timeline = fl.getDocumentDOM().getTimeline();
@@ -246,48 +275,61 @@ runBlinking = function (layerIndex) {
 	}
 
 	for (i = 0; i < frameArray.length; i++) {
-		if ((i == frameArray[i].startFrame) && (frameArray[i].isEmpty == false) && (frameArray[i].labelType == "anchor")) {
-			var blinkFrame = blinkFrameIndex(leftEye, rigPath, i, layerIndex, xSheetCache);
-
-			//BLINK
-			if (frameArray[i].name == "Blink") {
-				frameArray[i].actionScript = leftEye + ".gotoAndPlay(" + blinkFrame + ");\n" + rightEye + ".gotoAndPlay(" + blinkFrame + ");";
-				if (frameArray[i + blinkDuration].startFrame != i + blinkDuration) {
-					fl.getDocumentDOM().getTimeline().convertToKeyframes(i + blinkDuration);
-					tmpKeys.push([layerIndex, (i + blinkDuration)]);
-				}
-				fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].actionScript = leftEye + ".gotoAndStop(" + blinkFrame + ");\n" + rightEye + ".gotoAndStop(" + blinkFrame + ");";
+		
+		if (i != frameArray[i].startFrame) {
+			continue;
+		}
+	
+		if (frameArray[i].isEmpty == true) {
+			continue;
+		}
+	
+		if (frameArray[i].labelType != "anchor") {
+			continue;
+		}
+		
+		var blinkFrame = blinkFrameIndex(leftEye, rigPath, i, layerIndex, xSheetCache);
+		var blinkInstruction = frameArray[i].name;
+		
+		//The first frame of any blinkInstruction receives its AS3 here. The only instructions we have to do extra
+		//code with are instructions that require us to go ahead, place another keyframe, and write more AS3.
+		var AS3toWrite = AS3_Constructor(leftEye, rightEye, blinkFrame, blinkDuration, blinkInstruction);
+		frameArray[i].actionScript = AS3toWrite;
+		
+		//BLINK
+		//AS3 for first frame has been written. Iterate to frame [i + blinkDuration], convert it to a keyframe if it isn't one already.
+		//If we do convert it to a keyframe, mark it for deletion by pushing to tmpKeys.
+		//Hardcoded CutOpen at the end of the blink to force the blink to stop.
+		if (blinkInstruction == "Blink") {
+			if (frameArray[i + blinkDuration].startFrame != i + blinkDuration) {
+				fl.getDocumentDOM().getTimeline().convertToKeyframes(i + blinkDuration);
+				tmpKeys.push([layerIndex, (i + blinkDuration)]);
 			}
+			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].actionScript = AS3_Constructor(leftEye, rightEye, blinkFrame, blinkDuration, "CutOpen");
+		}
 
-			//ANIMATION OF EYES CLOSING
-			if (frameArray[i].name == "AnimClose") {
-				frameArray[i].actionScript = leftEye + ".gotoAndPlay(" + blinkFrame + ");\n" + rightEye + ".gotoAndPlay(" + blinkFrame + ");";
-				if (frameArray[i + blinkDuration].startFrame != i + (blinkDuration / 2)) {
-					fl.getDocumentDOM().getTimeline().convertToKeyframes(i + (blinkDuration / 2));
-					tmpKeys.push([layerIndex, (i + (blinkDuration / 2))]);
-				}
-				fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration / 2)].actionScript = leftEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");\n" + rightEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");";
+		//ANIMATION OF EYES CLOSING
+		//AS3 for first frame has been written. Iterate to frame [i + blinkDuration / 2] to end the animation. We convert this frame to
+		//a keyframe if it isn't already, and if we convert it, we also mark it for deletion.
+		//Hardcoded AS3 at the ending frame, we don't use AS3_Constructor because we're dealing with half a blink duration.
+		if (blinkInstruction == "AnimClose") {
+			if (frameArray[i + blinkDuration].startFrame != i + (blinkDuration / 2)) {
+				fl.getDocumentDOM().getTimeline().convertToKeyframes(i + (blinkDuration / 2));
+				tmpKeys.push([layerIndex, (i + (blinkDuration / 2))]);
 			}
+			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration / 2)].actionScript = leftEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");\n" + rightEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");";
+		}
 
-			//ANIMATION OF EYES OPENING
-			if (frameArray[i].name == "AnimOpen") {
-				frameArray[i].actionScript = leftEye + ".gotoAndPlay(" + (blinkFrame + (blinkDuration / 2)) + ");\n" + rightEye + ".gotoAndPlay(" + (blinkFrame + (blinkDuration / 2)) + ");";
-				if (frameArray[i + blinkDuration].startFrame != i + (blinkDuration / 2)) {
-					fl.getDocumentDOM().getTimeline().convertToKeyframes(i + (blinkDuration / 2));
-					tmpKeys.push([layerIndex, (i + (blinkDuration / 2))]);
-				}
-				fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration / 2)].actionScript = leftEye + ".gotoAndStop(" + blinkFrame + ");\n" + rightEye + ".gotoAndStop(" + blinkFrame + ");";
+		//ANIMATION OF EYES OPENING
+		//AS3 for first frame has been written. Iterate to frame [i + blinkDuration / 2] to end the animation. We convert this frame to
+		//a keyframe if it isn't already, and if we convert it, we also mark it for deletion.
+		//Hardcoded AS3 at the ending frame, we don't use AS3_Constructor because we're dealing with half a blink duration.
+		if (frameArray[i].name == "AnimOpen") {
+			if (frameArray[i + blinkDuration].startFrame != i + (blinkDuration / 2)) {
+				fl.getDocumentDOM().getTimeline().convertToKeyframes(i + (blinkDuration / 2));
+				tmpKeys.push([layerIndex, (i + (blinkDuration / 2))]);
 			}
-
-			//CUT TO EYES OPEN
-			if (frameArray[i].name == "CutOpen") {
-				frameArray[i].actionScript = leftEye + ".gotoAndStop(" + blinkFrame + ");\n" + rightEye + ".gotoAndStop(" + blinkFrame + ");";
-			}
-
-			//CUT TO EYES CLOSED
-			if (frameArray[i].name == "CutClosed") {
-				frameArray[i + 1].actionScript = leftEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");\n" + rightEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");";
-			}
+			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration / 2)].actionScript = leftEye + ".gotoAndStop(" + blinkFrame + ");\n" + rightEye + ".gotoAndStop(" + blinkFrame + ");";
 		}
 	}
 }
@@ -298,16 +340,24 @@ for (var a = 0; a < sceneArray.length; a++) {
 	var currentTimeline = sceneArray[a];
 	for (var b = 0; b < fl.getDocumentDOM().timelines[currentTimeline].layerCount; b++) {
 		var parentLayerIsNull = fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer === null;
-		var layerIsNotVectorCharacters = fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer.name !== "VECTOR_CHARACTERS";
-		var layerTypeIsNotNormal = fl.getDocumentDOM().timelines[currentTimeline].layers[b].layerType !== "normal";
-		if (parentLayerIsNull || layerIsNotVectorCharacters || layerTypeIsNotNormal) {
+
+		if (parentLayerIsNull) {
 			continue;
 		}
+		
+		var layerIsNotVectorCharacters = fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer.name !== "VECTOR_CHARACTERS";
+		var layerTypeIsNotNormal = fl.getDocumentDOM().timelines[currentTimeline].layers[b].layerType !== "normal";
+		
+		if (layerIsNotVectorCharacters || layerTypeIsNotNormal) {
+			continue;
+		}
+	
 		//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Run your code.
 		autoEyeSet(b);
 		runBlinking(b);
 	}
 }
+
 //Test movie, as opposed to test scene. This new implementation of blinking tech is resistant to testing scenes!
 fl.getDocumentDOM().testMovie();
 
@@ -316,25 +366,34 @@ for (var i = 0; i < sceneArray.length; i++) {
 	fl.getDocumentDOM().currentTimeline = sceneArray[i];
 	var currentTimeline = sceneArray[i];
 	for (var j = 0; j < fl.getDocumentDOM().timelines[currentTimeline].layerCount; j++) {
-		var parentLayerIsNull = fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer === null;
-		var layerIsNotVectorCharacters = fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer.name !== "VECTOR_CHARACTERS";
-		var layerTypeIsNotNormal = fl.getDocumentDOM().timelines[currentTimeline].layers[b].layerType !== "normal";
-		if (parentLayerIsNull || layerIsNotVectorCharacters || layerTypeIsNotNormal) {
+		var parentLayerIsNull = fl.getDocumentDOM().timelines[currentTimeline].layers[j].parentLayer === null;
+		
+		if (parentLayerIsNull) {
 			continue;
 		}
+	
+		var layerIsNotVectorCharacters = fl.getDocumentDOM().timelines[currentTimeline].layers[j].parentLayer.name !== "VECTOR_CHARACTERS";
+		var layerTypeIsNotNormal = fl.getDocumentDOM().timelines[currentTimeline].layers[j].layerType !== "normal";
+		
+		if (layerIsNotVectorCharacters || layerTypeIsNotNormal) {
+			continue;
+		}
+	
 		//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Erase your code.
 		var frameArray = fl.getDocumentDOM().getTimeline().layers[j].frames;
-		for (k = 0; k < frameArray.length; k++) {
+	
+		for (k = 0; k < frameArray.length; k+= frameArray[k].duration - (k - frameArray[k].startFrame)) {
 			frameArray[k].actionScript = ""
 		}
 	}
 }
 
+//Remove all temporary keyframes we made while converting keyframes in runBlinking().
 for (var i = 0; i < tmpKeys.length; i++) {
 	fl.getDocumentDOM().getTimeline().setSelectedLayers(tmpKeys[i][0]);
 	fl.getDocumentDOM().getTimeline().clearKeyframes(tmpKeys[i][1], tmpKeys[i][1]);
 }
 
-//Put you back where you were
+//Put you back where you were.
 fl.getDocumentDOM().currentTimeline = bookmarkerTl;
 fl.getDocumentDOM().getTimeline().currentFrame = bookmarkerFrame;
