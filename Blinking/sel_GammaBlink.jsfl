@@ -6,13 +6,6 @@
  ******************************************************************************/
 
 var mean = parseFloat(prompt("Insert the average seconds between blinks. Default is 5.", "5.0"))
-var k = 25;
-var FPS = fl.getDocumentDOM().frameRate;
-
-var frameSelection = fl.getDocumentDOM().getTimeline().getSelectedFrames();
-var selLayerIndex = frameSelection[0];
-var startFrame = frameSelection[1] + 1;
-var endFrame = frameSelection[2];
 
 /*
 Function: gammaVariable
@@ -106,64 +99,74 @@ function selectOrMakeKeyframe(layer, frame) {
 }
 
 /*
-Function: setup
-Variables: None
-Description: If the user makes a frame selection from right to left instead of 
-left to right, the starting frame will be the last frame and the ending frame
-will be the first. We need to ensure things are consistent.
+Function: autoBlink
+Variables: 
+	layerIndex	int
+	mean		int
+Description: Runs automatic blinking for a selection, with a mean.
 */
-function setup() {
+function autoBlink(mean) {
+
+	var k = 25;
+	var FPS = fl.getDocumentDOM().frameRate;
+
+	var frameSelection = fl.getDocumentDOM().getTimeline().getSelectedFrames();
+	var selLayerIndex = frameSelection[0];
+	var startFrame = frameSelection[1] + 1;
+	var endFrame = frameSelection[2];
+
 	if (startFrame > endFrame) { // if selection is backwards, fix it
 		var temp = endFrame;
 		endFrame = startFrame;
 		startFrame = temp;
 	}
-}
 
-setup();
+	// ♫Let's start at the very beginning...♫
+	setCurrentFrame(startFrame);
 
-// ♫Let's start at the very beginning...♫
-setCurrentFrame(startFrame);
+	// Until we reach the end frame...
+	while (getCurrentFrame() < endFrame) {
+		// pick a number of frames via gamma distribution for eyes to remain open 
+		var stare = gammaVariable(mean, k) * FPS
+		if ((getCurrentFrame() + stare) >= endFrame) { // if we've gone outside of our selection, we're done
+			break;
+		}
 
-// Until we reach the end frame...
-while (getCurrentFrame() < endFrame) {
-	// pick a number of frames via gamma distribution for eyes to remain open 
-	var stare = gammaVariable(mean, k) * FPS
-	if ((getCurrentFrame() + stare) >= endFrame) { // if we've gone outside of our selection, we're done
-		break;
-	}
+		addToCurrentFrame(Math.round(stare));
 
-	addToCurrentFrame(Math.round(stare));
+		// check if any of the next 6 frames are empty
+		for (var i = getCurrentFrame(); i < getCurrentFrame() + 6; i++) {
+			if (fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[i].isEmpty) { // if any of them are
+				setCurrentFrame(i); // go to that frame
+				continue;
+			}
+		}
 
-	// check if any of the next 6 frames are empty
-	for (var i = getCurrentFrame(); i < getCurrentFrame() + 6; i++) {
-		if (fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[i].isEmpty) { // if any of them are
-			setCurrentFrame(i); // go to that frame
-			continue;
+		// if we're still on an empty frame even after all that mess, advance so long as we're still in our selection
+		while (fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[getCurrentFrame()] == 0 && getCurrentFrame() < endFrame) {
+			// advance frames
+			addToCurrentFrame(1);
+		}
+
+		if (!fl.getDocumentDOM().getTimeline().layers[selLayerIndex].frames[getCurrentFrame()].isEmpty) {
+
+			// if the current frame isn't the first frame in a frame sequence, make a note of that
+			var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame;
+			// if it's not
+			if (!isKeyFrame) {
+				// convert it to keyframe
+				selectOrMakeKeyframe(selLayerIndex, getCurrentFrame());
+			}
+
+			// give it the frame name Blink
+			fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[getCurrentFrame()].name = 'Blink';
+			fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[getCurrentFrame()].labelType = 'anchor';
+			// we use anchor because no one else does to avoid conflicts
 		}
 	}
 
-	// if we're still on an empty frame even after all that mess, advance so long as we're still in our selection
-	while (fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[getCurrentFrame()] == 0 && getCurrentFrame() < endFrame) {
-		// advance frames
-		addToCurrentFrame(1);
-	}
+	fl.getDocumentDOM().getTimeline().setSelectedFrames(frameSelection);
 
-	if (!fl.getDocumentDOM().getTimeline().layers[selLayerIndex].frames[getCurrentFrame()].isEmpty) {
-
-		// if the current frame isn't the first frame in a frame sequence, make a note of that
-		var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame;
-		// if it's not
-		if (!isKeyFrame) {
-			// convert it to keyframe
-			selectOrMakeKeyframe(selLayerIndex, getCurrentFrame());
-		}
-
-		// give it the frame name Blink
-		fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[getCurrentFrame()].name = 'Blink';
-		fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[getCurrentFrame()].labelType = 'anchor';
-		// we use anchor because no one else does to avoid conflicts
-	}
 }
 
-fl.getDocumentDOM().getTimeline().setSelectedFrames(frameSelection);
+autoBlink(mean);
