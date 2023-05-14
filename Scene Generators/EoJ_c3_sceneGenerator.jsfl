@@ -1,29 +1,53 @@
-/******************************************************************************
-                        EOJ SCENE GENERATOR (2/27/23)
+/*****************************************************************************************************************
 
-Description: Makes EoJ scenes from scratch. The beating heart of the video
-editing process.
+░█▀▀▀ ░█─── ░█▀▀▀ ░█▀▄▀█ ░█▀▀▀ ░█▄─░█ ▀▀█▀▀ ░█▀▀▀█ 　 ░█▀▀▀█ ░█▀▀▀ 　 ───░█ ░█─░█ ░█▀▀▀█ ▀▀█▀▀ ▀█▀ ░█▀▀█ ░█▀▀▀ 
+░█▀▀▀ ░█─── ░█▀▀▀ ░█░█░█ ░█▀▀▀ ░█░█░█ ─░█── ─▀▀▀▄▄ 　 ░█──░█ ░█▀▀▀ 　 ─▄─░█ ░█─░█ ─▀▀▀▄▄ ─░█── ░█─ ░█─── ░█▀▀▀ 
+░█▄▄▄ ░█▄▄█ ░█▄▄▄ ░█──░█ ░█▄▄▄ ░█──▀█ ─░█── ░█▄▄▄█ 　 ░█▄▄▄█ ░█─── 　 ░█▄▄█ ─▀▄▄▀ ░█▄▄▄█ ─░█── ▄█▄ ░█▄▄█ ░█▄▄▄
 
-Issues:
-- Why are the witnesses commented out? Do witnesses work at all?
-- Desk placement only works with symbols. Convert all attorney desks to symbols
-in the template FLA and reverse hardcode workaround in config.txt
-- First time BG placement in court mode is wack
-- Text does strange stuff. Sometimes it is Suburga regular, sometimes the properties
-of the text are really bad. Hardcode font and the VA setting to force it to be
-correct
-- WE NEED AN AAI STYLE generator predicated on courtroom mode.
-- Intelligent debug print
+        ░█▀▀▀█ ░█▀▀█ ░█▀▀▀ ░█▄─░█ ░█▀▀▀ 　 ░█▀▀█ ░█▀▀▀ ░█▄─░█ ░█▀▀▀ ░█▀▀█ ─█▀▀█ ▀▀█▀▀ ░█▀▀▀█ ░█▀▀█ 
+        ─▀▀▀▄▄ ░█─── ░█▀▀▀ ░█░█░█ ░█▀▀▀ 　 ░█─▄▄ ░█▀▀▀ ░█░█░█ ░█▀▀▀ ░█▄▄▀ ░█▄▄█ ─░█── ░█──░█ ░█▄▄▀ 
+        ░█▄▄▄█ ░█▄▄█ ░█▄▄▄ ░█──▀█ ░█▄▄▄ 　 ░█▄▄█ ░█▄▄▄ ░█──▀█ ░█▄▄▄ ░█─░█ ░█─░█ ─░█── ░█▄▄▄█ ░█─░█
+
+******************************************************************************************************************
+
+Description: 
+    This JSFL file creates a Case 3-compliant scene.
+
+Contributors:
+    123ConnorPoop (https://github.com/123connorpoop)
+    ExodexoDev (https://github.com/ExodexoDev)
+    Pretzelman718 (https://github.com/jmc718)
+
+Desired Features:
+    ⦁ Scenes will be generated all the way to the lipsyncing stage.
+    ⦁ Lines will be added after characters are posed.
+    ⦁ Characters will be lipsynced after their lines are added.
+    ⦁ Characters will automatically blink after they are lipsynced.
+    ⦁ Optimizations made by abolishing all selection code.
+    ⦁ General quality of life features made to the code.
 
 To-Do:
-- On generation, add the AE line ID to text using persistent data and add the VOX
-line on runtime.
-- Dynamic rig obtaining. Instead of old, out of date libraries, we keep the rigs
-in a folder and the scene generator imports the rigs on runtime. This automatically
-ensures the rigs are up-to-date on every run.
-- Make sure you comment every function
+    ⦁ XMLUI should be an XML file within the directory of this JSFL file for
+    easy editing.
+    ⦁ We need a Logic Chess mode. (Need an FLA to extract magic numbers from.)
+    ⦁ Add a log file to be appended to within the directory of this JSFL file.
+    ⦁ Everything needs error-handling. This script should never fail unless you
+    do something TERRIBLE!
+    ⦁ EmotionEngine needs refactoring to allow negative-prompt bias.
+    ⦁ L-Ratio function needs to be made human readable.
+    ⦁ All functions need commenting.
+    ⦁ LineAdderFullAuto, MouthShapeLipSyncAll and GammaBlink need to be refactored
+    to allow parameters to be passed in from this file, so the scene generator can
+    run these scripts as needed.
+    ⦁ Do a pre-emptive warn and abort if a character in the scene array is not
+    present in the rig array.
 
-******************************************************************************/
+Issues:
+    ⦁ ???
+
+*****************************************************************************************************************/
+
+
 
 /******************************************************************************
                          GENERAL VARIABLES AND SETUP
@@ -35,24 +59,13 @@ fl.showIdleMessage(false);
 var iFrameDuration = 12;
 var viewMode = null;
 var arrayPath = null;
-var bRemapTime = false
 
 //COURTMODE VARIABLES//
-
 var sDefense = null;
 var sProsecutor = null;
 var sJudge = null;
 var sCocouncil = null;
-
-//WITNESSES = [4 2 1 3 5]
-
 var sWitnesses = {};
-
-/*var sWitness1 = null;
-var sWitness2 = null;
-var sWitness3 = null;
-var sWitness4 = null;
-var sWitness5 = null; */
 
 //GENERAL-PURPOSE VARIABLES//
 var propertiesLayer = null;
@@ -82,7 +95,6 @@ Variables:
     input string
 Description: ES5-compatible backport of the trim operator.
 */
-
 function trim(input) {
     var len = input.length;
     var st = 0;
@@ -103,7 +115,6 @@ Variables:
     layerVar int
 Description: More intelligent layer switching function.
 */
-
 function switchActive(layerVar) {
     var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(layerVar);
     if (layerIndex == null) {
@@ -119,7 +130,6 @@ Function: dialogueFormat
 Variables: None
 Description: Format the selected text to be normal talking text.
 */
-
 function dialogueFormat() {
     fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2 Semi-condensed Regular");
     fl.getDocumentDOM().setElementTextAttr("size", 40);
@@ -133,7 +143,6 @@ Function: speakerFormat
 Variables: None
 Description: Format the speakertag text with the default settings.
 */
-
 function speakerFormat() {
     fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2 Semi-condensed Regular");
     fl.getDocumentDOM().setElementTextAttr("size", 42);
@@ -146,7 +155,6 @@ Function: thinkingFormat
 Variables: None
 Description: Format the selected text to be "thinking" text.
 */
-
 function thinkingFormat() {
     fl.getDocumentDOM().setElementTextAttr("face", "Suburga 2 Semi-condensed Regular");
     fl.getDocumentDOM().setElementTextAttr("size", 40);
@@ -162,7 +170,6 @@ Variables:
     t string
 Description: ES5-compatible Levenshtein ratio function where s and t are input strings.
 */
-
 function levenshteinRatio(s, t) {
     var d = []; //2d matrix
 
@@ -220,7 +227,6 @@ Variables:
     str2    string
 Description: Averages out two emotionEngine abstractions for an in-between emotion.
 */
-
 function emotionAverage(str1, str2) {
     // create a map to keep track of character counts
     var charMap = {};
@@ -294,7 +300,6 @@ Variables:
     arr []
 Description: ES5-compatible backport of the spread operator.
 */
-
 function spreadMax(arr) {
 
     var result = arr.reduce(function (a, b) {
@@ -311,7 +316,6 @@ Descriptions:
     Gets the time difference. Useful for telling how long each step
     takes to execute and which rigs are bloated.
 */
-
 function getTimeDiff(startTime, endTime) {
     timeDiff = endTime - startTime;
     timeDiff /= 1000;
@@ -336,7 +340,6 @@ Variables:
 Descriptions:
     Returns the probability of a blink occuring.
 */
-
 function getBlinkProbability(theta, t) {
     return 1 - Math.pow(Math.E, -1 * (t / theta));
 }
@@ -350,7 +353,6 @@ Descriptions:
     Selects a pose from a character layer and frame number i. We use L-ratio
     to match the line's emotion to the emotionEngine data for the rig.
 */
-
 function getPoseFromEmotion(layerIndex, i) {
     var itemIndex = fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
     var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[fl.getDocumentDOM().library.items[itemIndex].timeline.layers.length - 1];
@@ -461,7 +463,6 @@ Description:
     but I assume it is related to error-handling or characters who speak
     without a rig.
 */
-
 function getCharacters() { // gets unique characters (basically returns a set)
     var unique = [];
     for (var i = 0; i < speakertagArray.length; i++) {
@@ -484,7 +485,6 @@ Description:
     of our chouse, make sure it is positioned correctly and visible. This function
     needs a companion function that changes poses based on emotionEngine output.
 */
-
 function addRigs() {
     var uniqueChars = getCharacters();
     for (var i = 0; i < uniqueChars.length; i++) {
@@ -523,7 +523,6 @@ Variables:
 Description: 
     Helper function to generate the condition for witness handling
 */
-
 function generateWitnessBools(speakerTagIndex) {
     var isWitnessSpeaking = false;
     var isNextCharacterWitness = false;
@@ -551,7 +550,6 @@ Variables:
 Description: 
     Pose automation based on LeXmo emotions and L-ratio algorithm.
 */
-
 function poseAutomation(layerIndex, i) {
 
     //fl.trace("Layer Index: " + layerIndex)
@@ -593,7 +591,6 @@ Description:
     Removes nonexistent characters so we do not return an error
     by trying to access symbols and library items that do not exist!
 */
-
 function removeAbsentCharactersAndDoPoseAutomation(uniqueChars, i) {
     for (var j = 0; j < uniqueChars.length; j++) {
         // fl.trace(masterRigArray[uniqueChars[j]][0])
@@ -669,7 +666,6 @@ Description:
     chiseling out where we want rigs to be by adding blank keyframes. This
     function alone is the most extreme speedup to scene generation.
 */
-
 function sculpt() {
     var uniqueChars = getCharacters();
     // For each line of dialogue
@@ -686,7 +682,6 @@ Description:
     to whichever step is last in execution. It is typically desks in most builds of
     EoJ scene generators.
 */
-
 function placeDesks() {
     fl.getDocumentDOM().getTimeline().currentFrame = 0;
     switchActive("DESKS");
@@ -717,7 +712,6 @@ Descriptions:
     for each character. So the Judge will always get the Judge background and Athena
     will always get the defense background.
 */
-
 function placeBGs() {
     fl.getDocumentDOM().getTimeline().currentFrame = 0;
     switchActive("BACKGROUNDS");
@@ -756,7 +750,6 @@ Description:
     No clue why this function needs an investigation variant. 
     Ask Connor about this later.
 */
-
 function doTextBoxesInvestigation() {
     var dialogueBounding = {
         left: 40.05,
@@ -826,7 +819,6 @@ Description:
     all the ponies face forwards and are centered. Also add emotionEngine support
     to this as well as incorporate automating fading.
 */
-
 function addRigsInvestgation() {
     var missingRigs = [];
     var uniqueChars = getCharacters();
@@ -876,7 +868,6 @@ Variables:
 Description:
     Intelligently spaces the position of multiple on-screen characters.
 */
-
 function getAlignmentPos(totalChars, currentChar) {
     var X = 0;
     // case 1: even number of characters
@@ -910,7 +901,6 @@ Variables: None
 Description: 
     Sculpts rigs like courtroom functions, but for Investigations.
 */
-
 function sculptInvestgation() {
     var uniqueChars = getCharacters();
 
@@ -1025,9 +1015,9 @@ if (guiPanel.dismiss == "accept") {
     fl.runScript(arrayPath);
     fl.runScript(dirURL + "/config.txt");
 
-    /******************************************************************************
-                                DISCRIMINATE ARRAYS
-    ******************************************************************************/
+/******************************************************************************
+                            DISCRIMINATE ARRAYS
+******************************************************************************/
 
     /*
     Remove inappropriate emotions.
@@ -1146,9 +1136,9 @@ if (guiPanel.dismiss == "accept") {
         speakertagArray[i] = (dialogueArray[i][0])
     }
 
-    /******************************************************************************
-                                    MAIN EXECUTION
-    ******************************************************************************/
+/******************************************************************************
+                                MAIN EXECUTION
+******************************************************************************/
 
     //move get time diff into each function plus a string saying the name of the function
 
