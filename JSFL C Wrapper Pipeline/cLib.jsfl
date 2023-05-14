@@ -133,5 +133,7 @@ function soundAlert(message) {
 	if (!(isSubstringPresent(settings, "noSounds") || isSubstringPresent(settings, "noDLLs"))) {
 		playSound(FLfile.uriToPlatformPath(fl.configURI) + "Commands\\Notifications\\Alert.wav");
 	}
-	alert(message)
+	if (message !== undefined) {
+		alert(message)
+	}
 }
