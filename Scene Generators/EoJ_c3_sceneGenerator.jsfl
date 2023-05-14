@@ -41,19 +41,199 @@ To-Do:
     run these scripts as needed.
     ⦁ Do a pre-emptive warn and abort if a character in the scene array is not
     present in the rig array.
+    ⦁ Remove all !true, !false sillyness.
 
 Issues:
+    ⦁ Questions will be highlighted in comments with QUESTION:
+    ⦁ Address all the questions
+    ⦁ Remove all fl.trace statements. We only want logging, or SFX alert/error/updates.
+    ⦁ tmp_DummySymbol looks like it's invoked, but not created if it doesn't exist.
     ⦁ ???
 
 *****************************************************************************************************************/
 
+/******************************************************************************
+                                DEBUGGING BACKEND
+******************************************************************************/
 
+const status00 = "INFO ";
+const status01 = "WARN ";
+const status02 = "DEBUG";
+const status03 = "ERROR";
+
+const logFile = fl.configURI + "log.txt";
+
+/*
+Function: formatDateTime
+Variables: 
+    date    object
+Description: Returns a date formatted as YYYY-MM-DD HH:MM:SS.
+*/
+function formatDateTime(date) {
+    var year = date.getFullYear();
+    var month = ("0" + (date.getMonth() + 1)).slice(-2); // Adding 1 because month is zero-based
+    var day = ("0" + date.getDate()).slice(-2);
+    var hours = ("0" + date.getHours()).slice(-2);
+    var minutes = ("0" + date.getMinutes()).slice(-2);
+    var seconds = ("0" + date.getSeconds()).slice(-2);
+
+    var formattedDate = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds + " ";
+
+    return formattedDate;
+}
+
+/*
+Function: initializeLog
+Variables: 
+    none
+Description: Creates the log file, or re-creates it, if it exists already.
+*/
+function initializeLog() {
+    if (FLfile.exists(logFile)) {
+        FLfile.remove(logFile);
+    }
+
+    FLfile.write(logFile, "");
+}
+
+/*
+Function: writeLogRaw
+Variables: 
+    message     string
+Description: Appends a raw string to the log. Newline character is built-in.
+*/
+function writeLogRaw(message) {
+    FLfile.write(logFile, message + "\n", "append")
+}
+
+/*
+Function: writeLogInfo
+Variables: 
+    timestamp   string
+    level       string
+    message     string
+Description: Appends a raw string to the log. Newline character is built-in.
+*/
+function writeLogInfo(timestamp, level, message) {
+    FLfile.write(logFile, timestamp + " | " + level + " | " + message + "\n", "append");
+}
+
+/*
+Function: getCurrentDate
+Variables: 
+    none
+Description: Returns the formatted current date and time for the log.
+*/
+function getCurrentDate() {
+    return formatDateTime(new Date());
+}
+
+/*
+Function: logSetup
+Variables: 
+    none
+Description: Prints the first part of the log.
+*/
+function logSetup() {
+    writeLogRaw("Elements of Justice — Scene Generator Logs              ");
+    writeLogRaw("                                                        ");
+    writeLogRaw("Timestamp                    | Message                  ");
+    writeLogRaw("--------------------------------------------------------");
+}
+
+initializeLog();
+logSetup();
+
+writeLogInfo(getCurrentDate(), status00, "Your code did a funny!");
+
+/******************************************************************************
+                                C LIBRARY WRAPPERS
+******************************************************************************/
+
+const cLib = fl.configURI + "cLib.jsfl";
+
+/*
+Function: validationCheck
+
+Variables: 
+    none
+	
+Description: Confirm code exists, or otherwise warn the user.
+*/
+function validationCheck() {
+    if (!FLfile.exists(cLib)) {
+        throw new Error("cLib.jsfl does not exist in the user's configuration directory.");
+    }
+}
+
+/*
+Function: beep
+
+Variables: 
+    frequency int
+    duration int
+
+Description: Plays a harsh beep through Windows.h's PlaySound function.
+Used for conditioning video editors to not do silly things like turning
+on advanced layers.
+*/
+function beep(frequency, duration) {
+    validationCheck()
+    fl.runScript(cLib, "beep", frequency, duration);
+}
+
+/*
+Function: playSound
+
+Variables: 
+    input string
+
+Description: Plays a sound through Windows.h's PlaySound function.
+If the input does not exist, no sound will be played.
+*/
+function playSound(input) {
+    validationCheck()
+    fl.runScript(cLib, "playSound", input);
+}
+
+/*
+Function: soundError
+
+Variables: 
+    none
+
+Description: Plays the BetterAnimate error sound. We do not throw
+new error here, because then the error code would link to this line,
+thus obfuscating the true error. Use this for long-execution code where
+you want to be notified of an error, and remember to throw new error after
+calling this.
+*/
+function soundError() {
+    validationCheck()
+    fl.runScript(cLib, "soundError");
+}
+
+/*
+Function: soundAlert
+
+Variables: 
+    message string
+
+Description: Plays the BetterAnimate notification sound, followed
+by a message. Use this to notify the user that your clunky ass code
+has finally finished executing.
+*/
+function soundAlert(message) {
+    fl.runScript(cLib, "soundAlert", message);
+}
 
 /******************************************************************************
                          GENERAL VARIABLES AND SETUP
 ******************************************************************************/
 
 fl.showIdleMessage(false);
+
+//QUESTION: Is there anything else we can put here, and any way to tidy up this enormous list of vars?
 
 //CONFIGURABLE VARIABLES//
 var iFrameDuration = 12;
@@ -89,31 +269,35 @@ var startTime = new Date();
                                 BASIC FUNCTIONS
 ******************************************************************************/
 
+//QUESTION: JSFL says it already has a string.trim operator. Why do we have this then?
+
 /*
 Function: trim
 Variables: 
     input string
 Description: ES5-compatible backport of the trim operator.
 */
-function trim(input) {
-    var len = input.length;
-    var st = 0;
-    var val = input;
+function trim(inputString) {
+    var length = inputString.length;
+    var startIndex = 0;
+    var trimmedValue = inputString;
 
-    while ((st < len) && (val.charAt(st) <= ' ')) {
-        st++;
+    while ((startIndex < length) && (trimmedValue.charAt(startIndex) <= ' ')) {
+        startIndex++;
     }
-    while ((st < len) && (val.charAt(len - 1) <= ' ')) {
-        len--;
+
+    while ((startIndex < length) && (trimmedValue.charAt(length - 1) <= ' ')) {
+        length--;
     }
-    return ((st > 0) || (len < input.length)) ? input.substring(st, len) : input;
+
+    return ((startIndex > 0) || (length < inputString.length)) ? inputString.substring(startIndex, length) : inputString;
 }
 
 /*
 Function: switchActive
 Variables: 
     layerVar int
-Description: More intelligent layer switching function.
+Description: Switches layers. If the layer doesn't exist, we create it.
 */
 function switchActive(layerVar) {
     var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(layerVar);
@@ -124,6 +308,9 @@ function switchActive(layerVar) {
     fl.getDocumentDOM().getTimeline().setSelectedLayers(layerIndex * 1);
     propertiesLayer = fl.getDocumentDOM().getTimeline().layers[layerIndex];
 }
+
+//QUESTION: A lot of the formatting types share properties like the font. Should we have a general formatter followed by a 
+//specific formatter. i.e. run generalFormat(), then dialogueFormat()? Is this optimal while reducing lines of code?
 
 /*
 Function: dialogueFormat
@@ -168,57 +355,64 @@ Function: levenshteinRatio
 Variables: 
     s string
     t string
-Description: ES5-compatible Levenshtein ratio function where s and t are input strings.
+Description: ES5-compatible Levenshtein ratio function used to compare the similarity of two strings.
 */
-function levenshteinRatio(s, t) {
-    var d = []; //2d matrix
+function levenshteinRatio(source, target) {
+    var distanceMatrix = []; // 2d matrix
 
     // Step 1
-    var n = s.length;
-    var m = t.length;
+    var sourceLength = source.length;
+    var targetLength = target.length;
 
-    if (n == 0) return m;
-    if (m == 0) return n;
+    if (sourceLength == 0) return targetLength;
+    if (targetLength == 0) return sourceLength;
 
-    //Create an array of arrays in javascript
-    for (var i = n; i >= 0; i--) d[i] = [];
+    // Create an array of arrays in JavaScript
+    for (var i = sourceLength; i >= 0; i--) {
+        distanceMatrix[i] = [];
+    }
 
     // Step 2
-    for (var i = n; i >= 0; i--) d[i][0] = i;
-    for (var j = m; j >= 0; j--) d[0][j] = j;
+    for (var i = sourceLength; i >= 0; i--) {
+        distanceMatrix[i][0] = i;
+    }
+    for (var j = targetLength; j >= 0; j--) {
+        distanceMatrix[0][j] = j;
+    }
 
     // Step 3
-    for (var i = 1; i <= n; i++) {
-        var s_i = s.charAt(i - 1);
+    for (var i = 1; i <= sourceLength; i++) {
+        var sourceChar = source.charAt(i - 1);
 
         // Step 4
-        for (var j = 1; j <= m; j++) {
+        for (var j = 1; j <= targetLength; j++) {
 
-            //Check the jagged ld total so far
-            if (i == j && d[i][j] > 4) return n;
+            // Check the jagged Levenshtein distance total so far
+            if (i == j && distanceMatrix[i][j] > 4) return sourceLength;
 
-            var t_j = t.charAt(j - 1);
-            var cost = (s_i == t_j) ? 0 : 1; // Step 5
+            var targetChar = target.charAt(j - 1);
+            var cost = (sourceChar == targetChar) ? 0 : 1; // Step 5
 
-            //Calculate the minimum
-            var mi = d[i - 1][j] + 1;
-            var b = d[i][j - 1] + 1;
-            var c = d[i - 1][j - 1] + cost;
+            // Calculate the minimum
+            var deletion = distanceMatrix[i - 1][j] + 1;
+            var insertion = distanceMatrix[i][j - 1] + 1;
+            var substitution = distanceMatrix[i - 1][j - 1] + cost;
 
-            if (b < mi) mi = b;
-            if (c < mi) mi = c;
+            var min = Math.min(deletion, insertion, substitution);
 
-            d[i][j] = mi; // Step 6
+            distanceMatrix[i][j] = min; // Step 6
 
-            //Damerau transposition
-            if (i > 1 && j > 1 && s_i == t.charAt(j - 2) && s.charAt(i - 2) == t_j) {
-                d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + cost);
+            // Damerau transposition
+            if (i > 1 && j > 1 && sourceChar == target.charAt(j - 2) && source.charAt(i - 2) == targetChar) {
+                distanceMatrix[i][j] = Math.min(distanceMatrix[i][j], distanceMatrix[i - 2][j - 2] + cost);
             }
         }
     }
 
-    return ((s.length + t.length - d[n][m]) / (s.length + t.length));
+    return ((sourceLength + targetLength - distanceMatrix[sourceLength][targetLength]) / (sourceLength + targetLength));
 }
+
+//QUESTION: Do we even want emotionAverage smoothing? Run tests and see if it is worth the compute cycles.
 
 /*
 Function: emotionAverage
@@ -228,10 +422,10 @@ Variables:
 Description: Averages out two emotionEngine abstractions for an in-between emotion.
 */
 function emotionAverage(str1, str2) {
-    // create a map to keep track of character counts
+    // Create a map to keep track of character counts
     var charMap = {};
 
-    // loop through the first string and update charMap accordingly
+    // Loop through the first string and update charMap accordingly
     for (var i = 0; i < str1.length; i++) {
         if (charMap[str1[i]] === undefined) {
             charMap[str1[i]] = 1;
@@ -240,7 +434,7 @@ function emotionAverage(str1, str2) {
         }
     }
 
-    // loop through the second string and update charMap accordingly
+    // Loop through the second string and update charMap accordingly
     for (var j = 0; j < str2.length; j++) {
         if (charMap[str2[j]] === undefined) {
             charMap[str2[j]] = 1;
@@ -249,7 +443,7 @@ function emotionAverage(str1, str2) {
         }
     }
 
-    // remove opposites and limit the number of each character
+    // Remove opposites and limit the number of each character
     var result = '';
     if (charMap['+'] > charMap['-']) {
         charMap['+'] -= charMap['-'];
@@ -284,13 +478,13 @@ function emotionAverage(str1, str2) {
         }
     }
 
-    // sort the characters in the result string
+    // Sort the characters in the result string
     result = result.split('').sort(function (a, b) {
         var order = '++--HHBBRRAAGGFFSSTTC';
         return order.indexOf(a) - order.indexOf(b);
     }).join('');
 
-    // return the result string
+    // Return the result string
     return result;
 }
 
@@ -322,27 +516,17 @@ function getTimeDiff(startTime, endTime) {
     var seconds = Math.round(timeDiff);
 
     if (timeDiff < 60) {
-        fl.trace("Time Elapsed: " + seconds + " seconds.");
+        return ("Time Elapsed: " + seconds + " seconds.");
     }
 
     if (timeDiff > 60) {
         var minutes = Math.floor(timeDiff / 60);
         var seconds = timeDiff - minutes * 60;
-        fl.trace("Time Elapsed: " + minutes + " minutes and " + seconds + " seconds");
+        return ("Time Elapsed: " + minutes + " minutes and " + seconds + " seconds");
     }
 }
 
-/*
-Function: getBlinkProbability
-Variables:
-    theta   ?
-    t       ?
-Descriptions:
-    Returns the probability of a blink occuring.
-*/
-function getBlinkProbability(theta, t) {
-    return 1 - Math.pow(Math.E, -1 * (t / theta));
-}
+//QUESTION: Would an xSheet cache speed this up?
 
 /*
 Function: getPoseFromEmotion
@@ -399,10 +583,10 @@ function doTextBoxes() {
         right: 254.4,
         bottom: 540.2
     };
+
     switchActive("TEXT");
 
     for (var i = 0; i < dialogueArray.length; i++) {
-        // select current frame
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
 
         if (i != 0) {
@@ -411,6 +595,9 @@ function doTextBoxes() {
 
         fl.getDocumentDOM().addNewText(dialogueBounding);
         fl.getDocumentDOM().setTextString(trim(dialogueArray[i][1]));
+
+        //QUESTIION: These setElementProperties can probably just be moved to dialogueFormat() and every other format, right?
+
         fl.getDocumentDOM().setElementTextAttr('alignment', 'left');
         fl.getDocumentDOM().setElementProperty('textType', 'dynamic');
         fl.getDocumentDOM().setElementProperty('lineType', 'multiline');
@@ -455,6 +642,8 @@ function doTextBoxes() {
     }
 }
 
+//QUESTION: This function needs better documentation.
+
 /*
 Function: getCharacters
 Variables: None
@@ -475,6 +664,10 @@ function getCharacters() { // gets unique characters (basically returns a set)
     });
     return unique;
 }
+
+//QUESTION: This function needs cleanup and more documentation.
+//QUESTION: This function uses fl.trace to acknowledge a rig being placed, and also for errors.
+//This is the perfect use case for the logging system.
 
 /*
 Function: addRigs
@@ -516,6 +709,8 @@ function addRigs() {
     }
 }
 
+//QUESTION: Function needs better documentation.
+
 /*
 Function: generateWitnessBools
 Variables: 
@@ -541,6 +736,8 @@ function generateWitnessBools(speakerTagIndex) {
     return [isWitnessSpeaking, isNextCharacterWitness];
 
 }
+
+//QUESTION: Pose needs better documentation, and trace statements should be logged as INFO.
 
 /*
 Function: poseAutomation
@@ -579,8 +776,9 @@ function poseAutomation(layerIndex, i) {
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
         fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
     }
-
 }
+
+//QUESTION: Function needs de-nesting, optimization and more documentation.
 
 /*
 Function: removeAbsentCharactersAndDoPoseAutomation
@@ -651,7 +849,6 @@ function removeAbsentCharactersAndDoPoseAutomation(uniqueChars, i) {
                 poseAutomation(layerIndex, i);
 
             }
-
         }
     }
 }
@@ -743,6 +940,8 @@ function placeBGs() {
                          INVESTIGATION FUNCTIONS
 ******************************************************************************/
 
+//QUESTION:  Why does this function need an investigation variant? Document why :(
+
 /*
 Function: doTextBoxesInvestigation
 Variables:
@@ -811,6 +1010,9 @@ function doTextBoxesInvestigation() {
     }
 }
 
+//QUESTION: fl.trace statements should be logged under INFO. Function needs more documentation and cleanup.
+//QUESTION: Configuration file error aborts here, very late into the generation process. Check earlier and abort before anything is done.
+
 /*
 Function: addRigsInvestigation
 Variables: 
@@ -860,6 +1062,12 @@ function addRigsInvestgation() {
     return missingRigs;
 }
 
+//QUESTION: Case 3 XMLUI panel for the scene generator has only one text input for witnesses.
+//Witnesses will be entered "Sugar Stamp,Turning Page,Fair Devotion" to indicate the positioning
+//and how many witnesses show up. Does this integrate smoothly with intelligent witness spacing?
+
+//QUESTION: Turn fl.trace into log info statements.
+
 /*
 Function: getAlignmentPos
 Variables: 
@@ -894,6 +1102,9 @@ function getAlignmentPos(totalChars, currentChar) {
     // fl.trace("X: " + X);
     return { x: X, y: 0 };
 }
+
+//QUESTION: Function needs de-nesting, optimization and more documentation.
+//QUESTION: Use logging for fl.trace statements.
 
 /*
 Function: sculptInvestigations
@@ -981,6 +1192,15 @@ function sculptInvestgation() {
                                 INVOKE GUI
 ******************************************************************************/
 
+//QUESTION: XMLUI will not be an xmlPanelFromString, but an actual XML file within
+//the same directory as the scene generator.
+
+//QUESTION: This area is not very clean. Some variables still use the old hungarian
+//notation variables from 2021!
+
+//QUESTION: Invocation neeeds to account for new features, like emotionEngine bias,
+//voice line insertion and CFGs for lipsyncing.
+
 var scriptPath = fl.scriptURI;
 var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
 var guiPanel = fl.xmlPanelFromString("<dialog title=\"Elements of Justice Generator (2.27.23)\" buttons=\"accept, cancel\"> <label value=\"Viewing Mode:\" control=\"iName\"/><menulist id = \"viewMode\"> <menupop>    <menuitem label=\"Courtroom Mode\" selected=\"true\" value=\"courtMode\" />    <menuitem label=\"Investigation Mode\" selected=\"false\" value=\"investigationMode\" />    <menuitem label=\"AAI Mode\" selected=\"false\" value=\"aaiMode\" /></menupop> </menulist><spacer /><label value=\"Defense/POV Character Name:\" control=\"iName\" /><textbox id=\"panel_sDefense\" size=\"24\" value=\"Athena\" /><spacer /><label value=\"Prosecutor Name:\" control=\"iName\" /><textbox id=\"panel_sProsecutor\" size=\"24\" value=\"Luna\" /><spacer /><label value=\"Judge Name:\" control=\"iName\" /><textbox id=\"panel_sJudge\" size=\"24\" value=\"Judge\" /><spacer /><label value=\"Cocouncil Name:\" control=\"iName\" /><textbox id=\"panel_sCocouncil\" size=\"24\" value=\"Twilight\" /><spacer /><label value=\"Witness No. 1 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness1\" size=\"24\" value=\"\" /><spacer /><label value=\"Witness No. 2 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness2\" size=\"24\" value=\"Diamond\" /><spacer /><label value=\"Witness No. 3 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness3\" size=\"24\" value=\"Silver Spoon\" /><spacer /><label value=\"Witness No. 4 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness4\" size=\"24\" value=\"\" /><spacer /><label value=\"Witness No. 5 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness5\" size=\"24\" value=\"\" /><spacer /><separator /><label value=\"Select Array File\" control=\"iName\" /><choosefile id=\"selectedJSON\" type=\"open\" pathtype=\"absolute\" literal=\"false\" required=\"true\" /><checkbox id=\"panel_writeReport\" label=\"Write Report?\" checked=\"true\" /><spacer /></dialog>");
@@ -1015,9 +1235,22 @@ if (guiPanel.dismiss == "accept") {
     fl.runScript(arrayPath);
     fl.runScript(dirURL + "/config.txt");
 
-/******************************************************************************
-                            DISCRIMINATE ARRAYS
-******************************************************************************/
+    /******************************************************************************
+                                DISCRIMINATE ARRAYS
+    ******************************************************************************/
+
+    //QUESTION: Everything about this area is very scary. Nothing in the code is really
+    //using the new array formatting, we just re-create the old format out of the new
+    //format here.
+
+    //QUESTION: Is emotionEngine smoothing going to be performed?
+
+    //QUESTION: EmotionEngine bias should occur here. Bias will be negative, so it will
+    //remove the antithesis of the emotions included in the bias. This allows greater
+    //expressive range in the emotions that are desired.
+
+    //QUESTION: Warnings about characters being called that don't exist in the rig arrays
+    //should occur here.
 
     /*
     Remove inappropriate emotions.
@@ -1078,31 +1311,31 @@ if (guiPanel.dismiss == "accept") {
 
     // Loop through the sceneData array starting from the second element (index 1)
     // Create an empty array to store the averaged emotions
-  /*   var averagedEmotions = [];
-
-    for (var i = 1; i < sceneData.length - 1; i++) {
-        // Check if the third element between the current and previous arrays are equivalent
-        if (sceneData[i][2] === sceneData[i - 1][2]) {
-            // If they are equivalent, call the emotionAverage function on the two 5th elements
-            var avgEmotion = emotionAverage(sceneData[i - 1][4], sceneData[i][4]);
-
-            // Store the averaged emotion in the temporary array
-            averagedEmotions[i] = avgEmotion;
-        } else {
-            // If they are not equivalent, store an empty string in the temporary array
-            averagedEmotions[i] = "";
-        }
-    }
-
-    // Update the sceneData array with the averaged emotions
-    for (var i = 1; i < sceneData.length - 1; i++) {
-        // Check if the temporary array has an averaged emotion at this index
-        if (averagedEmotions[i] !== "") {
-            // Update the current array's 5th element with the averaged emotion
-            sceneData[i][4] = averagedEmotions[i];
-        }
-    }
- */
+    /*   var averagedEmotions = [];
+  
+      for (var i = 1; i < sceneData.length - 1; i++) {
+          // Check if the third element between the current and previous arrays are equivalent
+          if (sceneData[i][2] === sceneData[i - 1][2]) {
+              // If they are equivalent, call the emotionAverage function on the two 5th elements
+              var avgEmotion = emotionAverage(sceneData[i - 1][4], sceneData[i][4]);
+  
+              // Store the averaged emotion in the temporary array
+              averagedEmotions[i] = avgEmotion;
+          } else {
+              // If they are not equivalent, store an empty string in the temporary array
+              averagedEmotions[i] = "";
+          }
+      }
+  
+      // Update the sceneData array with the averaged emotions
+      for (var i = 1; i < sceneData.length - 1; i++) {
+          // Check if the temporary array has an averaged emotion at this index
+          if (averagedEmotions[i] !== "") {
+              // Update the current array's 5th element with the averaged emotion
+              sceneData[i][4] = averagedEmotions[i];
+          }
+      }
+   */
     /*
     Dialogue Array
     
@@ -1136,11 +1369,20 @@ if (guiPanel.dismiss == "accept") {
         speakertagArray[i] = (dialogueArray[i][0])
     }
 
-/******************************************************************************
-                                MAIN EXECUTION
-******************************************************************************/
+    /******************************************************************************
+                                    MAIN EXECUTION
+    ******************************************************************************/
 
-    //move get time diff into each function plus a string saying the name of the function
+    //QUESTION: We need a logicChess viewMode, and all that that implies.
+
+    //QUESTION: Use playSound to signal to the user when each step has completed.
+    //This will prevent me from alt-tabbing while watching Disney movies for hours
+    //while scenes generate, because I will hear that the code is still running and
+    //not in an infinite loop.
+
+    //QUESTION: Store each getTimeDiff, along with the step in a string that will
+    //become an alert that shows if WriteReport is enabled. This will allow the user
+    //to see a comprehensive time profile of each step in execution.
 
     fl.getDocumentDOM().getTimeline().currentFrame = 0;
     if (viewMode == "courtMode") {
@@ -1190,6 +1432,10 @@ if (guiPanel.dismiss == "accept") {
     fl.selectTool("arrow");
 
 }
+
+//QUESTION: Log "END OF FILE" should occur here, at the end of the file.
+
+//QUESTION: Remove all fl.trace-ing here, we use logging and a new Write Report system, described above.
 
 var endTime = new Date();
 timeDiff = endTime - startTime;
