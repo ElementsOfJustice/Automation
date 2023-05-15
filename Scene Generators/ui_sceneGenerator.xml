@@ -1,0 +1,78 @@
+<dialog title="Elements of Justice Generator (5.15.23)" buttons="accept, cancel">
+	<spacer />
+	<spacer />
+	<spacer />
+	<spacer />
+	<spacer />
+	<spacer />
+	<spacer />
+	<spacer />
+	<spacer />
+	<spacer />
+	<spacer />
+	<spacer />
+	<spacer />
+	<spacer />
+	<spacer />
+	<spacer />
+	<label value="Viewing Mode:"/>
+	<menulist id="viewMode">
+		<menupop>
+			<menuitem label="Courtroom Mode" selected="true" value="courtMode" />
+			<menuitem label="Investigation Mode" selected="false" value="investigationMode" />
+			<menuitem label="Logic Chess Mode" selected="false" value="aaiMode" />
+		</menupop>
+	</menulist>
+	<spacer />
+	<label value="Defense/POV Character Name:"/>
+	<textbox id="panel_Defense" size="24" value="Sonata" />
+	<spacer />
+	<label value="Prosecutor Name:"/>
+	<textbox id="panel_Prosecutor" size="24" value="Luna" />
+	<spacer />
+	<label value="Judge Name:"/>
+	<textbox id="panel_Judge" size="24" value="Judge" />
+	<spacer />
+	<label value="Cocouncil Name:"/>
+	<textbox id="panel_Cocouncil" size="24" value="Phoenix" />
+	<spacer />
+	<label value="Witnesses:"/>
+	<textbox id="panel_allWitnesses" size="24" value="" />
+	<spacer />
+	<separator />
+	<label value="emotionEngine Bias:"/>
+	<textbox id="panel_eeBias" size="24" value="+HT" />
+	<separator />
+	<grid>
+		<columns>
+			<column flex="1"/>
+			<column flex="1"/>
+		</columns>
+		<rows>
+			<row align="center">
+				<checkbox id="panel_skip00" label="Add Text?" checked="true"/>
+				<checkbox id="panel_skip03" label="Typewriter?" checked="true"/>
+			</row>
+			<row align="center">
+				<checkbox id="panel_skip01" label="Add Rigs?" checked="true"/>
+				<checkbox id="panel_skip04" label="Add Lines?" checked="true"/>
+			</row>
+			<row align="center">
+				<checkbox id="panel_skip02" label="Court BGs?" checked="true"/>
+				<checkbox id="panel_skip05" label="AutoBlink?" checked="true"/>
+			</row>
+		</rows>
+	</grid>
+	<separator />
+	<label value="Select Array File:"/>
+	<choosefile id="panel_sceneData" type="open" pathtype="absolute" literal="false" required="true" />
+	<separator />
+	<label value="Select CFG Folder:"/>
+	<choosefile id="panel_folderCFG" type="open" pathtype="absolute" literal="false" required="false" />
+	<separator />
+	<label value="Select Voice Lines Folder:"/>
+	<choosefile id="panel_folderLines" type="open" pathtype="absolute" literal="false" required="false" />
+	<separator />
+	<checkbox id="panel_writeReport" label="Write Report?" checked="true" />
+	<flash id = "myId" src = "logo.swf" width = "5" height = "5">
+	</dialog>

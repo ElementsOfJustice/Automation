@@ -48,6 +48,10 @@ Issues:
     ⦁ Address all the questions
     ⦁ Remove all fl.trace statements. We only want logging, or SFX alert/error/updates.
     ⦁ tmp_DummySymbol looks like it's invoked, but not created if it doesn't exist.
+    ⦁ 15K frame overflow exists when generating large scenes. Soundman will experiment with 
+    creating a for-loop that intelligently switches scenes when a chunking value of frames is 
+    achieved. The end result in writing this into the code should be that generation of very 
+    long scenes can happen within one file, by generating within multiple scenes within Animate.
     ⦁ ???
 
 *****************************************************************************************************************/
@@ -553,6 +557,21 @@ function getPoseFromEmotion(layerIndex, i) {
         }
     }
     return poseFrameNum;
+}
+
+//QUESTION: This is how we'll hook up features to the sceneGenerator without duplicate code.
+//A core script that is function-pure, and an end-user script we run in manual cases.
+
+/*
+Function: gammaBlink
+Variables:
+    layerIndex  int
+    mean        float
+Descriptions:
+    Places blinking labels across a character's layer via a mean.
+*/
+function gammaBlink(layerIndex, mean) {
+    fl.runScript(fl.configURI + "Commands/Blinking/dev_GammaBlink_core.jsfl", "autoBlink", mean);
 }
 
 /******************************************************************************
