@@ -122,14 +122,16 @@ function resetSelection(layer, frame) {
 function placeKeyframes(startFrame, layer, lipsyncMap) {
 	var diphthongMap = {};
 	var mouthShapeMap = {};
+	fl.getDocumentDOM().getTimeline().currentLayer = layer;
 	for (var phonemeStartTime in phonemes) {
-		resetSelection(layer, startFrame + Math.round((phonemeStartTime * FRAME_RATE)));
-		var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame;
+		var curFrame = startFrame + Math.round((phonemeStartTime * FRAME_RATE));
+		var isKeyFrame = curFrame == fl.getDocumentDOM().getTimeline().layers[layer].frames[curFrame].startFrame;
 		if (!isKeyFrame) {
-			fl.getDocumentDOM().getTimeline().insertKeyframe(); // this logic will replace extremely short phonemes with the next one   
+			fl.getDocumentDOM().getTimeline().convertToKeyframes(curFrame); // this logic will replace extremely short phonemes with the next one   
 		}
-		resetSelection(layer, startFrame + Math.round((phonemeStartTime * FRAME_RATE)));
-		fl.getDocumentDOM().setElementProperty("loop", "play once");
+		//resetSelection(layer, startFrame + Math.round((phonemeStartTime * FRAME_RATE)));
+		//fl.getDocumentDOM().setElementProperty("loop", "play once");
+		fl.getDocumentDOM().getTimeline().layers[layer].frames[curFrame].elements[0].loop = 'play once';
 		var phoneme = phonemes[phonemeStartTime][WORD_PHONEME_INDEX].substring(0, 2);
 		if (arrayContains(DIPHTHONGS, phoneme, isEqual)) {
 			diphthongMap[fl.getDocumentDOM().getTimeline().currentFrame] = phoneme;
@@ -140,36 +142,42 @@ function placeKeyframes(startFrame, layer, lipsyncMap) {
 		} else {
 			var frame = lipsyncMap[PHONEME_TO_MOUTH_SHAPE[phoneme]];
 		}
-		fl.getDocumentDOM().setElementProperty("firstFrame", poseStartFrame + frame);
-		fl.getDocumentDOM().setElementProperty("lastFrame", poseStartFrame + frame + LENGTH_MAP[PHONEME_TO_MOUTH_SHAPE[phoneme]] - 1);
-		fl.getDocumentDOM().setElementProperty("loop", "play once");
+		//fl.getDocumentDOM().setElementProperty("firstFrame", poseStartFrame + frame);
+		fl.getDocumentDOM().getTimeline().layers[layer].frames[curFrame].elements[0].firstFrame = poseStartFrame + frame;
+		// fl.getDocumentDOM().setElementProperty("lastFrame", poseStartFrame + frame + LENGTH_MAP[PHONEME_TO_MOUTH_SHAPE[phoneme]] - 1);
+		fl.getDocumentDOM().getTimeline().layers[layer].frames[curFrame].elements[0].lastFrame =  poseStartFrame + frame + LENGTH_MAP[PHONEME_TO_MOUTH_SHAPE[phoneme]] - 1;
+		// fl.getDocumentDOM().setElementProperty("loop", "play once");
+		fl.getDocumentDOM().getTimeline().layers[layer].frames[curFrame].elements[0].loop = 'play once';
 		if (arrayContains(SINGLE_FRAME_MOUTH_SHAPES, PHONEME_TO_MOUTH_SHAPE[phoneme], isEqual)) {
-			fl.getDocumentDOM().setElementProperty("loop", "single frame"); // set single frame for mouth shapes that only last for one frame
+			// fl.getDocumentDOM().setElementProperty("loop", "single frame"); // set single frame for mouth shapes that only last for one frame
+			fl.getDocumentDOM().getTimeline().layers[layer].frames[curFrame].elements[0].loop = 'single frame';
 		}
 		mouthShapeMap[fl.getDocumentDOM().getTimeline().currentFrame] = PHONEME_TO_MOUTH_SHAPE[phoneme];
 	}
 	// handle diphthongs
 	for (var frame in diphthongMap) {
 		for (var i = 0; i < DIPHTHONG_ORDERING[diphthongMap[frame]].length; i++) { // for each mouth shape in the diphthong
-			resetSelection(layer, (parseInt(frame) + i));
-			var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame; // if the current frame isn't the first frame in a frame sequence, make a note of that
-			if (frame != fl.getDocumentDOM().getTimeline().currentFrame && isKeyFrame) {
+			var curFrame = (parseInt(frame) + i);
+			var isKeyFrame = curFrame == fl.getDocumentDOM().getTimeline().layers[layer].frames[curFrame].startFrame; // if the current frame isn't the first frame in a frame sequence, make a note of that
+			if (frame != curFrame && isKeyFrame) {
 				break; // at the next keyframe, abort mission
 			}
 			if (!isKeyFrame) {
-				fl.getDocumentDOM().getTimeline().insertKeyframe();
-				resetSelection(layer, (parseInt(frame) + i));
+				fl.getDocumentDOM().getTimeline().convertToKeyframes(curFrame);
+				//resetSelection(layer, (parseInt(frame) + i));
 			}
 			var firstFrame = lipsyncMap[DIPHTHONG_ORDERING[diphthongMap[frame]][i]];
-			fl.getDocumentDOM().setElementProperty("firstFrame", poseStartFrame + firstFrame);
-			fl.getDocumentDOM().setElementProperty("loop", "loop");
+			// fl.getDocumentDOM().setElementProperty("firstFrame", poseStartFrame + firstFrame);
+			fl.getDocumentDOM().getTimeline().layers[layer].frames[curFrame].elements[0].firstFrame = poseStartFrame + firstFrame;
+			// fl.getDocumentDOM().setElementProperty("loop", "loop");
+			fl.getDocumentDOM().getTimeline().layers[layer].frames[curFrame].elements[0].loop = 'loop';
 			mouthShapeMap[fl.getDocumentDOM().getTimeline().currentFrame] = DIPHTHONG_ORDERING[diphthongMap[frame]][i];
-			var framesToAdvanceBy = Math.round(fl.getDocumentDOM().getTimeline().layers[layer].frames[frame].duration / DIPHTHONG_ORDERING[diphthongMap[frame]].length);
-			fl.getDocumentDOM().getTimeline().currentFrame += (framesToAdvanceBy <= 0) ? 1 : framesToAdvanceBy;
+			// var framesToAdvanceBy = Math.round(fl.getDocumentDOM().getTimeline().layers[layer].frames[frame].duration / DIPHTHONG_ORDERING[diphthongMap[frame]].length);
+			// fl.getDocumentDOM().getTimeline().currentFrame += (framesToAdvanceBy <= 0) ? 1 : framesToAdvanceBy;
 		}
 	}
-	resetSelection(layer, startFrame + Math.round(getKeys(phonemes)[getKeys(phonemes).length - 1] * FRAME_RATE));
-	fl.getDocumentDOM().setElementProperty("loop", "single frame"); // set last phoneme to single frame
+	var curFrame = startFrame + Math.round(getKeys(phonemes)[getKeys(phonemes).length - 1] * FRAME_RATE);
+	fl.getDocumentDOM().getTimeline().layers[layer].frames[curFrame].elements[0].loop = "single frame"; // set last phoneme to single frame
 }
 
 //MAIN
