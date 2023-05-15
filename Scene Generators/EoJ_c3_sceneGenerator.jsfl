@@ -418,6 +418,8 @@ function levenshteinRatio(source, target) {
 
 //QUESTION: Do we even want emotionAverage smoothing? Run tests and see if it is worth the compute cycles.
 
+//QUESTION: What even is emotionAverage? What is an in-between emotion?
+
 /*
 Function: emotionAverage
 Variables: 
