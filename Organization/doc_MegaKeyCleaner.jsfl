@@ -74,7 +74,7 @@ function keyClean(timeline) {
             var prevMatrix = timeline.layers[layerIndex].frames[firstFrame].elements[0].matrix;
             var prevHasNoTween = timeline.layers[layerIndex].frames[firstFrame].tweenType == "none";
             for (var j = firstFrame + prevDuration; j < lastFrame; j += prevDuration) {
-                if (timeline.layers[layerIndex].frames[j].isEmpty) {
+                if (timeline.layers[layerIndex].frames[j].isEmpty || timeline.layers[layerIndex].frames[j].elements.length > 1) {
                     prevFirstFrame = undefined;
                     prevLoopType = undefined;
                     prevDuration = timeline.layers[layerIndex].frames[j].duration;
@@ -82,7 +82,7 @@ function keyClean(timeline) {
                     prevMatrix = undefined;
                     prevHasNoTween = true;
                     prevFrame = j;
-                    continue; // ignore empty keyframes  
+                    continue; // ignore empty keyframes and keyframes with more than one element
                 }
                 var curFirstFrame = timeline.layers[layerIndex].frames[j].elements[0].firstFrame;
                 var curLoopType = timeline.layers[layerIndex].frames[j].elements[0].loop;
