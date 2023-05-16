@@ -1,6 +1,6 @@
 ﻿/******************************************************************************
-doc_c3_LipSyncDocument.jsfl
-Description: Performs Case 3 Lipsyncing on a whole document.
+sel_c3_LipSyncSingle.jsfl
+Description: Performs Case 3 Lipsyncing on a selection.
 ******************************************************************************/
 
 /*
