@@ -27,20 +27,22 @@ Desired Features:
     ⦁ General quality of life features made to the code.
 
 To-Do:
+    ⦁ Do a validation check of all input before any generation begins.
+        ⦁ Do a pre-emptive warn and abort if a character in the scene array 
+        is not present in the rig array.
     ⦁ XMLUI should be an XML file within the directory of this JSFL file for
     easy editing.
     ⦁ We need a Logic Chess mode. (Need an FLA to extract magic numbers from.)
-    ⦁ Add a log file to be appended to within the directory of this JSFL file.
+    ⦁ Don't delete the many fl.trace statements. Use the new logging system, use
+    them as INFO comments. That way you can read all your output without clogging
+    the output panel.
     ⦁ Everything needs error-handling. This script should never fail unless you
     do something TERRIBLE!
     ⦁ EmotionEngine needs refactoring to allow negative-prompt bias.
-    ⦁ L-Ratio function needs to be made human readable.
     ⦁ All functions need commenting.
     ⦁ LineAdderFullAuto, MouthShapeLipSyncAll and GammaBlink need to be refactored
     to allow parameters to be passed in from this file, so the scene generator can
     run these scripts as needed.
-    ⦁ Do a pre-emptive warn and abort if a character in the scene array is not
-    present in the rig array.
     ⦁ Remove all !true, !false sillyness.
 
 Issues:
@@ -304,6 +306,21 @@ function trim(inputString) {
 }
 
 /*
+Function: spreadMax
+Variables: 
+    arr []
+Description: ES5-compatible backport of the spread operator.
+*/
+function spreadMax(arr) {
+
+    var result = arr.reduce(function (a, b) {
+        return Math.max(a, b);
+    });
+
+    return result;
+}
+
+/*
 Function: switchActive
 Variables: 
     layerVar int
@@ -422,9 +439,41 @@ function levenshteinRatio(source, target) {
     return ((sourceLength + targetLength - distanceMatrix[sourceLength][targetLength]) / (sourceLength + targetLength));
 }
 
+/*
+Function: getTimeDiff
+Variables:
+Description:
+    Gets the time difference. Useful for telling how long each step
+    takes to execute and which rigs are bloated.
+*/
+function getTimeDiff(startTime, endTime) {
+    timeDiff = endTime - startTime;
+    timeDiff /= 1000;
+    var seconds = Math.round(timeDiff);
+
+    if (timeDiff < 60) {
+        return ("Time Elapsed: " + seconds + " seconds.");
+    }
+
+    if (timeDiff > 60) {
+        var minutes = Math.floor(timeDiff / 60);
+        var seconds = timeDiff - minutes * 60;
+        return ("Time Elapsed: " + minutes + " minutes and " + seconds + " seconds");
+    }
+}
+
+/******************************************************************************
+                                EMOTION ENGINE
+******************************************************************************/
+
 //QUESTION: Do we even want emotionAverage smoothing? Run tests and see if it is worth the compute cycles.
 
 //QUESTION: What even is emotionAverage? What is an in-between emotion?
+
+//ANSWER: An in-between emotion is an averaged emotion between two input emotions. The semantic analysis
+//code we use for extracting emotions from text works on a per-line level. This means the code can produce
+//pose whiplash. A character may be happy, and then mad in the next pose. emotionAverage, and getting an
+//in-between emotion should allow us to smooth out these transient emotions for more posing consistency.
 
 /*
 Function: emotionAverage
@@ -500,44 +549,6 @@ function emotionAverage(str1, str2) {
     return result;
 }
 
-/*
-Function: spreadMax
-Variables: 
-    arr []
-Description: ES5-compatible backport of the spread operator.
-*/
-function spreadMax(arr) {
-
-    var result = arr.reduce(function (a, b) {
-        return Math.max(a, b);
-    });
-
-    return result;
-}
-
-/*
-Function: getTimeDiff
-Variables:
-Descriptions:
-    Gets the time difference. Useful for telling how long each step
-    takes to execute and which rigs are bloated.
-*/
-function getTimeDiff(startTime, endTime) {
-    timeDiff = endTime - startTime;
-    timeDiff /= 1000;
-    var seconds = Math.round(timeDiff);
-
-    if (timeDiff < 60) {
-        return ("Time Elapsed: " + seconds + " seconds.");
-    }
-
-    if (timeDiff > 60) {
-        var minutes = Math.floor(timeDiff / 60);
-        var seconds = timeDiff - minutes * 60;
-        return ("Time Elapsed: " + minutes + " minutes and " + seconds + " seconds");
-    }
-}
-
 //QUESTION: Would an xSheet cache speed this up?
 
 /*
@@ -545,7 +556,7 @@ Function: getPoseFromEmotion
 Variables:
     layerIndex  int
     i           int
-Descriptions:
+Description:
     Selects a pose from a character layer and frame number i. We use L-ratio
     to match the line's emotion to the emotionEngine data for the rig.
 */
@@ -567,20 +578,92 @@ function getPoseFromEmotion(layerIndex, i) {
     return poseFrameNum;
 }
 
+/******************************************************************************
+                                CHUNK FUNCTIONS
+******************************************************************************/
+
+var chunk = 3; // Number of voice lines per scene
+
+/*
+Function: goTo
+Variables:
+    inputString     str
+Description:
+    Will set the currentFrame to the first frame of a line. A line is
+    defined as when the TEXT layer has a frame.name value equaling a 
+    value from the sceneData. These frame names are placed when the text
+    is generated, so we will use them as markers for where lines begin.
+
+    The goTo function, and the chunking value above determines how many
+    lines will be in an Animate scene. The function intelligently enters
+    scenes before taking you to the start of the line.
+
+    goTo() should be used for all iteration post-text placement. This
+    way we can add frames, as we would when inserting voice lines, and
+    the iteration will not be affected because we compute dynamically.
+*/
+function goTo(inputString) {
+	var lineIndex = parseInt(inputString.substring(3, 6), 10);
+	var sceneIndex = Math.ceil(lineIndex / chunk);
+
+	// Go to the target scene
+	fl.getDocumentDOM().editScene(sceneIndex - 1);
+
+	var timeline = fl.getDocumentDOM().getTimeline();
+	var textLayer = timeline.layers[timeline.findLayerIndex("TEXT")]; // Get the "TEXT" layer
+	var keyframes = textLayer.frames; // Get all the keyframes on the textLayer
+
+	// Iterate over the keyframes on the textLayer
+	for (var i = 0; i < keyframes.length; i++) {
+		var frame = keyframes[i];
+
+		// Check if the frame name matches the input frame label
+		if (frame.name === inputString) {
+			// Go to the target frame within the scene
+			timeline.currentFrame = i;
+			break;
+		}
+
+		// Calculate the index of the next keyframe
+		var nextFrameIndex = i + frame.duration;
+
+		// Skip to the next keyframe
+		i = nextFrameIndex - 1;
+	}
+}
+
+/******************************************************************************
+                                CORE INVOKERS
+******************************************************************************/
+
 //QUESTION: This is how we'll hook up features to the sceneGenerator without duplicate code.
 //A core script that is function-pure, and an end-user script we run in manual cases.
+
+//QUESTION: Warn user via FLfile.exists if these files don't exist ahead of time.
+//Forseeable, since filenames may change once we enter Case 4.
 
 /*
 Function: gammaBlink
 Variables:
     layerIndex  int
     mean        float
-Descriptions:
+Description:
     Places blinking labels across a character's layer via a mean.
 */
 function gammaBlink(layerIndex, mean) {
     fl.getDocumentDOM().getTimeline().setSelectedLayers(layerIndex);
     fl.runScript(fl.configURI + "Commands/Blinking/dev_GammaBlink_core.jsfl", "autoBlink", mean);
+}
+
+/*
+Function: autoLipsyncDocument
+Variables:
+    cfgFolderPath   str
+Description:
+    Lipsyncs an entire document when provided a folder to CFGs.
+*/
+function autoLipsyncDocument(cfgFolderPath) {
+    fl.runScript(configURI + "Commands/Lipsyncing/dev_c3_LipSync_core.jsfl", "runLipsyncingDoc", cfgFolderPath);
 }
 
 /******************************************************************************
