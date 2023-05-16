@@ -268,6 +268,8 @@ Description: Runs all lipsyncing operations in the active document.
 */
 function runLipsyncingDoc(cfgFolderPath) {
 
+	compileScenes();
+
 	//Iterate through all scenes
 	for (var i = 0; i < sceneArray.length; i++) {
 		fl.getDocumentDOM().currentTimeline = sceneArray[i];
