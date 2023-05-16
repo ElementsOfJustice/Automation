@@ -48,10 +48,16 @@ Issues:
     ⦁ Address all the questions
     ⦁ Remove all fl.trace statements. We only want logging, or SFX alert/error/updates.
     ⦁ tmp_DummySymbol looks like it's invoked, but not created if it doesn't exist.
+    ⦁ const variable type sometimes gives redeclaration errors because of ghost cache. Does this
+    happen during failed executions? Should we not use const?
     ⦁ 15K frame overflow exists when generating large scenes. Soundman will experiment with 
     creating a for-loop that intelligently switches scenes when a chunking value of frames is 
     achieved. The end result in writing this into the code should be that generation of very 
     long scenes can happen within one file, by generating within multiple scenes within Animate.
+            ⦁ Soundman made a chunking system. Stress-test it, confirm it works nicely. When we
+            integrate it, the placeText() function will place a pre-defined amount of text into
+            each scene. This iterates normally. When we want to further iterate during steps such
+            as lipsyncing or blinking, we use the chunking system goTo() function.
     ⦁ ???
 
 *****************************************************************************************************************/
@@ -573,6 +579,7 @@ Descriptions:
     Places blinking labels across a character's layer via a mean.
 */
 function gammaBlink(layerIndex, mean) {
+    fl.getDocumentDOM().getTimeline().setSelectedLayers(layerIndex);
     fl.runScript(fl.configURI + "Commands/Blinking/dev_GammaBlink_core.jsfl", "autoBlink", mean);
 }
 
