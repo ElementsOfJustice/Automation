@@ -153,7 +153,7 @@ Variables:
 	lipsyncMap 		arr
 Description: Contains the logic for placing the keyframes responsible for lipsyncing.
 */
-function placeKeyframes(startFrame, layer, lipsyncMap) {
+function placeKeyframes(startFrame, layer, lipsyncMap, poseStartFrame) {
 	fl.getDocumentDOM().getTimeline().currentLayer = layer;
 	var diphthongMap = {};
 	var mouthShapeMap = {};
