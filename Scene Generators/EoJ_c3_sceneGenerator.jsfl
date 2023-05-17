@@ -666,6 +666,19 @@ function autoLipsyncDocument(cfgFolderPath) {
     fl.runScript(configURI + "Commands/Lipsyncing/dev_c3_LipSync_core.jsfl", "runLipsyncingDoc", cfgFolderPath);
 }
 
+//QUESTION: THIS DOESN'T WORK WITH MULTIPLE SCENES IN ONE FLA. WE GOTTA FIX THIS.
+
+/*
+Function: addAllVoiceLines
+Variables:
+    voiceLineFolderPath   str
+Description:
+    Adds all voice lines to a scene.
+*/
+function addAllVoiceLines(voiceLineFolderPath) {
+    fl.runScript(configURI + "Commands/Lipsyncing/dev_LineAdder_core.jsfl", "insertLines", voiceLineFolderPath);
+}
+
 /******************************************************************************
                             COURTROOM FUNCTIONS
 ******************************************************************************/
