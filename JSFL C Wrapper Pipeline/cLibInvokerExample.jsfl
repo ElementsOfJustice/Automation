@@ -89,6 +89,16 @@ function soundAlert(message) {
 	fl.runScript(cLib, "soundAlert", message);
 }
 
+/*
+Function: getFLACLength
+Variables:  
+	pathName	str
+Description: Returns the number of samples in a FLAC file.
+*/
+function getFLACLength(pathName) {
+	return fl.runScript(cLib, "getFLACLength", pathName);
+}
+
 // === C LIB WRAPPERS END HERE ===
 
 //Some examples of execution.

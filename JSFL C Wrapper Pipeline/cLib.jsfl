@@ -24,10 +24,9 @@ file. This is good for turning features on and off at will.
 function isSubstringPresent(string, substring) {
 	if (typeof string !== 'string' || typeof substring !== 'string') {
 		throw new TypeError('Both arguments must be strings.');
-	}
-
+	};
 	return string.indexOf(substring) !== -1;
-}
+};
 
 /*
 Function: validationCheck
@@ -40,8 +39,8 @@ Description: Confirm code exists, or otherwise warn the user.
 function validationCheck() {
 	if (!FLfile.exists(fl.configURI + "Settings.txt")) {
 		throw new Error("Settings.txt does not exist in the user's configuration directory.");
-	}
-}
+	};
+};
 
 //		= = = C++ WRAPPER FUNCTIONS = = = 
 
@@ -58,9 +57,9 @@ function stringToCFunctionString(input) {
 	var arr = "";
 	for (var i = 0; i < input.length; i++) {
 		arr += input.charCodeAt(i) + ", ";
-	}
+	};
 	return arr.substring(0, arr.length - 2);
-}
+};
 
 /*
 Function: beep
@@ -79,8 +78,8 @@ function beep(frequency, duration) {
 	if (!(isSubstringPresent(settings, "noSounds") || isSubstringPresent(settings, "noDLLs"))) {
 		var execString = "Sound.beep" + "(" + frequency + ", " + duration + ");";
 		return eval(execString);
-	}
-}
+	};
+};
 
 /*
 Function: playSound
@@ -96,8 +95,8 @@ function playSound(input) {
 	if (!(isSubstringPresent(settings, "noSounds") || isSubstringPresent(settings, "noDLLs"))) {
 		var execString = "Sound.playSound" + "(" + stringToCFunctionString(input) + ");";
 		return eval(execString);
-	}
-}
+	};
+};
 
 /*
 Function: soundError
@@ -115,8 +114,8 @@ function soundError() {
 	validationCheck()
 	if (!(isSubstringPresent(settings, "noSounds") || isSubstringPresent(settings, "noDLLs"))) {
 		playSound(FLfile.uriToPlatformPath(fl.configURI) + "Commands\\Notifications\\Error.wav");
-	}
-}
+	};
+};
 
 /*
 Function: soundAlert
@@ -132,8 +131,22 @@ function soundAlert(message) {
 	validationCheck()
 	if (!(isSubstringPresent(settings, "noSounds") || isSubstringPresent(settings, "noDLLs"))) {
 		playSound(FLfile.uriToPlatformPath(fl.configURI) + "Commands\\Notifications\\Alert.wav");
-	}
+	};
 	if (message !== undefined) {
 		alert(message)
-	}
-}
+	};
+};
+
+/*
+Function: getFLACLength
+Variables:  
+	pathName	str
+Description: Returns the number of samples in a FLAC file.
+*/
+function getFLACLength(pathName) {
+	validationCheck()
+	if (!(isSubstringPresent(settings, "noDLLs"))) {
+		var execString = "Sample.getFLACLength(" + stringToCFunctionString(pathName) + ");";
+		return eval(execString);
+	};
+};
