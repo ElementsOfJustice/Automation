@@ -16,7 +16,7 @@
 	<spacer />
 	<spacer />
 	<label value="Viewing Mode:"/>
-	<menulist id="viewMode">
+	<menulist id="panel_viewMode">
 		<menupop>
 			<menuitem label="Courtroom Mode" selected="true" value="courtMode" />
 			<menuitem label="Investigation Mode" selected="false" value="investigationMode" />
@@ -40,8 +40,19 @@
 	<textbox id="panel_allWitnesses" size="24" value="" />
 	<spacer />
 	<separator />
-	<label value="emotionEngine Bias:"/>
-	<textbox id="panel_eeBias" size="24" value="+HT" />
+	<label value="emotionEngine Bias:              Chunks:"/>
+	<grid>
+		<columns>
+			<column flex="1"/>
+			<column flex="1"/>
+		</columns>
+		<rows>
+			<row align="center">
+				<textbox id="panel_eeBias" size="18" value="+HT" />
+				<textbox id="panel_chunkSize" size="6" value="70" />
+			</row>
+		</rows>
+	</grid>
 	<separator />
 	<grid>
 		<columns>

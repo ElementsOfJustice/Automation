@@ -1325,13 +1325,10 @@ function sculptInvestgation() {
 //QUESTION: Invocation neeeds to account for new features, like emotionEngine bias,
 //voice line insertion and CFGs for lipsyncing.
 
-var scriptPath = fl.scriptURI;
-var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
-var guiPanel = fl.xmlPanelFromString("<dialog title=\"Elements of Justice Generator (2.27.23)\" buttons=\"accept, cancel\"> <label value=\"Viewing Mode:\" control=\"iName\"/><menulist id = \"viewMode\"> <menupop>    <menuitem label=\"Courtroom Mode\" selected=\"true\" value=\"courtMode\" />    <menuitem label=\"Investigation Mode\" selected=\"false\" value=\"investigationMode\" />    <menuitem label=\"AAI Mode\" selected=\"false\" value=\"aaiMode\" /></menupop> </menulist><spacer /><label value=\"Defense/POV Character Name:\" control=\"iName\" /><textbox id=\"panel_sDefense\" size=\"24\" value=\"Athena\" /><spacer /><label value=\"Prosecutor Name:\" control=\"iName\" /><textbox id=\"panel_sProsecutor\" size=\"24\" value=\"Luna\" /><spacer /><label value=\"Judge Name:\" control=\"iName\" /><textbox id=\"panel_sJudge\" size=\"24\" value=\"Judge\" /><spacer /><label value=\"Cocouncil Name:\" control=\"iName\" /><textbox id=\"panel_sCocouncil\" size=\"24\" value=\"Twilight\" /><spacer /><label value=\"Witness No. 1 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness1\" size=\"24\" value=\"\" /><spacer /><label value=\"Witness No. 2 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness2\" size=\"24\" value=\"Diamond\" /><spacer /><label value=\"Witness No. 3 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness3\" size=\"24\" value=\"Silver Spoon\" /><spacer /><label value=\"Witness No. 4 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness4\" size=\"24\" value=\"\" /><spacer /><label value=\"Witness No. 5 Name:\" control=\"iName\" /><textbox id=\"panel_sWitness5\" size=\"24\" value=\"\" /><spacer /><separator /><label value=\"Select Array File\" control=\"iName\" /><choosefile id=\"selectedJSON\" type=\"open\" pathtype=\"absolute\" literal=\"false\" required=\"true\" /><checkbox id=\"panel_writeReport\" label=\"Write Report?\" checked=\"true\" /><spacer /></dialog>");
+var dirURL = fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/"));
+var guiPanel = fl.getDocumentDOM().xmlPanel(dirURL + "/ui_sceneGenerator.xml");
 
 if (guiPanel.dismiss == "accept") {
-
-    var startTime = new Date();
 
     arrayPath = guiPanel.selectedJSON;
     var driveLetter = arrayPath.charAt(0);
@@ -1340,12 +1337,36 @@ if (guiPanel.dismiss == "accept") {
     arrayPath = arrayPath.replace(/\\/g, "/");
     arrayPath = arrayPath.replace(/ /g, '%20');
 
-    viewMode = guiPanel.viewMode;
+    var viewMode = guiPanel.panel_viewMode;
 
-    sDefense = guiPanel.panel_sDefense;
-    sProsecutor = guiPanel.panel_sProsecutor;
-    sJudge = guiPanel.panel_sJudge;
-    sCocouncil = guiPanel.panel_sCocouncil;
+    var defense = guiPanel.panel_Defense;
+    var prosecutor = guiPanel.panel_Prosecutor;
+    var judge = guiPanel.panel_Judge;
+    var cocouncil = guiPanel.panel_Cocouncil;
+    var witnesses = guiPanel.panel_allWitnesses;
+
+    var eeBias = guiPanel.panel_eeBias;
+    var chunkSize = guiPanel.panel_chunkSize;
+
+    //QUESTION: Ahahaha, Soundman realized really late into the game that skipping text is out of the cards, because...
+    //THE ENTIRE CHUNK SYSTEM DEPENDS ON IT!!! hahaha... 
+    var skipText = guiPanel.panel_skip00;
+
+    var skipRigs = guiPanel.panel_skip01;
+    var skipBGs = guiPanel.panel_skip02;
+    var skipTypewriter = guiPanel.panel_skip03;
+    var skipLines = guiPanel.panel_skip04;
+    var skipBlinks = guiPanel.panel_skip05;
+
+    var pathToSceneData = guiPanel.panel_sceneData;
+    var pathToCFGs = guiPanel.panel_folderCFG;
+    var pathToLines = guiPanel.panel_folderLines;
+
+    var writeReport = guiPanel.panel_writeReport;
+
+    //QUESTION: New method for adding witnesses should use str.split(",") to split a string formatted such as
+    //"Fair Devotion,Turning Page,Sugar Stamp" into an array of entries, 
+    //["Fair Devotion", "Turning Page", "Sugar Stamp"].
     var NUM_WITNESSES = 5;
     for (var i = 0; i < NUM_WITNESSES; i++) {
         eval("var isEmpty = guiPanel.panel_sWitness" + (i + 1) + " == \"\"");
@@ -1354,14 +1375,32 @@ if (guiPanel.dismiss == "accept") {
         }
     }
 
-    writeReport = guiPanel.panel_writeReport;
+    //You've heard of sanity checks? Here, we're checking to see if the user is insane.
+    if (!skipLines && skipRigs) {
+        soundError();
+        var newError = "You have attempted to skip rig placement, but not skip line insertion. You are insane.";
+        writeLogInfo(getCurrentDate(), status03, newError);
+        throw new Error(newError);
+    }
 
+    if (skipLines && ((pathToCFGs == "") || (pathToLines == ""))) {
+        soundError();
+        var newError = "Both a path to the CFG files and voice lines are required for line placement.";
+        writeLogInfo(getCurrentDate(), status03, newError);
+        throw new Error(newError);
+    }
+
+    //Load the sceneData, and the appropriate configuration file.
     fl.runScript(arrayPath);
     fl.runScript(dirURL + "/config.txt");
 
-    /******************************************************************************
+    //WE SHOULD DO A WARNING RIGHT HERE IF A RIG IS GOING TO BE CALLED THAT DOESN'T FUCKING EXIST!!!!!!!!!!!!
+
+}
+
+/******************************************************************************
                                 DISCRIMINATE ARRAYS
-    ******************************************************************************/
+******************************************************************************/
 
     //QUESTION: Everything about this area is very scary. Nothing in the code is really
     //using the new array formatting, we just re-create the old format out of the new
@@ -1460,6 +1499,7 @@ if (guiPanel.dismiss == "accept") {
           }
       }
    */
+
     /*
     Dialogue Array
     
@@ -1493,69 +1533,68 @@ if (guiPanel.dismiss == "accept") {
         speakertagArray[i] = (dialogueArray[i][0])
     }
 
-    /******************************************************************************
-                                    MAIN EXECUTION
-    ******************************************************************************/
+/******************************************************************************
+                                MAIN EXECUTION
+******************************************************************************/
 
-    //QUESTION: We need a logicChess viewMode, and all that that implies.
+//QUESTION: We need a logicChess viewMode, and all that that implies.
 
-    //QUESTION: Use playSound to signal to the user when each step has completed.
-    //This will prevent me from alt-tabbing while watching Disney movies for hours
-    //while scenes generate, because I will hear that the code is still running and
-    //not in an infinite loop.
+//QUESTION: Use playSound to signal to the user when each step has completed.
+//This will prevent me from alt-tabbing while watching Disney movies for hours
+//while scenes generate, because I will hear that the code is still running and
+//not in an infinite loop.
 
-    //QUESTION: Store each getTimeDiff, along with the step in a string that will
-    //become an alert that shows if WriteReport is enabled. This will allow the user
-    //to see a comprehensive time profile of each step in execution.
+//QUESTION: Store each getTimeDiff, along with the step in a string that will
+//become an alert that shows if WriteReport is enabled. This will allow the user
+//to see a comprehensive time profile of each step in execution.
 
-    fl.getDocumentDOM().getTimeline().currentFrame = 0;
-    if (viewMode == "courtMode") {
-        var start = new Date();
-        doTextBoxes();
-        var end = new Date();
-        getTimeDiff(start, end);
-        start = new Date();
-        addRigs();
-        end = new Date();
-        getTimeDiff(start, end);
-        start = new Date();
-        sculpt();
-        end = new Date();
-        getTimeDiff(start, end);
-        start = new Date();
-        placeDesks();
-        end = new Date();
-        getTimeDiff(start, end);
-        start = new Date();
-        placeBGs();
-        end = new Date();
-        getTimeDiff(start, end);
+fl.getDocumentDOM().getTimeline().currentFrame = 0;
 
-    }
-    //reportTrace function
-    if (viewMode == "investigationMode") {
-        sProsecutor = null;
-        sJudge = null;
-        sCocouncil = null;
-        sWitnesses = {};
-        var start = new Date();
-        doTextBoxes();
-        var end = new Date();
-        getTimeDiff(start, end);
-        start = new Date();
-        var missing = addRigsInvestgation();
-        fl.trace("Missing rigs: " + missing);
-        end = new Date();
-        getTimeDiff(start, end);
-        start = new Date();
-        sculptInvestgation();
-        end = new Date();
-        getTimeDiff(start, end);
-    }
-
-    fl.selectTool("arrow");
+if (viewMode == "courtMode") {
+    var start = new Date();
+    doTextBoxes();
+    var end = new Date();
+    getTimeDiff(start, end);
+    start = new Date();
+    addRigs();
+    end = new Date();
+    getTimeDiff(start, end);
+    start = new Date();
+    sculpt();
+    end = new Date();
+    getTimeDiff(start, end);
+    start = new Date();
+    placeDesks();
+    end = new Date();
+    getTimeDiff(start, end);
+    start = new Date();
+    placeBGs();
+    end = new Date();
+    getTimeDiff(start, end);
 
 }
+
+if (viewMode == "investigationMode") {
+    sProsecutor = null;
+    sJudge = null;
+    sCocouncil = null;
+    sWitnesses = {};
+    var start = new Date();
+    doTextBoxes();
+    var end = new Date();
+    getTimeDiff(start, end);
+    start = new Date();
+    var missing = addRigsInvestgation();
+    fl.trace("Missing rigs: " + missing);
+    end = new Date();
+    getTimeDiff(start, end);
+    start = new Date();
+    sculptInvestgation();
+    end = new Date();
+    getTimeDiff(start, end);
+}
+
+fl.selectTool("arrow");
 
 //QUESTION: Log "END OF FILE" should occur here, at the end of the file.
 
