@@ -360,6 +360,8 @@ function doTextBoxes() {
             textbox.loop = "single frame";
             //textbox.width = 2560;   
             //textbox.height = 491.2;
+            textbox.scaleX = 1.343;
+            textbox.scaleY = 1.343;
         };
 
         switchActive("TEXT");
@@ -371,13 +373,14 @@ function doTextBoxes() {
             fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("VISUALS")].layerType = "folder";
         };
 
-        visualsLayer = visualsLayer[0];
+        var visualsLayer = fl.getDocumentDOM().getTimeline().findLayerIndex("VISUALS")[0];
 
         fl.getDocumentDOM().getTimeline().reorderLayer(textLayerIndex, visualsLayer + 1);
         fl.getDocumentDOM().getTimeline().reorderLayer(fl.getDocumentDOM().getTimeline().findLayerIndex("TEXTBOX")[0], visualsLayer + 2);
         fl.getDocumentDOM().getTimeline().layers[textLayerIndex].parentLayer = fl.getDocumentDOM().getTimeline().layers[visualsLayer];
         fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("TEXTBOX")[0]].parentLayer = fl.getDocumentDOM().getTimeline().layers[visualsLayer];
 
+        switchActive("TEXT");
         var curLayer = fl.getDocumentDOM().getTimeline().currentLayer;
         var isKeyframe = curFrame == fl.getDocumentDOM().getTimeline().layers[curLayer].frames[curFrame].startFrame;
 
