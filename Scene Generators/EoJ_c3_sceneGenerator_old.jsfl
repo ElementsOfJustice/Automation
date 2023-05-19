@@ -32,7 +32,6 @@ To-Do:
         is not present in the rig array.
     ⦁ XMLUI should be an XML file within the directory of this JSFL file for
     easy editing.
-    ⦁ We need a Logic Chess mode. (Need an FLA to extract magic numbers from.)
     ⦁ Don't delete the many fl.trace statements. Use the new logging system, use
     them as INFO comments. That way you can read all your output without clogging
     the output panel.
@@ -50,8 +49,6 @@ Issues:
     ⦁ Address all the questions
     ⦁ Remove all fl.trace statements. We only want logging, or SFX alert/error/updates.
     ⦁ tmp_DummySymbol looks like it's invoked, but not created if it doesn't exist.
-    ⦁ const variable type sometimes gives redeclaration errors because of ghost cache. Does this
-    happen during failed executions? Should we not use const?
     ⦁ 15K frame overflow exists when generating large scenes. Soundman will experiment with 
     creating a for-loop that intelligently switches scenes when a chunking value of frames is 
     achieved. The end result in writing this into the code should be that generation of very 
@@ -68,12 +65,12 @@ Issues:
                                 DEBUGGING BACKEND
 ******************************************************************************/
 
-const status00 = "INFO ";
-const status01 = "WARN ";
-const status02 = "DEBUG";
-const status03 = "ERROR";
+var status00 = "INFO ";
+var status01 = "WARN ";
+var status02 = "DEBUG";
+var status03 = "ERROR";
 
-const logFile = fl.configURI + "log.txt";
+var logFile = fl.configURI + "log.txt";
 
 /*
 Function: formatDateTime
@@ -156,13 +153,11 @@ function logSetup() {
 initializeLog();
 logSetup();
 
-writeLogInfo(getCurrentDate(), status00, "Your code did a funny!");
-
 /******************************************************************************
                                 C LIBRARY WRAPPERS
 ******************************************************************************/
 
-const cLib = fl.configURI + "cLib.jsfl";
+var cLib = fl.configURI + "cLib.jsfl";
 
 /*
 Function: validationCheck
@@ -245,43 +240,12 @@ function soundAlert(message) {
 
 fl.showIdleMessage(false);
 
-//QUESTION: Is there anything else we can put here, and any way to tidy up this enormous list of vars?
-
 //CONFIGURABLE VARIABLES//
 var iFrameDuration = 12;
-var viewMode = null;
-var arrayPath = null;
-
-//COURTMODE VARIABLES//
-var sDefense = null;
-var sProsecutor = null;
-var sJudge = null;
-var sCocouncil = null;
-var sWitnesses = {};
-
-//GENERAL-PURPOSE VARIABLES//
-var propertiesLayer = null;
-var propertiesTextBox = null;
-
-var currentSpeaker = null;
-var nextSpeaker = null;
-var previousSpeaker = null;
-
-var writeReport = true;
-var stopRigPlacement = false;
-var hasDirections = null;
-var stageDirections = null;
-
-var dialogueArray = [];
-var speakertagArray = [];
-
-var startTime = new Date();
 
 /******************************************************************************
                                 BASIC FUNCTIONS
 ******************************************************************************/
-
-//QUESTION: JSFL says it already has a string.trim operator. Why do we have this then?
 
 /*
 Function: trim
@@ -338,6 +302,7 @@ function switchActive(layerVar) {
 
 //QUESTION: A lot of the formatting types share properties like the font. Should we have a general formatter followed by a 
 //specific formatter. i.e. run generalFormat(), then dialogueFormat()? Is this optimal while reducing lines of code?
+//ANSWER: yes but not necessary
 
 /*
 Function: dialogueFormat
@@ -561,7 +526,7 @@ Description:
     to match the line's emotion to the emotionEngine data for the rig.
 */
 function getPoseFromEmotion(layerIndex, i) {
-    var itemIndex = fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
+    var itemIndex = fl.getDocumentDOM().library.findItemIndex(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[curFrame].elements[0].libraryItem.name)
     var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[fl.getDocumentDOM().library.items[itemIndex].timeline.layers.length - 1];
 
     var poseFrameNum = -1
@@ -772,11 +737,9 @@ function doTextBoxes() {
 Function: getCharacters
 Variables: None
 Description: 
-    Returns a set of unique characters. I don't know why we do this
-    but I assume it is related to error-handling or characters who speak
-    without a rig.
+    Returns a set of all characters in the scene, with no duplicates.
 */
-function getCharacters() { // gets unique characters (basically returns a set)
+function getCharacters() {
     var unique = [];
     for (var i = 0; i < speakertagArray.length; i++) {
         for (var character in speakertagArray[i].split(" & ")) {
@@ -833,23 +796,23 @@ function addRigs() {
     }
 }
 
-//QUESTION: Function needs better documentation.
-
 /*
 Function: generateWitnessBools
 Variables: 
-    speakerTagIndex []
+    speakerTagIndex arr
 Description: 
-    Helper function to generate the condition for witness handling
+    Generates two bools: isWitnessSpeaking, isNextCharacterWitness.
+    We use this for keeping multiple characters on screen at once, even
+    if one doesn't speak.
 */
 function generateWitnessBools(speakerTagIndex) {
     var isWitnessSpeaking = false;
     var isNextCharacterWitness = false;
-    for (var witness in sWitnesses) {
-        if (sWitnesses[witness] == speakertagArray[speakerTagIndex]) {
+    for (var witness in witnesses) {
+        if (witnesses[witness] == speakertagArray[speakerTagIndex]) {
             isWitnessSpeaking = true;
         }
-        if (speakerTagIndex < speakertagArray.length - 1 && sWitnesses[witness] == speakertagArray[speakerTagIndex + 1]) {
+        if (speakerTagIndex < speakertagArray.length - 1 && witnesses[witness] == speakertagArray[speakerTagIndex + 1]) {
             isNextCharacterWitness = true;
         }
         if (isWitnessSpeaking && isNextCharacterWitness) {
@@ -871,7 +834,7 @@ Variables:
 Description: 
     Pose automation based on LeXmo emotions and L-ratio algorithm.
 */
-function poseAutomation(layerIndex, i) {
+function poseAutomation(layerIndex, i, curFrame) {
 
     //fl.trace("Layer Index: " + layerIndex)
     //fl.trace("Frame: " + fl.getDocumentDOM().getTimeline().currentFrame)
@@ -881,25 +844,25 @@ function poseAutomation(layerIndex, i) {
     //fl.trace("Selected Layer is " + masterRigArray[uniqueChars[j]][0] + " but it should be " + speakertagArray[i])
     //fl.trace("Selected Sym for xSheet Browsing is: " + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name)
 
-    var poseFrameNum = getPoseFromEmotion(layerIndex, i);
+    var poseFrameNum = getPoseFromEmotion(layerIndex, i, curFrame);
 
     if (poseFrameNum != -1) {
-        fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = poseFrameNum
+        fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[curFrame].elements[0].firstFrame = poseFrameNum;
     } else {
-        fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].firstFrame = 0
+        fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[curFrame].elements[0].firstFrame = 0;
     }
 
     //WARNING! CASE 2 HARDCODING AHEAD!
-    if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
-        fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name = dialogueArray[i][3]
+    if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[curFrame].elements[0].libraryItem.name == "RIGS/RASTER CHARACTERS/Athena - Courtroom/tmp_Athena") {
+        fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[curFrame].name = sceneData[i][4];
     }
 
-    if (speakertagArray[i] != speakertagArray[i + 1]) {
+    /*if (sceneData[i][2] != sceneData[i + 1][2]) {
         fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
         // select current frame
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
         fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
-    }
+    } */
 }
 
 //QUESTION: Function needs de-nesting, optimization and more documentation.
@@ -907,7 +870,7 @@ function poseAutomation(layerIndex, i) {
 /*
 Function: removeAbsentCharactersAndDoPoseAutomation
 Variables: 
-    uniqueChars []
+    uniqueChars arr
     i           int
 Description: 
     Removes nonexistent characters so we do not return an error
@@ -916,63 +879,62 @@ Description:
 function removeAbsentCharactersAndDoPoseAutomation(uniqueChars, i) {
     for (var j = 0; j < uniqueChars.length; j++) {
         // fl.trace(masterRigArray[uniqueChars[j]][0])
-        if (masterRigArray[uniqueChars[j]][0] !== undefined && fl.getDocumentDOM().library.itemExists(masterRigArray[uniqueChars[j]][1])) {
-            fl.getDocumentDOM().getTimeline().currentFrame = iFrameDuration * i;
+        if (!(masterRigArray[uniqueChars[j]][0] !== undefined && fl.getDocumentDOM().library.itemExists(masterRigArray[uniqueChars[j]][1]))) continue;
+        fl.getDocumentDOM().getTimeline().currentFrame = iFrameDuration * i;
 
-            var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
+        var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
 
-            if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
-                switchActive(masterRigArray[uniqueChars[j]][0]);
-                layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
-            }
+        if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
+            switchActive(masterRigArray[uniqueChars[j]][0]);
+            layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterRigArray[uniqueChars[j]][0]);
+        }
 
-            if ((i == 0) && (speakertagArray[i] != uniqueChars[j])) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
-                switchActive(masterRigArray[uniqueChars[j]][0]);
+        if ((i == 0) && (speakertagArray[i] != uniqueChars[j])) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
+            switchActive(masterRigArray[uniqueChars[j]][0]);
+            // select current frame
+            fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+            fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
+            // select current frame
+            fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+            fl.getDocumentDOM().deleteSelection();
+        }
+
+        else if ((generateWitnessBools(i)[0] /* isWitnessSpeaking */) && (uniqueChars[j] == speakertagArray[i])) { // make keyframe on active witnesses
+            for (var witness in witnesses) {
+                switchActive(masterRigArray[witnesses[witness]][0]);
                 // select current frame
-                fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-                fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
-                // select current frame
-                fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-                fl.getDocumentDOM().deleteSelection();
-            }
-
-            else if ((generateWitnessBools(i)[0] /* isWitnessSpeaking */) && (uniqueChars[j] == speakertagArray[i])) { // make keyframe on active witnesses
-                for (var witness in sWitnesses) {
-                    switchActive(masterRigArray[sWitnesses[witness]][0]);
-                    // select current frame
-                    fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-                    if (i != 0) {
-                        fl.getDocumentDOM().getTimeline().insertKeyframe();
-                    } else {
-                        fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
-                    }
-                }
-
-                if (!generateWitnessBools(i)[1] /* isNextCharacterWitness */) { // if next speaker is neither witnesses, put blank keyframes at the end of their keyframe
-                    for (var witness in sWitnesses) {
-                        fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
-                        switchActive(masterRigArray[sWitnesses[witness]][0]);
-                        // select current frame
-                        fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-                        fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
-                        fl.getDocumentDOM().getTimeline().currentFrame -= iFrameDuration;
-                    }
-                }
-            }
-
-            else if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
-                switchActive(masterRigArray[uniqueChars[j]][0]);
-
                 fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
                 if (i != 0) {
                     fl.getDocumentDOM().getTimeline().insertKeyframe();
                 } else {
                     fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
                 }
-
-                poseAutomation(layerIndex, i);
-
             }
+
+            if (!generateWitnessBools(i)[1] /* isNextCharacterWitness */) { // if next speaker is neither witnesses, put blank keyframes at the end of their keyframe
+                for (var witness in witnesses) {
+                    fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
+                    switchActive(masterRigArray[witnesses[witness]][0]);
+                    // select current frame
+                    fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+                    fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
+                    fl.getDocumentDOM().getTimeline().currentFrame -= iFrameDuration;
+                }
+            }
+        }
+
+        else if (speakertagArray[i] == uniqueChars[j]) { // make keyframe on active character
+            switchActive(masterRigArray[uniqueChars[j]][0]);
+
+            fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+            if (i != 0) {
+                fl.getDocumentDOM().getTimeline().insertKeyframe();
+            } else {
+                fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
+            }
+
+            poseAutomation(layerIndex, i);
+
         }
     }
 }
@@ -1142,15 +1104,14 @@ Function: addRigsInvestigation
 Variables: 
 Description:
     Adds rigs for the Investigation view format. Same as courtroom, but
-    all the ponies face forwards and are centered. Also add emotionEngine support
-    to this as well as incorporate automating fading.
+    all the ponies face forwards and are centered.
 */
 function addRigsInvestgation() {
     var missingRigs = [];
     var uniqueChars = getCharacters();
     for (var i = 0; i < uniqueChars.length; i++) {
         var character = uniqueChars[i];
-        if (character == sDefense) {
+        if (character == defense) {
             continue;
         }
         if (masterInvestigationArray[character] === undefined) {
@@ -1185,10 +1146,6 @@ function addRigsInvestgation() {
     }
     return missingRigs;
 }
-
-//QUESTION: Case 3 XMLUI panel for the scene generator has only one text input for witnesses.
-//Witnesses will be entered "Sugar Stamp,Turning Page,Fair Devotion" to indicate the positioning
-//and how many witnesses show up. Does this integrate smoothly with intelligent witness spacing?
 
 //QUESTION: Turn fl.trace into log info statements.
 
@@ -1240,10 +1197,10 @@ function sculptInvestgation() {
     var uniqueChars = getCharacters();
 
     for (var i = speakertagArray.length - 2; i >= 0; i--) {
-        var isPov = speakertagArray[i] == sDefense;
-        if (speakertagArray[i] == sDefense && i != 0) {
+        var isPov = speakertagArray[i] == defense;
+        if (speakertagArray[i] == defense && i != 0) {
             var tempI = i;
-            while (tempI > 0 && speakertagArray[tempI] == sDefense) {
+            while (tempI > 0 && speakertagArray[tempI] == defense) {
                 tempI--;
             }
             speakertagArray[i] = (tempI != 0) ? speakertagArray[tempI] : speakertagArray[i];
@@ -1280,7 +1237,7 @@ function sculptInvestgation() {
                     fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
                 }
                 var numChars = speakertagArray[i].split(" & ").length;
-                numChars -= (speakertagArray[i].indexOf(sDefense) > -1) ? 1 : 0;
+                numChars -= (speakertagArray[i].indexOf(defense) > -1) ? 1 : 0;
                 if (numChars > 1) { // multiple characters on screen, distribute them evenly
                     fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
                     fl.getDocumentDOM().getTimeline().setLayerProperty('visible', !false);
@@ -1309,24 +1266,14 @@ function sculptInvestgation() {
 }
 
 /******************************************************************************
-                                >>>MAIN<<<
-******************************************************************************/
-
-/******************************************************************************
                                 INVOKE GUI
 ******************************************************************************/
-
-//QUESTION: XMLUI will not be an xmlPanelFromString, but an actual XML file within
-//the same directory as the scene generator.
 
 //QUESTION: This area is not very clean. Some variables still use the old hungarian
 //notation variables from 2021!
 
-//QUESTION: Invocation neeeds to account for new features, like emotionEngine bias,
-//voice line insertion and CFGs for lipsyncing.
-
-var dirURL = fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/"));
-var guiPanel = fl.getDocumentDOM().xmlPanel(dirURL + "/ui_sceneGenerator.xml");
+var scriptPathURI = fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/"));
+var guiPanel = fl.getDocumentDOM().xmlPanel(scriptPathURI + "/ui_sceneGenerator.xml");
 
 if (guiPanel.dismiss == "accept") {
 
@@ -1338,6 +1285,10 @@ if (guiPanel.dismiss == "accept") {
     arrayPath = arrayPath.replace(/ /g, '%20');
 
     var viewMode = guiPanel.panel_viewMode;
+
+    //QUESTION: Case 3 XMLUI panel for the scene generator has only one text input for witnesses.
+    //Witnesses will be entered "Sugar Stamp,Turning Page,Fair Devotion" to indicate the positioning
+    //and how many witnesses show up. Does this integrate smoothly with intelligent witness spacing?
 
     var defense = guiPanel.panel_Defense;
     var prosecutor = guiPanel.panel_Prosecutor;
@@ -1392,7 +1343,7 @@ if (guiPanel.dismiss == "accept") {
 
     //Load the sceneData, and the appropriate configuration file.
     fl.runScript(arrayPath);
-    fl.runScript(dirURL + "/config.txt");
+    fl.runScript(scriptPathURI + "/config.txt");
 
     //WE SHOULD DO A WARNING RIGHT HERE IF A RIG IS GOING TO BE CALLED THAT DOESN'T FUCKING EXIST!!!!!!!!!!!!
 
@@ -1537,80 +1488,123 @@ if (guiPanel.dismiss == "accept") {
                                 MAIN EXECUTION
 ******************************************************************************/
 
-//QUESTION: We need a logicChess viewMode, and all that that implies.
-
-//QUESTION: Use playSound to signal to the user when each step has completed.
-//This will prevent me from alt-tabbing while watching Disney movies for hours
-//while scenes generate, because I will hear that the code is still running and
-//not in an infinite loop.
-
-//QUESTION: Store each getTimeDiff, along with the step in a string that will
-//become an alert that shows if WriteReport is enabled. This will allow the user
-//to see a comprehensive time profile of each step in execution.
-
+fl.getDocumentDOM().editScene(0);
 fl.getDocumentDOM().getTimeline().currentFrame = 0;
 
 if (viewMode == "courtMode") {
-    var start = new Date();
+    generationStarted = new Date();
+    stepStarted = new Date();
     doTextBoxes();
-    var end = new Date();
-    getTimeDiff(start, end);
-    start = new Date();
-    addRigs();
-    end = new Date();
-    getTimeDiff(start, end);
-    start = new Date();
-    sculpt();
-    end = new Date();
-    getTimeDiff(start, end);
-    start = new Date();
-    placeDesks();
-    end = new Date();
-    getTimeDiff(start, end);
-    start = new Date();
-    placeBGs();
-    end = new Date();
-    getTimeDiff(start, end);
+        stepEnded = new Date();
+        playSound("put textbox sound here");
+        getTimeDiff(stepStarted, stepEnded);
+        writeLogInfo(getCurrentDate(), status00, "Textbox placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
 
-}
+    if (!skipRigs)  {
+        stepStarted = new Date();
+        addRigs();
+        sculpt();
+            stepEnded = new Date();
+            playSound("put rig sound here");
+            getTimeDiff(stepStarted, stepEnded);
+            writeLogInfo(getCurrentDate(), status00, "Rig placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+    };
+
+    if (!skipBGs) {
+    stepStarted = new Date();
+    placeDesks();
+        stepEnded = new Date();
+        playSound("put desk sound here");
+        getTimeDiff(stepStarted, stepEnded);
+        writeLogInfo(getCurrentDate(), status00, "Desk placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+
+    stepStarted = new Date();
+    placeBGs();
+        stepEnded = new Date();
+        playSound("put background sound here");
+        getTimeDiff(stepStarted, stepEnded);
+        writeLogInfo(getCurrentDate(), status00, "Background placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+    };
+
+    if (!skipLines)  {
+        stepStarted = new Date();
+        addAllVoiceLines(voiceLineFolderPath);
+            stepEnded = new Date();
+            playSound("put voice lines sound here");
+            getTimeDiff(stepStarted, stepEnded);
+            writeLogInfo(getCurrentDate(), status00, "Voice line placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+        
+        stepStarted = new Date();
+        autoLipsyncDocument(pathToCFGs);
+            stepEnded = new Date();
+            playSound("put lipsync sound here");
+            getTimeDiff(stepStarted, stepEnded);
+            writeLogInfo(getCurrentDate(), status00, "Lipsyncing succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+    };
+
+    if (!skipBlinks) {
+        stepStarted = new Date();
+        //QUESTION: this is broken lol
+        gammaBlink()
+            stepEnded = new Date();
+            playSound("put blinking sound here");
+            getTimeDiff(stepStarted, stepEnded);
+            writeLogInfo(getCurrentDate(), status00, "Automatic blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+    };
+
+    generationEnded = new Date();
+    soundAlert("Scene generation completed successfully!\n\nTook: " + getTimeDiff(generationStarted, generationEnded));
+    writeLogInfo(getCurrentDate(), status00, "Scene generation completed successfully! Took: " + getTimeDiff(generationStarted, generationEnded));
+    fl.selectTool("arrow");
+};
 
 if (viewMode == "investigationMode") {
-    sProsecutor = null;
-    sJudge = null;
-    sCocouncil = null;
-    sWitnesses = {};
-    var start = new Date();
+    generationStarted = new Date();
+    stepStarted = new Date();
     doTextBoxes();
-    var end = new Date();
-    getTimeDiff(start, end);
-    start = new Date();
-    var missing = addRigsInvestgation();
-    fl.trace("Missing rigs: " + missing);
-    end = new Date();
-    getTimeDiff(start, end);
-    start = new Date();
-    sculptInvestgation();
-    end = new Date();
-    getTimeDiff(start, end);
-}
+        stepEnded = new Date();
+        playSound("put textbox sound here");
+        getTimeDiff(stepStarted, stepEnded);
+        writeLogInfo(getCurrentDate(), status00, "Textbox placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
 
-fl.selectTool("arrow");
+    if (!skipRigs)  {
+        stepStarted = new Date();
+        addRigsInvestgation();
+        sculptInvestgation();
+            stepEnded = new Date();
+            playSound("put rig sound here");
+            getTimeDiff(stepStarted, stepEnded);
+            writeLogInfo(getCurrentDate(), status00, "Rig placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+    };
 
-//QUESTION: Log "END OF FILE" should occur here, at the end of the file.
+    if (!skipLines)  {
+        stepStarted = new Date();
+        addAllVoiceLines(voiceLineFolderPath);
+            stepEnded = new Date();
+            playSound("put voice lines sound here");
+            getTimeDiff(stepStarted, stepEnded);
+            writeLogInfo(getCurrentDate(), status00, "Voice line placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+        
+        stepStarted = new Date();
+        autoLipsyncDocument(cfgFolderPath);
+            stepEnded = new Date();
+            playSound("put lipsync sound here");
+            getTimeDiff(stepStarted, stepEnded);
+            writeLogInfo(getCurrentDate(), status00, "Lipsyncing succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+    };
 
-//QUESTION: Remove all fl.trace-ing here, we use logging and a new Write Report system, described above.
+    if (!skipBlinks) {
+        stepStarted = new Date();
+        //QUESTION: this is broken lol
+        gammaBlink()
+            stepEnded = new Date();
+            playSound("put blinking sound here");
+            getTimeDiff(stepStarted, stepEnded);
+            writeLogInfo(getCurrentDate(), status00, "Automatic blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+    };
 
-var endTime = new Date();
-timeDiff = endTime - startTime;
-timeDiff /= 1000;
-var seconds = Math.round(timeDiff);
-
-if (timeDiff < 60) {
-    fl.trace("SCENE GENERATION TIME ELAPSED: " + seconds + " seconds.");
-}
-
-if (timeDiff > 60) {
-    var minutes = Math.floor(timeDiff / 60);
-    var seconds = timeDiff - minutes * 60;
-    fl.trace("SCENE GENERATION TIME ELAPSED: " + minutes + " minutes and " + seconds + " seconds");
-} 
+    generationEnded = new Date();
+    soundAlert("Scene generation completed successfully! Took " + getTimeDiff(stepStarted, stepEnded));
+    writeLogInfo(getCurrentDate(), status00, "Scene generation completed successfully! Took " + getTimeDiff(generationStarted, generationEnded));
+    fl.selectTool("arrow");
+};
