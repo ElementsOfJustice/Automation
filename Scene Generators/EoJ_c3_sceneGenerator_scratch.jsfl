@@ -715,7 +715,7 @@ if (viewMode == "investigationMode") {
 
     if (!skipRigs)  {
         stepStarted = new Date();
-        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/PLACING RIGS.wav");
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING ALL RIGS.wav");
         addRigsInvestgation();
             stepEnded = new Date();
             getTimeDiff(stepStarted, stepEnded);
@@ -730,7 +730,7 @@ if (viewMode == "investigationMode") {
 
     if (!skipLines)  {
         stepStarted = new Date();
-        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING ALL VOICE LINES.wav");
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING ALL THE VOICE LINES.wav");
         addAllVoiceLines(pathToLines);
             stepEnded = new Date();
             getTimeDiff(stepStarted, stepEnded);
