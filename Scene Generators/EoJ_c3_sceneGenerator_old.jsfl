@@ -1315,6 +1315,10 @@ if (guiPanel.dismiss == "accept") {
 
     var writeReport = guiPanel.panel_writeReport;
 
+    if (guiPanel.dismiss != "accept") {
+        logError("The user stopped execution.");
+    };
+
     //QUESTION: New method for adding witnesses should use str.split(",") to split a string formatted such as
     //"Fair Devotion,Turning Page,Sugar Stamp" into an array of entries, 
     //["Fair Devotion", "Turning Page", "Sugar Stamp"].

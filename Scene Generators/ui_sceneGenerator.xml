@@ -18,8 +18,8 @@
 	<label value="Viewing Mode:"/>
 	<menulist id="panel_viewMode">
 		<menupop>
-			<menuitem label="Courtroom Mode" selected="true" value="courtMode" />
-			<menuitem label="Investigation Mode" selected="false" value="investigationMode" />
+			<menuitem label="Courtroom Mode" selected="false" value="courtMode" />
+			<menuitem label="Investigation Mode" selected="true" value="investigationMode" />
 			<menuitem label="Logic Chess Mode" selected="false" value="aaiMode" />
 		</menupop>
 	</menulist>

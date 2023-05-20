@@ -127,6 +127,14 @@ function trim(inputString) {
     return ((startIndex > 0) || (length < inputString.length)) ? inputString.substring(startIndex, length) : inputString;
 }
 
+function charArrayToString(charArray) {
+    var str = "";
+    for (var i = 0; i < charArray.length; i++) {
+      str += charArray[i];
+    }
+    return str;
+  }
+
 function getKeys(input) {
 	var arr = [];
 	for (var i in input) {
@@ -207,6 +215,7 @@ var scriptPathURI = fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/"));
 var guiPanel = fl.getDocumentDOM().xmlPanel(scriptPathURI + "/ui_sceneGenerator.xml");
 
 if (guiPanel.dismiss == "accept") {
+    fl.showIdleMessage(false); 
 
     var arrayPath = guiPanel.panel_sceneData;
     var driveLetter = arrayPath.charAt(0);
@@ -233,23 +242,29 @@ if (guiPanel.dismiss == "accept") {
     var skipRigs = false;
     var skipBGs = true;
     var skipTypewriter = true;
-    var skipLines = true;
+    var skipLines = false;
     var skipBlinks = true;
 
     var pathToSceneData = guiPanel.panel_sceneData;
-    var pathToCFGs = guiPanel.panel_folderCFG;
-    var pathToLines = guiPanel.panel_folderLines;
+    var pathToCFGs = FLfile.platformPathToURI(guiPanel.panel_folderCFG);
+    var pathToLines = FLfile.platformPathToURI(guiPanel.panel_folderLines);
+
+    pathToCFGs = pathToCFGs.substring(0, pathToCFGs.lastIndexOf("/"));
+    pathToCFGs = FLfile.uriToPlatformPath(pathToCFGs);
+
+    pathToLines = pathToLines.substring(0, pathToLines.lastIndexOf("/"));
+    pathToLines = FLfile.uriToPlatformPath(pathToLines);
 
     var writeReport = guiPanel.panel_writeReport;
 
     //You've heard of sanity checks? Here, we're checking to see if the user is insane.
     if (!skipLines && skipRigs) {
         logError("You have attempted to skip rig placement, but not skip line insertion. You are insane.");
-    }
+    };
 
     if (!skipLines && ((pathToCFGs == "") || (pathToLines == ""))) {
         logError("Both a path to the CFG files and voice lines are required for line placement.");
-    }
+    };
 
     fl.runScript(arrayPath); // load sceneData
     fl.runScript(scriptPathURI + "/config.txt"); // load configuration file
@@ -265,6 +280,8 @@ if (guiPanel.dismiss == "accept") {
             logError("Library path to " + sceneData[i][2] + "'s rig does not exist.");
         }
     }
+} else {
+    logError("The user stopped execution.");
 }
 
 /******************************************************************************
@@ -336,7 +353,6 @@ function doTextBoxes() {
             if (speakerName == nameswapArray[j][0]) speakerName = nameswapArray[j][1];
         }
 
-        //Do Chunking
         var lineIndex = parseInt(lineID.substring(3, 6), 10);
         var sceneIndex = Math.ceil(lineIndex / chunkSize);
 
@@ -351,34 +367,18 @@ function doTextBoxes() {
         if (fl.getDocumentDOM().getTimeline().findLayerIndex("TEXTBOX") == null) {
             switchActive("TEXTBOX");
             fl.getDocumentDOM().addItem({
-                x: -7.3,
-                y: -6.9
+                x: 0,
+                y: 0
             }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
             writeLogInfo(getCurrentDate(), status00, "Added Textbox in Scene " + currentScene + ".");
             fl.getDocumentDOM().swapElement("OTHER ASSETS/Textbox");
             var textbox = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("TEXTBOX")[0]].frames[0].elements[0];
             textbox.loop = "single frame";
-            //textbox.width = 2560;   
-            //textbox.height = 491.2;
-            textbox.scaleX = 1.343;
-            textbox.scaleY = 1.343;
+            textbox.scaleX = 1.34164876055;
+            textbox.scaleY = 1.34152669671;
+            fl.getDocumentDOM().align("horizontal center", true);
+            fl.getDocumentDOM().align("bottom", true);
         };
-
-        switchActive("TEXT");
-        var textLayerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex("TEXT")[0];
-        var visualsLayer = fl.getDocumentDOM().getTimeline().findLayerIndex("VISUALS");
-
-        if (visualsLayer == null) {
-            fl.getDocumentDOM().getTimeline().addNewLayer("VISUALS");
-            fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("VISUALS")].layerType = "folder";
-        };
-
-        var visualsLayer = fl.getDocumentDOM().getTimeline().findLayerIndex("VISUALS")[0];
-
-        fl.getDocumentDOM().getTimeline().reorderLayer(textLayerIndex, visualsLayer + 1);
-        fl.getDocumentDOM().getTimeline().reorderLayer(fl.getDocumentDOM().getTimeline().findLayerIndex("TEXTBOX")[0], visualsLayer + 2);
-        fl.getDocumentDOM().getTimeline().layers[textLayerIndex].parentLayer = fl.getDocumentDOM().getTimeline().layers[visualsLayer];
-        fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("TEXTBOX")[0]].parentLayer = fl.getDocumentDOM().getTimeline().layers[visualsLayer];
 
         switchActive("TEXT");
         var curLayer = fl.getDocumentDOM().getTimeline().currentLayer;
@@ -434,6 +434,7 @@ function doTextBoxes() {
         }
 
         //This causes cushioning frames at end of timeline.
+        //This fella is wrong ^, it's sculpt that does this, as evidenced by the fact it's end-of-layer.
         fl.getDocumentDOM().getTimeline().layers[curLayer].frames[curFrame].name = lineID;
         if ((curFrame + iFrameDuration) >= fl.getDocumentDOM().getTimeline().layers[curLayer].frames.length) {
             fl.getDocumentDOM().getTimeline().insertFrames(iFrameDuration, true);
@@ -491,6 +492,24 @@ function addRigsInvestgation() {
         };
     };
 }
+
+//WARNING/TODO/QUESTION: This needs to work per-chunk
+function buildLayerStructure() {
+    var textLayerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex("TEXT")[0];
+    var visualsLayer = fl.getDocumentDOM().getTimeline().findLayerIndex("VISUALS");
+
+    if (visualsLayer == null) {
+        fl.getDocumentDOM().getTimeline().addNewLayer("VISUALS");
+        fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("VISUALS")].layerType = "folder";
+    };
+
+    var visualsLayer = fl.getDocumentDOM().getTimeline().findLayerIndex("VISUALS")[0];
+
+    fl.getDocumentDOM().getTimeline().reorderLayer(textLayerIndex, visualsLayer + 1);
+    fl.getDocumentDOM().getTimeline().reorderLayer(fl.getDocumentDOM().getTimeline().findLayerIndex("TEXTBOX")[0], visualsLayer + 2);
+    fl.getDocumentDOM().getTimeline().layers[textLayerIndex].parentLayer = fl.getDocumentDOM().getTimeline().layers[visualsLayer];
+    fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("TEXTBOX")[0]].parentLayer = fl.getDocumentDOM().getTimeline().layers[visualsLayer];
+};
 
 function poseAutomation(layerIndex, i, curFrame) {
 
@@ -596,8 +615,19 @@ function sculptInvestgation() {
 }
 
 function addAllVoiceLines(voiceLineFolderPath) {
-    fl.runScript(configURI + "Commands/QoL%20Commands/dev_LineAdder_core.jsfl", "insertLinesChunked", voiceLineFolderPath, chunkSize, totalChunks);
-}   
+    var missedLines = fl.runScript(fl.configURI + "Commands/QoL%20Commands/dev_LineAdder_core.jsfl", "insertLinesChunked", voiceLineFolderPath, chunkSize, totalChunks);
+
+    var allMissedLines = charArrayToString(missedLines);
+    allMissedLines = allMissedLines.split(",");
+
+    for (var i = 0; i < allMissedLines.length; i++) {
+        writeLogInfo(getCurrentDate(), status01, allMissedLines[i]);
+    };
+};
+
+function autoLipsyncDocument(cfgFolderPath) {
+    fl.runScript(fl.configURI + "Commands/Lipsyncing/dev_c3_LipSync_core.jsfl", "runLipsyncingDoc", cfgFolderPath);
+};
 
 /******************************************************************************
                                 MAIN EXECUTION
@@ -632,30 +662,30 @@ if (viewMode == "courtMode") {
         stepEnded = new Date();
         playSound("put desk sound here");
         getTimeDiff(stepStarted, stepEnded);
-        writeLogInfo(getCurrentDate(), status00, "Desk placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+        writeLogInfo(getCurrentDate(), status00, "[!] Desk placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
 
     stepStarted = new Date();
     placeBGs();
         stepEnded = new Date();
         playSound("put background sound here");
         getTimeDiff(stepStarted, stepEnded);
-        writeLogInfo(getCurrentDate(), status00, "Background placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+        writeLogInfo(getCurrentDate(), status00, "[!] Background placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     if (!skipLines)  {
         stepStarted = new Date();
-        addAllVoiceLines(voiceLineFolderPath);
+        addAllVoiceLines(pathToLines);
             stepEnded = new Date();
             playSound("put voice lines sound here");
             getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "Voice line placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+            writeLogInfo(getCurrentDate(), status00, "[!] Voice line placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
         
         stepStarted = new Date();
-        autoLipsyncDocument(pathToCFGs);
+        //autoLipsyncDocument(pathToCFGs);
             stepEnded = new Date();
             playSound("put lipsync sound here");
             getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "Lipsyncing succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+            writeLogInfo(getCurrentDate(), status00, "[!] Lipsyncing succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     if (!skipBlinks) {
@@ -665,54 +695,53 @@ if (viewMode == "courtMode") {
             stepEnded = new Date();
             playSound("put blinking sound here");
             getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "Automatic blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+            writeLogInfo(getCurrentDate(), status00, "[!] Automatic blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     generationEnded = new Date();
     soundAlert("Scene generation completed successfully!\n\nTook: " + getTimeDiff(generationStarted, generationEnded));
-    writeLogInfo(getCurrentDate(), status00, "Scene generation completed successfully! Took: " + getTimeDiff(generationStarted, generationEnded));
+    writeLogInfo(getCurrentDate(), status00, "[!] Scene generation completed successfully! Took: " + getTimeDiff(generationStarted, generationEnded));
     fl.selectTool("arrow");
 };
 
 if (viewMode == "investigationMode") {
     generationStarted = new Date();
     stepStarted = new Date();
+    playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING TEXT.wav");
     doTextBoxes();
         stepEnded = new Date();
-        playSound(scriptPathURI + "/Notifications/AddingText.wav");
         getTimeDiff(stepStarted, stepEnded);
-        writeLogInfo(getCurrentDate(), status01, scriptPathURI + "/Notifications/ADDING%20TEXT.wav");
-        writeLogInfo(getCurrentDate(), status00, "Textbox placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+        writeLogInfo(getCurrentDate(), status00, "[!] Textbox placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
 
     if (!skipRigs)  {
         stepStarted = new Date();
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/PLACING RIGS.wav");
         addRigsInvestgation();
             stepEnded = new Date();
-            playSound(scriptPathURI + "/Notifications/PlacingRigs.wav");
             getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "Rig placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+            writeLogInfo(getCurrentDate(), status00, "[!] Rig placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));   
         stepStarted = new Date();
         sculptInvestgation();
             stepEnded = new Date();
             soundAlert();
             getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "Rig sculpting succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+            writeLogInfo(getCurrentDate(), status00, "[!] Rig sculpting succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     if (!skipLines)  {
         stepStarted = new Date();
-        addAllVoiceLines(voiceLineFolderPath);
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING ALL VOICE LINES.wav");
+        addAllVoiceLines(pathToLines);
             stepEnded = new Date();
-            playSound("put voice lines sound here");
             getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "Voice line placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+            writeLogInfo(getCurrentDate(), status00, "[!] Voice line placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
         
         stepStarted = new Date();
-        autoLipsyncDocument(cfgFolderPath);
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/LIPSYNCING ALL CHARACTERS.wav");
+        autoLipsyncDocument(FLfile.platformPathToURI(pathToCFGs));
             stepEnded = new Date();
-            playSound("put lipsync sound here");
             getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "Lipsyncing succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+            writeLogInfo(getCurrentDate(), status00, "[!] Lipsyncing succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     if (!skipBlinks) {
@@ -722,11 +751,11 @@ if (viewMode == "investigationMode") {
             stepEnded = new Date();
             playSound("put blinking sound here");
             getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "Automatic blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+            writeLogInfo(getCurrentDate(), status00, "[!] Automatic blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     generationEnded = new Date();
     soundAlert("Scene generation completed successfully! Took " + getTimeDiff(generationStarted, generationEnded));
-    writeLogInfo(getCurrentDate(), status00, "Scene generation completed successfully! Took " + getTimeDiff(generationStarted, generationEnded));
+    writeLogInfo(getCurrentDate(), status00, "[!] Scene generation completed successfully! Took " + getTimeDiff(generationStarted, generationEnded));
     fl.selectTool("arrow");
 };
