@@ -152,9 +152,11 @@ function insertLinesChunked(folderURI, chunkSize, totalChunks) {
 	var sceneNum = 0;
 	fl.getDocumentDOM().editScene(sceneNum);
 	var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex("TEXT");
-	var frameArray = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames;
+
+	folderURI = FLfile.platformPathToURI(folderURI);
 	
 	var count = 0;
+	var missedLines = [];
 	
 	while (fl.getDocumentDOM().getTimeline().currentFrame < fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("TEXT")].frames.length - 1) {
 		layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex("TEXT");
@@ -164,12 +166,13 @@ function insertLinesChunked(folderURI, chunkSize, totalChunks) {
 
 		for (var i = 0; i < frameName.split(" & ").length; i++) {
 			var attemptFile = folderURI + "/" + frameName.split(" & ")[i] + ".flac";
+			//fl.trace(attemptFile);
 			if (FLfile.exists(attemptFile)) {
 				placeLine(attemptFile, frame, frameName);
 			} else if (FLfile.exists(attemptFile.replace(' ', '_'))) {
 				placeLine(attemptFile.replace(' ', '_'), frame, frameName);
 			} else {
-				fl.trace("NOT FOUND: " + attemptFile);
+				missedLines.push("NOT FOUND: " + FLfile.uriToPlatformPath(attemptFile));
 			}
 		}
 
@@ -187,4 +190,7 @@ function insertLinesChunked(folderURI, chunkSize, totalChunks) {
 			
 		}
 	}
+
+	return missedLines;
+
 }
