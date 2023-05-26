@@ -471,7 +471,6 @@ function addRigsInvestgation() {
             fl.getDocumentDOM().getTimeline().addNewLayer("VECTOR_CHARACTERS");
             vectorCharactersLayer = fl.getDocumentDOM().getTimeline().findLayerIndex("VECTOR_CHARACTERS");
             fl.getDocumentDOM().getTimeline().layers[vectorCharactersLayer].layerType = "folder";
-
         };
 
         for (var i = 0; i < uniqueChars.length; i++) {
@@ -620,13 +619,14 @@ function addAllVoiceLines(voiceLineFolderPath) {
     var allMissedLines = charArrayToString(missedLines);
     allMissedLines = allMissedLines.split(",");
 
-    for (var i = 0; i < allMissedLines.length; i++) {
-        writeLogInfo(getCurrentDate(), status01, allMissedLines[i]);
-    };
+    for (var i = 0; i < allMissedLines.length - 1; i++) {
+        writeLogInfo(getCurrentDate(), status01, "You missed these many voice lines: " + allMissedLines.length);
+        writeLogInfo(getCurrentDate(), status01, "Missed voice line: " + allMissedLines[i]);
+    }
 };
 
 function autoLipsyncDocument(cfgFolderPath) {
-    fl.runScript(fl.configURI + "Commands/Lipsyncing/dev_c3_LipSync_core.jsfl", "runLipsyncingDoc", cfgFolderPath);
+    fl.runScript(fl.configURI + "Commands/Lipsyncing/dev_c3_LipSync_core.jsfl", "runLipsyncingDoc", cfgFolderPath, writeLogInfo, getCurrentDate);
 };
 
 /******************************************************************************
