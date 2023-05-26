@@ -266,42 +266,42 @@ Variables:
 	cfgFolderPath 	str
 Description: Runs all lipsyncing operations in the active document.
 */
-function runLipsyncingDoc(cfgFolderPath) {
+function runLipsyncingDoc(cfgFolderPath, writeLogInfo, getCurrentDate) {
 
 	compileScenes();
 
 	//Iterate through all scenes
 	for (var i = 0; i < sceneArray.length; i++) {
-		fl.getDocumentDOM().currentTimeline = sceneArray[i];
+		fl.getDocumentDOM().editScene(i);
 		var currentTimeline = sceneArray[i];
 
 		//Iterate through all layers of all scenes, and find VECTOR_CHARACTERS folder.
-		for (var j = 0; j < fl.getDocumentDOM().timelines[currentTimeline].layerCount; j++) {
-			if (fl.getDocumentDOM().timelines[currentTimeline].layers[j].parentLayer !== null) {
-				if (fl.getDocumentDOM().timelines[currentTimeline].layers[j].parentLayer.name == "VECTOR_CHARACTERS") {
+		for (var j = 0; j < fl.getDocumentDOM().getTimeline().layerCount; j++) {
+			if (fl.getDocumentDOM().getTimeline().layers[j].parentLayer !== null) {
+				if (fl.getDocumentDOM().getTimeline().layers[j].parentLayer.name == "VECTOR_CHARACTERS") {
 					//Reset the sound array.
 					var layerSoundArray = [];
 
 					//Unlock and unhide operating layer.
-					fl.getDocumentDOM().timelines[currentTimeline].layers[j].visible = true;
-					fl.getDocumentDOM().timelines[currentTimeline].layers[j].locked = false;
+					fl.getDocumentDOM().getTimeline().layers[j].visible = true;
+					fl.getDocumentDOM().getTimeline().layers[j].locked = false;
 
 					//The audio layer for which we will seek voice lines.
-					var audioSeekLayer = fl.getDocumentDOM().timelines[currentTimeline].layers[j].name.toUpperCase() + "_VOX";
+					var audioSeekLayer = fl.getDocumentDOM().getTimeline().layers[j].name.toUpperCase() + "_VOX";
 
 					//Find the audio layer for the current character layer.
-					for (var k = 0; k < fl.getDocumentDOM().timelines[currentTimeline].layerCount; k++) {
+					for (var k = 0; k < fl.getDocumentDOM().getTimeline().layerCount; k++) {
 
-						if (fl.getDocumentDOM().timelines[currentTimeline].layers[k].name == audioSeekLayer) {
+						if (fl.getDocumentDOM().getTimeline().layers[k].name == audioSeekLayer) {
 							//Once on the audio layer, compile an array of the frames where all voice lines occur.
-							for (var l = 1; l < fl.getDocumentDOM().timelines[currentTimeline].layers[k].frames.length; l++) {
+							for (var l = 1; l < fl.getDocumentDOM().getTimeline().layers[k].frames.length; l++) {
 								//Only consider the first frame of a sound keyframe.
-								if (l == fl.getDocumentDOM().timelines[currentTimeline].layers[k].frames[l].startFrame) {
+								if (l == fl.getDocumentDOM().getTimeline().layers[k].frames[l].startFrame) {
 									//If the frame has audio content, add it to the array.
-									if (fl.getDocumentDOM().timelines[currentTimeline].layers[k].frames[l].soundName != null) {
+									if (fl.getDocumentDOM().getTimeline().layers[k].frames[l].soundName != null) {
 										//Push the frame number the sound occured on and the soundName.
 										//WARNING! HARDCODED SLICE LENGTH OF 5 TO CORRESPOND TO STRING '.FLAC'! OTHER AUDIO TYPES WILL FUCK UP!!!
-										layerSoundArray.push([l, fl.getDocumentDOM().timelines[currentTimeline].layers[k].frames[l].soundName.slice(0, -5)]);
+										layerSoundArray.push([l, fl.getDocumentDOM().getTimeline().layers[k].frames[l].soundName.slice(0, -5)]);
 									}
 								}
 							}
@@ -309,7 +309,7 @@ function runLipsyncingDoc(cfgFolderPath) {
 					}
 
 					//Actual lipsync execution occurs here
-					for (var k = 1; k < fl.getDocumentDOM().timelines[currentTimeline].layers[j].frames.length; k++) {
+					for (var k = 1; k < fl.getDocumentDOM().getTimeline().layers[j].frames.length; k++) {
 						for (var x = 0; x < layerSoundArray.length; x++) {
 							if (layerSoundArray[x][0] === k) {
 								var voiceLine = layerSoundArray[x][1];
@@ -329,8 +329,13 @@ function runLipsyncingDoc(cfgFolderPath) {
 								var poseStartFrame = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].startFrame;
 								var cfgPath = cfgFolderPath + "/" + voiceLine + ".cfg";
 
-								fl.runScript(cfgPath);
-								placeKeyframes(k, j, OFFSET_MAP, poseStartFrame);
+								try {
+									fl.runScript(cfgPath);
+									placeKeyframes(k, j, OFFSET_MAP, poseStartFrame);
+									writeLogInfo(getCurrentDate(), "INFO ", "Lipsync operation at timeline " + fl.getDocumentDOM().getTimeline().name + ", layer " + fl.getDocumentDOM().getTimeline().layers[j].name + ", frame " + k + " with cfg path " + cfgPath + ".");	
+								  } catch (error) {
+									writeLogInfo(getCurrentDate(), "WARN ", cfgPath + " does not exist.");
+								  }
 
 								break;
 							}
@@ -338,7 +343,7 @@ function runLipsyncingDoc(cfgFolderPath) {
 					}
 
 					//Re-enable layer visibility
-					fl.getDocumentDOM().timelines[currentTimeline].layers[j].visible = true;
+					fl.getDocumentDOM().getTimeline().layers[j].visible = true;
 
 				}
 			}
