@@ -9,7 +9,6 @@ Convert all voice lines to Stream.
 Get all voice lines in a subset of folders
 Errors should be returned into the scene generator to be reconstructed for the logging system
 Failed lines should be returned into the scene generator to be reconstructed for the logging system
-Does not iterate to other scenes via chunking system when it should. In the words of the Heavy from TF2: "OH, THIS IS BAD!"
 Put all imported voice lines into the VOX folder. Organize by character.
 Don't use fl.trace.
 Try to handle errors without breaking. Skip stuff if need be.
@@ -162,7 +161,7 @@ function insertLinesChunked(folderURI, chunkSize, totalChunks) {
 		layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex("TEXT");
 
 		var frameName = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[fl.getDocumentDOM().getTimeline().currentFrame].name;
-		var frame = fl.getDocumentDOM().getTimeline().currentFrame;
+		var frame = fl.getDocumentDOM().getTimeline().currentFrame + 1;
 
 		for (var i = 0; i < frameName.split(" & ").length; i++) {
 			var attemptFile = folderURI + "/" + frameName.split(" & ")[i] + ".flac";
