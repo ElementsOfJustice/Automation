@@ -68,7 +68,7 @@ function getTimeDiff(startTime, endTime) {
 
     if (timeDiff > 60) {
         var minutes = Math.floor(timeDiff / 60);
-        var seconds = timeDiff - minutes * 60;
+        var seconds = parseInt(timeDiff - minutes * 60);
         return (minutes + " minutes and " + seconds + " seconds");
     }
 }
@@ -243,6 +243,7 @@ if (guiPanel.dismiss == "accept") {
     var skipBGs = true;
     var skipTypewriter = true;
     var skipLines = false;
+    var skipFades = false;
     var skipBlinks = true;
 
     var pathToSceneData = guiPanel.panel_sceneData;
@@ -613,14 +614,103 @@ function sculptInvestgation() {
     }
 }
 
+// WARNING: THIS IS NOT TOO PERFORMANT, BUT NOT TOO UNPERFORMANT. DOES THIS NEED DE-SELECTIFICATION?
+// please optimize this, future soundman.....
+function jamFades() {
+    for (var i = 0; i <= sceneData.length - 1; i++) {
+        if (sceneData[i][0] != "dialogue") continue;
+
+        var currentLineID = sceneData[i][1];
+        var lineIndex = parseInt(currentLineID.substring(3, 6), 10);
+        var jamFadeDuration = 14;
+
+        goTo(currentLineID);
+
+        if ((i == 0) || (i == sceneData.length - 1)) {
+            var doesMCspeakBeforeOrAfterThisLine = false;
+            var doesTheSameCharacterSpeakBeforeOrAfterThisLine = false;
+        } else {
+            var doesMCspeakBeforeOrAfterThisLine = ((sceneData[i - 1][2] == defense) || (sceneData[i + 1][2] == defense));
+            var doesTheSameCharacterSpeakBeforeThisLine = ((sceneData[i - 1][2] == sceneData[i][2]));
+        };
+
+        if (doesMCspeakBeforeOrAfterThisLine || doesTheSameCharacterSpeakBeforeThisLine) {continue} ;
+        
+        if (lineIndex % chunkSize === 1) {
+            //First fade in a chunk.
+            switchActive("JAM_MASK");
+            fl.getDocumentDOM().getTimeline().currentFrame = 0;
+
+            fl.getDocumentDOM().addItem({
+                x: 0,
+                y: 0
+            }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
+            fl.getDocumentDOM().swapElement("OTHER ASSETS/Jam_Fade");
+
+            fl.getDocumentDOM().align("vertical center", true);
+            fl.getDocumentDOM().align("horizontal center", true);
+
+            fl.getDocumentDOM().getTimeline().insertFrames(7, true);
+
+            fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("JAM_MASK")[0]].frames[0].elements[0].firstFrame = 9;
+            switchActive("JAM_MASK");
+            fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(6, 6);
+
+            writeLogInfo(getCurrentDate(), status00, currentLineID + " is the first fade in a chunk.");
+        } else if ((lineIndex % chunkSize === 0) || (i == sceneData.length - 1)) {
+            //Last fade in a chunk.
+
+            //WARNING: This technically works, but not with the current cushioning of frames at the end of chunks.
+            switchActive("JAM_MASK");
+            fl.getDocumentDOM().getTimeline().currentFrame = fl.getDocumentDOM().getTimeline().frameCount - 1;
+            fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame);
+
+            fl.getDocumentDOM().addItem({
+                x: 0,
+                y: 0
+            }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
+            fl.getDocumentDOM().swapElement("OTHER ASSETS/Jam_Fade");
+
+            fl.getDocumentDOM().align("vertical center", true);
+            fl.getDocumentDOM().align("horizontal center", true);
+
+            fl.getDocumentDOM().getTimeline().insertFrames(7, true);
+
+            writeLogInfo(getCurrentDate(), status00, currentLineID + " is the last fade in a chunk.");
+        } else {
+            //Regular jamFade.
+            switchActive("JAM_MASK");
+            fl.getDocumentDOM().getTimeline().currentFrame = fl.getDocumentDOM().getTimeline().currentFrame - 1;
+            fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame);
+
+            fl.getDocumentDOM().addItem({
+                x: 0,
+                y: 0
+            }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
+            fl.getDocumentDOM().swapElement("OTHER ASSETS/Jam_Fade");
+
+            fl.getDocumentDOM().align("vertical center", true);
+            fl.getDocumentDOM().align("horizontal center", true);
+
+            fl.getDocumentDOM().getTimeline().insertFrames(6, true);
+            goTo(currentLineID);
+            fl.getDocumentDOM().getTimeline().insertFrames(8, true);
+            switchActive("JAM_MASK");
+            fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame);
+
+            writeLogInfo(getCurrentDate(), status00, currentLineID + " is a middle fade in a chunk.");
+        }
+    }
+}
+
 function addAllVoiceLines(voiceLineFolderPath) {
     var missedLines = fl.runScript(fl.configURI + "Commands/QoL%20Commands/dev_LineAdder_core.jsfl", "insertLinesChunked", voiceLineFolderPath, chunkSize, totalChunks);
 
     var allMissedLines = charArrayToString(missedLines);
     allMissedLines = allMissedLines.split(",");
 
+    writeLogInfo(getCurrentDate(), status01, "You missed these many voice lines: " + allMissedLines.length);
     for (var i = 0; i < allMissedLines.length - 1; i++) {
-        writeLogInfo(getCurrentDate(), status01, "You missed these many voice lines: " + allMissedLines.length);
         writeLogInfo(getCurrentDate(), status01, "Missed voice line: " + allMissedLines[i]);
     }
 };
@@ -634,7 +724,7 @@ function autoLipsyncDocument(cfgFolderPath) {
 ******************************************************************************/
 
 fl.getDocumentDOM().editScene(0);
-var iFrameDuration = 12;
+var iFrameDuration = 24;
 var totalChunks = 0;
 
 if (viewMode == "courtMode") {
@@ -744,9 +834,18 @@ if (viewMode == "investigationMode") {
             writeLogInfo(getCurrentDate(), status00, "[!] Lipsyncing succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
+    if (!skipFades) {
+        stepStarted = new Date();
+        jamFades();
+            stepEnded = new Date();
+            playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/AUTOFADING ALL CHARACTERS.wav");
+            getTimeDiff(stepStarted, stepEnded);
+            writeLogInfo(getCurrentDate(), status00, "[!] Automatic Jam Fading succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+    };
+
     if (!skipBlinks) {
         stepStarted = new Date();
-        //QUESTION: this is broken lol
+        //QUESTION: does this shit work?
         gammaBlink()
             stepEnded = new Date();
             playSound("put blinking sound here");
