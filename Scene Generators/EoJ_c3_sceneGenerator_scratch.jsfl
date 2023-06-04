@@ -244,7 +244,7 @@ if (guiPanel.dismiss == "accept") {
     var skipTypewriter = true;
     var skipLines = false;
     var skipFades = false;
-    var skipBlinks = true;
+    var skipBlinks = false;
 
     var pathToSceneData = guiPanel.panel_sceneData;
     var pathToCFGs = FLfile.platformPathToURI(guiPanel.panel_folderCFG);
@@ -628,7 +628,7 @@ function jamFades() {
 
         if ((i == 0) || (i == sceneData.length - 1)) {
             var doesMCspeakBeforeOrAfterThisLine = false;
-            var doesTheSameCharacterSpeakBeforeOrAfterThisLine = false;
+            var doesTheSameCharacterSpeakBeforeThisLine = false;
         } else {
             var doesMCspeakBeforeOrAfterThisLine = ((sceneData[i - 1][2] == defense) || (sceneData[i + 1][2] == defense));
             var doesTheSameCharacterSpeakBeforeThisLine = ((sceneData[i - 1][2] == sceneData[i][2]));
@@ -701,7 +701,20 @@ function jamFades() {
             writeLogInfo(getCurrentDate(), status00, currentLineID + " is a middle fade in a chunk.");
         }
     }
-}
+};
+
+//WARNING: THIS IS FUCKING AWFUL, DOUBLES EXECUTION TIME BY BEING SELECTIFIED IN THE CORE. FIX THIS.
+function automaticBlinking() {
+    for (var i = 0; i < totalChunks; i++) {
+        fl.getDocumentDOM().editScene(i);
+        var vectorCharactersLayer = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("VECTOR_CHARACTERS")[0]];
+        for (var j = 0; j <= fl.getDocumentDOM().getTimeline().layerCount - 1; j++) {
+            if (fl.getDocumentDOM().getTimeline().layers[j].parentLayer != vectorCharactersLayer) {continue};
+            fl.getDocumentDOM().getTimeline().setSelectedLayers(j);
+            gammaBlink(6);
+        }
+    }
+};
 
 function addAllVoiceLines(voiceLineFolderPath) {
     var missedLines = fl.runScript(fl.configURI + "Commands/QoL%20Commands/dev_LineAdder_core.jsfl", "insertLinesChunked", voiceLineFolderPath, chunkSize, totalChunks);
@@ -717,6 +730,10 @@ function addAllVoiceLines(voiceLineFolderPath) {
 
 function autoLipsyncDocument(cfgFolderPath) {
     fl.runScript(fl.configURI + "Commands/Lipsyncing/dev_c3_LipSync_core.jsfl", "runLipsyncingDoc", cfgFolderPath, writeLogInfo, getCurrentDate);
+};
+
+function gammaBlink(mean) {
+    fl.runScript(fl.configURI + "Commands/Blinking/dev_GammaBlink_core.jsfl", "autoBlink", mean);
 };
 
 /******************************************************************************
@@ -781,11 +798,11 @@ if (viewMode == "courtMode") {
     if (!skipBlinks) {
         stepStarted = new Date();
         //QUESTION: this is broken lol
-        gammaBlink()
+        automaticBlinking();
             stepEnded = new Date();
             playSound("put blinking sound here");
             getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "[!] Automatic blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+            writeLogInfo(getCurrentDate(), status00, "[!] Automatic Blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     generationEnded = new Date();
@@ -801,7 +818,7 @@ if (viewMode == "investigationMode") {
     doTextBoxes();
         stepEnded = new Date();
         getTimeDiff(stepStarted, stepEnded);
-        writeLogInfo(getCurrentDate(), status00, "[!] Textbox placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+        writeLogInfo(getCurrentDate(), status00, "[!] Textbox Placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
 
     if (!skipRigs)  {
         stepStarted = new Date();
@@ -809,13 +826,13 @@ if (viewMode == "investigationMode") {
         addRigsInvestgation();
             stepEnded = new Date();
             getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "[!] Rig placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));   
+            writeLogInfo(getCurrentDate(), status00, "[!] Rig Placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));   
         stepStarted = new Date();
         sculptInvestgation();
             stepEnded = new Date();
             soundAlert();
             getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "[!] Rig sculpting succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+            writeLogInfo(getCurrentDate(), status00, "[!] Rig Sculpting succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     if (!skipLines)  {
@@ -824,14 +841,14 @@ if (viewMode == "investigationMode") {
         addAllVoiceLines(pathToLines);
             stepEnded = new Date();
             getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "[!] Voice line placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+            writeLogInfo(getCurrentDate(), status00, "[!] Voice Line Placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
         
         stepStarted = new Date();
         playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/LIPSYNCING ALL CHARACTERS.wav");
         autoLipsyncDocument(FLfile.platformPathToURI(pathToCFGs));
             stepEnded = new Date();
             getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "[!] Lipsyncing succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+            writeLogInfo(getCurrentDate(), status00, "[!] Lipsyncing Succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     if (!skipFades) {
@@ -845,12 +862,11 @@ if (viewMode == "investigationMode") {
 
     if (!skipBlinks) {
         stepStarted = new Date();
-        //QUESTION: does this shit work?
-        gammaBlink()
+        automaticBlinking()
             stepEnded = new Date();
-            playSound("put blinking sound here");
+            playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/AUTOMATING BLINKING.wav");
             getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "[!] Automatic blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+            writeLogInfo(getCurrentDate(), status00, "[!] Automatic Blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     generationEnded = new Date();
