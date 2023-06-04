@@ -134,14 +134,18 @@
          }
  
          addToCurrentFrame(Math.round(stare));
- 
-         // check if any of the next 6 frames are empty
-         for (var i = getCurrentFrame(); i < getCurrentFrame() + 6; i++) {
-             if (fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[i].isEmpty) { // if any of them are
-                 setCurrentFrame(i); // go to that frame
-                 continue;
-             }
-         }
+
+         try { 
+            // check if any of the next 6 frames are empty
+            for (var i = getCurrentFrame(); i < getCurrentFrame() + 6; i++) {
+                if (fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[i].isEmpty) { // if any of them are
+                    setCurrentFrame(i); // go to that frame
+                    continue;
+                }
+            }
+         } catch (error) {
+            //Well, I guess it didn't work!
+         };
  
          // if we're still on an empty frame even after all that mess, advance so long as we're still in our selection
          while (fl.getDocumentDOM().getTimeline().layers[getCurrentLayer()].frames[getCurrentFrame()] == 0 && getCurrentFrame() < endFrame) {

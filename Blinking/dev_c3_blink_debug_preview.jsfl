@@ -180,21 +180,23 @@ function autoEyeSet(layerIndex) {
 
 	//For all frames on the layer we are running autoEyeSet on, automatically apply the bare minimum blink instructions.
 	for (var i = 0; i < frames.length - 1; i++) {
-		if ((i == 0) && (!frames[i].isEmpty) && frames[i].elements[0].libraryItem.name.indexOf("Pose") != -1) {
+		if ((i == 0) && ((!frames[i].isEmpty) && frames[i].elements[0].libraryItem.name.indexOf("Pose") != -1)) {
 			//CutOpen on the first frame of a character layer if it has content. 
 			frames[i].labelType = "anchor";
 			frames[i].name = "CutOpen";
 		}
 
-		//Next two operations check if a pre-existing anchor label exists, and if it does, does nothing. This allows human users to circumvent the automatic labelling. 
+		//Next two operations check if a pre-existing anchor label exists, and if it does, does nothing. This allows human users to circumvent the automatic labelling.
+		if (frames[i].labelType == "anchor") {continue};
 
-		if ((frames[i].isEmpty) && (!frames[i + 1].isEmpty) && (!frames[i].labelType == "anchor")) {
+		if ((frames[i].isEmpty) && (!frames[i + 1].isEmpty)) {
 			//CutOpen if we go from no content to content from one frame to the next.
 			frames[i + 1].labelType = "anchor";
 			frames[i + 1].name = "CutOpen";
 		}
 
-		if ((!frames[i].isEmpty) && (!frames[i + 1].isEmpty) && (checkRange(xSheetCache, xSheetCache[-1], frames[i + 1].elements[0].firstFrame)) && (!frames[i].labelType == "anchor")) {
+		//WARNING: This shit doesn't seem to work anymore.
+		if ((!frames[i].isEmpty) && (!frames[i + 1].isEmpty) && (checkRange(xSheetCache, xSheetCache[-1], frames[i + 1].elements[0].firstFrame))) {
 			if (!checkRange(xSheetCache, frames[i].elements[0].firstFrame, frames[i + 1].elements[0].firstFrame)) {
 				//CutOpen on pose changes.
 				frames[i + 1].labelType = "anchor";

@@ -335,6 +335,7 @@ function runLipsyncingDoc(cfgFolderPath, writeLogInfo, getCurrentDate) {
 									writeLogInfo(getCurrentDate(), "INFO ", "Lipsync operation at timeline " + fl.getDocumentDOM().getTimeline().name + ", layer " + fl.getDocumentDOM().getTimeline().layers[j].name + ", frame " + k + " with cfg path " + cfgPath + ".");	
 								  } catch (error) {
 									writeLogInfo(getCurrentDate(), "WARN ", cfgPath + " does not exist.");
+									fl.getDocumentDOM().getTimeline().layers[j].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].loop = 'single frame';
 								  }
 
 								break;
