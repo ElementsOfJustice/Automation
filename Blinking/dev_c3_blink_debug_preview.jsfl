@@ -165,7 +165,7 @@ function autoEyeSet(layerIndex) {
 	var timeline = fl.getDocumentDOM().getTimeline();
 	var layer = timeline.layers[layerIndex];
 	var frames = layer.frames;
-
+	
 	//Reference the character's xSheet we are about to consider.
 	var itemIndex = fl.getDocumentDOM().library.findItemIndex(frames[firstGraphicInstance].elements[0].libraryItem.name);
 	var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
@@ -180,7 +180,10 @@ function autoEyeSet(layerIndex) {
 
 	//For all frames on the layer we are running autoEyeSet on, automatically apply the bare minimum blink instructions.
 	for (var i = 0; i < frames.length - 1; i++) {
-		if ((i == 0) && ((!frames[i].isEmpty) && frames[i].elements[0].libraryItem.name.indexOf("Pose") != -1)) {
+
+		//var isPoseSymbol = (frames[i].elements[0].libraryItem.name.indexOf("Pose") != -1);
+
+		if ((i == 0) && (!frames[i].isEmpty)) {
 			//CutOpen on the first frame of a character layer if it has content. 
 			frames[i].labelType = "anchor";
 			frames[i].name = "CutOpen";
@@ -195,8 +198,9 @@ function autoEyeSet(layerIndex) {
 			frames[i + 1].name = "CutOpen";
 		}
 
-		//WARNING: This shit doesn't seem to work anymore.
-		if ((!frames[i].isEmpty) && (!frames[i + 1].isEmpty) && (checkRange(xSheetCache, xSheetCache[-1], frames[i + 1].elements[0].firstFrame))) {
+		if (frames[i].isEmpty) {continue};
+		
+		if (!frames[i + 1].isEmpty) {
 			if (!checkRange(xSheetCache, frames[i].elements[0].firstFrame, frames[i + 1].elements[0].firstFrame)) {
 				//CutOpen on pose changes.
 				frames[i + 1].labelType = "anchor";
