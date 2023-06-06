@@ -130,17 +130,17 @@ function trim(inputString) {
 function charArrayToString(charArray) {
     var str = "";
     for (var i = 0; i < charArray.length; i++) {
-      str += charArray[i];
+        str += charArray[i];
     }
     return str;
-  }
+}
 
 function getKeys(input) {
-	var arr = [];
-	for (var i in input) {
-		arr.push(i);
-	}
-	return arr;
+    var arr = [];
+    for (var i in input) {
+        arr.push(i);
+    }
+    return arr;
 }
 
 function spreadMax(arr) {
@@ -215,7 +215,7 @@ var scriptPathURI = fl.scriptURI.substring(0, fl.scriptURI.lastIndexOf("/"));
 var guiPanel = fl.getDocumentDOM().xmlPanel(scriptPathURI + "/ui_sceneGenerator.xml");
 
 if (guiPanel.dismiss == "accept") {
-    fl.showIdleMessage(false); 
+    fl.showIdleMessage(false);
 
     var arrayPath = guiPanel.panel_sceneData;
     var driveLetter = arrayPath.charAt(0);
@@ -233,16 +233,16 @@ if (guiPanel.dismiss == "accept") {
     var eeBias = guiPanel.panel_eeBias;
     var chunkSize = guiPanel.panel_chunkSize;
 
- /*    var skipRigs = guiPanel.panel_skip01 == "true";
-    var skipBGs = guiPanel.panel_skip02 == "true";
-    var skipTypewriter = guiPanel.panel_skip03 == "true";
-    var skipLines = guiPanel.panel_skip04 == "true";
-    var skipBlinks = guiPanel.panel_skip05 == "true"; */
+    /*    var skipRigs = guiPanel.panel_skip01 == "true";
+       var skipBGs = guiPanel.panel_skip02 == "true";
+       var skipTypewriter = guiPanel.panel_skip03 == "true";
+       var skipLines = guiPanel.panel_skip04 == "true";
+       var skipBlinks = guiPanel.panel_skip05 == "true"; */
 
     var skipRigs = false;
     var skipBGs = true;
     var skipTypewriter = true;
-    var skipLines = false;
+    var skipLines = true;
     var skipFades = false;
     var skipBlinks = false;
 
@@ -270,14 +270,14 @@ if (guiPanel.dismiss == "accept") {
     fl.runScript(arrayPath); // load sceneData
     fl.runScript(scriptPathURI + "/config.txt"); // load configuration file
 
-    var check_masterInvestigationArray = getKeys(masterInvestigationArray );
+    var check_masterInvestigationArray = getKeys(masterInvestigationArray);
 
     for (var i = 0; i < sceneData.length; i++) {
         if (skipRigs) break;
         if (check_masterInvestigationArray.indexOf(sceneData[i][2]) === -1) {
             logError('An entry for ' + sceneData[i][2] + "'s rig is not included in masterInvestigationArray .");
         }
-        if (!fl.getDocumentDOM().library.itemExists(masterInvestigationArray [sceneData[i][2]][1])) {
+        if (!fl.getDocumentDOM().library.itemExists(masterInvestigationArray[sceneData[i][2]][1])) {
             logError("Library path to " + sceneData[i][2] + "'s rig does not exist.");
         }
     }
@@ -300,48 +300,211 @@ function switchActive(layerVar) {
 }
 
 function goTo(inputString) {
-	var lineIndex = parseInt(inputString.substring(3, 6), 10);
-	var sceneIndex = Math.ceil(lineIndex / chunkSize);
+    var lineIndex = parseInt(inputString.substring(3, 6), 10);
+    var sceneIndex = Math.ceil(lineIndex / chunkSize);
 
-	fl.getDocumentDOM().editScene(sceneIndex - 1);
+    fl.getDocumentDOM().editScene(sceneIndex - 1);
 
-	var timeline = fl.getDocumentDOM().getTimeline();
-	var textLayer = timeline.layers[timeline.findLayerIndex("TEXT")];
-	var keyframes = textLayer.frames;
+    var timeline = fl.getDocumentDOM().getTimeline();
+    var textLayer = timeline.layers[timeline.findLayerIndex("TEXT")];
+    var keyframes = textLayer.frames;
 
-	for (var i = 0; i < keyframes.length; i++) {
-		var frame = keyframes[i];
+    for (var i = 0; i < keyframes.length; i++) {
+        var frame = keyframes[i];
 
-		if (frame.name === inputString) {
-			timeline.currentFrame = i;
-			break;
-		}
+        if (frame.name === inputString) {
+            timeline.currentFrame = i;
+            break;
+        }
 
-		var nextFrameIndex = i + frame.duration;
+        var nextFrameIndex = i + frame.duration;
 
-		i = nextFrameIndex - 1;
-	}
+        i = nextFrameIndex - 1;
+    }
+}
+
+function inputValidation() {
+    var flagMissingCFG = false;
+    var flagMissingVOX = false;
+
+    for (var i = 0; i < sceneData.length; i++) {
+        if (sceneData[i][0] != "dialogue") continue;
+        var checkCFG = FLfile.platformPathToURI(pathToCFGs + "/" + sceneData[i][1] + ".cfg");
+        if (!FLfile.exists(checkCFG)) {
+            writeLogInfo(getCurrentDate(), status01, "Missing CFG: " + sceneData[i][1] + ".cfg");
+            flagMissingCFG = true;
+        };
+    };
+
+    for (var i = 0; i < sceneData.length; i++) {
+        if (sceneData[i][0] != "dialogue") continue;
+        var checkCFG = FLfile.platformPathToURI(pathToLines + "/" + sceneData[i][1] + ".flac");
+        if (!FLfile.exists(checkCFG)) {
+            writeLogInfo(getCurrentDate(), status01, "Missing Voice Line: " + sceneData[i][1] + ".flac");
+            flagMissingVOX = true;
+        };
+    };
+
+    if (flagMissingCFG && flagMissingVOX) {
+        soundAlert()
+        var continueExecution = confirm("Both CFGs and Voice Lines are missing from your input data. Check the log to see which files are missing. \n\n Do you want to continue?");
+    } else if (flagMissingCFG) {
+        soundAlert()
+        var continueExecution = confirm("CFGs are missing from your input data. Check the log to see which files are missing. \n\n Do you want to continue?");
+    } else if (flagMissingVOX) {
+        soundAlert()
+        var continueExecution = confirm("Voice Lines are missing from your input data. Check the log to see which files are missing. \n\n Do you want to continue?");
+    };
+
+    if (!continueExecution) {
+        soundError()
+        writeLogInfo(getCurrentDate(), status00, "The user decided to stop execution.");
+        throw new Error("The user decided to stop execution.");
+    }
+};
+
+function negativeEmotionBias(input, bias) {
+    var result = '';
+    var opposites = {
+        '+': '-',
+        '-': '+',
+        'H': 'B',
+        'B': 'H',
+        'F': 'T',
+        'T': 'F',
+    };
+
+    for (var i = 0; i < input.length; i++) {
+        var currentChar = input[i];
+        var isOpposite = false;
+        for (var j = 0; j < bias.length; j++) {
+            var biasChar = bias[j];
+            if (currentChar === opposites[biasChar]) {
+                isOpposite = true;
+                bias = bias.substring(0, j) + bias.substring(j + 1);
+                break;
+            }
+        }
+        if (!isOpposite) {
+            result += currentChar;
+        }
+    }
+    return result;
+}
+
+function emotionAverage(str1, str2) {
+    //Create a map to keep track of character counts
+    var charMap = {};
+
+    //Loop through the first string and update charMap accordingly
+    for (var i = 0; i < str1.length; i++) {
+        if (charMap[str1[i]] === undefined) {
+            charMap[str1[i]] = 1;
+        } else {
+            charMap[str1[i]]++;
+        }
+    }
+
+    //Loop through the second string and update charMap accordingly
+    for (var j = 0; j < str2.length; j++) {
+        if (charMap[str2[j]] === undefined) {
+            charMap[str2[j]] = 1;
+        } else {
+            charMap[str2[j]]++;
+        }
+    }
+
+    //Remove opposites and limit the number of each character
+    var result = '';
+    if (charMap['+'] > charMap['-']) {
+        charMap['+'] -= charMap['-'];
+        charMap['-'] = 0;
+    } else {
+        charMap['-'] -= charMap['+'];
+        charMap['+'] = 0;
+    }
+    if (charMap['B'] > charMap['H']) {
+        charMap['B'] -= charMap['H'];
+        charMap['H'] = 0;
+    } else {
+        charMap['H'] -= charMap['B'];
+        charMap['B'] = 0;
+    }
+    if (charMap['F'] > charMap['T']) {
+        charMap['F'] -= charMap['T'];
+        charMap['T'] = 0;
+    } else {
+        charMap['T'] -= charMap['F'];
+        charMap['F'] = 0;
+    }
+    if (charMap['C'] > 1) {
+        charMap['C'] = 1;
+    }
+    for (var char in charMap) {
+        if (charMap[char] > 2) {
+            charMap[char] = 2;
+        }
+        for (var i = 0; i < charMap[char]; i++) {
+            result += char;
+        }
+    }
+
+    //Sort the characters in the result string
+    result = result.split('').sort(function (a, b) {
+        var order = '++--HHBBRRAAGGFFSSTTC';
+        return order.indexOf(a) - order.indexOf(b);
+    }).join('');
+
+    return result;
+}
+
+function pruneEmotionEngineData() {
+
+    //Apply emotionEngine bias.
+    for (var i = 0; i < sceneData.length; i++) {
+        sceneData[i][4] = negativeEmotionBias(sceneData[i][4], eeBias);
+    }
+
+    var averagedEmotions = [];
+
+    //Smooth out transient emotions.
+    for (var i = 1; i < sceneData.length - 1; i++) {
+        // Check if the third element between the current and previous arrays are equivalent
+        if (sceneData[i][2] === sceneData[i - 1][2]) {
+            var avgEmotion = emotionAverage(sceneData[i - 1][4], sceneData[i][4]);
+            averagedEmotions[i] = avgEmotion;
+        } else {
+            averagedEmotions[i] = "";
+        }
+    }
+
+    // Update the sceneData array with the averaged emotions
+    for (var i = 1; i < sceneData.length - 1; i++) {
+        if (averagedEmotions[i] !== "") {
+            sceneData[i][4] = averagedEmotions[i];
+        }
+    }
 }
 
 function doTextBoxes() {
 
     var dialogueBounding = {
-        left: (40.05)*2,
-        top: (549.5)*2,
-        right: (1212.95)*2,
-        bottom: (708.95)*2
+        left: (40.05) * 2,
+        top: (549.5) * 2,
+        right: (1212.95) * 2,
+        bottom: (708.95) * 2
     };
 
     var speakerBounding = {
-        left: (20.05)*2,
-        top: (482.5)*2,
-        right: (254.4)*2,
-        bottom: (540.2)*2
+        left: (20.05) * 2,
+        top: (482.5) * 2,
+        right: (254.4) * 2,
+        bottom: (540.2) * 2
     };
-    
+
     var curFrame = 0;
     var currentScene = 1;
-    
+
     for (var i = 0; i < sceneData.length; i++) {
 
         if (sceneData[i][0] != "dialogue") continue;
@@ -475,14 +638,14 @@ function addRigsInvestgation() {
         };
 
         for (var i = 0; i < uniqueChars.length; i++) {
-            switchActive(masterInvestigationArray [uniqueChars[i]][0]);
+            switchActive(masterInvestigationArray[uniqueChars[i]][0]);
             fl.getDocumentDOM().getTimeline().currentFrame = 0;
             fl.getDocumentDOM().addItem({
                 x: 0,
                 y: 0
             }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
-            writeLogInfo(getCurrentDate(), status00, "Added Rig: " + masterInvestigationArray [uniqueChars[i]][0] + " at " + masterInvestigationArray [uniqueChars[i]][1]);
-            fl.getDocumentDOM().swapElement(masterInvestigationArray [uniqueChars[i]][1]);
+            writeLogInfo(getCurrentDate(), status00, "Added Rig: " + masterInvestigationArray[uniqueChars[i]][0] + " at " + masterInvestigationArray[uniqueChars[i]][1]);
+            fl.getDocumentDOM().swapElement(masterInvestigationArray[uniqueChars[i]][1]);
             fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[0].elements[0].setTransformationPoint({ x: 0, y: 0 });
             fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[0].elements[0].transformX = 0;
             fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[0].elements[0].transformY = 0;
@@ -535,7 +698,7 @@ function getPoseFromEmotion(layerIndex, i, curFrame) {
     var poseFrameNum = -1;
     var tmpArray = [];
 
-    for (var iter = 0; iter < objTl.frameCount; iter+= objTl.frames[iter].duration) {
+    for (var iter = 0; iter < objTl.frameCount; iter += objTl.frames[iter].duration) {
         if ((objTl.frames[iter].labelType == "name") && (iter == objTl.frames[iter].startFrame)) {
             tmpArray.push(levenshteinRatio(objTl.frames[iter].name, eeInput));
             if (spreadMax(tmpArray) == tmpArray[tmpArray.length - 1]) {
@@ -543,7 +706,7 @@ function getPoseFromEmotion(layerIndex, i, curFrame) {
             };
         };
     };
-    
+
     if (poseFrameNum != -1) {
         writeLogInfo(getCurrentDate(), status00, "emotionEngine input " + eeInput + " yielded pose " + xSheet.frames[poseFrameNum].name + ", for character " + fl.getDocumentDOM().getTimeline().layers[layerIndex * 1].name + ".");
     } else {
@@ -562,7 +725,7 @@ function sculptInvestgation() {
         var currentLineID = sceneData[i][1];
         var frameToConsider = iFrameDuration * (i % chunkSize);
         var isPov = sceneData[i][2] == defense;
-        
+
         goTo(currentLineID);
 
         if (sceneData[i][2] == defense && i != 0) {
@@ -572,7 +735,7 @@ function sculptInvestgation() {
             }
             sceneData[i][2] = (tempI != 0) ? sceneData[tempI][2] : sceneData[i][2];
         }
-        
+
         var characterIndex = 0; // for distributing multiple characters on screen
 
         for (var j = 0; j < uniqueChars.length; j++) {
@@ -634,8 +797,8 @@ function jamFades() {
             var doesTheSameCharacterSpeakBeforeThisLine = ((sceneData[i - 1][2] == sceneData[i][2]));
         };
 
-        if (doesMCspeakBeforeOrAfterThisLine || doesTheSameCharacterSpeakBeforeThisLine) {continue} ;
-        
+        if (doesMCspeakBeforeOrAfterThisLine || doesTheSameCharacterSpeakBeforeThisLine) { continue };
+
         if (lineIndex % chunkSize === 1) {
             //First fade in a chunk.
             switchActive("JAM_MASK");
@@ -709,7 +872,7 @@ function automaticBlinking() {
         fl.getDocumentDOM().editScene(i);
         var vectorCharactersLayer = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("VECTOR_CHARACTERS")[0]];
         for (var j = 0; j <= fl.getDocumentDOM().getTimeline().layerCount - 1; j++) {
-            if (fl.getDocumentDOM().getTimeline().layers[j].parentLayer != vectorCharactersLayer) {continue};
+            if (fl.getDocumentDOM().getTimeline().layers[j].parentLayer != vectorCharactersLayer) { continue };
             fl.getDocumentDOM().getTimeline().setSelectedLayers(j);
             gammaBlink(6);
         }
@@ -745,64 +908,65 @@ var iFrameDuration = 24;
 var totalChunks = 0;
 
 if (viewMode == "courtMode") {
+    inputValidation();
     generationStarted = new Date();
     stepStarted = new Date();
     doTextBoxes();
-        stepEnded = new Date();
-        playSound("put textbox sound here");
-        getTimeDiff(stepStarted, stepEnded);
-        writeLogInfo(getCurrentDate(), status00, "Textbox placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+    stepEnded = new Date();
+    playSound("put textbox sound here");
+    getTimeDiff(stepStarted, stepEnded);
+    writeLogInfo(getCurrentDate(), status00, "Textbox placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
 
-    if (!skipRigs)  {
+    if (!skipRigs) {
         stepStarted = new Date();
         addRigs();
         sculpt();
-            stepEnded = new Date();
-            playSound("put rig sound here");
-            getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "Rig placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+        stepEnded = new Date();
+        playSound("put rig sound here");
+        getTimeDiff(stepStarted, stepEnded);
+        writeLogInfo(getCurrentDate(), status00, "Rig placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     if (!skipBGs) {
-    stepStarted = new Date();
-    placeDesks();
+        stepStarted = new Date();
+        placeDesks();
         stepEnded = new Date();
         playSound("put desk sound here");
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Desk placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
 
-    stepStarted = new Date();
-    placeBGs();
+        stepStarted = new Date();
+        placeBGs();
         stepEnded = new Date();
         playSound("put background sound here");
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Background placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
-    if (!skipLines)  {
+    if (!skipLines) {
         stepStarted = new Date();
         addAllVoiceLines(pathToLines);
-            stepEnded = new Date();
-            playSound("put voice lines sound here");
-            getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "[!] Voice line placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
-        
+        stepEnded = new Date();
+        playSound("put voice lines sound here");
+        getTimeDiff(stepStarted, stepEnded);
+        writeLogInfo(getCurrentDate(), status00, "[!] Voice line placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+
         stepStarted = new Date();
         //autoLipsyncDocument(pathToCFGs);
-            stepEnded = new Date();
-            playSound("put lipsync sound here");
-            getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "[!] Lipsyncing succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+        stepEnded = new Date();
+        playSound("put lipsync sound here");
+        getTimeDiff(stepStarted, stepEnded);
+        writeLogInfo(getCurrentDate(), status00, "[!] Lipsyncing succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     if (!skipBlinks) {
         stepStarted = new Date();
         //QUESTION: this is broken lol
         automaticBlinking();
-            stepEnded = new Date();
-            playSound("put blinking sound here");
-            getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "[!] Automatic Blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+        stepEnded = new Date();
+        playSound("put blinking sound here");
+        getTimeDiff(stepStarted, stepEnded);
+        writeLogInfo(getCurrentDate(), status00, "[!] Automatic Blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     generationEnded = new Date();
@@ -812,61 +976,63 @@ if (viewMode == "courtMode") {
 };
 
 if (viewMode == "investigationMode") {
+    inputValidation();
+    pruneEmotionEngineData();
     generationStarted = new Date();
     stepStarted = new Date();
     playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING TEXT.wav");
     doTextBoxes();
-        stepEnded = new Date();
-        getTimeDiff(stepStarted, stepEnded);
-        writeLogInfo(getCurrentDate(), status00, "[!] Textbox Placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+    stepEnded = new Date();
+    getTimeDiff(stepStarted, stepEnded);
+    writeLogInfo(getCurrentDate(), status00, "[!] Textbox Placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
 
-    if (!skipRigs)  {
+    if (!skipRigs) {
         stepStarted = new Date();
         playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING ALL RIGS.wav");
         addRigsInvestgation();
-            stepEnded = new Date();
-            getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "[!] Rig Placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));   
+        stepEnded = new Date();
+        getTimeDiff(stepStarted, stepEnded);
+        writeLogInfo(getCurrentDate(), status00, "[!] Rig Placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
         stepStarted = new Date();
         sculptInvestgation();
-            stepEnded = new Date();
-            soundAlert();
-            getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "[!] Rig Sculpting succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+        stepEnded = new Date();
+        soundAlert();
+        getTimeDiff(stepStarted, stepEnded);
+        writeLogInfo(getCurrentDate(), status00, "[!] Rig Sculpting succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
-    if (!skipLines)  {
+    if (!skipLines) {
         stepStarted = new Date();
         playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING ALL THE VOICE LINES.wav");
         addAllVoiceLines(pathToLines);
-            stepEnded = new Date();
-            getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "[!] Voice Line Placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
-        
+        stepEnded = new Date();
+        getTimeDiff(stepStarted, stepEnded);
+        writeLogInfo(getCurrentDate(), status00, "[!] Voice Line Placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+
         stepStarted = new Date();
         playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/LIPSYNCING ALL CHARACTERS.wav");
         autoLipsyncDocument(FLfile.platformPathToURI(pathToCFGs));
-            stepEnded = new Date();
-            getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "[!] Lipsyncing Succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+        stepEnded = new Date();
+        getTimeDiff(stepStarted, stepEnded);
+        writeLogInfo(getCurrentDate(), status00, "[!] Lipsyncing Succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     if (!skipFades) {
         stepStarted = new Date();
         jamFades();
-            stepEnded = new Date();
-            playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/AUTOFADING ALL CHARACTERS.wav");
-            getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "[!] Automatic Jam Fading succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+        stepEnded = new Date();
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/AUTOFADING ALL CHARACTERS.wav");
+        getTimeDiff(stepStarted, stepEnded);
+        writeLogInfo(getCurrentDate(), status00, "[!] Automatic Jam Fading succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     if (!skipBlinks) {
         stepStarted = new Date();
         automaticBlinking()
-            stepEnded = new Date();
-            playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/AUTOMATING BLINKING.wav");
-            getTimeDiff(stepStarted, stepEnded);
-            writeLogInfo(getCurrentDate(), status00, "[!] Automatic Blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+        stepEnded = new Date();
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/AUTOMATING BLINKING.wav");
+        getTimeDiff(stepStarted, stepEnded);
+        writeLogInfo(getCurrentDate(), status00, "[!] Automatic Blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     generationEnded = new Date();
