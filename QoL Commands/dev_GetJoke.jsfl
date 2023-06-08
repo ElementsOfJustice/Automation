@@ -5,7 +5,7 @@
 }
 
 function playSound(input) {
-	var execString = "Sound.playSound" + "(" + stringToCFunctionString(input) + ");";
+	var execString = "Utils.playSound" + "(" + stringToCFunctionString(input) + ");";
 	return eval(execString);
 }
 
@@ -50,6 +50,6 @@ function parseJoke(jsonString) {
 
 }
 
-var joke = Sound.joke();
+var joke = Utils.joke();
 fl.trace(joke);
 parseJoke(joke);

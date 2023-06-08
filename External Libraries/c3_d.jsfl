@@ -50,7 +50,7 @@ function stringToCFunctionString(input) {
 /*		= = = WRAPPER FUNCTIONS = = =
 	Wrapper functions for the C++ library go here.
 */
-const DLL_NAME = "Sample";
+const DLL_NAME = "Utils";
 function stringExample(input) {
 	var execString = DLL_NAME + ".stringExample" + "(" + stringToCFunctionString(input) + ");";
 	return eval(execString);

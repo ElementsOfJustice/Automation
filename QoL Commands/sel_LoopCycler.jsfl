@@ -13,7 +13,7 @@ function stringToCFunctionString(input) {
 }
 
 function playSound(input) {
-	var execString = "Sound.playSound" + "(" + stringToCFunctionString(input) + ");";
+	var execString = "Utils.playSound" + "(" + stringToCFunctionString(input) + ");";
 	return eval(execString);
 }
 
