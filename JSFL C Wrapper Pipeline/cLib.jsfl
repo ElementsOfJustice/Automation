@@ -76,7 +76,7 @@ on advanced layers.
 function beep(frequency, duration) {
 	validationCheck()
 	if (!(isSubstringPresent(settings, "noSounds") || isSubstringPresent(settings, "noDLLs"))) {
-		var execString = "Sound.beep" + "(" + frequency + ", " + duration + ");";
+		var execString = "Utils.beep" + "(" + frequency + ", " + duration + ");";
 		return eval(execString);
 	};
 };
@@ -93,7 +93,7 @@ If the input does not exist, no sound will be played.
 function playSound(input) {
 	validationCheck()
 	if (!(isSubstringPresent(settings, "noSounds") || isSubstringPresent(settings, "noDLLs"))) {
-		var execString = "Sound.playSound" + "(" + stringToCFunctionString(input) + ");";
+		var execString = "Utils.playSound" + "(" + stringToCFunctionString(input) + ");";
 		return eval(execString);
 	};
 };
@@ -146,7 +146,7 @@ Description: Returns the number of samples in a FLAC file.
 function getFLACLength(pathName) {
 	validationCheck()
 	if (!(isSubstringPresent(settings, "noDLLs"))) {
-		var execString = "Sample.getFLACLength(" + stringToCFunctionString(pathName) + ");";
+		var execString = "Utils.getFLACLength(" + stringToCFunctionString(pathName) + ");";
 		return eval(execString);
 	};
 };

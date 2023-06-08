@@ -7,7 +7,14 @@
 #include "git2Stuff.h"
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <vector>
+#include <Windows.h>
+#include <thread>
+#include <winhttp.h>
+
+#pragma comment(lib, "winmm.lib")  // Link with winmm.lib to use the Windows multimedia functions
+#pragma comment(lib, "winhttp.lib")
 
 std::vector<std::string> splitOnQuestionMark(std::string input) {
 	std::vector<std::string> substrings;
@@ -66,15 +73,14 @@ JSBool getFLACLength(JSContext* cx, JSObject* obj, unsigned int argc, jsval* arg
 		inpString.push_back((argv[i] - 1) / 2);
 	}
 	std::string filename = arrToString(inpString);
-	FILE* fp; // prepare file to read from
-	int c, i, max; // looping variables
-	unsigned long sampleRate = 0, samples = 0; // file metadata variables
-	int err = fopen_s(&fp, filename.c_str(), "rb"); // open the file
-	if (err != 0) {
+	std::ifstream file(filename, std::ios::binary);
+	if (!file.is_open()) {
 		*rval = JS_IntegerToValue(-1);
 		return JS_TRUE; // return -1 as an error value so that it doesn't crash.
 	}
-	for (i = 0, max = 0x20; i < max && (c = getc(fp)) != EOF; i++) { // loop over first 32 bytes of the file
+	int c, i, max; // looping variables
+	unsigned long sampleRate = 0, samples = 0; // file metadata variables
+	for (i = 0, max = 0x20; i < max && (c = file.get()) != EOF; i++) { // loop over first 32 bytes of the file
 		if ((i >= 0x12 && i <= 0x14) || (i >= 0x15 && i <= 0x19)) {
 			if (i >= 0x12 && i <= 0x14) { // FLAC documentation says that the sample rate is from byte 0x12 to the first nibble of byte 0x14
 				sampleRate <<= (i == 0x14) ? 4 : 8;
@@ -88,7 +94,7 @@ JSBool getFLACLength(JSContext* cx, JSObject* obj, unsigned int argc, jsval* arg
 
 	}
 	int time = 1000 * (1.0f * samples / (1.0f * sampleRate)); // the duration of a sound file is the number of samples divided by the sample rate. Truncate to the nearest millisecond
-	fclose(fp);
+	file.close();
 
 	*rval = JS_IntegerToValue(time); // return the duration of the FLAC file in milliseconds
 	// Indicate success
@@ -205,7 +211,7 @@ JSBool renameFolder(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv
 		inpString.push_back((argv[i] - 1) / 2);
 	}
 	std::string toReturn = "Success.";
-	auto oldPath = splitOnQuestionMark(arrToString(inpString))[0], newPath = splitOnQuestionMark(arrToString(inpString))[1];
+	std::string oldPath = splitOnQuestionMark(arrToString(inpString))[0], newPath = splitOnQuestionMark(arrToString(inpString))[1];
 	int success = rename(oldPath.c_str(), newPath.c_str());
 	if (success != 0) {
 		toReturn = "Rename failed: " + std::to_string(success) + " " + std::to_string(errno);
@@ -463,6 +469,110 @@ JSBool stringExample(JSContext* cx, JSObject* obj, unsigned int argc, jsval* arg
 	return JS_TRUE;
 
 }
+
+JSBool beep(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
+
+	long arg1, arg2;
+
+	JS_ValueToInteger(cx, argv[0], &arg1);
+	JS_ValueToInteger(cx, argv[2], &arg2);
+
+	std::thread t([arg1, arg2]() {
+		Beep((DWORD)arg1, (DWORD)arg2);
+		});
+
+	t.detach();
+
+	return JS_TRUE;
+}
+
+JSBool playSound(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
+	// AIDS METHOD: because JS_ValueToString causes read access violations, we take each character as its own argument and build a string from that.
+	std::vector<int> inpString;
+
+	for (unsigned int i = 0; i < argc * 2; i += 2) {
+		inpString.push_back((argv[i] - 1) / 2);
+	}
+
+	std::string str = arrToString(inpString);
+	auto wideStr = stringToWide(str);
+
+	std::thread t([wideStr]() {
+		PlaySound(wideStr, NULL, SND_FILENAME | SND_ASYNC);
+		});
+
+	t.detach();
+
+	return JS_TRUE;
+}
+
+JSBool joke(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
+
+	// Initialize WinHTTP.
+	HINTERNET hSession = WinHttpOpen(L"WinHTTP Example/1.0",
+		WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME,
+		WINHTTP_NO_PROXY_BYPASS, 0);
+	if (!hSession) {
+		std::cerr << "WinHttpOpen failed: " << GetLastError() << std::endl;
+		return 1;
+	}
+
+	// Create an HTTP request.
+	HINTERNET hRequest = WinHttpOpenRequest(WinHttpConnect(hSession,
+		L"v2.jokeapi.dev", INTERNET_DEFAULT_HTTPS_PORT, 0),
+		L"GET", L"/joke/Programming,Miscellaneous,Pun,Spooky?blacklistFlags=nsfw,religious,political,racist,sexist", NULL, WINHTTP_NO_REFERER,
+		WINHTTP_DEFAULT_ACCEPT_TYPES, WINHTTP_FLAG_SECURE);
+	if (!hRequest) {
+		std::cerr << "WinHttpOpenRequest failed: " << GetLastError() << std::endl;
+		WinHttpCloseHandle(hSession);
+		return 1;
+	}
+
+	// Send the HTTP request and receive the response.
+	if (!WinHttpSendRequest(hRequest, WINHTTP_NO_ADDITIONAL_HEADERS, 0,
+		WINHTTP_NO_REQUEST_DATA, 0, 0, 0) || !WinHttpReceiveResponse(hRequest, NULL)) {
+		std::cerr << "WinHttpSendRequest/WinHttpReceiveResponse failed: "
+			<< GetLastError() << std::endl;
+		WinHttpCloseHandle(hRequest);
+		WinHttpCloseHandle(hSession);
+		return 1;
+	}
+
+	// Read the HTTP response body.
+	DWORD dwSize = 0;
+	if (!WinHttpQueryDataAvailable(hRequest, &dwSize)) {
+		std::cerr << "WinHttpQueryDataAvailable failed: " << GetLastError() << std::endl;
+		WinHttpCloseHandle(hRequest);
+		WinHttpCloseHandle(hSession);
+		return 1;
+	}
+
+	//Get a warning here LOL
+	char* pszOutBuffer = new char[dwSize + 1];
+	ZeroMemory(pszOutBuffer, dwSize + 1);
+	DWORD dwDownloaded = 0;
+	if (!WinHttpReadData(hRequest, pszOutBuffer, dwSize, &dwDownloaded)) {
+		std::cerr << "WinHttpReadData failed: " << GetLastError() << std::endl;
+		delete[] pszOutBuffer;
+		WinHttpCloseHandle(hRequest);
+		WinHttpCloseHandle(hSession);
+		return 1;
+	}
+
+	// Print the joke.
+	std::string str(pszOutBuffer);
+	JS_StringToValue(cx, stringToWide(str), str.size(), rval);
+
+	// Clean up.
+	delete[] pszOutBuffer;
+	WinHttpCloseHandle(hRequest);
+	WinHttpCloseHandle(hSession);
+
+	return JS_TRUE;
+}
+
+
+
 extern "C" {
     // MM_STATE is a macro that expands to some definitions that are
     // needed in order interact with Dreamweaver.  This macro must be
@@ -479,5 +589,8 @@ extern "C" {
 		JS_DefineFunction(L"renameFolder", renameFolder, 512);
 		JS_DefineFunction(L"stringExample", stringExample, 512);
 		JS_DefineFunction(L"commitLocalChange", commitLocalChange, 512);
+		JS_DefineFunction(L"beep", beep, 512);
+		JS_DefineFunction(L"playSound", playSound, 512);
+		JS_DefineFunction(L"joke", joke, 512);
 	}
 }
