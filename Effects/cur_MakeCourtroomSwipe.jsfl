@@ -326,6 +326,13 @@ function makeCrossCourtSwipe(sourceCharacterLayer, destinationCharacterLayer, wi
     handleMidCrossCourtSwipe(witnessStandCharacterLayers);
 }
 
+function makeCrossCourtSwipeEmptyStand(sourceCharacterLayer, destinationCharacterLayer) {
+    createTween(sourceCharacterLayer);
+    handleCharacters(sourceCharacterLayer, destinationCharacterLayer);
+    handleDesksAndParentDestinationCharactersFullSwipe(destinationCharacterLayer);
+    handleMidCrossCourtSwipe([]);
+}
+
 /*
 >>>MAIN<<<
 Description: 
@@ -387,6 +394,7 @@ if (!halfCourt) {
     var witnessCharacterLayers = [];
     // for each layer name provided...
     for (var i = 0; i < witnessCharacterLayerNames.split(',').length; i++) {
+        if(witnessCharacterLayerNames == "") break;
         // if the name is valid
         if (fl.getDocumentDOM().getTimeline().findLayerIndex(witnessCharacterLayerNames.split(',')[i]) != undefined) {
             // add the layer index to the array
@@ -399,6 +407,8 @@ if (!halfCourt) {
 // if we've got ourselves a half courtroom swipe
 if (halfCourt) {
     makeWitnessStandToDeskSwipe(sourceCharacterLayers, destinationCharacterLayers);
-} else {
+} else if(witnessCharacterLayersNames != "") {
     makeCrossCourtSwipe(sourceCharacterLayers, destinationCharacterLayers, witnessCharacterLayers);
+} else {
+    makeCrossCourtSwipeEmptyStand(sourceCharacterLayers, destinationCharacterLayers);
 }
