@@ -39,9 +39,9 @@ wchar_t* stringToWide(const std::string& str) {
 }
 
 std::string wideToString(wchar_t* wideStr) {
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-    std::wstring wstr(wideStr);
-    return converter.to_bytes(wstr);
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+	std::wstring wstr(wideStr);
+	return converter.to_bytes(wstr);
 }
 
 std::string arrToString(std::vector<int> input) {
@@ -50,7 +50,7 @@ std::string arrToString(std::vector<int> input) {
 		oss << static_cast<char>(input[i]);
 	}
 	return oss.str();
-}	
+}
 
 #define returnErr(err)\
 	auto ret = stringToWide(err);\
@@ -182,15 +182,11 @@ cleanup:
 	return toReturn;
 }
 
-JSBool updateOrDownloadCommandsRepo(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
-	std::vector<int> inpString;
-	for (unsigned int i = 0; i < argc * 2; i += 2) {
-		inpString.push_back((argv[i] - 1) / 2);
-	}
-	std::string pathName = arrToString(inpString), toReturn = "Successfully pulled.";
+void updateOrDownloadCommandsRepo(std::string pathName) {
 	git_libgit2_init();
 	git_repository* repo = NULL;
 	const char* url = "https://github.com/ElementsOfJustice/Automation";
+	std::string toReturn;
 	if (git_repository_open_ext(NULL, pathName.c_str(), GIT_REPOSITORY_OPEN_NO_SEARCH, NULL) == 0) {
 		toReturn = gitPull(pathName.c_str());
 	}
@@ -198,12 +194,23 @@ JSBool updateOrDownloadCommandsRepo(JSContext* cx, JSObject* obj, unsigned int a
 		toReturn = ((git_clone(&repo, url, pathName.c_str(), NULL)) == 0) ? "Successfully cloned." : "Error cloning.";
 	}
 	auto ret = stringToWide(toReturn);
-	JS_StringToValue(cx, ret, toReturn.size(), rval);
 	delete[] ret;
 	git_repository_free(repo);
 	git_libgit2_shutdown();
+}
+
+JSBool updateOrDownloadCommandsRepoEntry(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
+	std::vector<int> inpString;
+	for (unsigned int i = 0; i < argc * 2; i += 2) {
+		inpString.push_back((argv[i] - 1) / 2);
+	}
+	std::string pathName = arrToString(inpString), toReturn = "Successfully pulled.";
+	std::thread t([pathName]() {
+		updateOrDownloadCommandsRepo((std::string)pathName);
+		});
+	t.detach();
 	return JS_TRUE;
-} 
+}
 
 JSBool renameFolder(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval* rval) {
 	std::vector<int> inpString;
@@ -323,7 +330,7 @@ JSBool commitLocalChange(JSContext* cx, JSObject* obj, unsigned int argc, jsval*
 		error = git_oid_cpy(&parent_oid, git_commit_id(parent));
 		if (error < 0) {
 			setErrMsg("Failed to get OID of parent commit. ")
-			git_repository_free(repo);
+				git_repository_free(repo);
 			git_index_free(index);
 			git_tree_free(tree);
 			git_reference_free(head);
@@ -449,7 +456,7 @@ JSBool commitLocalChange(JSContext* cx, JSObject* obj, unsigned int argc, jsval*
 	}
 
 	// Clean up resources
-	
+
 	auto ret = stringToWide(toReturn);
 	JS_StringToValue(cx, ret, toReturn.size(), rval);
 	delete[] ret;
@@ -574,18 +581,18 @@ JSBool joke(JSContext* cx, JSObject* obj, unsigned int argc, jsval* argv, jsval*
 
 
 extern "C" {
-    // MM_STATE is a macro that expands to some definitions that are
-    // needed in order interact with Dreamweaver.  This macro must be
-    // defined exactly once in your library
-    MM_STATE
+	// MM_STATE is a macro that expands to some definitions that are
+	// needed in order interact with Dreamweaver.  This macro must be
+	// defined exactly once in your library
+	MM_STATE
 
 
-        // Flash calls MM_Init when your library is loaded
-        void
-        MM_Init()
-    {
+		// Flash calls MM_Init when your library is loaded
+		void
+		MM_Init()
+	{
 		JS_DefineFunction(L"getFLACLength", getFLACLength, 512);
-		JS_DefineFunction(L"updateOrDownloadCommandsRepo", updateOrDownloadCommandsRepo, 512);
+		JS_DefineFunction(L"updateOrDownloadCommandsRepo", updateOrDownloadCommandsRepoEntry, 512);
 		JS_DefineFunction(L"renameFolder", renameFolder, 512);
 		JS_DefineFunction(L"stringExample", stringExample, 512);
 		JS_DefineFunction(L"commitLocalChange", commitLocalChange, 512);
