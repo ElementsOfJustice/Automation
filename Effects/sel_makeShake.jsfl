@@ -29,6 +29,8 @@ if (guiPanel.dismiss == "accept") {
 
     // set the shake intensity to the user's input
     var intensity = guiPanel.panel_int;
+    intensity = Math.max(1, intensity);
+
     // "true" string if user checked
     var taperOff = guiPanel.panel_taperOff;
     var shakeOffsets = [];

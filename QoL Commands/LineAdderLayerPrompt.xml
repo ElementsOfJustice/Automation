@@ -1,8 +1,0 @@
-<dialog title="Line Adder" buttons="accept, cancel">
-	<vbox>
-		<hbox>
-			<label value="Name of voice layer (click cancel to stop script):" control="panel_layerName"/>
-			<textbox id="panel_layerName" size="24" value="" />
-		</hbox>
-	</vbox>
-</dialog>

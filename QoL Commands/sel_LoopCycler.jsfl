@@ -4,20 +4,11 @@ Description:
 
 ******************************************************************************/
 
-function stringToCFunctionString(input) {
-	var arr = "";
-	for (var i = 0; i < input.length; i++) {
-		arr += input.charCodeAt(i) + ", ";
-	}
-	return arr.substring(0, arr.length - 2);
-}
+var cLib = fl.configURI + "cLib.jsfl";
 
-function playSound(input) {
-	var execString = "Utils.playSound" + "(" + stringToCFunctionString(input) + ");";
-	return eval(execString);
+function playSound(sfx) {
+	fl.runScript(cLib, "playSound", sfx);
 }
-
-//fl.trace(FLfile.uriToPlatformPath(fl.configURI) + "Commands\\Notifications\\Loop.wav");
 
 if (fl.getDocumentDOM().getElementProperty('loop') == 'single frame') {
 	fl.getDocumentDOM().setElementProperty('loop', 'loop');

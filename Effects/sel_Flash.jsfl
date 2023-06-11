@@ -50,7 +50,7 @@ fl.getDocumentDOM().getTimeline().layers[layer].locked = false;
 fl.getDocumentDOM().getTimeline().setSelectedLayers(layer[0]);
 
 //Select start of selected frames
-selectOrMakeKeyframe(layer, selectedFrames[1])
+selectOrMakeKeyframe(layer, fl.getDocumentDOM().getTimeline().currentFrame)
 
 //Use a static path for the symbol, cause this will be in every file starting from Case 3
 fl.getDocumentDOM().addItem({
@@ -61,10 +61,9 @@ fl.getDocumentDOM().addItem({
 //Aw hell nah, he did NOT just use distribute
 fl.getDocumentDOM().distribute("vertical center", true);
 fl.getDocumentDOM().distribute("horizontal center", true);
-fl.getDocumentDOM().setElementProperty('firstFrame', interjectionType);
 
 //Telomere @flashRange frames forwards
-fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(selectedFrames[1] + flashRange - 1);
+fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(fl.getDocumentDOM().getTimeline().currentFrame + flashRange - 1);
 
 //Reset selection
 fl.getDocumentDOM().getTimeline().setSelectedFrames(selectedFrames);

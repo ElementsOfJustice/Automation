@@ -82,7 +82,7 @@ if (theDialog.dismiss == "accept") {
 	fl.getDocumentDOM().getTimeline().layers[layer].locked = false;
 
 	//Select start of selected frames
-	selectOrMakeKeyframe(layer, selectedFrames[1])
+	selectOrMakeKeyframe(layer, fl.getDocumentDOM().getTimeline().currentFrame)
 
 	//Use a static path for the symbol, cause this will be in every file starting from Case 3
 	fl.getDocumentDOM().addItem({
@@ -106,7 +106,7 @@ if (theDialog.dismiss == "accept") {
 	}
 
 	//Telomere @range frames forwards
-	fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(selectedFrames[1] + range - 1);
+	fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(fl.getDocumentDOM().getTimeline().currentFrame + range - 1);
 
 	//Reset Selection
 	fl.getDocumentDOM().getTimeline().setSelectedFrames(selectedFrames);

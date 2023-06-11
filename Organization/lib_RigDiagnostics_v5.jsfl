@@ -12,7 +12,7 @@ var autoRename = false;
 var autoMerge = false;
 var autoDelete = false;
 
-var xmlDialogue = '<dialog title="Rig Diagnostics v5" buttons="accept cancel"><radiogroup id="diagnostic_operation" ><radio label="Diagnose Only" value="panel_diagnose" /><radio label="Diagnose and Delete Empty Layers" value="panel_delete" /><radio label="Diagnose, Delete and Rename " value="panel_rename" /><radio label="Diagnose, Delete, Rename and Auto-Merge" value="panel_merge" /></radiogroup></dialog>'
+var xmlDialogue = '<dialog title="Rig Diagnostics v5" buttons="accept cancel"><radiogroup id="diagnostic_operation" ><radio label="Diagnose Only" value="panel_diagnose" /><radio label="Diagnose and Delete Empty Layers" value="panel_delete" /><radio label="Diagnose, Delete and Rename " value="panel_rename" /></radiogroup></dialog>'
 var xmlPanel = fl.xmlPanelFromString(xmlDialogue);
 
 var diagnosticOperation = xmlPanel.diagnostic_operation
@@ -368,6 +368,9 @@ function main() {
 	if ((autoDelete) && (deleted > 1)) {
 		alert(deleted + " layers of " + layersCount + " have been deleted");
 	}
+
+	var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex("tmp_rigDiagnose")[0];
+	fl.getDocumentDOM().getTimeline().deleteLayer(layerIndex);
 
 }
 

@@ -18,11 +18,14 @@ function soundAlert(message) {
 	fl.runScript(cLib, "soundAlert", message);
 }
 
+function nothing() {
+}
+
 var scriptPath = fl.scriptURI;
 var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
 var cLib = fl.configURI + "cLib.jsfl";
 
 var cfgFolderPath = fl.browseForFolderURL("Select the folder where all CFGs for this scene are located.");
 
-fl.runScript(dirURL + "/dev_c3_LipSync_core.jsfl", "runLipsyncingDoc", cfgFolderPath);
+fl.runScript(dirURL + "/dev_c3_LipSync_core.jsfl", "runLipsyncingDoc", cfgFolderPath, nothing(), nothing());
 soundAlert();
