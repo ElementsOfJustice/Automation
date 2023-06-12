@@ -2,12 +2,13 @@
 var selFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames();
 //get the start of the continguous keyframe section, assume it's on the first layer
 var lowestFrame = selFrames[1];
-while(!fl.getDocumentDOM().getTimeline().layers[selFrames[0]].frames[lowestFrame].isEmpty && lowestFrame > 1) {
+while(lowestFrame > 0 && !fl.getDocumentDOM().getTimeline().layers[selFrames[0]].frames[lowestFrame].isEmpty ) {
     lowestFrame = fl.getDocumentDOM().getTimeline().layers[selFrames[0]].frames[lowestFrame].startFrame - 1;
 }
-if(!fl.getDocumentDOM().getTimeline().layers[selFrames[0]].frames[lowestFrame].isEmpty) {
-    throw new Error("Unable to find empty keyframe before selection.");
-}
+if(lowestFrame < 0) lowestFrame = 0;
+// if(!fl.getDocumentDOM().getTimeline().layers[selFrames[0]].frames[lowestFrame].isEmpty) {
+//     throw new Error("Unable to find empty keyframe before selection.");
+// }
 fl.getDocumentDOM().getTimeline().copyFrames();
 fl.getDocumentDOM().getTimeline().clearKeyframes();
 for(var i = 0; i < selFrames.length / 3; i++) {

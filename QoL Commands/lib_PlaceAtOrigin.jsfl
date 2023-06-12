@@ -27,7 +27,7 @@ Description: selects the keyframe if there's one there, or makes one if there is
 function selectOrMakeKeyframe(layer, frame) {
     resetSelection(layer, frame); // select layer and frame
     // if the current frame isn't the first frame in a frame sequence, make a note of that
-    var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame; 
+    var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame;
     // if it isn't...
     if (!isKeyFrame) {
         fl.getDocumentDOM().getTimeline().insertKeyframe(); // keyframe for new position
@@ -35,7 +35,9 @@ function selectOrMakeKeyframe(layer, frame) {
     }
 }
 
-selectOrMakeKeyframe(fl.getDocumentDOM().getTimeline().getSelectedLayers(), fl.getDocumentDOM().getTimeline().currentFrame);
-an.getDocumentDOM().library.addItemToDocument({x:0, y:0});
-fl.getDocumentDOM().setElementProperty('x', 0);
-fl.getDocumentDOM().setElementProperty('y', 0);
+if (an.getDocumentDOM().library.getSelectedItems.length > 0) {
+    selectOrMakeKeyframe(fl.getDocumentDOM().getTimeline().getSelectedLayers(), fl.getDocumentDOM().getTimeline().currentFrame);
+    an.getDocumentDOM().library.addItemToDocument({ x: 0, y: 0 });
+    fl.getDocumentDOM().setElementProperty('x', 0);
+    fl.getDocumentDOM().setElementProperty('y', 0);
+}
