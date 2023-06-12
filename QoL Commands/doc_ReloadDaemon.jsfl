@@ -5,4 +5,3 @@ function beep(frequency, duration) {
 }
 
 fl.reloadTools();
-beep(200, 1000);

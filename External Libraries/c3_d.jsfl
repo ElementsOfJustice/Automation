@@ -245,6 +245,12 @@ function docOpen() {
 			sessionCommit = true;
 		}
 	}
+
+
+	if (Math.random() < 1/10) {
+		getJoke();
+	}
+
 }
 
 function docChanged() {
