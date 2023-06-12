@@ -11,12 +11,22 @@ User Disclaimers:
 -None
 ******************************************************************************/
 
+var cLib = fl.configURI + "cLib.jsfl";
+
 var selectedFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames();
 var layerInfo = [];
 for (var i = 0; i < selectedFrames.length / 3; i++) {
 	layerInfo.push([selectedFrames[3 * i], selectedFrames[3 * i + 1], selectedFrames[3 * i + 2]]);
 }
 var toWrite = [];
+
+function soundAlert() {
+	fl.runScript(cLib, "soundAlert");
+}
+
+function soundError() {
+	fl.runScript(cLib, "soundError");
+}
 
 /*
 Function: setHash
@@ -31,9 +41,6 @@ function setHash(variableName, value, type) {
 	var hashIndex = variableName;
 	fl.getDocumentDOM().addDataToDocument(hashIndex, type, value);
 }
-
-
-
 
 // Process copy data for selected region.
 for (var l = 0; l < layerInfo.length; l++) {
@@ -54,6 +61,7 @@ for (var l = 0; l < layerInfo.length; l++) {
 	for (var i = firstFrame; i < lastFrame; i += (frameArray[i].duration - (i - frameArray[i].startFrame))) { // iterate over all keyframes
 
 		if (frameArray[i] == undefined) {
+			soundError();
 			throw new Error("You have selected a folder layer. Run again without the folder layer selected.");
 		}
 
@@ -63,6 +71,7 @@ for (var l = 0; l < layerInfo.length; l++) {
 			if (frameArray[i].isEmpty == false) {
 
 				if (frameArray[i].elements[0].libraryItem == undefined) {
+					soundError();
 					throw new Error("Hypercopy only works with symbol-pure selections. You have selected a range of frames that contains something that is not a symbol.");
 				}
 
@@ -107,3 +116,4 @@ for (var l = 0; l < layerInfo.length; l++) {
 // Save the data to the hash table, so that it can be retrieved later.
 var dataString = toWrite.join(',');
 setHash("HYPERCOPY", dataString, "string");
+soundAlert();
