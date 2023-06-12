@@ -1,9 +1,7 @@
 ﻿/*
+
 	CASE 3 BLINK PREVIEW
-	
-	TODO:
-	Fix all single-letter variables. It's horrendously inconsistent.
-	
+
 */
 var bookmarkerTl = fl.getDocumentDOM().currentTimeline;
 var bookmarkerFrame = fl.getDocumentDOM().getTimeline().currentFrame;
@@ -181,8 +179,6 @@ function autoEyeSet(layerIndex) {
 	//For all frames on the layer we are running autoEyeSet on, automatically apply the bare minimum blink instructions.
 	for (var i = 0; i < frames.length - 1; i++) {
 
-		//var isPoseSymbol = (frames[i].elements[0].libraryItem.name.indexOf("Pose") != -1);
-
 		if ((i == 0) && (!frames[i].isEmpty)) {
 			//CutOpen on the first frame of a character layer if it has content. 
 			frames[i].labelType = "anchor";
@@ -285,17 +281,15 @@ function runBlinking(layerIndex) {
 
 	for (i = 0; i < frameArray.length; i++) {
 		
-		if (i != frameArray[i].startFrame) {
-			continue;
-		}
+		if (i != frameArray[i].startFrame) {continue};
 	
-		if (frameArray[i].isEmpty == true) {
-			continue;
-		}
+		if (frameArray[i].isEmpty == true) {continue};
 	
-		if (frameArray[i].labelType != "anchor") {
-			continue;
-		}
+		if (frameArray[i].labelType != "anchor") {continue};
+
+		//alert(frameArray[i].elements[0].libraryItem.name.toLowerCase() + "!\n" + (frameArray[i].elements[0].libraryItem.name.toLowerCase().indexOf("pose") != -1))
+
+		if (frameArray[i].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) {continue};
 		
 		var blinkFrame = blinkFrameIndex(leftEye, rigPath, i, layerIndex, xSheetCache);
 		var blinkInstruction = frameArray[i].name;
@@ -386,6 +380,7 @@ for (var a = 0; a < sceneArray.length; a++) {
 		//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Run your code.
 		autoEyeSet(b);
 		runBlinking(b);
+
 		if(fl.getDocumentDOM().timelines[currentTimeline].layers[b].name.toUpperCase().indexOf("LUNA") != -1) {
 			syncMane(b);
 		}
@@ -394,6 +389,7 @@ for (var a = 0; a < sceneArray.length; a++) {
 
 //Test movie, as opposed to test scene. This new implementation of blinking tech is resistant to testing scenes!
 fl.getDocumentDOM().testMovie();
+
 //AS3 Cleanup
 for (var i = 0; i < sceneArray.length; i++) {
 	fl.getDocumentDOM().currentTimeline = sceneArray[i];
@@ -426,6 +422,7 @@ for (var i = 0; i < tmpKeys.length; i++) {
 	fl.getDocumentDOM().getTimeline().setSelectedLayers(tmpKeys[i][0]);
 	fl.getDocumentDOM().getTimeline().clearKeyframes(tmpKeys[i][1], tmpKeys[i][1]);
 }
+
 //Put you back where you were.
 fl.getDocumentDOM().currentTimeline = bookmarkerTl;
 fl.getDocumentDOM().getTimeline().currentFrame = bookmarkerFrame;

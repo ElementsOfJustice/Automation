@@ -1,20 +1,17 @@
-﻿function soundAlert(message) {
-	playSound(FLfile.uriToPlatformPath(fl.configURI) + "Commands\\Notifications\\Alert.wav");
-	alert(message)
+﻿var cLib = fl.configURI + "cLib.jsfl";
 
+function soundAlert(message) {
+	fl.runScript(cLib, "soundAlert", message);
 }
 
-function playSound(input) {
-	var execString = "Utils.playSound" + "(" + stringToCFunctionString(input) + ");";
-	return eval(execString);
-}
-
-function stringToCFunctionString(input) {
-	var arr = "";
-	for (var i = 0; i < input.length; i++) {
-		arr += input.charCodeAt(i) + ", ";
+function replaceTwentyTimes(input) {
+	var output = input;
+  
+	for (var i = 0; i < 20; i++) {
+	  output = output.replace("\\n", ' ').replace("\\", "");
 	}
-	return arr.substring(0, arr.length - 2);
+
+	return output;
 }
 
 function parseJoke(jsonString) {
@@ -30,7 +27,7 @@ function parseJoke(jsonString) {
 		var endIndex = jsonString.indexOf('",\n', startIndex); // find the ending index of the substring
 		var desiredSubstring = jsonString.substring(startIndex, endIndex); // extract the substring	
 
-		soundAlert(desiredSubstring.replace("\\n", ' ').replace("\\", ""));
+		soundAlert(replaceTwentyTimes(desiredSubstring));
 		
 	} else if (type == "t") {
 		//Two part joke
@@ -39,17 +36,15 @@ function parseJoke(jsonString) {
 		var endIndex = jsonString.indexOf('",\n', startIndex); // find the ending index of the substring
 		var desiredSubstring = jsonString.substring(startIndex, endIndex); // extract the substring	
 
-		soundAlert(desiredSubstring.replace("\\n", ' ').replace("\\", ""));
+		soundAlert(replaceTwentyTimes(desiredSubstring));
 		
 		var startIndex = jsonString.indexOf('"delivery": "') + 13; // find the starting index of the substring
 		var endIndex = jsonString.indexOf('",\n', startIndex); // find the ending index of the substring
 		var desiredSubstring = jsonString.substring(startIndex, endIndex); // extract the substring	
 		
-		soundAlert(desiredSubstring.replace("\\n", ' ').replace("\\", ""));
+		soundAlert(replaceTwentyTimes(desiredSubstring));
 	}
-
 }
 
 var joke = Utils.joke();
-fl.trace(joke);
 parseJoke(joke);
