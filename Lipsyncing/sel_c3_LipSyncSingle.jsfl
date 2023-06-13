@@ -20,7 +20,7 @@ function soundAlert(message) {
 
 var scriptPath = fl.scriptURI;
 var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
-var cLib = fl.configURI + "cLib.jsfl";
+var cLib = fl.configURI + "Commands/cLib.jsfl";
 
 fl.runScript(dirURL + "/dev_c3_LipSync_core.jsfl", "runLipsyncingSingle");
 soundAlert();

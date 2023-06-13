@@ -11,7 +11,7 @@ User Disclaimers:
 -None
 ******************************************************************************/
 
-var cLib = fl.configURI + "cLib.jsfl";
+var cLib = fl.configURI + "Commands/cLib.jsfl";
 
 var selectedFrames = fl.getDocumentDOM().getTimeline().getSelectedFrames();
 var layerInfo = [];

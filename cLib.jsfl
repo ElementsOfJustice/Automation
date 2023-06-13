@@ -9,7 +9,7 @@
 													-Soundman
 */
 
-var settings = FLfile.read(fl.configURI + "Settings.txt");
+var settings = FLfile.read(fl.configURI + "Commands/Settings.txt");
 
 /*
 Function: isSubstringPresent
@@ -32,13 +32,13 @@ function isSubstringPresent(string, substring) {
 Function: validationCheck
 
 Variables: 
-	none
+	none`
 
 Description: Confirm code exists, or otherwise warn the user.
 */
 function validationCheck() {
 	if (!FLfile.exists(fl.configURI + "Settings.txt")) {
-		throw new Error("Settings.txt does not exist in the user's configuration directory.");
+		throw new Error("Settings.txt does not exist in the user's Commands directory.");
 	};
 };
 

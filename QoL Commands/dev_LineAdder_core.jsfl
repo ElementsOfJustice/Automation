@@ -16,7 +16,7 @@ Try to handle errors without breaking. Skip stuff if need be.
 ******************************************************************************/
 
 UPPER_FRAMECOUNT_LIMIT = 12000;
-var cLib = fl.configURI + "cLib.jsfl";
+var cLib = fl.configURI + "Commands/cLib.jsfl";
 
 /*
 Function: getFLACLength
