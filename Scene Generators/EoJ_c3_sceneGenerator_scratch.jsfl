@@ -625,7 +625,7 @@ function getCharacters() {
     return unique;
 }
 
-function addRigsInvestgation() {
+function addRigs(characterArray) {
     var uniqueChars = getCharacters();
 
     for (var h = 0; h < totalChunks; h++) {
@@ -638,14 +638,14 @@ function addRigsInvestgation() {
         };
 
         for (var i = 0; i < uniqueChars.length; i++) {
-            switchActive(masterInvestigationArray[uniqueChars[i]][0]);
+            switchActive(characterArray[uniqueChars[i]][0]);
             fl.getDocumentDOM().getTimeline().currentFrame = 0;
             fl.getDocumentDOM().addItem({
                 x: 0,
                 y: 0
             }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
-            writeLogInfo(getCurrentDate(), status00, "Added Rig: " + masterInvestigationArray[uniqueChars[i]][0] + " at " + masterInvestigationArray[uniqueChars[i]][1]);
-            fl.getDocumentDOM().swapElement(masterInvestigationArray[uniqueChars[i]][1]);
+            writeLogInfo(getCurrentDate(), status00, "Added Rig: " + characterArray[uniqueChars[i]][0] + " at " + characterArray[uniqueChars[i]][1]);
+            fl.getDocumentDOM().swapElement(characterArray[uniqueChars[i]][1]);
             fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[0].elements[0].setTransformationPoint({ x: 0, y: 0 });
             fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[0].elements[0].transformX = 0;
             fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[0].elements[0].transformY = 0;
@@ -716,7 +716,7 @@ function getPoseFromEmotion(layerIndex, i, curFrame) {
     return poseFrameNum;
 };
 
-function sculptInvestgation() {
+function sculpt(characterArray) {
     var uniqueChars = getCharacters();
 
     for (var i = sceneData.length - 2; i >= 0; i--) {
@@ -739,18 +739,18 @@ function sculptInvestgation() {
         var characterIndex = 0; // for distributing multiple characters on screen
 
         for (var j = 0; j < uniqueChars.length; j++) {
-            if (masterInvestigationArray[uniqueChars[j]] === undefined) {
+            if (characterArray[uniqueChars[j]] === undefined) {
                 continue;
             }
-            var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(masterInvestigationArray[uniqueChars[j]][0]);
+            var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(characterArray[uniqueChars[j]][0]);
             //fl.getDocumentDOM().getTimeline().currentFrame = frameToConsider;
             if ((i % chunkSize == 0) && (sceneData[i][2].indexOf(uniqueChars[j]) == -1)) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
-                switchActive(masterInvestigationArray[uniqueChars[j]][0]);
+                switchActive(characterArray[uniqueChars[j]][0]);
                 fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(frameToConsider + 1);
                 fl.getDocumentDOM().getTimeline().clearKeyframes(frameToConsider);
             }
             else if (sceneData[i][2].indexOf(uniqueChars[j]) > -1) { // make keyframe on active character
-                switchActive(masterInvestigationArray[uniqueChars[j]][0]);
+                switchActive(characterArray[uniqueChars[j]][0]);
                 if (i != 0) {
                     fl.getDocumentDOM().getTimeline().convertToKeyframes(frameToConsider);
                 } else {
@@ -989,12 +989,12 @@ if (viewMode == "investigationMode") {
     if (!skipRigs) {
         stepStarted = new Date();
         playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING ALL RIGS.wav");
-        addRigsInvestgation();
+        addRigs(masterInvestigationArray);
         stepEnded = new Date();
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Rig Placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
         stepStarted = new Date();
-        sculptInvestgation();
+        sculpt(masterInvestigationArray);
         stepEnded = new Date();
         soundAlert();
         getTimeDiff(stepStarted, stepEnded);
