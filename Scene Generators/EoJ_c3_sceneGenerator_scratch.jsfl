@@ -866,7 +866,6 @@ function jamFades() {
     }
 };
 
-//WARNING: THIS IS FUCKING AWFUL, DOUBLES EXECUTION TIME BY BEING SELECTIFIED IN THE CORE. FIX THIS.
 function automaticBlinking() {
     for (var i = 0; i < totalChunks; i++) {
         fl.getDocumentDOM().editScene(i);
@@ -899,6 +898,55 @@ function gammaBlink(mean) {
     fl.runScript(fl.configURI + "Commands/Blinking/dev_GammaBlink_core.jsfl", "autoBlink", mean);
 };
 
+function placeDesks() {
+    fl.getDocumentDOM().getTimeline().currentFrame = 0;
+    switchActive("DESKS");
+    for (var i = 0; i < sceneData.length; i++) {
+        // select current frame
+        fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+        if (i != 0) {
+            fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
+        }
+        if (masterDeskArray[sceneData[i][2]] == undefined) {
+            fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
+            continue;
+        }
+        fl.getDocumentDOM().addItem({
+            x: masterDeskArray[sceneData[i][2]][1],
+            y: masterDeskArray[sceneData[i][2]][2]
+        }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
+        fl.getDocumentDOM().swapElement(masterDeskArray[sceneData[i][2]][0]);
+        fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
+    }
+}
+
+function placeBGs() {
+    fl.getDocumentDOM().getTimeline().currentFrame = 0;
+    switchActive("BACKGROUNDS");
+    for (var i = 0; i < sceneData.length; i++) {
+        // select current frame
+        fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
+        if (i != 0) {
+            fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
+        } if (courtmodeBackgroundsArray[sceneData[i][2]] == undefined) {
+            fl.getDocumentDOM().addItem({
+                x: 640,
+                y: 360
+            }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
+            fl.getDocumentDOM().swapElement("BACKGROUNDS/Full-Courtroom");
+            fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
+            continue;
+        }
+
+        fl.getDocumentDOM().addItem({
+            x: courtmodeBackgroundsArray[sceneData[i][2]][1],
+            y: courtmodeBackgroundsArray[sceneData[i][2]][2]
+        }, fl.getDocumentDOM().library.items[fl.getDocumentDOM().library.findItemIndex("tmp_Dummysymbol")]);
+        fl.getDocumentDOM().swapElement(courtmodeBackgroundsArray[sceneData[i][2]][0]);
+        fl.getDocumentDOM().getTimeline().currentFrame += iFrameDuration;
+    }
+}
+
 /******************************************************************************
                                 MAIN EXECUTION
 ******************************************************************************/
@@ -913,32 +961,32 @@ if (viewMode == "courtMode") {
     stepStarted = new Date();
     doTextBoxes();
     stepEnded = new Date();
-    playSound("put textbox sound here");
+    playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING TEXT.wav");
     getTimeDiff(stepStarted, stepEnded);
-    writeLogInfo(getCurrentDate(), status00, "Textbox placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+    writeLogInfo(getCurrentDate(), status00, "[!] Textbox placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
 
     if (!skipRigs) {
         stepStarted = new Date();
-        addRigs();
-        sculpt();
+        addRigs(masterRigArray);
+        sculpt(masterRigArray);
         stepEnded = new Date();
-        playSound("put rig sound here");
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING ALL RIGS.wav");
         getTimeDiff(stepStarted, stepEnded);
-        writeLogInfo(getCurrentDate(), status00, "Rig placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
+        writeLogInfo(getCurrentDate(), status00, "[!] Rig placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     if (!skipBGs) {
         stepStarted = new Date();
         placeDesks();
         stepEnded = new Date();
-        playSound("put desk sound here");
+        playSound("/Notifications/ADDING ALL DESKS.wav");
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Desk placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
 
         stepStarted = new Date();
         placeBGs();
         stepEnded = new Date();
-        playSound("put background sound here");
+        playSound("/Notifications/ADDING ALL BACKGROUNDS.wav");
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Background placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
@@ -947,14 +995,14 @@ if (viewMode == "courtMode") {
         stepStarted = new Date();
         addAllVoiceLines(pathToLines);
         stepEnded = new Date();
-        playSound("put voice lines sound here");
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING ALL THE VOICE LINES.wav");
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Voice line placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
 
         stepStarted = new Date();
         //autoLipsyncDocument(pathToCFGs);
         stepEnded = new Date();
-        playSound("put lipsync sound here");
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/LIPSYNCING ALL CHARACTERS.wav");
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Lipsyncing succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
@@ -964,7 +1012,7 @@ if (viewMode == "courtMode") {
         //QUESTION: this is broken lol
         automaticBlinking();
         stepEnded = new Date();
-        playSound("put blinking sound here");
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/AUTOMATING BLINKING.wav");
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Automatic Blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
