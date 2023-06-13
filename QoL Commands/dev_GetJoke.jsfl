@@ -1,4 +1,4 @@
-﻿var cLib = fl.configURI + "cLib.jsfl";
+﻿var cLib = fl.configURI + "Commands/cLib.jsfl";
 
 function soundAlert(message) {
 	fl.runScript(cLib, "soundAlert", message);

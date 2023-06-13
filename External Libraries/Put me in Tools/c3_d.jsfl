@@ -23,8 +23,8 @@ var sceneArray = [0];
 var xSheetCache = {};
 
 //cLib API & User Settings
-var settings = FLfile.read(fl.configURI + "Settings.txt");
-var cLib = fl.configURI + "cLib.jsfl";
+var settings = FLfile.read(fl.configURI + "Commands/Settings.txt");
+var cLib = fl.configURI + "Commands/cLib.jsfl";
 
 for (var i = 0; i < scriptsToCheck.length; i++) {
 	var scriptToCheck = scriptsToCheck[i];

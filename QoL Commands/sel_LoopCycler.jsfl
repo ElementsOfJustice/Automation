@@ -4,7 +4,7 @@ Description:
 
 ******************************************************************************/
 
-var cLib = fl.configURI + "cLib.jsfl";
+var cLib = fl.configURI + "Commands/cLib.jsfl";
 
 function playSound(sfx) {
 	fl.runScript(cLib, "playSound", sfx);

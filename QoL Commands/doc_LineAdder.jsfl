@@ -19,7 +19,7 @@ function soundAlert(message) {
 
 var scriptPath = fl.scriptURI;
 var dirURL = scriptPath.substring(0, scriptPath.lastIndexOf("/"));
-var cLib = fl.configURI + "cLib.jsfl";
+var cLib = fl.configURI + "Commands/cLib.jsfl";
 
 var cfgFolderPath = fl.browseForFolderURL("Select the folder containing ALL voice lines for this scene.");
 
