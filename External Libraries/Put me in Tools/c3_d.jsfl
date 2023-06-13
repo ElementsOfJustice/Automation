@@ -380,6 +380,8 @@ function moveMouse() {
 	}
 }
 
+validate_cLib_installation();
+
 if (!(isSubstringPresent(settings, "noKeymapInjection"))) {
 	injectKeybinds((fl.configURI + "Commands" + "/" + "External Libraries" + "/" + "C3VEKeys.xml"), "Case 3 Video Editor Keybinds.xml");
 }
