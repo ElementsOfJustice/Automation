@@ -36,7 +36,9 @@ Variables: num
 Description: Rounds down to the next hundred.
 */
 function roundDownToHundred(num) {
-  return Math.floor(num/100) * 100;
+	var calculation = Math.floor(num / 100) * 100;
+	if (calculation == 0) {calculation = 1};
+	return calculation;
 }
 
 setup();
@@ -47,7 +49,7 @@ if (focus !== undefined) {
 	if (focus.elementType == "instance") {
 		var ffIndex = focus.firstFrame + 1
 		var itemIndex = fl.getDocumentDOM().library.findItemIndex(focus.libraryItem.name)
-		
+
 		if (fl.getDocumentDOM().library.items[itemIndex].timeline !== undefined) {
 			var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0]
 			var poseName = objTl.frames[ffIndex - 1].name;
@@ -71,7 +73,8 @@ if (focus !== undefined) {
 			var guiPanel = fl.xmlPanelFromString(xmlStr1 + totalSelStr + xmlStr2);
 
 			if (guiPanel.dismiss == "accept") {
-				delta = (roundDownToHundred(parseInt(guiPanel.poseList)) - roundDownToHundred(fl.getDocumentDOM().getTimeline().layers[layerNum].frames[startingFrame].elements[0].firstFrame));
+				//delta = (roundDownToHundred(parseInt(guiPanel.poseList)) - roundDownToHundred(fl.getDocumentDOM().getTimeline().layers[layerNum].frames[startingFrame].elements[0].firstFrame));
+				delta = (parseInt(guiPanel.poseList) - roundDownToHundred(fl.getDocumentDOM().getTimeline().layers[layerNum].frames[startingFrame].elements[0].firstFrame)) + 1;
 			}
 		}
 	}
@@ -90,3 +93,5 @@ for (var i = startingFrame; i < endFrame - 1; i++) {
 }
 
 fl.getDocumentDOM().getTimeline().setSelectedFrames(frameSelection);
+
+alert("delta " + delta);

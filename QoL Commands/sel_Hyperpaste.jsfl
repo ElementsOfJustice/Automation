@@ -27,6 +27,16 @@ yield the fastest load time. A selection constantly switching between
 multiple symbols will be the slowest.
 ******************************************************************************/
 
+var cLib = fl.configURI + "Commands/cLib.jsfl";
+
+function soundAlert() {
+	fl.runScript(cLib, "soundAlert");
+}
+
+function soundError() {
+	fl.runScript(cLib, "soundError");
+}
+
 NUM_PARAMS = 12;
 fl.showIdleMessage(false);
 if (!fl.getDocumentDOM().library.itemExists("tmp_Dummysymbol"))
@@ -47,6 +57,7 @@ function parseString(str) {
 	try {
 	var arrSplit = str.split(',¤,');
 	} catch (error) {
+		soundError()
 		alert("Hypercopy and hyperpaste do not work cross-document.")
 	};
 
@@ -248,3 +259,5 @@ for (var l = 0; l < fullData.length; l++) {
 		}
 	}
 }
+
+soundAlert()
