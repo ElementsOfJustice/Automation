@@ -291,6 +291,10 @@ function injectKeybinds(inputFile, writeFile) {
 
 	URI = keymapPath + "/" + writeFile;
 
+	if (!FLfile.exists(URI)) {
+		FLfile.write(URI, "", "append")
+	}
+
 	if (FLfile.write(URI, keyData)) {
 		//Successful
 	} else {
