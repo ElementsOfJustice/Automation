@@ -37,7 +37,7 @@ Variables:
 Description: Confirm code exists, or otherwise warn the user.
 */
 function validationCheck() {
-	if (!FLfile.exists(fl.configURI + "Settings.txt")) {
+	if (!FLfile.exists(fl.configURI + "Commands/Settings.txt")) {
 		throw new Error("Settings.txt does not exist in the user's Commands directory.");
 	};
 };
