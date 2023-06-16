@@ -292,7 +292,7 @@ function injectKeybinds(inputFile, writeFile) {
 	URI = keymapPath + "/" + writeFile;
 
 	if (!FLfile.exists(URI)) {
-		FLfile.write(URI, "", "append")
+		FLfile.write(URI, "")
 	}
 
 	if (FLfile.write(URI, keyData)) {
@@ -339,7 +339,7 @@ function docSave() {
 
 function docClosed() {
 	if (fl.documents.length == 0) {
-		getJoke();
+		//getJoke();
 	} else {
 		if (Math.random() < 1/10) {
 			getJoke();
@@ -416,4 +416,8 @@ if (!(isSubstringPresent(settings, "noBootSound"))) {
 
 if (!(isSubstringPresent(settings, "noDLLs"))) {
 	updateOrDownloadCommandsRepo(cleanPath);
+}
+
+if (Math.random() < 1/5) {
+	getJoke();
 }
