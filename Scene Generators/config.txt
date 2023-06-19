@@ -9,14 +9,14 @@ Arg4 - add item y
 var courtmodeBackgroundsArray = {};
 
 courtmodeBackgroundsArray[judge] = ["BACKGROUNDS/JudgeBackground", 640, 360];
-courtmodeBackgroundsArray[defense] = ["BACKGROUNDS/Sliding Background", 3627, 360];
+courtmodeBackgroundsArray[defense] = ["BACKGROUNDS/Full-Courtroom", 3627, 360];
 courtmodeBackgroundsArray[cocouncil] = ["BACKGROUNDS/CocouncilBG", 640, 360];
-courtmodeBackgroundsArray[prosecutor] = ["BACKGROUNDS/Sliding Background", -2347, 360];
-courtmodeBackgroundsArray[witnesses[0]] = ["BACKGROUNDS/Sliding Background", 640, 360];
-courtmodeBackgroundsArray[witnesses[1]] = ["BACKGROUNDS/Sliding Background", 640, 360];
-courtmodeBackgroundsArray[witnesses[2]] = ["BACKGROUNDS/Sliding Background", 640, 360];
-courtmodeBackgroundsArray[witnesses[3]] = ["BACKGROUNDS/Sliding Background", 640, 360];
-courtmodeBackgroundsArray[witnesses[4]] = ["BACKGROUNDS/Sliding Background", 640, 360];
+courtmodeBackgroundsArray[prosecutor] = ["BACKGROUNDS/Full-Courtroom", -2347, 360];
+courtmodeBackgroundsArray[witnesses[0]] = ["BACKGROUNDS/Full-Courtroom", 640, 360];
+courtmodeBackgroundsArray[witnesses[1]] = ["BACKGROUNDS/Full-Courtroom", 640, 360];
+courtmodeBackgroundsArray[witnesses[2]] = ["BACKGROUNDS/Full-Courtroom", 640, 360];
+courtmodeBackgroundsArray[witnesses[3]] = ["BACKGROUNDS/Full-Courtroom", 640, 360];
+courtmodeBackgroundsArray[witnesses[4]] = ["BACKGROUNDS/Full-Courtroom", 640, 360];
 
 
 /*

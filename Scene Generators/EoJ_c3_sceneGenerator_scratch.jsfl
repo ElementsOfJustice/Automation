@@ -80,11 +80,11 @@ logSetup();
                                 C LIBRARY WRAPPERS
 ******************************************************************************/
 
-var cLib = fl.configURI + "cLib.jsfl";
+var cLib = fl.configURI + "Commands/cLib.jsfl";
 
 function validationCheck() {
     if (!FLfile.exists(cLib)) {
-        throw new Error("cLib.jsfl does not exist in the user's configuration directory.");
+        throw new Error("cLib.jsfl does not exist in the user's Commands directory.");
     }
 }
 
@@ -240,7 +240,7 @@ if (guiPanel.dismiss == "accept") {
        var skipBlinks = guiPanel.panel_skip05 == "true"; */
 
     var skipRigs = false;
-    var skipBGs = true;
+    var skipBGs = false;
     var skipTypewriter = true;
     var skipLines = true;
     var skipFades = false;
@@ -291,12 +291,11 @@ if (guiPanel.dismiss == "accept") {
 
 function switchActive(layerVar) {
     var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(layerVar);
-    if (layerIndex == null) {
+    if (layerIndex == undefined) {
         fl.getDocumentDOM().getTimeline().addNewLayer(layerVar);
         layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(layerVar);
     }
-    fl.getDocumentDOM().getTimeline().currentLayer = layerIndex * 1;
-    propertiesLayer = fl.getDocumentDOM().getTimeline().layers[layerIndex];
+    fl.getDocumentDOM().getTimeline().currentLayer = layerIndex[0];
 }
 
 function goTo(inputString) {
@@ -547,14 +546,14 @@ function doTextBoxes() {
         switchActive("TEXT");
         var curLayer = fl.getDocumentDOM().getTimeline().currentLayer;
         var isKeyframe = curFrame == fl.getDocumentDOM().getTimeline().layers[curLayer].frames[curFrame].startFrame;
-
+        
         if (!isKeyframe) {
             fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(curFrame);
         }
-
+        
         fl.getDocumentDOM().getTimeline().currentFrame = curFrame;
         fl.getDocumentDOM().addNewText(dialogueBounding);
-
+        
         fl.getDocumentDOM().getTimeline().layers[curLayer].frames[curFrame].elements[0].setTextString(trim(dialogue));
         fl.getDocumentDOM().getTimeline().layers[curLayer].frames[curFrame].elements[0].setTextAttr('alignment', 'left');
         fl.getDocumentDOM().getTimeline().layers[curLayer].frames[curFrame].elements[0].textType = 'dynamic';
@@ -566,7 +565,7 @@ function doTextBoxes() {
         fl.getDocumentDOM().getTimeline().layers[curLayer].frames[curFrame].elements[0].setTextAttr("fillColor", 0xffffff);
         fl.getDocumentDOM().getTimeline().layers[curLayer].frames[curFrame].elements[0].setTextAttr("letterSpacing", 2);
         fl.getDocumentDOM().getTimeline().layers[curLayer].frames[curFrame].elements[0].setTextAttr("lineSpacing", 1);
-
+        
         if (dialogue.indexOf('(') > -1) {
             fl.getDocumentDOM().getTimeline().layers[curLayer].frames[curFrame].elements[0].setTextAttr("face", "Suburga 2 Semi-condensed Regular");
             fl.getDocumentDOM().getTimeline().layers[curLayer].frames[curFrame].elements[0].setTextAttr("size", 84);
@@ -578,7 +577,7 @@ function doTextBoxes() {
         if (speakerName == "Widget") {
             fl.getDocumentDOM().getTimeline().layers[curLayer].frames[curFrame].elements[0].setTextAttr("fillColor", 0xD7D700);
         }
-
+        switchActive("TEXT"); // believe it or not, something up there causes the selected layer to change
         fl.getDocumentDOM().addNewText(speakerBounding);
         fl.getDocumentDOM().getTimeline().layers[curLayer].frames[curFrame].elements[1].setTextString(speakerName);
         fl.getDocumentDOM().getTimeline().layers[curLayer].frames[curFrame].elements[1].setTextAttr("alignment", "left");
@@ -900,11 +899,16 @@ function gammaBlink(mean) {
 
 function placeDesks() {
     fl.getDocumentDOM().getTimeline().currentFrame = 0;
-    switchActive("DESKS");
+    
     for (var i = 0; i < sceneData.length; i++) {
+        if(i % chunkSize == 0) {
+            fl.getDocumentDOM().editScene(Math.floor(i / chunkSize));
+            fl.getDocumentDOM().getTimeline().currentFrame = 0;
+            switchActive("DESKS");
+        }    
         // select current frame
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-        if (i != 0) {
+        if (fl.getDocumentDOM().getTimeline().currentFrame != 0) {
             fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
         }
         if (masterDeskArray[sceneData[i][2]] == undefined) {
@@ -922,13 +926,18 @@ function placeDesks() {
 
 function placeBGs() {
     fl.getDocumentDOM().getTimeline().currentFrame = 0;
-    switchActive("BACKGROUNDS");
     for (var i = 0; i < sceneData.length; i++) {
+        if(i % chunkSize == 0) {
+            fl.getDocumentDOM().editScene(Math.floor(i / chunkSize));
+            fl.getDocumentDOM().getTimeline().currentFrame = 0;
+            switchActive("BACKGROUNDS");
+        } 
         // select current frame
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
-        if (i != 0) {
+        if (fl.getDocumentDOM().getTimeline().currentFrame != 0) {
             fl.getDocumentDOM().getTimeline().insertBlankKeyframe();
-        } if (courtmodeBackgroundsArray[sceneData[i][2]] == undefined) {
+        } 
+        if (courtmodeBackgroundsArray[sceneData[i][2]] == undefined) {
             fl.getDocumentDOM().addItem({
                 x: 640,
                 y: 360
@@ -959,34 +968,34 @@ if (viewMode == "courtMode") {
     inputValidation();
     generationStarted = new Date();
     stepStarted = new Date();
+    playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING TEXT.wav");
     doTextBoxes();
     stepEnded = new Date();
-    playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING TEXT.wav");
     getTimeDiff(stepStarted, stepEnded);
     writeLogInfo(getCurrentDate(), status00, "[!] Textbox placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
 
     if (!skipRigs) {
         stepStarted = new Date();
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING ALL RIGS.wav");
         addRigs(masterRigArray);
         sculpt(masterRigArray);
         stepEnded = new Date();
-        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING ALL RIGS.wav");
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Rig placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     if (!skipBGs) {
         stepStarted = new Date();
+        playSound("/Notifications/ADDING ALL DESKS.wav");
         placeDesks();
         stepEnded = new Date();
-        playSound("/Notifications/ADDING ALL DESKS.wav");
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Desk placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
 
         stepStarted = new Date();
+        playSound("/Notifications/ADDING ALL BACKGROUNDS.wav");
         placeBGs();
         stepEnded = new Date();
-        playSound("/Notifications/ADDING ALL BACKGROUNDS.wav");
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Background placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
