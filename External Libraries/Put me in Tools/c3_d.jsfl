@@ -38,7 +38,7 @@ for (var i = 0; i < scriptsToCheck.length; i++) {
 function validate_cLib_installation() {
 
 	if (!FLfile.exists(settings)) {
-		FLfile.write(settings, "");
+		FLfile.write(settings, "Place your settings here:");
 	}
 
 	if (!FLfile.exists(cLib)) {
@@ -292,13 +292,13 @@ function injectKeybinds(inputFile, writeFile) {
 	URI = keymapPath + "/" + writeFile;
 
 	if (!FLfile.exists(URI)) {
-		FLfile.write(URI, "")
+		FLfile.write(URI, " ")
 	}
 
 	if (FLfile.write(URI, keyData)) {
 		//Successful
 	} else {
-		alert("Keymap injection failed. \nIs AppData/Roaming/Adobe/Animate/2022/Shortcuts a valid path?");
+		alert("Keymap injection failed. \nIs " + keymapPath + " a valid path?");
 	}
 }
 
