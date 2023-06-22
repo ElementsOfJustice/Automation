@@ -82,9 +82,13 @@ var imagePath = fl.browseForFileURL("select");
 doc.importFile(imagePath);
 
 // prompt the user and store input
-var evidenceName = prompt("Enter name of evidence");
 // create a new symbol with a type, name, and registration point
 doc.convertToSymbol("graphic", evidenceName, "center");
+var imageName = imagePath.substring(imagePath.lastIndexOf('/') + 1);
+var evidenceName = prompt("Enter name of evidence", imageName.substring(0, imageName.indexOf('.')));
+fl.getDocumentDOM().library.newFolder("EVIDENCE");
+fl.getDocumentDOM().library.moveToFolder("EVIDENCE", evidenceName);
+fl.getDocumentDOM().library.moveToFolder("EVIDENCE", imageName);
 //TODO: move to its own folder in the library
 // scale width and height of the evidence image
 an.getDocumentDOM().scaleSelection(trueWidth / timeline.layers[layer].frames[curFrame].elements[0].width, 1);

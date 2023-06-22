@@ -56,15 +56,18 @@ var frameArray = fl.getDocumentDOM().getTimeline().layers[layer].frames;
 alert("Select the evidence image.");
 // Open the file explorer, prompting the user to select an image
 var imagePath = fl.browseForFileURL("select");
+var imageName = imagePath.substring(imagePath.lastIndexOf('/') + 1);
 doc.importFile(imagePath);
 
 // prompt the user and store input
-var evidenceName = prompt("Enter name of evidence");
+var evidenceName = prompt("Enter name of evidence", imageName.substring(0, imageName.indexOf('.')));
 // Store boolean value based on user interaction
 var left = confirm("Click \"OK\" for a left swoosh, click \"Cancel\" for a right swoosh");
 // create a new symbol with a type, name, and registration point
 doc.convertToSymbol("graphic", evidenceName, "center");
-
+fl.getDocumentDOM().library.newFolder("EVIDENCE");
+fl.getDocumentDOM().library.moveToFolder("EVIDENCE", evidenceName);
+fl.getDocumentDOM().library.moveToFolder("EVIDENCE", imageName);
 // store the current frame's matrix
 var mat = doc.getTimeline().layers[layer].frames[doc.getTimeline().currentFrame].elements[0].matrix;
 // change matrix values

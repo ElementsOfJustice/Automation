@@ -93,5 +93,3 @@ for (var i = startingFrame; i < endFrame - 1; i++) {
 }
 
 fl.getDocumentDOM().getTimeline().setSelectedFrames(frameSelection);
-
-alert("delta " + delta);
