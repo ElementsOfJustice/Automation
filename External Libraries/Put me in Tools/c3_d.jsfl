@@ -298,7 +298,7 @@ function injectKeybinds(inputFile, writeFile) {
 	if (FLfile.write(URI, keyData)) {
 		//Successful
 	} else {
-		alert("Keymap injection failed. \nIs " + keymapPath + " a valid path?");
+		//alert("Keymap injection failed. \nIs " + keymapPath + " a valid path?");
 	}
 }
 
