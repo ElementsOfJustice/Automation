@@ -55,7 +55,7 @@ guideAll(originalLayers)
 
 //Export all valid layers above "JAM_MASK" as "EffectOnly.swf"
 for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
-	if (fl.getDocumentDOM().getTimeline().layers[i].name == "JAM_MASK") {
+	if (fl.getDocumentDOM().getTimeline().layers[i].name == "TEXTBOX") {
 		for (var j = 0; j < fl.getDocumentDOM().getTimeline().layers.length; j++) {
 			if ((j < i) && (originalLayers.indexOf(j) !== -1)) {
 				fl.getDocumentDOM().getTimeline().layers[j].layerType = "normal";
@@ -67,6 +67,16 @@ for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
 exportSWF("EffectsOnly");
 guideAll(originalLayers)
 
+//Export "TEXTBOX" as "TextboxOnly.swf"
+for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
+	if (fl.getDocumentDOM().getTimeline().layers[i].name == "TEXTBOX") {
+		fl.getDocumentDOM().getTimeline().layers[i].layerType = "normal";
+	}
+}
+
+exportSWF("TextboxOnly");
+guideAll(originalLayers)
+
 //Export "JAM_MASK" as "MaskOnly.swf"
 for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
 	if (fl.getDocumentDOM().getTimeline().layers[i].name == "JAM_MASK") {
@@ -74,7 +84,7 @@ for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
 	}
 }
 
-exportSWF("MaskOnly");
+exportSWF("JamMaskOnly");
 guideAll(originalLayers)
 
 //Export all valid layers beneath "JAM_MASK" who are not children of the AUDIO folder or "BACKGROUNDS" to "CharactersOnly"
@@ -82,6 +92,8 @@ for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
 	if (fl.getDocumentDOM().getTimeline().layers[i].name == "JAM_MASK") {
 		for (var j = 0; j < fl.getDocumentDOM().getTimeline().layers.length; j++) {
 			if ((j > i) && (originalLayers.indexOf(j) !== -1)) {
+				if (fl.getDocumentDOM().getTimeline().layers[j].parentLayer == null) {continue};
+				
 				if ((fl.getDocumentDOM().getTimeline().layers[j].parentLayer.name != "AUDIO") && (fl.getDocumentDOM().getTimeline().layers[j].name != "BACKGROUNDS")) {
 					fl.getDocumentDOM().getTimeline().layers[j].layerType = "normal";
 				}

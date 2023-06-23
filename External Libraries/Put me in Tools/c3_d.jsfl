@@ -405,16 +405,13 @@ while (FLfile.exists(path + "_OLD" + index)) {
 var cleanPath = FLfile.uriToPlatformPath(path);
 cleanPath = cleanPath.replace(/\\/g, "/");
 
-if (!FLfile.exists(path + "/.git")) {
-	renameFolder(cleanPath, cleanPath + "_OLD" + index);
-	FLfile.createFolder(path);
-}
-
 if (!(isSubstringPresent(settings, "noBootSound"))) {
 	playSound(FLfile.uriToPlatformPath(fl.configURI) + "Commands\\Notifications\\Loadup.wav");
 }
 
 if (!(isSubstringPresent(settings, "noDLLs"))) {
+	renameFolder(cleanPath, cleanPath + "_OLD" + index);
+	FLfile.createFolder(path);
 	updateOrDownloadCommandsRepo(cleanPath);
 }
 
