@@ -35,7 +35,7 @@ function selectOrMakeKeyframe(layer, frame) {
     }
 }
 
-if (an.getDocumentDOM().library.getSelectedItems.length > 0) {
+if (an.getDocumentDOM().library.getSelectedItems().length > 0) {
     selectOrMakeKeyframe(fl.getDocumentDOM().getTimeline().getSelectedLayers(), fl.getDocumentDOM().getTimeline().currentFrame);
     an.getDocumentDOM().library.addItemToDocument({ x: 0, y: 0 });
     fl.getDocumentDOM().setElementProperty('x', 0);

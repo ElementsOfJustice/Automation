@@ -142,7 +142,7 @@ if (guiPanel.dismiss == "accept") {
 	if (doShake) {
 
 		var range = 10;
-		var intensity = 10;
+		var intensity = 20;
 		var taperOff = true;
 		var shakeOffsets = [];
 

@@ -123,7 +123,7 @@ if (focus !== undefined) {
 		var offsetResult = undefined, lengthResult = undefined;
 		for(var i = 0; i < mouthShapeKeys.length; i++) {
 			if(selFirstFrameOffset == OFFSET_MAP[MOUTH_SHAPE_MAP[mouthShapeKeys[i]]] - 1) {
-				offsetResult = roundDownToHundred(fl.getDocumentDOM().getElementProperty("firstFrame")) + OFFSET_MAP[MOUTH_SHAPE_MAP[mouthShapeKeys[(i + 1) % mouthShapeKeys.length]]];
+				offsetResult = roundDownToHundred(fl.getDocumentDOM().getElementProperty("firstFrame") + 1) + OFFSET_MAP[MOUTH_SHAPE_MAP[mouthShapeKeys[(i + 1) % mouthShapeKeys.length]]];
 				lengthResult = LENGTH_MAP[MOUTH_SHAPE_MAP[mouthShapeKeys[(i + 1) % mouthShapeKeys.length]]];
 			}
 		}
@@ -131,7 +131,6 @@ if (focus !== undefined) {
 			offsetResult = roundDownToHundred(fl.getDocumentDOM().getElementProperty("firstFrame")) + OFFSET_MAP[MOUTH_SHAPE_MAP[mouthShapeKeys[0]]];
 			lengthResult = LENGTH_MAP[MOUTH_SHAPE_MAP[mouthShapeKeys[0]]];
 		}
-
 		fl.getDocumentDOM().setElementProperty("firstFrame", offsetResult - 1);
 		if(focus.lastFrame !== undefined) {
 			fl.getDocumentDOM().setElementProperty("lastFrame", fl.getDocumentDOM().getElementProperty("firstFrame") + lengthResult - 1);

@@ -54,11 +54,15 @@ setup();
 alert("Select the evidence info image.");
 // Open the file explorer, prompting the user to select an image
 var imagePath = fl.browseForFileURL("select");
+var imageName = imagePath.substring(imagePath.lastIndexOf('/') + 1);
 doc.importFile(imagePath);
 // prompt the user and store input
-var evidenceName = prompt("Enter name of evidence");
+var evidenceName = prompt("Enter name of evidence", imageName.substring(0, imageName.indexOf('.')));
 // do initial tween 
 doc.convertToSymbol("graphic", evidenceName, "center");
+fl.getDocumentDOM().library.newFolder("EVIDENCE");
+fl.getDocumentDOM().library.moveToFolder("EVIDENCE", evidenceName);
+fl.getDocumentDOM().library.moveToFolder("EVIDENCE", imageName);
 doc.setElementProperty("height", trueHeight);
 doc.setElementProperty("width", trueWidth);
 an.getDocumentDOM().align('vertical center', true);
@@ -106,8 +110,11 @@ alert("Select the updated evidence info image.");
 imagePath = fl.browseForFileURL("select");
 doc.importFile(imagePath);
 // prompt the user and store input
-evidenceName = prompt("Enter name of updated evidence");
+evidenceName = prompt("Enter name of updated evidence", imageName.substring(0, imageName.indexOf('.')));
 doc.convertToSymbol("graphic", evidenceName, "center");
+var imageName = imagePath.substring(imagePath.lastIndexOf('/') + 1);
+fl.getDocumentDOM().library.moveToFolder("EVIDENCE", evidenceName);
+fl.getDocumentDOM().library.moveToFolder("EVIDENCE", imageName);
 // select current frame
 doc.getTimeline().setSelectedFrames(doc.getTimeline().currentFrame, doc.getTimeline().currentFrame+1); 
 doc.setElementProperty("height", 543 * SCALE);
