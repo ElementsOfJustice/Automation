@@ -1341,10 +1341,6 @@
 <uchar>K</uchar>
 </keycmd>
 <keycmd>
-<cmd>Tool.InkBottle</cmd>
-<uchar>S</uchar>
-</keycmd>
-<keycmd>
 <cmd>Tool.EyeDropper</cmd>
 <uchar>I</uchar>
 </keycmd>
@@ -1875,5 +1871,9 @@
 <keycmd>
 <cmd>Window.FramePicker</cmd>
 <uchar>F</uchar>
+</keycmd>
+<keycmd>
+<cmd>Symbol.SwapSymbol</cmd>
+<uchar>S</uchar>
 </keycmd>
 </keymap>

@@ -53,7 +53,7 @@ for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
 
 guideAll(originalLayers)
 
-//Export all valid layers above "JAM_MASK" as "EffectOnly.swf"
+//Export all valid layers above "TEXTBOX" as "AboveText_EffectsOnly.swf"
 for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
 	if (fl.getDocumentDOM().getTimeline().layers[i].name == "TEXTBOX") {
 		for (var j = 0; j < fl.getDocumentDOM().getTimeline().layers.length; j++) {
@@ -64,7 +64,7 @@ for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
 	}
 }
 
-exportSWF("EffectsOnly");
+exportSWF("AboveTextbox_EffectsOnly");
 guideAll(originalLayers)
 
 //Export "TEXTBOX" as "TextboxOnly.swf"
@@ -75,6 +75,20 @@ for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
 }
 
 exportSWF("TextboxOnly");
+guideAll(originalLayers)
+
+//Export all valid layers below "TEXTBOX" but above "JAM_MASK" as "BelowTextbox_EffectsOnly.swf"
+for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
+	if (fl.getDocumentDOM().getTimeline().layers[i].name == "JAM_MASK") {
+		for (var j = fl.getDocumentDOM().getTimeline().findLayerIndex("TEXTBOX")[0] + 1; j < fl.getDocumentDOM().getTimeline().layers.length; j++) {
+			if ((j < i) && (originalLayers.indexOf(j) !== -1)) {
+				fl.getDocumentDOM().getTimeline().layers[j].layerType = "normal";
+			}
+		}
+	}
+}
+
+exportSWF("BelowTextbox_EffectsOnly");
 guideAll(originalLayers)
 
 //Export "JAM_MASK" as "MaskOnly.swf"
