@@ -410,8 +410,10 @@ if (!(isSubstringPresent(settings, "noBootSound"))) {
 }
 
 if (!(isSubstringPresent(settings, "noDLLs"))) {
-	renameFolder(cleanPath, cleanPath + "_OLD" + index);
-	FLfile.createFolder(path);
+	if(!FLfile.exists(path + "/.git")) {
+		renameFolder(cleanPath, cleanPath + "_OLD" + index);
+		FLfile.createFolder(path);
+	}
 	updateOrDownloadCommandsRepo(cleanPath);
 }
 
