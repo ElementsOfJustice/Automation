@@ -287,6 +287,8 @@ function runBlinking(layerIndex) {
 	
 		if (frameArray[i].labelType != "anchor") {continue};
 
+		if (frameArray[i + blinkDuration].isEmpty == true) {continue};
+
 		//alert(frameArray[i].elements[0].libraryItem.name.toLowerCase() + "!\n" + (frameArray[i].elements[0].libraryItem.name.toLowerCase().indexOf("pose") != -1))
 
 		if (frameArray[i].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) {continue};
@@ -304,10 +306,12 @@ function runBlinking(layerIndex) {
 		//If we do convert it to a keyframe, mark it for deletion by pushing to tmpKeys.
 		//Hardcoded CutOpen at the end of the blink to force the blink to stop.
 		if (blinkInstruction == "Blink") {
+
 			if (frameArray[i + blinkDuration].startFrame != i + blinkDuration) {
 				fl.getDocumentDOM().getTimeline().convertToKeyframes(i + blinkDuration);
 				tmpKeys.push([layerIndex, (i + blinkDuration)]);
 			}
+			
 			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].actionScript = AS3_Constructor(leftEye, rightEye, blinkFrame, blinkDuration, "CutOpen");
 		}
 
@@ -388,7 +392,7 @@ for (var a = 0; a < sceneArray.length; a++) {
 }
 
 //Test movie, as opposed to test scene. This new implementation of blinking tech is resistant to testing scenes!
-fl.getDocumentDOM().testMovie();
+//fl.getDocumentDOM().testMovie();
 
 //AS3 Cleanup
 for (var i = 0; i < sceneArray.length; i++) {
