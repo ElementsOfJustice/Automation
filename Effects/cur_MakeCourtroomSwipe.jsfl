@@ -407,7 +407,7 @@ if (!halfCourt) {
 // if we've got ourselves a half courtroom swipe
 if (halfCourt) {
     makeWitnessStandToDeskSwipe(sourceCharacterLayers, destinationCharacterLayers);
-} else if(witnessCharacterLayersNames != "") {
+} else if(witnessCharacterLayerNames != "") {
     makeCrossCourtSwipe(sourceCharacterLayers, destinationCharacterLayers, witnessCharacterLayers);
 } else {
     makeCrossCourtSwipeEmptyStand(sourceCharacterLayers, destinationCharacterLayers);
