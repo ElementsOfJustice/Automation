@@ -12,6 +12,8 @@ Variables:
     k    [The higher it is, the smaller the variance]
 Description: 
 */
+
+BLINK_DURATION = 6;
 function gammaVariable(mean, k) {
     var theta = mean / k;
     var sum = 0;
@@ -49,9 +51,12 @@ function autoBlink(mean) {
                 continue;
             }
             var diff = Math.min(remainingFramesInKeyframe, stare);
+
             i += diff;
             stare -= diff;
         }
+        var remainingFramesInKeyframe = curLayer.frames[i].duration - (i - curLayer.frames[i].startFrame);
+        if(remainingFramesInKeyframe < BLINK_DURATION || curLayer.frames[i].isEmpty) continue;
         fl.getDocumentDOM().getTimeline().convertToKeyframes(i);
         fl.getDocumentDOM().getTimeline().layers[selLayerIndex].frames[i].name = 'Blink';
         fl.getDocumentDOM().getTimeline().layers[selLayerIndex].frames[i].labelType = 'anchor';
