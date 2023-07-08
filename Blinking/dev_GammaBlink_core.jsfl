@@ -55,8 +55,14 @@ function autoBlink(mean) {
             i += diff;
             stare -= diff;
         }
-        var remainingFramesInKeyframe = curLayer.frames[i].duration - (i - curLayer.frames[i].startFrame);
-        if(remainingFramesInKeyframe < BLINK_DURATION || curLayer.frames[i].isEmpty) continue;
+        var blinkPossible = true;
+        for(var iter = 0; iter <= BLINK_DURATION; iter++) {
+            if(curLayer.frames[i + iter].isEmpty) {
+                blinkPossible = false;
+                break;
+            }
+        }
+        if(!blinkPossible) continue;
         fl.getDocumentDOM().getTimeline().convertToKeyframes(i);
         fl.getDocumentDOM().getTimeline().layers[selLayerIndex].frames[i].name = 'Blink';
         fl.getDocumentDOM().getTimeline().layers[selLayerIndex].frames[i].labelType = 'anchor';
