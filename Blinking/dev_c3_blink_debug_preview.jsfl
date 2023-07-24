@@ -347,32 +347,32 @@ function runBlinking(layerIndex) {
 function syncMane(layerIndex) {
 	// TODO: search for symbol changes, and then add Luna_mane.gotoAndPlay and Luna_tail.gotoAndPlay
 	var previousSymbol = undefined;
-	for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers[layerIndex].frameCount; i += fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].duration) {
-		if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].isEmpty) {
+	for (var iter = 0; iter < fl.getDocumentDOM().getTimeline().layers[layerIndex].frameCount; iter += fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].duration) {
+		if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].isEmpty) {
 			previousSymbol = undefined;
 			continue;
 		}
 		if (previousSymbol === undefined) {
-			previousSymbol = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].libraryItem.name;
+			previousSymbol = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].elements[0].libraryItem.name;
 			continue;
 		}
-		if (previousSymbol != fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].libraryItem.name) { // symbol is... le changed!
-			fl.getDocumentDOM().getTimeline().convertToKeyframes(i - 1); // keyframe previous frame
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i - 1].actionScript += "\nthis.maneFrame = Luna_mane.currentFrame;\n this.tailFrame = Luna_tail.currentFrame;";
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].actionScript += "\nthis.Luna_mane.gotoAndPlay((this.maneFrame + 1) % this.Luna_mane.totalFrames);\nthis.Luna_tail.gotoAndPlay((this.tailFrame + 1) % this.Luna_tail.totalFrames);";
+		if (previousSymbol != fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].elements[0].libraryItem.name) { // symbol is... le changed!
+			fl.getDocumentDOM().getTimeline().convertToKeyframes(iter - 1); // keyframe previous frame
+			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter - 1].actionScript += "\nthis.maneFrame = Luna_mane.currentFrame;\n this.tailFrame = Luna_tail.currentFrame;";
+			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].actionScript += "\nthis.Luna_mane.gotoAndPlay((this.maneFrame + 1) % this.Luna_mane.totalFrames);\nthis.Luna_tail.gotoAndPlay((this.tailFrame + 1) % this.Luna_tail.totalFrames);";
 		}
-		previousSymbol = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].libraryItem.name;
+		previousSymbol = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].elements[0].libraryItem.name;
 	}
 }
 
 //For each entry in sceneArray, runBlinking on each child layer of VECTOR_CHARACTERS
-for (var i = 0; i < sceneArray.length; i++) {
-	fl.trace("Write: " + i)
-	fl.trace(sceneArray[i][0])
-	if (sceneArray[i][0] == "Scene") {
+for (var k = 0; k < sceneArray.length; k++) {
+	fl.trace("Write: " + k);
+	fl.trace(sceneArray[k][0])
+	if (sceneArray[k][0] == "Scene") {
 		//Consider as a scene
-		fl.getDocumentDOM().currentTimeline = sceneArray[i][1];
-		var currentTimeline = fl.getDocumentDOM().timelines[sceneArray[i][1]];
+		fl.getDocumentDOM().currentTimeline = sceneArray[k][1];
+		var currentTimeline = fl.getDocumentDOM().timelines[sceneArray[k][1]];
 
 		for (var j = 0; j < currentTimeline.layerCount; j++) {
 			var parentLayerIsNull = currentTimeline.layers[j].parentLayer === null;
@@ -389,10 +389,10 @@ for (var i = 0; i < sceneArray.length; i++) {
 				syncMane(j);
 			}
 		}
-	} else if (sceneArray[i][0] == "Symbol") {
+	} else if (sceneArray[k][0] == "Symbol") {
 		//Consider as a flashback
 		//fl.getDocumentDOM().library.editItem(libItems[sceneArray[i][1]].name);
-		var currentTimeline = libItems[sceneArray[i][1]].timeline
+		var currentTimeline = libItems[sceneArray[k][1]].timeline
 
 		for (var j = 0; j < currentTimeline.layerCount; j++) {
 			var parentLayerIsNull = currentTimeline.layers[j].parentLayer === null;
@@ -456,7 +456,7 @@ for (var i = 0; i < sceneArray.length; i++) {
 			//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Run your code.
 			var frameArray = currentTimeline.layers[j].frames;
 
-			for (k = 0; k < frameArray.length; k += frameArray[k].duration - (k - frameArray[k].startFrame)) {
+			for (var k = 0; k < frameArray.length; k += frameArray[k].duration - (k - frameArray[k].startFrame)) {
 				frameArray[k].actionScript = ""
 			}
 		}
