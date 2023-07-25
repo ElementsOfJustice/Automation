@@ -228,27 +228,21 @@ Description: Automatically apply cutOpen frame anchors to detected
 pose changes.
 */
 function AS3_Constructor(leftEye, rightEye, blinkFrame, blinkDuration, instruction) {
-
 	if (instruction == "Blink") {
 		return leftEye + ".gotoAndPlay(" + blinkFrame + ");\n" + rightEye + ".gotoAndPlay(" + blinkFrame + ");";
 	}
-
 	if (instruction == "AnimClose") {
 		return leftEye + ".gotoAndPlay(" + blinkFrame + ");\n" + rightEye + ".gotoAndPlay(" + blinkFrame + ");";
 	}
-
 	if (instruction == "AnimOpen") {
 		return leftEye + ".gotoAndPlay(" + (blinkFrame + (blinkDuration / 2)) + ");\n" + rightEye + ".gotoAndPlay(" + (blinkFrame + (blinkDuration / 2)) + ");";
 	}
-
 	if (instruction == "CutOpen") {
 		return leftEye + ".gotoAndStop(" + blinkFrame + ");\n" + rightEye + ".gotoAndStop(" + blinkFrame + ");";
 	}
-
 	if (instruction == "CutClosed") {
 		return leftEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");\n" + rightEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");";
 	}
-
 }
 
 /*
@@ -381,7 +375,6 @@ for (var k = 0; k < sceneArray.length; k++) {
 			var layerTypeIsNotNormal = currentTimeline.layers[j].layerType !== "normal";
 			if (layerIsNotVectorCharacters || layerTypeIsNotNormal) { continue }
 
-			//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Run your code.
 			autoEyeSet(j);
 			runBlinking(j);
 
@@ -391,7 +384,7 @@ for (var k = 0; k < sceneArray.length; k++) {
 		}
 	} else if (sceneArray[k][0] == "Symbol") {
 		//Consider as a flashback
-		//fl.getDocumentDOM().library.editItem(libItems[sceneArray[i][1]].name);
+		fl.getDocumentDOM().library.editItem(libItems[sceneArray[k][1]].name);
 		var currentTimeline = libItems[sceneArray[k][1]].timeline
 
 		for (var j = 0; j < currentTimeline.layerCount; j++) {
@@ -401,7 +394,6 @@ for (var k = 0; k < sceneArray.length; k++) {
 			var layerTypeIsNotNormal = currentTimeline.layers[j].layerType !== "normal";
 			if (layerIsNotVectorCharacters || layerTypeIsNotNormal) { continue }
 
-			//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Run your code.
 			autoEyeSet(j);
 			runBlinking(j);
 
@@ -409,14 +401,11 @@ for (var k = 0; k < sceneArray.length; k++) {
 				syncMane(j);
 			}
 		}
-
-		//fl.getDocumentDOM().exitEditMode();
-
 	}
 }
 
 //Test movie, as opposed to test scene. This new implementation of blinking tech is resistant to testing scenes!
-//fl.getDocumentDOM().testMovie();
+fl.getDocumentDOM().testMovie();
 
 //AS3 Cleanup
 for (var i = 0; i < sceneArray.length; i++) {
@@ -434,7 +423,6 @@ for (var i = 0; i < sceneArray.length; i++) {
 			var layerTypeIsNotNormal = currentTimeline.layers[j].layerType !== "normal";
 			if (layerIsNotVectorCharacters || layerTypeIsNotNormal) { continue }
 
-			//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Run your code.
 			var frameArray = fl.getDocumentDOM().getTimeline().layers[j].frames;
 
 			for (k = 0; k < frameArray.length; k += frameArray[k].duration - (k - frameArray[k].startFrame)) {
@@ -443,7 +431,6 @@ for (var i = 0; i < sceneArray.length; i++) {
 		}
 	} else if (sceneArray[i][0] == "Symbol") {
 		//Consider as a flashback
-		//fl.getDocumentDOM().library.editItem(libItems[sceneArray[i][1]].name);
 		var currentTimeline = libItems[sceneArray[i][1]].timeline
 
 		for (var j = 0; j < currentTimeline.layerCount; j++) {
@@ -453,16 +440,12 @@ for (var i = 0; i < sceneArray.length; i++) {
 			var layerTypeIsNotNormal = currentTimeline.layers[j].layerType !== "normal";
 			if (layerIsNotVectorCharacters || layerTypeIsNotNormal) { continue }
 
-			//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Run your code.
 			var frameArray = currentTimeline.layers[j].frames;
 
 			for (var k = 0; k < frameArray.length; k += frameArray[k].duration - (k - frameArray[k].startFrame)) {
 				frameArray[k].actionScript = ""
 			}
 		}
-
-		//fl.getDocumentDOM().exitEditMode();
-
 	}
 }
 
