@@ -637,6 +637,7 @@ function addRigs(characterArray) {
         };
 
         for (var i = 0; i < uniqueChars.length; i++) {
+            if (uniqueChars[i] == defense) continue;
             switchActive(characterArray[uniqueChars[i]][0]);
             fl.getDocumentDOM().getTimeline().currentFrame = 0;
             fl.getDocumentDOM().addItem({
@@ -741,6 +742,7 @@ function sculpt(characterArray) {
             if (characterArray[uniqueChars[j]] === undefined) {
                 continue;
             }
+            if(uniqueChars[j] == defense) continue;
             var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(characterArray[uniqueChars[j]][0]);
             //fl.getDocumentDOM().getTimeline().currentFrame = frameToConsider;
             if ((i % chunkSize == 0) && (sceneData[i][2].indexOf(uniqueChars[j]) == -1)) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
