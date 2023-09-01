@@ -312,6 +312,10 @@ function runLipsyncingDoc(cfgFolderPath, writeLogInfo, getCurrentDate) {
 					for (var k = 1; k < fl.getDocumentDOM().getTimeline().layers[j].frames.length; k++) {
 						for (var x = 0; x < layerSoundArray.length; x++) {
 							if (layerSoundArray[x][0] === k) {
+								if(fl.getDocumentDOM().getTimeline().layers[j].frames[k].elements[0] === undefined) {
+									break;
+								}
+								
 								var voiceLine = layerSoundArray[x][1];
 
 								//Takes a performance hit.
