@@ -241,8 +241,8 @@ if (guiPanel.dismiss == "accept") {
 
     var skipRigs = false;
     var skipBGs = false;
-    var skipTypewriter = true;
-    var skipLines = true;
+    var skipTypewriter = false;
+    var skipLines = false;
     var skipFades = false;
     var skipBlinks = false;
 
@@ -1002,16 +1002,16 @@ if (viewMode == "courtMode") {
 
     if (!skipLines) {
         stepStarted = new Date();
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING ALL THE VOICE LINES.wav");
         addAllVoiceLines(pathToLines);
         stepEnded = new Date();
-        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/ADDING ALL THE VOICE LINES.wav");
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Voice line placement succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
 
         stepStarted = new Date();
-        //autoLipsyncDocument(pathToCFGs);
-        stepEnded = new Date();
         playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/LIPSYNCING ALL CHARACTERS.wav");
+        autoLipsyncDocument(pathToCFGs);
+        stepEnded = new Date();
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Lipsyncing succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
@@ -1019,9 +1019,9 @@ if (viewMode == "courtMode") {
     if (!skipBlinks) {
         stepStarted = new Date();
         //QUESTION: this is broken lol
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/AUTOMATING BLINKING.wav");
         automaticBlinking();
         stepEnded = new Date();
-        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/AUTOMATING BLINKING.wav");
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Automatic Blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
@@ -1076,18 +1076,18 @@ if (viewMode == "investigationMode") {
 
     if (!skipFades) {
         stepStarted = new Date();
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/AUTOFADING ALL CHARACTERS.wav");
         jamFades();
         stepEnded = new Date();
-        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/AUTOFADING ALL CHARACTERS.wav");
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Automatic Jam Fading succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
 
     if (!skipBlinks) {
         stepStarted = new Date();
+        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/AUTOMATING BLINKING.wav");
         automaticBlinking()
         stepEnded = new Date();
-        playSound(FLfile.uriToPlatformPath(scriptPathURI) + "/Notifications/AUTOMATING BLINKING.wav");
         getTimeDiff(stepStarted, stepEnded);
         writeLogInfo(getCurrentDate(), status00, "[!] Automatic Blinking succeeded. Took " + getTimeDiff(stepStarted, stepEnded));
     };
