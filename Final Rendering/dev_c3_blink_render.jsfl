@@ -341,8 +341,8 @@ function runBlinking(layerIndex) {
 	}
 }
 
-function syncMane(layerIndex) {
-	// TODO: search for symbol changes, and then add Luna_mane.gotoAndPlay and Luna_tail.gotoAndPlay
+function syncMane(layerIndex, maneName, tailName) {
+	// TODO: search for symbol changes, and then add maneName.gotoAndPlay and tailName.gotoAndPlay
 	var previousSymbol = undefined;
 	for(var i = 0; i < fl.getDocumentDOM().getTimeline().layers[layerIndex].frameCount; i+= fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].duration) {
 		if(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].isEmpty) {
@@ -356,8 +356,8 @@ function syncMane(layerIndex) {
 		if(previousSymbol != fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].libraryItem.name) { // symbol is... le changed!
 			fl.getDocumentDOM().getTimeline().convertToKeyframes(i - 1); // keyframe previous frame
 			tmpKeys.push([layerIndex, i-1])
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i-1].actionScript += "\nthis.maneFrame = Luna_mane.currentFrame;\n this.tailFrame = Luna_tail.currentFrame;";
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].actionScript += "\nthis.Luna_mane.gotoAndPlay((this.maneFrame + 1) % this.Luna_mane.totalFrames);\nthis.Luna_tail.gotoAndPlay((this.tailFrame + 1) % this.Luna_tail.totalFrames);";
+			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i-1].actionScript += "\nthis.maneFrame = " + maneName + ".currentFrame;\n this.tailFrame = " + tailName + ".currentFrame;";
+			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].actionScript += "\nthis." + maneName + ".gotoAndPlay((this.maneFrame + 1) % this." + maneName + ".totalFrames);\nthis." + tailName + ".gotoAndPlay((this.tailFrame + 1) % this." + tailName + ".totalFrames);";
 		}
 		previousSymbol = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].libraryItem.name;
 	}
@@ -386,7 +386,10 @@ for (var a = 0; a < sceneArray.length; a++) {
 		runBlinking(b);
 
 		if(fl.getDocumentDOM().timelines[currentTimeline].layers[b].name.toUpperCase().indexOf("LUNA") != -1) {
-			syncMane(b);
+			syncMane(b, "Luna_mane", "Luna_tail");
+		}
+		if(fl.getDocumentDOM().timelines[currentTimeline].layers[b].name.toUpperCase().indexOf("CELESTIA") != -1) {
+			syncMane(b, "Celestia_mane", "Celestia_tail");
 		}
 	}
 }

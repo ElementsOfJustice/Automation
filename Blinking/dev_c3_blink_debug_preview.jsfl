@@ -338,8 +338,8 @@ function runBlinking(layerIndex) {
 	}
 }
 
-function syncMane(layerIndex) {
-	// TODO: search for symbol changes, and then add Luna_mane.gotoAndPlay and Luna_tail.gotoAndPlay
+function syncMane(layerIndex, maneName, tailName) {
+	// TODO: search for symbol changes, and then add maneName.gotoAndPlay and tailName.gotoAndPlay
 	var previousSymbol = undefined;
 	for (var iter = 0; iter < fl.getDocumentDOM().getTimeline().layers[layerIndex].frameCount; iter += fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].duration) {
 		if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].isEmpty) {
@@ -352,8 +352,9 @@ function syncMane(layerIndex) {
 		}
 		if (previousSymbol != fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].elements[0].libraryItem.name) { // symbol is... le changed!
 			fl.getDocumentDOM().getTimeline().convertToKeyframes(iter - 1); // keyframe previous frame
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter - 1].actionScript += "\nthis.maneFrame = Luna_mane.currentFrame;\n this.tailFrame = Luna_tail.currentFrame;";
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].actionScript += "\nthis.Luna_mane.gotoAndPlay((this.maneFrame + 1) % this.Luna_mane.totalFrames);\nthis.Luna_tail.gotoAndPlay((this.tailFrame + 1) % this.Luna_tail.totalFrames);";
+			tmpKeys.push([layerIndex, iter - 1])
+			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter - 1].actionScript += "\nthis.maneFrame = " + maneName + ".currentFrame;\n this.tailFrame = " + tailName + ".currentFrame;";
+			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].actionScript += "\nthis." + maneName + ".gotoAndPlay((this.maneFrame + 1) % this." + maneName + ".totalFrames);\nthis." + tailName + ".gotoAndPlay((this.tailFrame + 1) % this." + tailName + ".totalFrames);";
 		}
 		previousSymbol = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].elements[0].libraryItem.name;
 	}
@@ -379,7 +380,10 @@ for (var k = 0; k < sceneArray.length; k++) {
 			runBlinking(j);
 
 			if (currentTimeline.layers[j].name.toUpperCase().indexOf("LUNA") != -1) {
-				syncMane(j);
+				syncMane(j, "Luna_mane", "Luna_tail");
+			}
+			if (currentTimeline.layers[j].name.toUpperCase().indexOf("CELESTIA") != -1) {
+				syncMane(j, "Celestia_mane", "Celestia_tail");
 			}
 		}
 	} else if (sceneArray[k][0] == "Symbol") {
@@ -398,7 +402,10 @@ for (var k = 0; k < sceneArray.length; k++) {
 			runBlinking(j);
 
 			if (currentTimeline.layers[j].name.toUpperCase().indexOf("LUNA") != -1) {
-				syncMane(j);
+				syncMane(j, "Luna_mane", "Luna_tail");
+			}
+			if (currentTimeline.layers[j].name.toUpperCase().indexOf("CELESTIA") != -1) {
+				syncMane(j, "Celestia_mane", "Celestia_tail");
 			}
 		}
 	}
