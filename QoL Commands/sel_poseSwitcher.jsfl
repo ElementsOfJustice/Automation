@@ -74,13 +74,13 @@ if (focus !== undefined) {
 
 			if (guiPanel.dismiss == "accept") {
 				//delta = (roundDownToHundred(parseInt(guiPanel.poseList)) - roundDownToHundred(fl.getDocumentDOM().getTimeline().layers[layerNum].frames[startingFrame].elements[0].firstFrame));
-				delta = (parseInt(guiPanel.poseList) - roundDownToHundred(fl.getDocumentDOM().getTimeline().layers[layerNum].frames[startingFrame].elements[0].firstFrame)) + 1;
+				delta = (parseInt(guiPanel.poseList) - roundDownToHundred(fl.getDocumentDOM().getTimeline().layers[layerNum].frames[startingFrame].elements[0].firstFrame + 1)) + 1; 
 			}
 		}
 	}
 }
 
-for (var i = startingFrame; i < endFrame - 1; i++) {
+for (var i = startingFrame; i < endFrame; i += fl.getDocumentDOM().getTimeline().layers[selLayerIndex].frames[i].duration - (i - fl.getDocumentDOM().getTimeline().layers[selLayerIndex].frames[i].startFrame)) {
 	//For each keyframe
 	if (fl.getDocumentDOM().getTimeline().layers[selLayerIndex].frames[i].startFrame == i) {
 		// Move the frame (the most important line of the script)
