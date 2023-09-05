@@ -21,16 +21,13 @@ fl.outputPanel.clear();
 for (i = 0; i < fl.getDocumentDOM().timelines.length; i++) {
 	if (fl.getDocumentDOM().timelines[i].findLayerIndex("VECTOR_CHARACTERS") != undefined) {
 		sceneArray.push(["Scene", i]);
-		break;
 	}
 }
-
 //Symbol handling
 for (i = 0; i < libItems.length; i++) {
 	if (symbols.indexOf(libItems[i].itemType) > -1) {
 		if (libItems[i].timeline.findLayerIndex("VECTOR_CHARACTERS") != undefined) {
 			sceneArray.push(["Symbol", i]);
-			break;
 		}
 	}
 }
