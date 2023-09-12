@@ -331,14 +331,14 @@ function runLipsyncingDoc(cfgFolderPath, writeLogInfo, getCurrentDate) {
 
 								var poseFrame = fl.getDocumentDOM().getTimeline().layers[j].frames[k].elements[0].firstFrame;
 								var poseStartFrame = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].startFrame;
-								var cfgPath = cfgFolderPath + "/" + voiceLine + ".cfg";
+								var cfgPath = FLfile.platformPathToURI(cfgFolderPath + "\\" + voiceLine + ".cfg");
 
 								try {
 									fl.runScript(cfgPath);
 									placeKeyframes(k, j, OFFSET_MAP, poseStartFrame);
 									writeLogInfo(getCurrentDate(), "INFO ", "Lipsync operation at timeline " + fl.getDocumentDOM().getTimeline().name + ", layer " + fl.getDocumentDOM().getTimeline().layers[j].name + ", frame " + k + " with cfg path " + cfgPath + ".");	
 								  } catch (error) {
-									writeLogInfo(getCurrentDate(), "WARN ", cfgPath + " does not exist.");
+									writeLogInfo(getCurrentDate(), "WARN ", cfgPath + " does not exist." + " " + error);
 									fl.getDocumentDOM().getTimeline().layers[j].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].loop = 'single frame';
 								  }
 
