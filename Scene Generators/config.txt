@@ -8,15 +8,15 @@ Arg4 - add item y
 	
 var courtmodeBackgroundsArray = {};
 
-courtmodeBackgroundsArray[judge] = ["BACKGROUNDS/JudgeBackground", 640, 360];
-courtmodeBackgroundsArray[defense] = ["BACKGROUNDS/Full-Courtroom", 3627, 360];
-courtmodeBackgroundsArray[cocouncil] = ["BACKGROUNDS/CocouncilBG", 640, 360];
-courtmodeBackgroundsArray[prosecutor] = ["BACKGROUNDS/Full-Courtroom", -2347, 360];
-courtmodeBackgroundsArray[witnesses[0]] = ["BACKGROUNDS/Full-Courtroom", 640, 360];
-courtmodeBackgroundsArray[witnesses[1]] = ["BACKGROUNDS/Full-Courtroom", 640, 360];
-courtmodeBackgroundsArray[witnesses[2]] = ["BACKGROUNDS/Full-Courtroom", 640, 360];
-courtmodeBackgroundsArray[witnesses[3]] = ["BACKGROUNDS/Full-Courtroom", 640, 360];
-courtmodeBackgroundsArray[witnesses[4]] = ["BACKGROUNDS/Full-Courtroom", 640, 360];
+courtmodeBackgroundsArray[judge] = ["BACKGROUNDS/JudgeBackground", 1280, 720];
+courtmodeBackgroundsArray[defense] = ["BACKGROUNDS/Full-Courtroom", 7254, -738];
+courtmodeBackgroundsArray[cocouncil] = ["BACKGROUNDS/CocouncilBG", 1280, 720];
+courtmodeBackgroundsArray[prosecutor] = ["BACKGROUNDS/Full-Courtroom", -4694, -738];
+courtmodeBackgroundsArray[witnesses[0]] = ["BACKGROUNDS/Full-Courtroom", 1280, -738];
+courtmodeBackgroundsArray[witnesses[1]] = ["BACKGROUNDS/Full-Courtroom", 1280, -738];
+courtmodeBackgroundsArray[witnesses[2]] = ["BACKGROUNDS/Full-Courtroom", 1280, -738];
+courtmodeBackgroundsArray[witnesses[3]] = ["BACKGROUNDS/Full-Courtroom", 1280, -738];
+courtmodeBackgroundsArray[witnesses[4]] = ["BACKGROUNDS/Full-Courtroom", 1280, -738];
 
 
 /*
@@ -27,11 +27,10 @@ Arg3 - path of the rig
 */
 	
 var masterRigArray = {
-"Fair Devotion": ["FAIR_DEVOTION", "RIGS/Fluttershy►/Fluttershy►PoseScaled"],
-"Judge": ["JUDGE", "RIGS/Fluttershy►/Fluttershy►PoseScaled"],
-"Luna": ["LUNA", "RIGS/Fluttershy►/Fluttershy►PoseScaled"],
-"Athena": ["ATHENA", "RIGS/Fluttershy►/Fluttershy►PoseScaled"],
-"Twilight": ["TWILIGHT", "RIGS/Fluttershy►/Fluttershy►PoseScaled"],
+"Sonata": ["SONATA", "RIGS/TrixieProsecution►/TrixieProsecution►ScaledPoses"],
+"Trixie": ["TRIXIE", "RIGS/TrixieProsecution►/TrixieProsecution►ScaledPoses"],
+"Overall": ["OVERALL", "RIGS/Overall►/Overall►PoseScaled"],
+"Celestia": ["CELESTIA", "RIGS/CELESTIA►/Celestia►ScaledPoses"]
 }
  
 // Declare rig paths, layer names and speakertagArray condition. //
@@ -61,14 +60,14 @@ Arg4 - add item y
 */
 
 var masterDeskArray = {}
-masterDeskArray[judge] = ["OTHER ASSETS/DESKS/Judge-Table-Final", 640, 360];
-masterDeskArray[defense] = ["OTHER ASSETS/DESKS/DEFENSE-BENCH", 530, 640];
-masterDeskArray[prosecutor] = ["OTHER ASSETS/DESKS/PROSECUTION-BENCH", 755, 630];
-masterDeskArray[witnesses[0]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
-masterDeskArray[witnesses[1]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
-masterDeskArray[witnesses[2]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
-masterDeskArray[witnesses[3]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
-masterDeskArray[witnesses[4]] = ["OTHER ASSETS/DESKS/WitnessStand", 640, 509];
+masterDeskArray[judge] = ["OTHER ASSETS/DESKS/desk_Judge", 1280, 720];
+masterDeskArray[defense] = ["OTHER ASSETS/DESKS/desk_Defense", 1180, 1290];
+masterDeskArray[prosecutor] = ["OTHER ASSETS/DESKS/desk_Prosecution", 1390, 1290];
+masterDeskArray[witnesses[0]] = ["OTHER ASSETS/DESKS/desk_Witness", 1280, 720];
+masterDeskArray[witnesses[1]] = ["OTHER ASSETS/DESKS/desk_Witness", 1280, 720];
+masterDeskArray[witnesses[2]] = ["OTHER ASSETS/DESKS/desk_Witness", 1280, 720];
+masterDeskArray[witnesses[3]] = ["OTHER ASSETS/DESKS/desk_Witness", 1280, 720];
+masterDeskArray[witnesses[4]] = ["OTHER ASSETS/DESKS/desk_Witness", 1280, 720];
 
 
 //Simplifies names.

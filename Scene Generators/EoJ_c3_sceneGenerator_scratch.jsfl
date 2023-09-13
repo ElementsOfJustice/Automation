@@ -271,13 +271,26 @@ if (guiPanel.dismiss == "accept") {
     fl.runScript(scriptPathURI + "/config.txt"); // load configuration file
 
     var check_masterInvestigationArray = getKeys(masterInvestigationArray);
+    var check_masterRigArray = getKeys(masterRigArray);
 
     for (var i = 0; i < sceneData.length; i++) {
         if (skipRigs) break;
+        if (viewMode == "courtMode") break;
         if (check_masterInvestigationArray.indexOf(sceneData[i][2]) === -1) {
-            logError('An entry for ' + sceneData[i][2] + "'s rig is not included in masterInvestigationArray .");
+            logError('An entry for ' + sceneData[i][2] + "'s rig is not included in masterInvestigationArray.");
         }
         if (!fl.getDocumentDOM().library.itemExists(masterInvestigationArray[sceneData[i][2]][1])) {
+            logError("Library path to " + sceneData[i][2] + "'s rig does not exist.");
+        }
+    }
+
+    for (var i = 0; i < sceneData.length; i++) {
+        if (skipRigs) break;
+        if (viewMode == "investigationMode") break;
+        if (check_masterRigArray.indexOf(sceneData[i][2]) === -1) {
+            logError('An entry for ' + sceneData[i][2] + "'s rig is not included in masterRigArray.");
+        }
+        if (!fl.getDocumentDOM().library.itemExists(masterRigArray[sceneData[i][2]][1])) {
             logError("Library path to " + sceneData[i][2] + "'s rig does not exist.");
         }
     }
@@ -637,7 +650,8 @@ function addRigs(characterArray) {
         };
 
         for (var i = 0; i < uniqueChars.length; i++) {
-            if (uniqueChars[i] == defense) continue;
+            //Some polymorphism for you Conzor (wink)
+            if ((uniqueChars[i] == defense) && (viewMode == "investigationMode")) continue;
             switchActive(characterArray[uniqueChars[i]][0]);
             fl.getDocumentDOM().getTimeline().currentFrame = 0;
             fl.getDocumentDOM().addItem({
@@ -728,7 +742,7 @@ function sculpt(characterArray) {
 
         goTo(currentLineID);
 
-        if (sceneData[i][2] == defense && i != 0) {
+        if ((sceneData[i][2] == defense && i != 0) && (viewMode == "investigationMode")) {
             var tempI = i;
             while (tempI > 0 && sceneData[tempI][2] == defense) {
                 tempI--;
@@ -742,7 +756,8 @@ function sculpt(characterArray) {
             if (characterArray[uniqueChars[j]] === undefined) {
                 continue;
             }
-            if(uniqueChars[j] == defense) continue;
+            //Some polymorphism for you Conzor AGAIN (wink)x2
+            if((uniqueChars[j] == defense) && (viewMode == "investigationMode")) continue;
             var layerIndex = fl.getDocumentDOM().getTimeline().findLayerIndex(characterArray[uniqueChars[j]][0]);
             //fl.getDocumentDOM().getTimeline().currentFrame = frameToConsider;
             if ((i % chunkSize == 0) && (sceneData[i][2].indexOf(uniqueChars[j]) == -1)) { /// make blank keyframe on inactive character for the first frame (inserting blank keyframe causes weirdness)
@@ -766,9 +781,11 @@ function sculpt(characterArray) {
                     characterIndex++;
                 }
 
-                if (!isPov) {
-                    poseAutomation(layerIndex, i, frameToConsider);
-                }
+                if (viewMode == "investigationMode") {
+                    if (!isPov) {
+                        poseAutomation(layerIndex, i, frameToConsider);
+                    }
+                } else {poseAutomation(layerIndex, i, frameToConsider)};
 
                 if (sceneData[i][2] != sceneData[i + 1][2]) {
                     fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(frameToConsider + iFrameDuration);
@@ -880,6 +897,7 @@ function automaticBlinking() {
 };
 
 function addAllVoiceLines(voiceLineFolderPath) {
+
     var missedLines = fl.runScript(fl.configURI + "Commands/QoL%20Commands/dev_LineAdder_core.jsfl", "insertLinesChunked", voiceLineFolderPath, chunkSize, totalChunks);
 
     var allMissedLines = charArrayToString(missedLines);
