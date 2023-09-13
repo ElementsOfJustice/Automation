@@ -907,6 +907,7 @@ function placeDesks() {
             fl.getDocumentDOM().editScene(Math.floor(i / chunkSize));
             fl.getDocumentDOM().getTimeline().currentFrame = 0;
             switchActive("DESKS");
+            fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("DESKS")[0]].parentLayer = null;
         }    
         // select current frame
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
@@ -933,6 +934,7 @@ function placeBGs() {
             fl.getDocumentDOM().editScene(Math.floor(i / chunkSize));
             fl.getDocumentDOM().getTimeline().currentFrame = 0;
             switchActive("BACKGROUNDS");
+            fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("BACKGROUNDS")[0]].parentLayer = null;
         } 
         // select current frame
         fl.getDocumentDOM().getTimeline().setSelectedFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1);
