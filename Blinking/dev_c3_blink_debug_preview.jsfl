@@ -193,7 +193,7 @@ function autoEyeSet(layerIndex) {
 		}
 
 		//Next two operations check if a pre-existing anchor label exists, and if it does, does nothing. This allows human users to circumvent the automatic labelling.
-
+		if (frames[i + 1].labelType == "anchor") { continue };
 		if ((frames[i].isEmpty) && (!frames[i + 1].isEmpty)) {
 			//CutOpen if we go from no content to content from one frame to the next.
 			frames[i + 1].labelType = "anchor";
