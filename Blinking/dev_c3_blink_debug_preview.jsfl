@@ -185,7 +185,7 @@ function autoEyeSet(layerIndex) {
 
 	//For all frames on the layer we are running autoEyeSet on, automatically apply the bare minimum blink instructions.
 	for (var i = 0; i < frames.length - 1; i++) {
-
+		if (frames[i].labelType == "anchor") { continue };
 		if ((i == 0) && (!frames[i].isEmpty)) {
 			//CutOpen on the first frame of a character layer if it has content. 
 			frames[i].labelType = "anchor";
@@ -193,7 +193,6 @@ function autoEyeSet(layerIndex) {
 		}
 
 		//Next two operations check if a pre-existing anchor label exists, and if it does, does nothing. This allows human users to circumvent the automatic labelling.
-		if (frames[i].labelType == "anchor") { continue };
 
 		if ((frames[i].isEmpty) && (!frames[i + 1].isEmpty)) {
 			//CutOpen if we go from no content to content from one frame to the next.
