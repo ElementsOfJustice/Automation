@@ -361,13 +361,13 @@ function moveMouse() {
 		var success = false;
 		while ((!success || result.indexOf("Retry")) != -1 && retryCount < 5) {
 			try {
-				fl.trace("Attempting to commit change to version history...");
+				// fl.trace("Attempting to commit change to version history...");
 				result = commitLocalChange(tmpPath);
 				if (result === undefined || result.indexOf("Success.") != -1) {
 					success = true;
-					fl.trace(result);
+					// fl.trace(result);
 				} else {
-					fl.trace("Local commit failed at path " + tmpPath + ": " + result);
+					// alert("Local commit failed at path " + tmpPath + ": " + result);
 				}
 			} catch (e) {
 				fl.trace("CRITICAL ERROR: " + e.stack);
@@ -377,7 +377,7 @@ function moveMouse() {
 			retryCount++;
 		}
 		if (!success) {
-			alert("Local Commit failed after " + retryCount + " retries.");
+			alert("Local Commit failed after " + retryCount + " retries at path " + tmpPath + ": " + result); 
 		}
 		autoSave = false;
 		toSave = "";
