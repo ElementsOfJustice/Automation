@@ -6,9 +6,9 @@ TEXT_LAYER_2 = "txt2";
 SFX_LAYER = "sfx_1";
 TYPEWRITER_SFX_NAME = "AUDIO/SFX/sfx-typewriter.wav";
 AVERAGE_CHARACTER_WIDTH = 20;
+SCALE = fl.getDocumentDOM().width / 1280.0;
 
-
-var bounding = { left: 69, top: 560, right: 420, bottom: 620 };	// L 435 R 845
+var bounding = { left: 69 * SCALE, top: 560 * SCALE, right: 420 * SCALE, bottom: 620 * SCALE };	// L 435 R 845
 
 /*
 Function: resetSelection
@@ -45,7 +45,7 @@ function getAlignment(text, topBounding, bottomBounding) { // creates a textbox 
 function typewriterFormat() {
     fl.getDocumentDOM().setElementTextAttr("face", TYPEFACE_NAME);
     fl.getDocumentDOM().setElementProperty('fontRenderingMode', 'standard');
-    fl.getDocumentDOM().setElementTextAttr("size", 40);
+    fl.getDocumentDOM().setElementTextAttr("size", 40 * SCALE);
     fl.getDocumentDOM().setElementTextAttr("fillColor", 0xFF6633);
     fl.getDocumentDOM().setElementTextAttr("letterSpacing", 2);
     fl.getDocumentDOM().setElementTextAttr("lineSpacing", 1);
@@ -56,31 +56,26 @@ function typewriterFormat() {
 }
 
 function makeTestimonyText(text, bounding, layer, startFrame) {
-    var curFrame = startFrame;
-    resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(layer), 0);
-    var ailgnRect = getAlignment(text, bounding.top, bounding.bottom);
-    for (var i = 0; i < text.length; i++) {
-        var curText = text.slice(0, i + 1); // get the portion of text that should be shown at this frame
-        resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(layer), curFrame);
-        var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().getSelectedLayers()[0]].frames[fl.getDocumentDOM().getTimeline().getSelectedFrames()[1]].startFrame; // if the current frame isn't the first frame in a frame sequence, make a note of that
-        if (!isKeyFrame) {
-            fl.getDocumentDOM().getTimeline().insertKeyframe();
-            resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(layer), curFrame);
-        }
-        if (i == 0) {
-            fl.getDocumentDOM().addNewText(bounding);
-        }
-        resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(layer), curFrame);
-        fl.getDocumentDOM().setTextString(curText);
-        fl.getDocumentDOM().setTextRectangle(ailgnRect);
-        resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(layer), curFrame);
-        typewriterFormat();
-        curFrame += 2;
-    }
+	var curFrame = startFrame;
+	for (var i = 0; i < text.length; i++) {
+		var curText = text.slice(0, i + 1); // get the portion of text that should be shown at this frame
+		resetSelection(layer, curFrame);
+		var isKeyFrame = fl.getDocumentDOM().getTimeline().currentFrame == fl.getDocumentDOM().getTimeline().layers[layer].frames[fl.getDocumentDOM().getTimeline().currentFrame].startFrame; // if the current frame isn't the first frame in a frame sequence, make a note of that
+		if (!isKeyFrame) {
+			fl.getDocumentDOM().getTimeline().insertKeyframe();
+			resetSelection(layer, curFrame);
+		}
+		if (i == 0) {
+			fl.getDocumentDOM().addNewText(bounding);
+		}
+		fl.getDocumentDOM().setTextString(curText);
+		typewriterFormat();
+		curFrame += 2;
+	}
 }
 
 // MAIN
 var input1 = prompt("Enter testimony name.");
 if(input1 != null) {
-    makeTestimonyText(input1, bounding, TEXT_LAYER_1, 0);
+    makeTestimonyText(input1, bounding, fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame);
 }
