@@ -348,7 +348,7 @@ function syncMane(layerIndex, maneName, tailName) {
 		}
 		if (previousSymbol != fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].elements[0].libraryItem.name) { // symbol is... le changed!
 			fl.getDocumentDOM().getTimeline().convertToKeyframes(iter - 1); // keyframe previous frame
-			tmpKeys.push([layerIndex, iter - 1])
+			// tmpKeys.push([layerIndex, iter - 1])
 			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter - 1].actionScript += "\nthis.maneFrame = " + maneName + ".currentFrame;\n this.tailFrame = " + tailName + ".currentFrame;";
 			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].actionScript += "\nthis." + maneName + ".gotoAndPlay((this.maneFrame + 1) % this." + maneName + ".totalFrames);\nthis." + tailName + ".gotoAndPlay((this.tailFrame + 1) % this." + tailName + ".totalFrames);";
 		}
