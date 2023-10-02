@@ -170,6 +170,9 @@ class Layer:
     @parentLayer.setter
     def parentLayer(self, value):
         self.attrib['parentLayer'] = value
+    @property
+    def frameCount(self):
+        return int(self.frames[-1].startFrame) + int(self.frames[-1].duration)
 
     def __getitem__(self, key):
         # return the nth keyframe where n.startFrame <= key < (n+1).startFrame
@@ -209,6 +212,28 @@ class Layer:
         self.frames.append(Frame(new_frame))
         self.layer_element.find('xfl:frames', namespaces=ns).append(new_frame)
         return True
+    
+    def insert_Keyframe(self, index):
+        # get copy of keyframe before index
+        new_frame = copy.deepcopy(self[index])
+        if index == int(new_frame.startFrame):
+            index += 1
+        # return if new index already has a keyframe
+        if index == int(self[index].startFrame):
+            return False
+        new_frame.duration = str(int(self[index].duration) - index + int(self[index].startFrame))
+        self[index].duration = str(index - int(self[index].startFrame))
+        new_frame.startFrame = str(index)
+        # get keyframe index
+        for i, frame in enumerate(self.frames):
+            if int(frame.startFrame) > index:
+                self.frames.insert(i, new_frame)
+                self.layer_element.find('xfl:frames', namespaces=ns).insert(i, new_frame.frame_element)
+                return True
+        self.frames.append(new_frame)
+        self.layer_element.find('xfl:frames', namespaces=ns).append(new_frame.frame_element)
+        return True
+
 
 
 # frames[1] will get second keyframe, layers[14] will get the 14th frame in the layer
@@ -370,6 +395,8 @@ class Point():
 
 if __name__ == '__main__':
     xfl = XFL('INSANITY\\test\\DOMDocument.xml')
-    
+    xfl.timelines[0].layers[0].insert_Keyframe(10)
+    xfl.timelines[0].layers[0].insert_Keyframe(10)
+    xfl.timelines[0].layers[0].insert_Keyframe(10)
     xfl.write('INSANITY\\test\\DOMDocument.xml')
     xfl.read('INSANITY\\test\\DOMDocument.xml')
