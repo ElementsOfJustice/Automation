@@ -1,69 +1,92 @@
-<DOMDocument xmlns="http://ns.adobe.com/xfl/2008/" width="1280" height="720" frameRate="30" currentTimeline="1" xflVersion="22.02" creatorInfo="Adobe Animate" platform="Windows" versionInfo="Saved by Animate Windows 22.0 build 179" majorVersion="22" buildNumber="179" viewAngle3D="100.925968316201" vanishingPoint3DX="640" vanishingPoint3DY="360" nextSceneIdentifier="2" playOptionsPlayLoop="false" playOptionsPlayPages="false" playOptionsPlayFrameActions="false" filetypeGUID="DD0DDBBF-5BEF-45B2-9F24-A3048D2A676F" fileGUID="A9B24965CDA3034B99F6BADAE59998EA" forceSimple="true" hasAccessibleData="true">
+<DOMDocument xmlns="http://ns.adobe.com/xfl/2008/" width="1280" height="720" frameRate="30" currentTimeline="2" xflVersion="22.02" creatorInfo="Adobe Animate" platform="Windows" versionInfo="Saved by Animate Windows 22.0 build 179" majorVersion="22" buildNumber="179" viewAngle3D="100.925968316201" vanishingPoint3DX="640" vanishingPoint3DY="360" nextSceneIdentifier="3" playOptionsPlayLoop="false" playOptionsPlayPages="false" playOptionsPlayFrameActions="false" filetypeGUID="DD0DDBBF-5BEF-45B2-9F24-A3048D2A676F" fileGUID="A9B24965CDA3034B99F6BADAE59998EA" forceSimple="true" hasAccessibleData="true">
+     <media>
+          <DOMSoundItem name="Alert.wav" itemID="651af7f0-00000130" sourceExternalFilepath="./LIBRARY/Alert.wav" sourceLastImported="1687386674" externalFileSize="193928" href="Alert.wav" soundDataHRef="M 2 1696266224.dat" format="44kHz 16bit Stereo" sampleCount="48446" dataLength="193784" />
+          <DOMSoundItem name="Error.wav" itemID="651af7f3-00000133" sourceExternalFilepath="./LIBRARY/Error.wav" sourceLastImported="1687386674" externalFileSize="264794" href="Error.wav" soundDataHRef="M 3 1696266227.dat" format="44kHz 16bit Stereo" sampleCount="66163" dataLength="264652" />
+          <DOMSoundItem name="Loop.wav" itemID="651af7e7-00000129" sourceExternalFilepath="./LIBRARY/Loop.wav" sourceLastImported="1687386674" externalFileSize="71620" href="Loop.wav" soundDataHRef="M 1 1696266215.dat" format="44kHz 16bit Mono" sampleCount="35739" dataLength="71478" />
+     </media>
      <symbols />
      <timelines>
-          <DOMTimeline name="Scene 1" currentFrame="20" layerDepthEnabled="true">
+          <DOMTimeline name="Scene 1" layerDepthEnabled="true">
                <layers>
+                    <DOMLayer name="Layer_2" color="#9933CC">
+                         <frames>
+                              <DOMFrame index="0" duration="5" keyMode="9728">
+                                   <elements />
+                              </DOMFrame>
+                         <DOMFrame index="5" duration="5" />
+			<DOMFrame index="10" duration="5" />
+			<DOMFrame index="15" duration="15" />
+			</frames>
+                    </DOMLayer>
+                    <DOMLayer name="Layer_2_copy" color="#9933CC">
+                         <frames>
+                              <DOMFrame index="0" duration="5" keyMode="9728">
+                                   <elements />
+                              </DOMFrame>
+                         <DOMFrame index="5" duration="5" />
+			<DOMFrame index="10" duration="5" />
+			<DOMFrame index="15" duration="15" />
+			</frames>
+                    </DOMLayer>
                     <DOMLayer name="Layer_1" color="#00FFFF">
                          <frames>
-                              <DOMFrame index="0" duration="19" keyMode="9728">
+                              <DOMFrame index="0" duration="5" keyMode="9728">
                                    <elements />
                               </DOMFrame>
-                              <DOMFrame index="14" duration="5" />
-			<DOMFrame index="19" duration="11" keyMode="9728">
-                                   <elements />
-                              </DOMFrame>
-                         </frames>
+                         <DOMFrame index="5" duration="5" />
+			<DOMFrame index="10" duration="5" />
+			<DOMFrame index="15" duration="15" />
+			</frames>
                     </DOMLayer>
-                    <DOMLayer name="Layer_2" color="#9933CC">
+                    <DOMLayer name="Layer_3" color="#FF800A" current="true" isSelected="true">
+                         <frames>
+                              <DOMFrame index="0" duration="5" keyMode="9728">
+                                   <elements />
+                              </DOMFrame>
+                         <DOMFrame index="5" duration="5" />
+			<DOMFrame index="10" duration="5" />
+			<DOMFrame index="15" duration="15" />
+			</frames>
+                    </DOMLayer>
+               </layers>
+          </DOMTimeline>
+          <DOMTimeline name="Scene 2" layerDepthEnabled="true">
+               <layers>
+                    <DOMLayer name="Layer_4" color="#00FFFF" autoNamed="false">
                          <frames>
                               <DOMFrame index="0" duration="9" keyMode="9728">
                                    <elements />
                               </DOMFrame>
-                              <DOMFrame index="9" duration="10" keyMode="9728">
-                                   <elements>
-                                        <DOMDynamicText width="242" height="240.15" isSelectable="false" lineType="multiline no wrap">
-                                             <matrix>
-                                                  <Matrix tx="766" ty="200.85" />
-                                             </matrix>
-                                             <textRuns>
-                                                  <DOMTextRun>
-                                                       <characters>Hi 2</characters>
-                                                       <textAttrs>
-                                                            <DOMTextAttrs alignment="center" aliasText="false" lineHeight="122.8" size="96" bitmapSize="1920" face="Suburga2-SemicondensedRegular" fillColor="#666666" />
-                                                       </textAttrs>
-                                                  </DOMTextRun>
-                                             </textRuns>
-                                        </DOMDynamicText>
-                                   </elements>
-                              </DOMFrame>
-                              <DOMFrame index="19" duration="11" keyMode="9728">
+                              <DOMFrame index="9" duration="51" keyMode="9728" soundName="Loop.wav">
+                                   <SoundEnvelope>
+                                        <SoundEnvelopePoint level0="32768" level1="32768" />
+                                   </SoundEnvelope>
                                    <elements />
                               </DOMFrame>
                          </frames>
                     </DOMLayer>
-                    <DOMLayer name="Layer_3" color="#FF800A" current="true" isSelected="true">
+                    <DOMLayer name="Layer_5" color="#9933CC" autoNamed="false">
                          <frames>
                               <DOMFrame index="0" duration="19" keyMode="9728">
                                    <elements />
                               </DOMFrame>
-                              <DOMFrame index="19" duration="5" keyMode="9728">
-                                   <elements>
-                                        <DOMDynamicText selected="true" width="242" height="247.6" isSelectable="false" lineType="multiline no wrap">
-                                             <matrix>
-                                                  <Matrix tx="748" ty="197.85" />
-                                             </matrix>
-                                             <textRuns>
-                                                  <DOMTextRun>
-                                                       <characters>Hello World</characters>
-                                                       <textAttrs>
-                                                            <DOMTextAttrs alignment="center" aliasText="false" lineHeight="122.8" size="96" bitmapSize="1920" face="Suburga2-SemicondensedRegular" fillColor="#666666" />
-                                                       </textAttrs>
-                                                  </DOMTextRun>
-                                             </textRuns>
-                                        </DOMDynamicText>
-                                   </elements>
+                              <DOMFrame index="19" duration="41" keyMode="9728" soundName="Alert.wav">
+                                   <SoundEnvelope>
+                                        <SoundEnvelopePoint level0="32768" level1="32768" />
+                                   </SoundEnvelope>
+                                   <elements />
                               </DOMFrame>
-                              <DOMFrame index="24" duration="6" keyMode="9728">
+                         </frames>
+                    </DOMLayer>
+                    <DOMLayer name="Layer_6" color="#FF800A" current="true" isSelected="true" autoNamed="false">
+                         <frames>
+                              <DOMFrame index="0" duration="29" keyMode="9728">
+                                   <elements />
+                              </DOMFrame>
+                              <DOMFrame index="29" duration="31" keyMode="9728" soundName="Error.wav">
+                                   <SoundEnvelope>
+                                        <SoundEnvelopePoint level0="32768" level1="32768" />
+                                   </SoundEnvelope>
                                    <elements />
                               </DOMFrame>
                          </frames>
