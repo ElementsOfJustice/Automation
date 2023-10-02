@@ -1,19 +1,24 @@
+from pydub import AudioSegment
 import xml.etree.ElementTree as ET
+import datetime
+import shutil
 import copy
 import os
+
 ET.register_namespace("", "http://ns.adobe.com/xfl/2008/")
 
 # Namespace constant
 ns = {'xfl': 'http://ns.adobe.com/xfl/2008/'}
 
+
 class PyFile:
     def __init__(self, filename):
         self.filename = filename
-    def exists(self):
-        return os.path.exists(self.filename)
-    def getSize(self):
-        if self.exists():
-            return os.path.getsize(self.filename)
+    def exists(filename):
+        return os.path.exists(filename)
+    def getSize(filename):
+        if os.path.exists(filename):
+            return os.path.getsize(filename)
         else:
             return None
     def read(self):
@@ -31,6 +36,23 @@ class PyFile:
     def write(self, content, mode='w'):
         with open(self.filename, mode) as file:
             file.write(content)
+    def get_audio_format_string(filename):
+        print(filename)
+        audio = AudioSegment.from_file(filename)
+        sample_width = audio.sample_width * 8  # Convert sample width to bit depth
+        sample_rate = audio.frame_rate
+        num_channels = audio.channels
+        format_string = f"{sample_rate/1000:.0f}kHz {sample_width}bit "
+        if num_channels == 1:
+            format_string += "Mono"
+        elif num_channels == 2:
+            format_string += "Stereo"
+        else:
+            format_string += f"{num_channels} channels"
+        return format_string
+    def get_total_samples(filename):
+        audio = AudioSegment.from_file(filename)
+        return len(audio)
 
 
 class XFL:
@@ -45,20 +67,35 @@ class XFL:
     def read(self, file_path):
         self.xfl_tree = ET.parse(file_path)
         self.timelines = [Timeline(timeline) for timeline in self.xfl_tree.findall('.//xfl:DOMTimeline', ns)]
-
-
-class Document:
-    def __init__(self, document_element):
-        self.document_element = document_element
-        self.attrib = document_element.attrib
-        self.timelines = [Timeline(timeline) for timeline in document_element.findall('xfl:media', ns)]
-
     def delete_Timelines(self, index):
         if index < 0 or index >= len(self.timelines):
             raise IndexError("Index out of range")
         timeline_to_delete = self.timelines[index]
-        self.document_element.find('xfl:timelines', namespaces=ns).remove(timeline_to_delete.timeline_element)
+        self.xfl_tree.find('xfl:timelines', namespaces=ns).remove(timeline_to_delete.timeline_element)
         del self.timelines[index]
+    def import_Sound(self, audio_path, XFL_Filepath=""):      
+        # Duplicate the audio file
+        audio_filename = os.path.basename(audio_path)
+        library_path = os.path.join("INSANITY", "test", "LIBRARY", XFL_Filepath)
+        os.makedirs(library_path, exist_ok=True)
+        audio_duplicate_path = os.path.join(library_path, audio_filename)
+        shutil.copy2(audio_path, audio_duplicate_path)
+
+        # Create XML entry
+        media_element = ET.Element("DOMSoundItem")
+        media_element.set("name", audio_filename)
+        media_element.set("sourceExternalFilepath", f"./LIBRARY/{XFL_Filepath}/{audio_filename}")
+        media_element.set("sourceLastImported", str(int(datetime.datetime.now().timestamp())))
+        media_element.set("externalFileSize", str(os.path.getsize(audio_duplicate_path)))
+        media_element.set("href", audio_filename)
+        media_element.set("format", str(PyFile.get_audio_format_string(os.path.abspath(audio_path))))
+        media_element.set("sampleCount", str(PyFile.get_total_samples(os.path.abspath(audio_path))))
+        media_element.set("dataLength", str(os.path.getsize(audio_duplicate_path)))
+
+        # Add the XML entry
+        media_parent = self.xfl_tree.find(".//xfl:media", namespaces=ns)
+        if media_parent is not None:
+            media_parent.append(media_element)
 
 
 class Timeline:
@@ -370,6 +407,6 @@ class Point():
 
 if __name__ == '__main__':
     xfl = XFL('INSANITY\\test\\DOMDocument.xml')
-    
+
     xfl.write('INSANITY\\test\\DOMDocument.xml')
     xfl.read('INSANITY\\test\\DOMDocument.xml')
