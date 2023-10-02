@@ -113,14 +113,15 @@ class Layer:
         # Find the correct position to insert the new frame based on the index
         for i, frame in enumerate(self.frames):
             if int(frame.startFrame) > index:
-                print(i)
                 new_frame.attrib['duration'] = str(int(self.frames[i-1].startFrame) - index + int(self.frames[i-1].duration))
+                self.frames[i-1].duration = str(index - int(self.frames[i-1].startFrame))
                 self.frames.insert(i, Frame(new_frame))
                 self.layer_element.find('xfl:frames', namespaces=ns).insert(i, new_frame)
                 return True
 
         # If no frames with a greater index were found, append the new frame to the end
         new_frame.attrib['duration'] = str(int(self.frames[-1].startFrame) - index + int(self.frames[-1].duration))
+        self.frames[-1].duration = str(index - int(self.frames[-1].startFrame))
         self.frames.append(Frame(new_frame))
         self.layer_element.find('xfl:frames', namespaces=ns).append(new_frame)
         return True
