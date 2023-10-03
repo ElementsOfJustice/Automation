@@ -135,7 +135,7 @@ class XFL:
             if timeline.timeline_element in timelines_element:
                 timelines_element.remove(timeline.timeline_element)
             timelines_element.append(timeline.timeline_element)
-    def import_Sound(self, audio_path, XFL_Filepath=""):      
+    def import_Sound(self, audio_path, folderName=""):      
         # Duplicate the audio file
         audio_filename = os.path.basename(audio_path)
         library_path = os.path.join("INSANITY", "test", "LIBRARY", folderName)
