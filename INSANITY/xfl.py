@@ -169,6 +169,13 @@ class Timeline:
             layers_element.insert(index_to_duplicate + 1, duplicated_layer_element)
         else:
             raise ValueError("Layer not found in the timeline.")
+        
+    def findLayerIndex(self, layerName):
+        for i, layer in enumerate(self.layers):
+            if layer.name == layerName:
+                return i
+        return None
+        
     
 #Trying to set parentLayer to a string caused an XFL wipe
 #Need a way to dynamically access layer index. Want to do this by accessing layer's timeline parent and counting which layer it is, but don't know how to get parent.
@@ -433,9 +440,6 @@ class Point():
 if __name__ == '__main__':
     xfl = XFL('INSANITY\\test\\DOMDocument.xml')
 
-    xfl.timelines[0].layers[0].insert_Keyframe(10)
-    xfl.timelines[0].layers[0].insert_Keyframe(10)
-    xfl.timelines[0].layers[0].insert_Keyframe(10)
-
+    print(xfl.timelines[0].findLayerIndex("Layer_2"))
     xfl.write('INSANITY\\test\\DOMDocument.xml')
     xfl.read('INSANITY\\test\\DOMDocument.xml')
