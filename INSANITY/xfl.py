@@ -376,14 +376,16 @@ class Layer:
             return self.parentTimeline.layers.index(self)
         return -1  # Return -1 if the layer is not associated with any timeline
 
-    def clearKeyframe(self, start_frame):
+    def clearKeyframe(self, frameIndex):
+        if frameIndex >= self.frameCount or frameIndex < 0:
+            raise IndexError('Frame index out of range')
         if len(self.frames) == 1:
             return False
-        frame = self[start_frame]
-        if start_frame != int(frame.startFrame):
+        frame = self[frameIndex]
+        if frameIndex != int(frame.startFrame):
             return False
         # special case for frame 0
-        if start_frame == 0:
+        if frameIndex == 0:
             next_frame = self[int(frame.startFrame) + int(frame.duration)]
             next_frame.duration = str(int(next_frame.duration) + int(frame.duration))
             next_frame.startFrame = 0
@@ -397,6 +399,8 @@ class Layer:
         return True
     
     def insertBlankKeyframe(self, frameIndex):
+        if frameIndex >= self.frameCount or frameIndex < 0:
+            raise IndexError('Frame index out of range')
         prev_frame = self[frameIndex]
         if frameIndex == int(prev_frame.startFrame):
             frameIndex += 1
@@ -419,6 +423,8 @@ class Layer:
         return True
     
     def insertKeyframe(self, frameIndex):
+        if frameIndex >= self.frameCount or frameIndex < 0:
+            raise IndexError('Frame index out of range')
         # get copy of keyframe before index, O(log(n)) for keyframe access, O(1) for copy
         new_frame = copy.deepcopy(self[frameIndex])
         if frameIndex == int(new_frame.startFrame):
