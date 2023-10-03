@@ -21,20 +21,20 @@ class PyFile:
             return os.path.getsize(filename)
         else:
             return None
-    def read(self):
-        if self.exists():
-            with open(self.filename, 'r') as file:
+    def read(filename):
+        if os.path.exists(filename):
+            with open(filename, 'r') as file:
                 return file.read()
         else:
             return None
-    def remove(self):
-        if self.exists():
-            os.remove(self.filename)
+    def remove(filename):
+        if os.path.exists(filename):
+            os.remove(filename)
             return True
         else:
             return False
-    def write(self, content, mode='w'):
-        with open(self.filename, mode) as file:
+    def write(filename, content, mode='w'):
+        with open(filename, mode) as file:
             file.write(content)
     def get_audio_format_string(filename):
         print(filename)
@@ -429,13 +429,13 @@ class Point():
     def y(self, value):
         self.attrib['y'] = str(value)
 
+# get_audio_format, get_total_samples
 
 if __name__ == '__main__':
     xfl = XFL('INSANITY\\test\\DOMDocument.xml')
 
-    xfl.timelines[0].layers[0].insert_Keyframe(10)
-    xfl.timelines[0].layers[0].insert_Keyframe(10)
-    xfl.timelines[0].layers[0].insert_Keyframe(10)
+    print(PyFile.exists('INSANITY\\Innovations.mp3'))
+    print(PyFile.get_audio_format_string('INSANITY\\Innovations.mp3'))
 
     xfl.write('INSANITY\\test\\DOMDocument.xml')
     xfl.read('INSANITY\\test\\DOMDocument.xml')
