@@ -1,3 +1,42 @@
+"""
+**********************************************************************
+*                            TO-DO LIST                              *
+**********************************************************************
+
+[1] - Task 1: Implement keyframe manipulation functions for Layers.
+    - Assigned to: Conzor & CoPilot!
+
+[2] - Task 2: Implement Library & Item class.
+    - Assigned to: Soundman & OpenAI!
+
+[3] - Task 3: Fill out XFL class.
+    - Assigned to: Conzor & Soundman
+
+[4] - Task 4: Functions that create layers and timelines, need to
+        create the proper XML structure, complete with correct
+        indents and correct XML end tags.
+
+**********************************************************************
+*                           SOME QUESTIONS                           *
+**********************************************************************
+
+[Q1] -  I want camelCase variable and function names, for brevity. 
+        Underscores are weird and unintuitive for me. We'll refactor
+        after we have a decent base.
+
+[Q2] -  Let's abolish timeline/layer indexes as a concept. Instead,
+        our functions only take in timeline and layer objects. We
+        spend more time working in a productive mindset, and spend
+        less time thinking about where the stuff we're working with
+        is.
+
+[Q3] -  I want to minimize the verbosity of our heiarchy. We're
+        currently at:
+                xfl.timelines[0].layers[1][2].elements[3]
+        This isn't too bad, but the fact that frames[] accesses
+        keyframes instead of frames is still weird to me!
+"""
+
 from pydub import AudioSegment
 import xml.etree.ElementTree as ET
 import datetime
@@ -73,7 +112,30 @@ class XFL:
         timeline_to_delete = self.timelines[index]
         self.xfl_tree.find('xfl:timelines', namespaces=ns).remove(timeline_to_delete.timeline_element)
         del self.timelines[index]
-    def import_Sound(self, audio_path, folderName=""):      
+    def duplicate_Timelines(self, timeline_to_duplicate):
+        index_to_duplicate = None
+        for i, timeline in enumerate(self.timelines):
+            if timeline == timeline_to_duplicate:
+                index_to_duplicate = i
+                break
+        if index_to_duplicate is not None:
+            duplicated_timeline_element = copy.deepcopy(timeline_to_duplicate.timeline_element)
+            new_timeline_name = f"{timeline_to_duplicate.name}_copy"
+            duplicated_timeline_element.attrib['name'] = new_timeline_name
+            self.xfl_tree.find('xfl:timelines', namespaces=ns).insert(index_to_duplicate + 1, duplicated_timeline_element)
+            self.timelines.insert(index_to_duplicate + 1, Timeline(duplicated_timeline_element))
+        else:
+            raise ValueError("Timeline not found in the XFL document.")
+    def reorder_Timelines(self, custom_sort_key):
+        self.timelines = sorted(self.timelines, key=lambda timeline: custom_sort_key(timeline.name))
+
+        # Rebuild the timelines in the XML structure based on the new order
+        timelines_element = self.xfl_tree.find('.//xfl:timelines', namespaces=ns)
+        for timeline in self.timelines:
+            if timeline.timeline_element in timelines_element:
+                timelines_element.remove(timeline.timeline_element)
+            timelines_element.append(timeline.timeline_element)
+    def import_Sound(self, audio_path, XFL_Filepath=""):      
         # Duplicate the audio file
         audio_filename = os.path.basename(audio_path)
         library_path = os.path.join("INSANITY", "test", "LIBRARY", folderName)
@@ -435,8 +497,6 @@ class Point():
     @y.setter
     def y(self, value):
         self.attrib['y'] = str(value)
-
-# get_audio_format, get_total_samples
 
 if __name__ == '__main__':
     xfl = XFL('INSANITY\\test\\DOMDocument.xml')
