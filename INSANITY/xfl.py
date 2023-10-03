@@ -73,10 +73,10 @@ class XFL:
         timeline_to_delete = self.timelines[index]
         self.xfl_tree.find('xfl:timelines', namespaces=ns).remove(timeline_to_delete.timeline_element)
         del self.timelines[index]
-    def import_Sound(self, audio_path, XFL_Filepath=""):      
+    def import_Sound(self, audio_path, folderName=""):      
         # Duplicate the audio file
         audio_filename = os.path.basename(audio_path)
-        library_path = os.path.join("INSANITY", "test", "LIBRARY", XFL_Filepath)
+        library_path = os.path.join("INSANITY", "test", "LIBRARY", folderName)
         os.makedirs(library_path, exist_ok=True)
         audio_duplicate_path = os.path.join(library_path, audio_filename)
         shutil.copy2(audio_path, audio_duplicate_path)
@@ -84,7 +84,7 @@ class XFL:
         # Create XML entry
         media_element = ET.Element("DOMSoundItem")
         media_element.set("name", audio_filename)
-        media_element.set("sourceExternalFilepath", f"./LIBRARY/{XFL_Filepath}/{audio_filename}")
+        media_element.set("sourceExternalFilepath", f"./LIBRARY/{folderName}/{audio_filename}")
         media_element.set("sourceLastImported", str(int(datetime.datetime.now().timestamp())))
         media_element.set("externalFileSize", str(os.path.getsize(audio_duplicate_path)))
         media_element.set("href", audio_filename)
@@ -443,6 +443,6 @@ if __name__ == '__main__':
 
     print(PyFile.exists('INSANITY\\Innovations.mp3'))
     print(PyFile.get_audio_format_string('INSANITY\\Innovations.mp3'))
-
+    xfl.import_Sound('INSANITY\\Innovations.mp3')
     xfl.write('INSANITY\\test\\DOMDocument.xml')
     xfl.read('INSANITY\\test\\DOMDocument.xml')
