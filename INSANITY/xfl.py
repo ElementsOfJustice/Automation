@@ -55,43 +55,61 @@ class PyFile:
         self.filename = filename
     def exists(filename):
         return os.path.exists(filename)
+    def getAudioFormat(filename):
+        if os.path.exists(filename):
+            audio = AudioSegment.from_file(filename)
+            sample_width = audio.sample_width * 8
+            sample_rate = audio.frame_rate
+            num_channels = audio.channels
+            format_string = f"{sample_rate/1000:.0f}kHz {sample_width}bit "
+            if num_channels == 1:
+                format_string += "Mono"
+            elif num_channels == 2:
+                format_string += "Stereo"
+            else:
+                format_string += f"{num_channels} Channels"
+            return format_string
+        else:
+            return False
     def getSize(filename):
         if os.path.exists(filename):
             return os.path.getsize(filename)
         else:
-            return None
+            return False
+    def getSamples(filename):
+        if os.path.exists(filename):
+            audio = AudioSegment.from_file(filename)
+            return len(audio)
+        else:
+            return False
     def read(filename):
         if os.path.exists(filename):
             with open(filename, 'r') as file:
                 return file.read()
         else:
-            return None
-    def remove(filename):
-        if os.path.exists(filename):
-            os.remove(filename)
-            return True
+            return False
+    def remove(targetPath):
+        if os.path.exists(targetPath):
+            try:
+                if os.path.isfile(targetPath):
+                    os.remove(targetPath)
+                elif os.path.isdir(targetPath):
+                    shutil.rmtree(targetPath)
+                return True
+            except Exception as e:
+                print(f"Error removing {targetPath}: {e}")
+                return False
         else:
             return False
     def write(filename, content, mode='w'):
-        with open(filename, mode) as file:
-            file.write(content)
-    def get_audio_format_string(filename):
-        print(filename)
-        audio = AudioSegment.from_file(filename)
-        sample_width = audio.sample_width * 8  # Convert sample width to bit depth
-        sample_rate = audio.frame_rate
-        num_channels = audio.channels
-        format_string = f"{sample_rate/1000:.0f}kHz {sample_width}bit "
-        if num_channels == 1:
-            format_string += "Mono"
-        elif num_channels == 2:
-            format_string += "Stereo"
-        else:
-            format_string += f"{num_channels} channels"
-        return format_string
-    def get_total_samples(filename):
-        audio = AudioSegment.from_file(filename)
-        return len(audio)
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        try:
+            with open(filename, mode) as file:
+                file.write(content)
+            return True
+        except Exception as e:
+            print(f"Error writing to {filename}: {e}")
+            return False
 
 
 class XFL:
@@ -150,8 +168,8 @@ class XFL:
         media_element.set("sourceLastImported", str(int(datetime.datetime.now().timestamp())))
         media_element.set("externalFileSize", str(os.path.getsize(audio_duplicate_path)))
         media_element.set("href", audio_filename)
-        media_element.set("format", str(PyFile.get_audio_format_string(os.path.abspath(audio_path))))
-        media_element.set("sampleCount", str(PyFile.get_total_samples(os.path.abspath(audio_path))))
+        media_element.set("format", str(PyFile.getAudioFormat(os.path.abspath(audio_path))))
+        media_element.set("sampleCount", str(PyFile.getSamples(os.path.abspath(audio_path))))
         media_element.set("dataLength", str(os.path.getsize(audio_duplicate_path)))
 
         # Add the XML entry
