@@ -245,7 +245,7 @@ class Layer:
     def __init__(self, layer_element):
         self.layer_element = layer_element
         self.attrib = layer_element.attrib
-        self.frames = [Frame(frame) for frame in layer_element.findall('xfl:frames/xfl:DOMFrame', ns)]
+        self.frames = [Frame(frame, i) for i, frame in enumerate(layer_element.findall('xfl:frames/xfl:DOMFrame', ns))]
     @property
     def color(self):
         return self.attrib['color']
@@ -282,12 +282,14 @@ class Layer:
 
     def __getitem__(self, key):
         # return the nth keyframe where n.startFrame <= key < (n+1).startFrame
+        if key > self.frameCount:
+            raise IndexError('Frame index out of range')
         if isinstance(key, int):
             for i, frame in enumerate(self.frames):
                 if int(frame.startFrame) <= key < int(self.frames[i+1].startFrame):
                     return frame
         else:
-            raise TypeError('Layer indices must be integers')
+            raise TypeError('Frame indices must be integers')
 
     def clear_Keyframe(self, start_frame):
         for i, frame in enumerate(self.frames):
@@ -319,34 +321,30 @@ class Layer:
         self.layer_element.find('xfl:frames', namespaces=ns).append(new_frame)
         return True
     
-    def insert_Keyframe(self, index):
+    def insert_Keyframe(self, frameIndex):
         # get copy of keyframe before index
-        new_frame = copy.deepcopy(self[index])
-        if index == int(new_frame.startFrame):
-            index += 1
+        new_frame = copy.deepcopy(self[frameIndex])
+        if frameIndex == int(new_frame.startFrame):
+            frameIndex += 1
         # return if new index already has a keyframe
-        if index == int(self[index].startFrame):
+        if frameIndex == int(self[frameIndex].startFrame):
             return False
-        new_frame.duration = str(int(self[index].duration) - index + int(self[index].startFrame))
-        self[index].duration = str(index - int(self[index].startFrame))
-        new_frame.startFrame = str(index)
+        new_frame.duration = str(int(self[frameIndex].duration) - frameIndex + int(self[frameIndex].startFrame))
+        self[frameIndex].duration = str(frameIndex - int(self[frameIndex].startFrame))
+        new_frame.startFrame = str(frameIndex)
         # get keyframe index
-        for i, frame in enumerate(self.frames):
-            if int(frame.startFrame) > index:
-                self.frames.insert(i, new_frame)
-                self.layer_element.find('xfl:frames', namespaces=ns).insert(i, new_frame.frame_element)
-                return True
-        self.frames.append(new_frame)
-        self.layer_element.find('xfl:frames', namespaces=ns).append(new_frame.frame_element)
+        self.frames.insert(new_frame.index+1, new_frame)
+        self.layer_element.find('xfl:frames', namespaces=ns).insert(new_frame.index+1, new_frame.frame_element)
         return True
 
 
 
 # frames[1] will get second keyframe, layers[14] will get the 14th frame in the layer
 class Frame:
-    def __init__(self, frame_element):
+    def __init__(self, frame_element, index):
         self.frame_element = frame_element
         self.attrib = frame_element.attrib
+        self._index = index
         self.elements = [Element(element) for element in frame_element.findall('xfl:elements/*', ns)]
         for i, element in enumerate(self.elements):
             if element.type == 'DOMSymbolInstance':
@@ -380,6 +378,9 @@ class Frame:
     @property
     def is_empty(self):
         return len(self.elements) == 0
+    @property
+    def index(self):
+        return self._index
     
 
 class Element:
