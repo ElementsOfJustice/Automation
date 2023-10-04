@@ -9,6 +9,7 @@ class Matrix {
     public:
         Matrix(pugi::xml_node& matrixNode);
         ~Matrix();
+        Matrix(const Matrix& matrix);
         double getA();
         void setA(double a);
         double getB();

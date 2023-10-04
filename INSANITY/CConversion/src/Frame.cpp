@@ -12,6 +12,14 @@ Frame::Frame(pugi::xml_node& frameNode) {
     this->root = frameNode;
     loadElements(frameNode);
 }
+
+// copy constructor, make a deep copy of the frame
+Frame::Frame(const Frame& frame) {
+    pugi::xml_document doc;
+    doc.append_copy(frame.root);
+    this->root = doc.first_child();
+    loadElements(this->root);
+}
 Frame::~Frame() {
     
 }

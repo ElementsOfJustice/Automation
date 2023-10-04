@@ -56,7 +56,8 @@
         "vector": "cpp",
         "map": "cpp",
         "xtree": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "algorithm": "cpp"
     },
     "cmake.configureOnOpen": true
 }

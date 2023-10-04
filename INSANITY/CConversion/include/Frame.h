@@ -13,6 +13,7 @@ class Frame {
         void loadElements(pugi::xml_node& frameNode);
     public:
         Frame(pugi::xml_node& frameNode);
+        Frame(const Frame& frame);
         ~Frame();
         Element* getElement(unsigned int index);
         unsigned int getDuration();

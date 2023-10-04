@@ -5,6 +5,12 @@ Matrix::Matrix(pugi::xml_node& matrixNode) {
 Matrix::~Matrix() {
     
 }
+
+Matrix::Matrix(const Matrix& matrix) {
+    pugi::xml_document doc;
+    doc.append_copy(matrix.root);
+    this->root = doc.first_child();
+}
 double Matrix::getA() {
     return this->root.attribute("a").as_double();
 }

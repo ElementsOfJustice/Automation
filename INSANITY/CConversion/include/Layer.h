@@ -8,11 +8,12 @@
 class Layer {
     private:
         pugi::xml_node root;
-        std::vector<std::unique_ptr<Frame>> frames;
         void loadFrames(pugi::xml_node& layerNode);
     public:
+        std::vector<std::unique_ptr<Frame>> frames;
         Layer(pugi::xml_node& layerNode);
         ~Layer();
+        bool insertKeyframe(unsigned int frameIndex);
         Frame* getKeyFrame(unsigned int index);
         Frame* getFrame(unsigned int frameIndex);
         std::string getColor();

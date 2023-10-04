@@ -9,6 +9,7 @@ class Point {
     public:
         Point(pugi::xml_node& pointNode);
         ~Point();
+        Point(const Point& point);
         double getX();
         void setX(double x);
         double getY();

@@ -1,4 +1,6 @@
 #include "../include/Layer.h"
+#include <algorithm>
+#include <stdexcept>
 void Layer::loadFrames(pugi::xml_node& layerNode) {
     auto frames = layerNode.child("frames").children("DOMFrame");
     for(auto iter = frames.begin(); iter != frames.end(); ++iter) {
@@ -12,12 +14,30 @@ Layer::Layer(pugi::xml_node& layerNode) {
 Layer::~Layer() {
     
 }
+
+bool Layer::insertKeyframe(unsigned int frameIndex) { // TODO
+    if(frameIndex > this->getFrameCount()) {
+        throw std::out_of_range("Frame index out of range");
+    }
+    Frame* frame = this->getFrame(frameIndex);
+    auto newFrame = std::make_unique<Frame>(*frame);
+
+    return false;
+}
+
 Frame* Layer::getKeyFrame(unsigned int index) {
     return frames[index].get();
 }
 
 Frame* Layer::getFrame(unsigned int frameIndex) {
-    return nullptr;
+    // return the nth keyframe where n.startFrame <= key < n.startFrame + n.duration using binary search
+    if(frameIndex > this->getFrameCount()) {
+        throw std::out_of_range("Frame index out of range");
+    }
+    unsigned int index = std::lower_bound(this->frames.begin(), this->frames.end(), frameIndex, [](const std::unique_ptr<Frame>& frame, unsigned int frameIndex) {
+        return frame->getStartFrame() + frame->getDuration() <= frameIndex;
+    }) - this->frames.begin();
+    return this->frames[index].get();
 }
 
 std::string Layer::getColor() {

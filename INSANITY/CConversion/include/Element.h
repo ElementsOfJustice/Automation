@@ -9,6 +9,7 @@ class Element {
     public:
         Element(pugi::xml_node& elementNode);
         ~Element();
+        Element(const Element& element);
         virtual double getWidth() = 0;
         virtual void setWidth(double width) = 0;
         virtual double getHeight() = 0;
