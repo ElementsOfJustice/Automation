@@ -48,7 +48,7 @@ import datetime
 import shutil
 import copy
 import os
-
+import time
 ET.register_namespace("", "http://ns.adobe.com/xfl/2008/")
 
 # Namespace constant
@@ -426,7 +426,8 @@ class Layer:
         if frameIndex >= self.frameCount or frameIndex < 0:
             raise IndexError('Frame index out of range')
         # get copy of keyframe before index, O(log(n)) for keyframe access, O(1) for copy
-        new_frame = copy.deepcopy(self[frameIndex])
+        frame = self[frameIndex]
+        new_frame = frame.copy()
         if frameIndex == int(new_frame.startFrame):
             frameIndex += 1
         if frameIndex >= self.frameCount:
@@ -454,6 +455,11 @@ class Frame:
         for i, element in enumerate(self.elements):
             if element.type == 'DOMSymbolInstance':
                 self.elements[i] = SymbolInstance(element.element_element)
+    #copy constructor
+    def copy(self):
+        new_frame_element = copy.deepcopy(self.frame_element)
+        return Frame(new_frame_element)
+
 
     @property
     def duration(self):
@@ -513,7 +519,8 @@ class SymbolInstance(Element):
     def __init__(self, symbolInstance_element):
         self.symbolInstance_element = symbolInstance_element
         self.attrib = symbolInstance_element.attrib
-        self.matrix = Matrix(symbolInstance_element.find('xfl:matrix/xfl:Matrix', ns))
+        matrix = symbolInstance_element.find('xfl:matrix/xfl:Matrix', ns)
+        self.matrix = Matrix(matrix) if matrix is not None else None
         self.transformation_point = Point(symbolInstance_element.find('xfl:transformationPoint/xfl:Point', ns))
 
     @property
@@ -615,9 +622,12 @@ class Point():
         self.attrib['y'] = str(value)
 
 if __name__ == '__main__':
-    xfl = XFL('INSANITY\\test\\DOMDocument.xml')
 
-    print(xfl.timelines[0].getLayerFromName("Layer_1")[0][2].parentLayer.name)
-
-    xfl.write('INSANITY\\test\\DOMDocument.xml')
+    xfl = XFL('C:\\VHC\\301_S4_bugged\\DOMDocument.xml')
+    start = time.perf_counter()
+    for i in range(xfl.timelines[0].layers[xfl.timelines[0].findLayerIndex("PHOENIX")].frameCount):
+        xfl.timelines[0].layers[xfl.timelines[0].findLayerIndex("RAINBOW_DASH")].insertKeyframe(i)
+    end = time.perf_counter()
+    print(f"Time to make {xfl.timelines[0].layers[xfl.timelines[0].findLayerIndex('PHOENIX')].frameCount} keyframes: {end-start}")
+    # xfl.write('C:\\VHC\\301_S4_bugged\\DOMDocument.xml')
     # xfl.read('INSANITY\\test\\DOMDocument.xml')
