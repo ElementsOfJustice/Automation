@@ -1,13 +1,29 @@
 #include "include/XFLDocument.h"
+#include "include/CFile.h"
 #include <iostream>
 
 int main() {
-    XFLDocument xfl("C:\\VHC\\301_S4_bugged\\DOMDocument.xml");
-    // print name of first timeline
-    // xfl.getTimeline(0)->getLayer(0)->getFrame(0)->getElement(0)->setHeight(1000);
-    // std::cout << xfl.getTimeline(0)->getLayer(0)->getFrame(0)->getStartFrame() << std::endl;
-    xfl.getTimeline(0)->getLayer(11)->insertKeyframe(6);
-    xfl.getTimeline(0)->setName("New Timeline Name");
-    std::cout << xfl.getTimeline(0)->getLayer(11)->frames.back()->getStartFrame() << std::endl;
-    // xfl.write("../test/DOMDocument2.xml");
+/*  std::string fileName = "Examples.txt";
+    CFile file(fileName);
+
+    if (file.exists(fileName)) {
+        std::cout << "File exists." << std::endl;
+    } else {
+        std::cout << "File does not exist." << std::endl;
+    }
+
+    return 0; */
+
+    std::string fileName = "example.txt";
+    CFile file(fileName);
+
+    // Call the write function with an in-line string content
+    if (file.write(fileName, "Inline content goes here.")) {
+        std::cout << "Write successful!" << std::endl;
+    } else {
+        std::cout << "Write failed." << std::endl;
+    }
+
+    return 0;
+
 }

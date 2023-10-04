@@ -47,3 +47,5 @@ Scene Generators/Script Parsing/302S6_Scene_Generation_S6.txt
 *.pdb
 *.exe
 *.ilk
+.vs
+.vscode
