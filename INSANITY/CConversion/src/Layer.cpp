@@ -12,8 +12,12 @@ Layer::Layer(pugi::xml_node& layerNode) {
 Layer::~Layer() {
     
 }
-Frame* Layer::getFrame(unsigned int index) {
+Frame* Layer::getKeyFrame(unsigned int index) {
     return frames[index].get();
+}
+
+Frame* Layer::getFrame(unsigned int frameIndex) {
+    return nullptr;
 }
 
 std::string Layer::getColor() {
@@ -54,4 +58,8 @@ std::optional<std::string> Layer::getParentLayer() {
         return parentLayer.value();
     }
     return std::nullopt;
+}
+
+unsigned int Layer::getFrameCount() {
+    return this->frames[this->frames.size() - 1]->getStartFrame() + this->frames[this->frames.size() - 1]->getDuration();
 }

@@ -2,6 +2,7 @@
 #define FRAME_H
 #include "pugixml.hpp"
 #include "Element.h"
+#include "SymbolInstance.h"
 #include <vector>
 #include <memory>
 #include <optional>

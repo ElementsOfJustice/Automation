@@ -2,7 +2,10 @@
 void Frame::loadElements(pugi::xml_node& frameNode) {
     auto elements = frameNode.child("elements").children();
     for(auto iter = elements.begin(); iter != elements.end(); ++iter) {
-        this->elements.push_back(std::make_unique<Element>(*iter));
+        std::string type = iter->name();
+        if(type.find("SymbolInstance") != std::string::npos) {
+            this->elements.push_back(std::make_unique<SymbolInstance>(*iter));
+        }
     }
 }
 Frame::Frame(pugi::xml_node& frameNode) {

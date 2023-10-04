@@ -4,8 +4,6 @@
 #include "Element.h"
 
 class SymbolInstance : public Element {
-    private:
-        pugi::xml_node root;
     public:
         SymbolInstance(pugi::xml_node& elementNode);
         ~SymbolInstance();
@@ -21,6 +19,10 @@ class SymbolInstance : public Element {
         void setLastFrame(unsigned int lastFrame);
         std::string getLoop();
         void setLoop(const std::string& loop);
+        double getWidth() override;
+        void setWidth(double width) override;
+        double getHeight() override;
+        void setHeight(double height) override;
 };
 
 #endif // SYMBOLINSTANCE_H

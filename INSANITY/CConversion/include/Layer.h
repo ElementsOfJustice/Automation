@@ -13,7 +13,8 @@ class Layer {
     public:
         Layer(pugi::xml_node& layerNode);
         ~Layer();
-        Frame* getFrame(unsigned int index);
+        Frame* getKeyFrame(unsigned int index);
+        Frame* getFrame(unsigned int frameIndex);
         std::string getColor();
         void setColor(const std::string& color);
         std::optional<std::string> getLayerType();
@@ -24,5 +25,6 @@ class Layer {
         void setName(const std::string& name);
         std::optional<std::string> getParentLayer();
         void setParentLayer(const std::string& parentLayer);
+        unsigned int getFrameCount();
 };
 #endif // LAYER_H

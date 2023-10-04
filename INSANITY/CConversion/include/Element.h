@@ -4,15 +4,15 @@
 #include "pugixml.hpp"
 #include <optional>
 class Element {
-    private:
+    protected:
         pugi::xml_node root;
     public:
         Element(pugi::xml_node& elementNode);
         ~Element();
-        double getWidth();
-        void setWidth(double width);
-        double getHeight();
-        void setHeight(double height);
+        virtual double getWidth() = 0;
+        virtual void setWidth(double width) = 0;
+        virtual double getHeight() = 0;
+        virtual void setHeight(double height) = 0;
         std::string getType();
 };
 

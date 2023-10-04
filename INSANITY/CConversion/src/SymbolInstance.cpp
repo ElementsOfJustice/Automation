@@ -1,6 +1,5 @@
 #include "../include/SymbolInstance.h"
 SymbolInstance::SymbolInstance(pugi::xml_node& elementNode) : Element(elementNode) {
-    this->root = elementNode;
 }
 SymbolInstance::~SymbolInstance() {
     
@@ -41,4 +40,16 @@ std::string SymbolInstance::getLoop() {
 }
 void SymbolInstance::setLoop(const std::string& loop) {
     this->root.attribute("loop").set_value(loop.c_str());
+}
+double SymbolInstance::getWidth() {
+    return this->root.attribute("width").as_double();   
+}
+void SymbolInstance::setWidth(double width) {
+    this->root.attribute("width").set_value(width);
+}
+double SymbolInstance::getHeight() {
+    return this->root.attribute("height").as_double();
+}
+void SymbolInstance::setHeight(double height) {
+    this->root.attribute("height").set_value(height);
 }
