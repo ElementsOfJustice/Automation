@@ -1,0 +1,43 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "build",
+            "linux": {
+                "postBuild": "cp lib/libpugixml.a bin/"
+            },
+            "osx": {
+                "postBuild": "cp lib/libpugixml.a bin/"
+            },
+            "windows": {
+                "postBuild": "copy lib\\pugixml.lib bin\\"
+            },
+            "logging": {
+                "moduleLoad": false,
+                "trace": true,
+                "engineLogging": true,
+                "traceResponse": true
+            },
+            "miDebuggerArgs": "-i=mi"
+        }
+    ],
+    "compounds": []
+}

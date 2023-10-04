@@ -41,13 +41,14 @@
         keyframes instead of frames is still weird to me!
 """
 
+import bisect
 from pydub import AudioSegment
 import xml.etree.ElementTree as ET
 import datetime
 import shutil
 import copy
 import os
-
+import time
 ET.register_namespace("", "http://ns.adobe.com/xfl/2008/")
 
 # Namespace constant
@@ -320,7 +321,7 @@ class Layer:
     def __init__(self, layer_element):
         self.layer_element = layer_element
         self.attrib = layer_element.attrib
-        self.frames = [Frame(frame, i) for i, frame in enumerate(layer_element.findall('xfl:frames/xfl:DOMFrame', ns))]
+        self.frames = [Frame(frame) for frame in layer_element.findall('xfl:frames/xfl:DOMFrame', ns)]
         self.parentTimeline = None
         for frame in self.frames:
             frame.parentLayer = self
@@ -360,85 +361,115 @@ class Layer:
         return int(self.frames[-1].startFrame) + int(self.frames[-1].duration)
 
     def __getitem__(self, key):
-        # return the nth keyframe where n.startFrame <= key < (n+1).startFrame
-        if key > self.frameCount:
+        # return the nth keyframe where n.startFrame <= key < n.startFrame + n.duration
+        # self.frames will always be sorted in ascending order by startFrame, so we can do a binary search
+        if key >= self.frameCount or key < 0:
             raise IndexError('Frame index out of range')
-        if isinstance(key, int):
-            for i, frame in enumerate(self.frames):
-                if int(frame.startFrame) <= key < int(self.frames[i+1].startFrame):
-                    return frame
-        else:
+        if not isinstance(key, int):
             raise TypeError('Frame indices must be integers')
+        # binary search for nth keyframe where n.startFrame <= key < n.startFrame + n.duration
+        index = bisect.bisect_left(self.frames, key+1, key=lambda frame: int(frame.startFrame) + int(frame.duration))
+        return self.frames[index]
         
     def index(self):
         if self.parentTimeline:
             return self.parentTimeline.layers.index(self)
         return -1  # Return -1 if the layer is not associated with any timeline
 
-    def clearKeyframe(self, start_frame):
-        for i, frame in enumerate(self.frames):
-            if frame.startFrame == str(start_frame):
-                self.layer_element.find('xfl:frames', namespaces=ns).remove(frame.frame_element)
-                self.frames.remove(frame)
-                self.frames[i-1].duration = str(int(self.frames[i-1].duration) + int(frame.duration))
-                return True
-        return False
+    def clearKeyframe(self, frameIndex):
+        if frameIndex >= self.frameCount or frameIndex < 0:
+            raise IndexError('Frame index out of range')
+        if len(self.frames) == 1:
+            return False
+        frame = self[frameIndex]
+        if frameIndex != int(frame.startFrame):
+            return False
+        # special case for frame 0
+        if frameIndex == 0:
+            next_frame = self[int(frame.startFrame) + int(frame.duration)]
+            next_frame.duration = str(int(next_frame.duration) + int(frame.duration))
+            next_frame.startFrame = 0
+            self.layer_element.find('xfl:frames', namespaces=ns).remove(frame.frame_element)
+            self.frames.remove(frame)
+            return True
+        
+        self.layer_element.find('xfl:frames', namespaces=ns).remove(frame.frame_element)
+        self.frames.remove(frame)
+        self[int(frame.startFrame)-1].duration = str(int(self[int(frame.startFrame)-1].duration) + int(frame.duration))
+        return True
     
-    def insertBlankKeyframe(self, index):
+    def insertBlankKeyframe(self, frameIndex):
+        if frameIndex >= self.frameCount or frameIndex < 0:
+            raise IndexError('Frame index out of range')
+        prev_frame = self[frameIndex]
+        if frameIndex == int(prev_frame.startFrame):
+            frameIndex += 1
+        if frameIndex >= self.frameCount:
+            return False
+        frame = self[frameIndex]
+        if frameIndex == int(frame.startFrame):
+            return False 
         new_frame = ET.Element('DOMFrame')
         new_frame.tail = '\n\t\t\t'
-        new_frame.attrib['index'] = str(index)
-    
-        # Find the correct position to insert the new frame based on the index
-        for i, frame in enumerate(self.frames):
-            if int(frame.startFrame) > index:
-                new_frame.attrib['duration'] = str(int(self.frames[i-1].startFrame) - index + int(self.frames[i-1].duration))
-                self.frames[i-1].duration = str(index - int(self.frames[i-1].startFrame))
-                self.frames.insert(i, Frame(new_frame))
-                self.layer_element.find('xfl:frames', namespaces=ns).insert(i, new_frame)
-                return True
-
-        # If no frames with a greater index were found, append the new frame to the end
-        new_frame.attrib['duration'] = str(int(self.frames[-1].startFrame) - index + int(self.frames[-1].duration))
-        self.frames[-1].duration = str(index - int(self.frames[-1].startFrame))
-        self.frames.append(Frame(new_frame))
-        self.layer_element.find('xfl:frames', namespaces=ns).append(new_frame)
+        duration = int(frame.duration) - frameIndex + int(frame.startFrame)
+        if duration > 1:
+            new_frame.attrib['duration'] = str(duration)
+        frame.duration = str(frameIndex - int(frame.startFrame))
+        new_frame.attrib['index'] = str(frameIndex)
+        # Find the correct position to insert the new frame based on the frameIndex
+        index = bisect.bisect_left(self.frames, frameIndex+1, key=lambda frame: int(frame.startFrame) + int(frame.duration))
+        self.frames.insert(index, Frame(new_frame))
+        self.layer_element.find('xfl:frames', namespaces=ns).insert(index, new_frame)
         return True
     
     def insertKeyframe(self, frameIndex):
-        # get copy of keyframe before index
-        new_frame = copy.deepcopy(self[frameIndex])
+        if frameIndex >= self.frameCount or frameIndex < 0:
+            raise IndexError('Frame index out of range')
+        # get copy of keyframe before index, O(log(n)) for keyframe access, O(1) for copy
+        frame = self[frameIndex]
+        new_frame = frame.copy()
         if frameIndex == int(new_frame.startFrame):
             frameIndex += 1
-        # return if new index already has a keyframe
-        if frameIndex == int(self[frameIndex].startFrame):
+        if frameIndex >= self.frameCount:
             return False
-        new_frame.duration = str(int(self[frameIndex].duration) - frameIndex + int(self[frameIndex].startFrame))
-        self[frameIndex].duration = str(frameIndex - int(self[frameIndex].startFrame))
+        # return if new index already has a keyframe, another O(log n)
+        frame = self[frameIndex]
+        if frameIndex == int(frame.startFrame):
+            return False
+        new_frame.duration = str(int(frame.duration) - frameIndex + int(frame.startFrame))
+        frame.duration = str(frameIndex - int(frame.startFrame))
         new_frame.startFrame = str(frameIndex)
-        # get keyframe index
-        self.frames.insert(new_frame.index+1, new_frame)
-        self.layer_element.find('xfl:frames', namespaces=ns).insert(new_frame.index+1, new_frame.frame_element)
+        # get keyframe index, O(log n)
+        index = bisect.bisect_left(self.frames, frameIndex+1, key=lambda frame: int(frame.startFrame) + int(frame.duration))
+        self.frames.insert(index, new_frame)
+        self.layer_element.find('xfl:frames', namespaces=ns).insert(index, new_frame.frame_element)
         return True
 
 
 class Frame:
-    def __init__(self, frame_element, index):
+    def __init__(self, frame_element):
         self.frame_element = frame_element
         self.attrib = frame_element.attrib
-        self._index = index
         self.elements = [Element(element) for element in frame_element.findall('xfl:elements/*', ns)]
         self.parentLayer = None
         for i, element in enumerate(self.elements):
             if element.type == 'DOMSymbolInstance':
                 self.elements[i] = SymbolInstance(element.element_element)
+    #copy constructor
+    def copy(self):
+        new_frame_element = copy.deepcopy(self.frame_element)
+        return Frame(new_frame_element)
+
 
     @property
     def duration(self):
-        return self.attrib['duration']
+        # xfl has no duration if it's a single frame
+        return self.attrib['duration'] if 'duration' in self.attrib else 1
     @duration.setter
     def duration(self, value):
         self.attrib['duration'] = str(value)
+        if int(value) == 1:
+            del self.attrib['duration']
     @property
     def startFrame(self):
         return self.attrib['index']
@@ -446,7 +477,7 @@ class Frame:
     def startFrame(self, value):
         self.attrib['index'] = str(value)
     @property
-    def labelType(self, value):
+    def labelType(self):
         return self.attrib['labelType'] if 'labelType' in self.frame_element.attrib else None
     @labelType.setter
     def labelType(self, value):
@@ -462,9 +493,6 @@ class Frame:
     @property
     def is_empty(self):
         return len(self.elements) == 0
-    @property
-    def index(self):
-        return self._index
     
 
 class Element:
@@ -491,7 +519,8 @@ class SymbolInstance(Element):
     def __init__(self, symbolInstance_element):
         self.symbolInstance_element = symbolInstance_element
         self.attrib = symbolInstance_element.attrib
-        self.matrix = Matrix(symbolInstance_element.find('xfl:matrix/xfl:Matrix', ns))
+        matrix = symbolInstance_element.find('xfl:matrix/xfl:Matrix', ns)
+        self.matrix = Matrix(matrix) if matrix is not None else None
         self.transformation_point = Point(symbolInstance_element.find('xfl:transformationPoint/xfl:Point', ns))
 
     @property
@@ -593,9 +622,12 @@ class Point():
         self.attrib['y'] = str(value)
 
 if __name__ == '__main__':
-    xfl = XFL('INSANITY\\test\\DOMDocument.xml')
 
-    print(xfl.timelines[0].getLayerFromName("Layer_1")[0][2].parentLayer.name)
-
-    xfl.write('INSANITY\\test\\DOMDocument.xml')
-    xfl.read('INSANITY\\test\\DOMDocument.xml')
+    xfl = XFL('C:\\VHC\\301_S4_bugged\\DOMDocument.xml')
+    start = time.perf_counter()
+    for i in range(xfl.timelines[0].layers[xfl.timelines[0].findLayerIndex("PHOENIX")].frameCount):
+        xfl.timelines[0].layers[xfl.timelines[0].findLayerIndex("RAINBOW_DASH")].insertKeyframe(i)
+    end = time.perf_counter()
+    print(f"Time to make {xfl.timelines[0].layers[xfl.timelines[0].findLayerIndex('PHOENIX')].frameCount} keyframes: {end-start}")
+    # xfl.write('C:\\VHC\\301_S4_bugged\\DOMDocument.xml')
+    # xfl.read('INSANITY\\test\\DOMDocument.xml')

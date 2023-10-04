@@ -43,3 +43,7 @@ Scene Generators/Script Parsing/209_Scene_Generation_S1.txt
 Scene Generators/Script Parsing/302S6.txt
 Scene Generators/Script Parsing/302S6_ae_markup.txt
 Scene Generators/Script Parsing/302S6_Scene_Generation_S6.txt
+*.obj
+*.pdb
+*.exe
+*.ilk
