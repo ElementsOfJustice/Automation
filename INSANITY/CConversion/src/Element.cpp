@@ -1,14 +1,16 @@
 #include "../include/Element.h"
 Element::Element(pugi::xml_node& elementNode) {
-    this->root = elementNode;
+	this->root = elementNode;
 }
 Element::Element(const Element& element) {
-    pugi::xml_document doc;
-    doc.append_copy(element.root);
-    this->root = doc.first_child();
+	auto parent = element.root.parent();
+	this->root = parent.insert_copy_after(element.root, element.root);
 }
 Element::~Element() {
 }
 std::string Element::getType() {
-    return this->root.name();
+	return this->root.name();
+}
+pugi::xml_node& Element::getRoot() {
+	return this->root;
 }

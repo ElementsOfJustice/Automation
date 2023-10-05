@@ -5,15 +5,16 @@
 #include <vector>
 #include <memory>
 class Timeline {
-    private:
-    std::vector<std::unique_ptr<Layer>> layers;
-    pugi::xml_node root;
-    void loadLayers(pugi::xml_node& timelineNode);
-    public:
-    Timeline(pugi::xml_node& timelineNode);
-    ~Timeline();
-    Layer* getLayer(unsigned int index);
-    std::string getName();
-    void setName(const std::string& name);
+private:
+	std::vector<std::unique_ptr<Layer>> layers;
+	pugi::xml_node root;
+	void loadLayers(pugi::xml_node& timelineNode);
+public:
+	Timeline(pugi::xml_node& timelineNode);
+	~Timeline();
+	Layer* getLayer(unsigned int index);
+	std::string getName();
+	void setName(const std::string& name);
+	pugi::xml_node& getRoot();
 };
 #endif // TIMELINE_H
