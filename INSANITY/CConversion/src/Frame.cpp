@@ -20,6 +20,7 @@ Frame::Frame(const Frame& frame, bool isBlank) {
 	auto parent = frame.root.parent();
 	this->root = parent.insert_copy_after(frame.root, frame.root);
 	if (!isBlank) loadElements(this->root);
+	else this->root.remove_child("elements");
 }
 Frame::~Frame() {
 
@@ -30,9 +31,6 @@ Element* Frame::getElement(unsigned int index) {
 unsigned int Frame::getDuration() {
 	// duration is empty if it's 1, so we need to check if it's empty
 	auto duration = this->root.attribute("duration");
-	// std::cout << duration.as_int() << std::endl;
-	// std::cout << duration.empty() << std::endl;
-	// std::cout << duration << std::endl;
 	if (!duration.empty()) {
 		return duration.as_int();
 	}
