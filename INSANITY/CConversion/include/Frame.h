@@ -12,8 +12,8 @@ private:
 	std::vector<std::unique_ptr<Element>> elements;
 	void loadElements(pugi::xml_node& frameNode);
 public:
-	Frame(pugi::xml_node& frameNode);
-	Frame(const Frame& frame);
+	Frame(pugi::xml_node& frameNode, bool isBlank=false);
+	Frame(const Frame& frame, bool isBlank=false);
 	~Frame();
 	Element* getElement(unsigned int index);
 	unsigned int getDuration();

@@ -9,17 +9,17 @@ void Frame::loadElements(pugi::xml_node& frameNode) {
 		}
 	}
 }
-Frame::Frame(pugi::xml_node& frameNode) {
+Frame::Frame(pugi::xml_node& frameNode, bool isBlank) {
 	this->root = frameNode;
-	loadElements(frameNode);
+	if (!isBlank) loadElements(frameNode);
 }
 
 // copy constructor, make a deep copy of the frame
-Frame::Frame(const Frame& frame) {
+Frame::Frame(const Frame& frame, bool isBlank) {
 	// use the parent of this->root to insert the copy
 	auto parent = frame.root.parent();
 	this->root = parent.insert_copy_after(frame.root, frame.root);
-	loadElements(this->root);
+	if (!isBlank) loadElements(this->root);
 }
 Frame::~Frame() {
 

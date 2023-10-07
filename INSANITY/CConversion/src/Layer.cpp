@@ -15,7 +15,7 @@ Layer::~Layer() {
 
 }
 
-bool Layer::insertKeyframe(unsigned int frameIndex) {
+bool Layer::insertKeyframe(unsigned int frameIndex, bool isBlank) {
 	if (frameIndex > this->getFrameCount()) {
 		throw std::out_of_range("Frame index out of range");
 	}
@@ -24,14 +24,21 @@ bool Layer::insertKeyframe(unsigned int frameIndex) {
 	if (frameIndex >= this->getFrameCount()) return false;
 	frame = this->getFrame(frameIndex);
 	if (frameIndex == frame->getStartFrame()) return false;
-	auto newFrame = std::make_unique<Frame>(*frame);
+	auto newFrame = std::make_unique<Frame>(*frame, isBlank);
 	unsigned int index = this->getKeyframeIndex(frameIndex);
-	// this->root.child("frames").insert_copy_after(newFrame->getRoot(), frame->getRoot());
 	newFrame->setDuration(frame->getDuration() + frame->getStartFrame() - frameIndex);
 	frame->setDuration(frameIndex - frame->getStartFrame());
 	newFrame->setStartFrame(frameIndex);
 	this->frames.insert(this->frames.begin() + index + 1, std::move(newFrame));
 	return true;
+}
+
+bool Layer::insertKeyframe(unsigned int frameIndex) {
+	return this->insertKeyframe(frameIndex, false);
+}
+
+bool Layer::insertBlankKeyframe(unsigned int frameIndex) {
+	return this->insertKeyframe(frameIndex, true);
 }
 
 Frame* Layer::getKeyFrame(unsigned int index) {
