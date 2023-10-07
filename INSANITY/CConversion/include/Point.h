@@ -6,14 +6,15 @@
 class Point {
 private:
 	pugi::xml_node root;
+	double x, y;
 public:
 	Point(pugi::xml_node& pointNode);
 	Point(const pugi::xml_node& pointNode);
 	~Point();
 	Point(const Point& point);
-	double getX();
+	double getX() const;
 	void setX(double x);
-	double getY();
+	double getY() const;
 	void setY(double y);
 	pugi::xml_node& getRoot();
 };

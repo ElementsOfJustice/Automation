@@ -9,6 +9,11 @@ void Layer::loadFrames(pugi::xml_node& layerNode) {
 }
 Layer::Layer(pugi::xml_node& layerNode) {
 	this->root = layerNode;
+	this->color = layerNode.attribute("color").value();
+	this->layerType = layerNode.attribute("layerType").value();
+	this->locked = layerNode.attribute("locked").as_bool();
+	this->name = layerNode.attribute("name").value();
+	this->parentLayer = layerNode.attribute("parentLayer").value();
 	loadFrames(this->root);
 }
 Layer::~Layer() {
@@ -75,44 +80,43 @@ Frame* Layer::getFrame(unsigned int frameIndex) {
 	return this->frames[index].get();
 }
 
-std::string Layer::getColor() {
-	return this->root.attribute("color").value();
+std::string Layer::getColor() const {
+	return this->color;
 }
 void Layer::setColor(const std::string& color) {
 	this->root.attribute("color").set_value(color.c_str());
+	this->color = color;
 }
-std::optional<std::string> Layer::getLayerType() {
-	auto layerType = this->root.attribute("layerType");
-	if (!layerType.empty()) {
-		return layerType.value();
-	}
-	return std::nullopt;
+std::string Layer::getLayerType() const {
+	return this->layerType;
 }
 void Layer::setLayerType(const std::string& layerType) {
-	this->root.attribute("layerType").set_value(layerType.c_str());
+	if(layerType.empty()) this->root.remove_attribute("layerType");
+	else this->root.attribute("layerType").set_value(layerType.c_str());
+	this->layerType = layerType;
 }
-std::optional<bool> Layer::isLocked() {
-	auto locked = this->root.attribute("locked");
-	if (!locked.empty()) {
-		return locked.as_bool();
-	}
-	return std::nullopt;
+bool Layer::isLocked() const {
+	return this->locked;
 }
 void Layer::setLocked(bool locked) {
-	this->root.attribute("locked").set_value(locked);
+	if(!locked) this->root.remove_attribute("locked");
+	else this->root.attribute("locked").set_value(locked);
+	this->locked = locked;
 }
-std::string Layer::getName() {
-	return this->root.attribute("name").value();
+std::string Layer::getName() const {
+	return this->name;
 }
 void Layer::setName(const std::string& name) {
 	this->root.attribute("name").set_value(name.c_str());
+	this->name = name;
 }
-std::optional<std::string> Layer::getParentLayer() {
-	auto parentLayer = this->root.attribute("parentLayer");
-	if (!parentLayer.empty()) {
-		return parentLayer.value();
-	}
-	return std::nullopt;
+std::string Layer::getParentLayer() const {
+	return this->parentLayer;
+}
+void Layer::setParentLayer(const std::string& parentLayer) {
+	if(parentLayer.empty()) this->root.remove_attribute("parentLayer");
+	else this->root.attribute("parentLayer").set_value(parentLayer.c_str());
+	this->parentLayer = parentLayer;
 }
 
 unsigned int Layer::getFrameCount() {

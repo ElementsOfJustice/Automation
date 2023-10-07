@@ -1,7 +1,6 @@
 #ifndef CFILE_H
 #define CFILE_H
 
-#include <optional>
 #include <string>
 #include <fstream>
 #include <iostream>

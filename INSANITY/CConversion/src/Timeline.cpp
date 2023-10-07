@@ -20,10 +20,11 @@ Layer* Timeline::getLayer(unsigned int index) {
 	return layers[index].get();
 }
 std::string Timeline::getName() {
-	return this->root.attribute("name").value();
+	return this->name;
 }
 void Timeline::setName(const std::string& name) {
 	this->root.attribute("name").set_value(name.c_str());
+	this->name = name;
 }
 pugi::xml_node& Timeline::getRoot() {
 	return this->root;

@@ -4,8 +4,19 @@
 #include "Element.h"
 #include "Matrix.h"
 #include "Point.h"
+#include <optional>
 
 class SymbolInstance : public Element, private Matrix, private Point {
+private:
+	pugi::xml_node root;
+	std::string libraryItemName;
+	bool selected;
+	std::string symbolType;
+	unsigned int firstFrame;
+	std::optional<unsigned int> lastFrame;
+	std::string loop;
+	double getWidthRecur() const;
+	double getHeightRecur() const;
 public:
 	SymbolInstance(pugi::xml_node& elementNode);
 	~SymbolInstance();
@@ -18,14 +29,13 @@ public:
 	void setSymbolType(const std::string& symbolType);
 	unsigned int getFirstFrame();
 	void setFirstFrame(unsigned int firstFrame);
-	unsigned int getLastFrame();
+	std::optional<unsigned int> getLastFrame();
 	void setLastFrame(unsigned int lastFrame);
+	void setLastFrame(std::optional<unsigned int> lastFrame);
 	std::string getLoop();
 	void setLoop(const std::string& loop);
-	double getWidth() override;
-	void setWidth(double width) override;
-	double getHeight() override;
-	void setHeight(double height) override;
+	double getWidth() const override;
+	double getHeight() const override;
 	Matrix* getMatrix();
 	Point* getPoint();
 };

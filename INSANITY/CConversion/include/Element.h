@@ -1,19 +1,20 @@
 #ifndef ELEMENT_H
 #define ELEMENT_H
-
+#define UNDEF -1.0
 #include "pugixml.hpp"
-#include <optional>
 class Element {
 protected:
 	pugi::xml_node root;
+	double width, height;
 public:
+	Element();
 	Element(pugi::xml_node& elementNode);
 	~Element();
 	Element(const Element& element);
-	virtual double getWidth() = 0;
-	virtual void setWidth(double width) = 0;
-	virtual double getHeight() = 0;
-	virtual void setHeight(double height) = 0;
+	virtual double getWidth() const = 0;
+	void setWidth(double width);
+	virtual double getHeight() const = 0;
+	void setHeight(double height);
 	std::string getType();
 	pugi::xml_node& getRoot();
 };
