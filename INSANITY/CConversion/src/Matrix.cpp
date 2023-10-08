@@ -1,19 +1,20 @@
 #include "../include/Matrix.h"
 Matrix::Matrix(pugi::xml_node& matrixNode) {
 	this->root = matrixNode;
-	this->a = matrixNode.attribute("a").as_double();
-	this->b = matrixNode.attribute("b").as_double();
-	this->c = matrixNode.attribute("c").as_double();
-	this->d = matrixNode.attribute("d").as_double();
+	// empty values for a and d is 1.0; b, c, tx, and ty is 0.0
+	this->a  = matrixNode.attribute("a").as_double(1.0);
+	this->b  = matrixNode.attribute("b").as_double();
+	this->c  = matrixNode.attribute("c").as_double();
+	this->d  = matrixNode.attribute("d").as_double(1.0);
 	this->tx = matrixNode.attribute("tx").as_double();
 	this->ty = matrixNode.attribute("ty").as_double();
 }
 Matrix::Matrix(const pugi::xml_node& matrixNode) {
 	this->root = matrixNode;
-	this->a  = matrixNode.attribute("a").as_double();
+	this->a  = matrixNode.attribute("a").as_double(1.0);
 	this->b  = matrixNode.attribute("b").as_double();
 	this->c  = matrixNode.attribute("c").as_double();
-	this->d  = matrixNode.attribute("d").as_double();
+	this->d  = matrixNode.attribute("d").as_double(1.0);
 	this->tx = matrixNode.attribute("tx").as_double();
 	this->ty = matrixNode.attribute("ty").as_double();
 }
@@ -35,7 +36,7 @@ double Matrix::getA() const {
 	return this->a;
 }
 void Matrix::setA(double a)  {
-	if (std::abs(a) < std::numeric_limits<double>::epsilon()) this->root.remove_attribute("a");
+	if (std::abs(a - 1.0) < std::numeric_limits<double>::epsilon()) this->root.remove_attribute("a");
 	else this->root.attribute("a").set_value(a);
 	this->a = a;
 }
@@ -59,7 +60,7 @@ double Matrix::getD() const {
 	return this->d;
 }
 void Matrix::setD(double d) {
-	if (std::abs(d) < std::numeric_limits<double>::epsilon()) this->root.remove_attribute("d");
+	if (std::abs(d - 1.0) < std::numeric_limits<double>::epsilon()) this->root.remove_attribute("d");
 	else this->root.attribute("d").set_value(d);
 	this->d = d;
 }
