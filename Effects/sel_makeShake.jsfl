@@ -71,9 +71,12 @@ if (guiPanel.dismiss == "accept") {
                     //  convert the current frame to a key frame 
                     fl.getDocumentDOM().getTimeline().currentLayer = l;
                     timeline.convertToKeyframes(timeline.currentFrame);
+                    timeline.layers[l].frames[timeline.currentFrame].elements[0].matrix = mat;
+                } else {
+                    mat = timeline.layers[l].frames[timeline.currentFrame].elements[0].matrix;
                 }
                 // Reset the frame to its original position to create the shake effect
-                timeline.layers[l].frames[timeline.currentFrame].elements[0].matrix = mat;
+                // fl.trace(timeline.layers[l].name);
                 // Move the frame's registration point by our changes in x and y
                 fl.getDocumentDOM().getTimeline().layers[l].frames[timeline.currentFrame].elements[0].x += shakeOffsets[i][0];
                 fl.getDocumentDOM().getTimeline().layers[l].frames[timeline.currentFrame].elements[0].y += shakeOffsets[i][1];
@@ -81,7 +84,9 @@ if (guiPanel.dismiss == "accept") {
                 timeline.currentFrame += 1;
             }
             // Reset the frame back to the starting position once more.
-            timeline.layers[l].frames[timeline.currentFrame].elements[0].matrix = mat;
+            if (fl.getDocumentDOM().getTimeline().layers[l].frames[timeline.currentFrame].startFrame != timeline.currentFrame) {
+                timeline.layers[l].frames[timeline.currentFrame].elements[0].matrix = mat;
+            }
             timeline.currentFrame = startingFrame;
         }
     }
