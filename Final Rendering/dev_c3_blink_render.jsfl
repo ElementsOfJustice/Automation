@@ -292,7 +292,7 @@ function runBlinking(layerIndex) {
 		//The first frame of any blinkInstruction receives its AS3 here. The only instructions we have to do extra
 		//code with are instructions that require us to go ahead, place another keyframe, and write more AS3.
 		var AS3toWrite = AS3_Constructor(leftEye, rightEye, blinkFrame, blinkDuration, blinkInstruction);
-		if(blinkInstruction == "CutOpen" || blinkInstruction == "CutClosed") frameArray[i].actionScript = AS3toWrite;
+		frameArray[i].actionScript = AS3toWrite;
 		if(frameArray[i + (blinkDuration / 2)].isEmpty) continue;
 		if(frameArray[i + (blinkDuration/2)].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) continue;
 		//ANIMATION OF EYES CLOSING
