@@ -279,42 +279,22 @@ function runBlinking(layerIndex) {
 		}
 	}
 
-	for (i = 0; i < frameArray.length; i++) {
-		
-		if (i != frameArray[i].startFrame) {continue};
-	
-		if (frameArray[i].isEmpty == true) {continue};
-	
-		if (frameArray[i].labelType != "anchor") {continue};
+	for (i = 0; i < frameArray.length; i+= frameArray[i].duration - (i - frameArray[i].startFrame)) {
 
-		if (frameArray[i + blinkDuration].isEmpty == true) {continue};
+		if (frameArray[i].isEmpty == true) { continue };
 
-		//alert(frameArray[i].elements[0].libraryItem.name.toLowerCase() + "!\n" + (frameArray[i].elements[0].libraryItem.name.toLowerCase().indexOf("pose") != -1))
+		if (frameArray[i].labelType != "anchor") { continue };
 
-		if (frameArray[i].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) {continue};
-		
+		if (frameArray[i].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) { continue };
 		var blinkFrame = blinkFrameIndex(leftEye, rigPath, i, layerIndex, xSheetCache);
 		var blinkInstruction = frameArray[i].name;
-		
+
 		//The first frame of any blinkInstruction receives its AS3 here. The only instructions we have to do extra
 		//code with are instructions that require us to go ahead, place another keyframe, and write more AS3.
 		var AS3toWrite = AS3_Constructor(leftEye, rightEye, blinkFrame, blinkDuration, blinkInstruction);
-		frameArray[i].actionScript = AS3toWrite;
-		
-		//BLINK
-		//AS3 for first frame has been written. Iterate to frame [i + blinkDuration], convert it to a keyframe if it isn't one already.
-		//If we do convert it to a keyframe, mark it for deletion by pushing to tmpKeys.
-		//Hardcoded CutOpen at the end of the blink to force the blink to stop.
-		if (blinkInstruction == "Blink") {
-
-			if (frameArray[i + blinkDuration].startFrame != i + blinkDuration) {
-				fl.getDocumentDOM().getTimeline().convertToKeyframes(i + blinkDuration);
-				tmpKeys.push([layerIndex, (i + blinkDuration)]);
-			}
-			
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].actionScript = AS3_Constructor(leftEye, rightEye, blinkFrame, blinkDuration, "CutOpen");
-		}
-
+		if(blinkInstruction == "CutOpen" || blinkInstruction == "CutClosed") frameArray[i].actionScript = AS3toWrite;
+		if(frameArray[i + (blinkDuration / 2)].isEmpty) continue;
+		if(frameArray[i + (blinkDuration/2)].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) continue;
 		//ANIMATION OF EYES CLOSING
 		//AS3 for first frame has been written. Iterate to frame [i + blinkDuration / 2] to end the animation. We convert this frame to
 		//a keyframe if it isn't already, and if we convert it, we also mark it for deletion.
@@ -322,11 +302,10 @@ function runBlinking(layerIndex) {
 		if (blinkInstruction == "AnimClose") {
 			if (frameArray[i + blinkDuration].startFrame != i + (blinkDuration / 2)) {
 				fl.getDocumentDOM().getTimeline().convertToKeyframes(i + (blinkDuration / 2));
-				tmpKeys.push([layerIndex, (i + (blinkDuration / 2))]);
 			}
 			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration / 2)].actionScript = leftEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");\n" + rightEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");";
 		}
-
+		
 		//ANIMATION OF EYES OPENING
 		//AS3 for first frame has been written. Iterate to frame [i + blinkDuration / 2] to end the animation. We convert this frame to
 		//a keyframe if it isn't already, and if we convert it, we also mark it for deletion.
@@ -334,9 +313,20 @@ function runBlinking(layerIndex) {
 		if (frameArray[i].name == "AnimOpen") {
 			if (frameArray[i + blinkDuration].startFrame != i + (blinkDuration / 2)) {
 				fl.getDocumentDOM().getTimeline().convertToKeyframes(i + (blinkDuration / 2));
-				tmpKeys.push([layerIndex, (i + (blinkDuration / 2))]);
 			}
 			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration / 2)].actionScript = leftEye + ".gotoAndStop(" + blinkFrame + ");\n" + rightEye + ".gotoAndStop(" + blinkFrame + ");";
+		}
+		if(frameArray[i + blinkDuration].isEmpty) continue;
+		if(frameArray[i + blinkDuration].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) continue;
+		//BLINK
+		//AS3 for first frame has been written. Iterate to frame [i + blinkDuration], convert it to a keyframe if it isn't one already.
+		//Hardcoded CutOpen at the end of the blink to force the blink to stop.
+		if (blinkInstruction == "Blink") {
+	
+			if (frameArray[i + blinkDuration].startFrame != i + blinkDuration) {
+				fl.getDocumentDOM().getTimeline().convertToKeyframes(i + blinkDuration);
+			}
+			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].actionScript = AS3_Constructor(leftEye, rightEye, blinkFrame, blinkDuration, "CutOpen");
 		}
 	}
 }
