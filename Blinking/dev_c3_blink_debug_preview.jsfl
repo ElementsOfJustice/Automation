@@ -278,7 +278,7 @@ function runBlinking(layerIndex) {
 	// checking for infinite loops
 	for (i = 0; i < fl.getDocumentDOM().getTimeline().layers[layerIndex].frames.length; i+= fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].duration - (i - fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].startFrame)) {
 		var newTime = new Date();
-		if (newTime - curTime > 60000) {
+		if (newTime - curTime > 180000) {
 			throw new Error("Infinite loop detected. Please check your timeline for any loops in the blinking code.");
 		}
 		if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].isEmpty == true) { continue };
