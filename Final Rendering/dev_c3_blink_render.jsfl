@@ -32,14 +32,12 @@ Variables:
 Description: Return the frame number of the first occurance of any graphic symbol.
 */
 findFirstFrameWithSymbol = function (layerIndex) {
-	var frameArray = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames;
-
-	for (var i = 0; i < frameArray.length; i++) {
-		var frameHasElements = frameArray[i].elements.length > 0;
-		if(!frameHasElements) continue;
-		var elementIsInstance = frameArray[i].elements[0].elementType == "instance";
-		if(!elementIsInstance) continue;
-		var instanceNameContainsPose = frameArray[i].elements[0].libraryItem.name.indexOf("Pose") != -1;
+	for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers[layerIndex].frames.length; i++) {
+		var frameHasElements = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements.length > 0;
+		if (!frameHasElements) continue;
+		var elementIsInstance = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].elementType == "instance";
+		if (!elementIsInstance) continue;
+		var instanceNameContainsPose = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].libraryItem.name.indexOf("Pose") != -1;
 		if (instanceNameContainsPose) {
 			return i;
 		}
@@ -248,7 +246,7 @@ Variables:
 Description: Run the blinking code for all markers on a layer.
 */
 function runBlinking(layerIndex) {
-	
+
 	var xSheetCache = {};
 	var firstGraphicInstance = findFirstFrameWithSymbol(layerIndex);
 	fl.getDocumentDOM().getTimeline().currentLayer = layerIndex;
@@ -258,9 +256,7 @@ function runBlinking(layerIndex) {
 	}
 
 	//Get the library folder of the character we are running blinking code on.
-	var timeline = fl.getDocumentDOM().getTimeline();
-	var frameArray = timeline.layers[layerIndex].frames;
-	var rigPath = timeline.layers[layerIndex].frames[firstGraphicInstance].elements[0].libraryItem.name;
+	var rigPath = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[firstGraphicInstance].elements[0].libraryItem.name;
 	var rigFolder = rigPath.substring(rigPath.lastIndexOf('/') + 1);
 	rigFolder = rigFolder.substring(0, rigFolder.indexOf('►')) + "►";
 
@@ -272,35 +268,39 @@ function runBlinking(layerIndex) {
 	var itemIndex = fl.getDocumentDOM().library.findItemIndex(rigPath);
 	var character_xSheet = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
 
-	for (var k = 0; k < character_xSheet.frames.length; k+= character_xSheet.frames[k].duration - (k - character_xSheet.frames[k].startFrame)) {
+	for (var k = 0; k < character_xSheet.frames.length; k += character_xSheet.frames[k].duration - (k - character_xSheet.frames[k].startFrame)) {
 		var character_xSheetEntry = character_xSheet.frames[k];
 		if (character_xSheetEntry.labelType === "name" && k === character_xSheetEntry.startFrame) {
 			xSheetCache[k] = character_xSheetEntry.name;
 		}
 	}
+	var curTime = new Date();
+	// checking for infinite loops
+	for (i = 0; i < fl.getDocumentDOM().getTimeline().layers[layerIndex].frames.length; i+= fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].duration - (i - fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].startFrame)) {
+		var newTime = new Date();
+		if (newTime - curTime > 60000) {
+			throw new Error("Infinite loop detected. Please check your timeline for any loops in the blinking code.");
+		}
+		if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].isEmpty == true) { continue };
 
-	for (i = 0; i < frameArray.length; i+= frameArray[i].duration - (i - frameArray[i].startFrame)) {
+		if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].labelType != "anchor") { continue };
 
-		if (frameArray[i].isEmpty == true) { continue };
-
-		if (frameArray[i].labelType != "anchor") { continue };
-
-		if (frameArray[i].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) { continue };
+		if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) { continue };
 		var blinkFrame = blinkFrameIndex(leftEye, rigPath, i, layerIndex, xSheetCache);
-		var blinkInstruction = frameArray[i].name;
+		var blinkInstruction = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].name;
 
 		//The first frame of any blinkInstruction receives its AS3 here. The only instructions we have to do extra
 		//code with are instructions that require us to go ahead, place another keyframe, and write more AS3.
 		var AS3toWrite = AS3_Constructor(leftEye, rightEye, blinkFrame, blinkDuration, blinkInstruction);
-		frameArray[i].actionScript = AS3toWrite;
-		if(frameArray[i + (blinkDuration / 2)].isEmpty) continue;
-		if(frameArray[i + (blinkDuration/2)].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) continue;
+		fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].actionScript = AS3toWrite;
+		if(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration / 2)].isEmpty) continue;
+		if(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration/2)].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) continue;
 		//ANIMATION OF EYES CLOSING
 		//AS3 for first frame has been written. Iterate to frame [i + blinkDuration / 2] to end the animation. We convert this frame to
 		//a keyframe if it isn't already, and if we convert it, we also mark it for deletion.
 		//Hardcoded AS3 at the ending frame, we don't use AS3_Constructor because we're dealing with half a blink duration.
 		if (blinkInstruction == "AnimClose") {
-			if (frameArray[i + blinkDuration].startFrame != i + (blinkDuration / 2)) {
+			if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].startFrame != i + (blinkDuration / 2)) {
 				fl.getDocumentDOM().getTimeline().convertToKeyframes(i + (blinkDuration / 2));
 			}
 			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration / 2)].actionScript = leftEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");\n" + rightEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");";
@@ -310,20 +310,20 @@ function runBlinking(layerIndex) {
 		//AS3 for first frame has been written. Iterate to frame [i + blinkDuration / 2] to end the animation. We convert this frame to
 		//a keyframe if it isn't already, and if we convert it, we also mark it for deletion.
 		//Hardcoded AS3 at the ending frame, we don't use AS3_Constructor because we're dealing with half a blink duration.
-		if (frameArray[i].name == "AnimOpen") {
-			if (frameArray[i + blinkDuration].startFrame != i + (blinkDuration / 2)) {
+		if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].name == "AnimOpen") {
+			if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].startFrame != i + (blinkDuration / 2)) {
 				fl.getDocumentDOM().getTimeline().convertToKeyframes(i + (blinkDuration / 2));
 			}
 			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration / 2)].actionScript = leftEye + ".gotoAndStop(" + blinkFrame + ");\n" + rightEye + ".gotoAndStop(" + blinkFrame + ");";
 		}
-		if(frameArray[i + blinkDuration].isEmpty) continue;
-		if(frameArray[i + blinkDuration].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) continue;
+		if(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].isEmpty) continue;
+		if(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) continue;
 		//BLINK
 		//AS3 for first frame has been written. Iterate to frame [i + blinkDuration], convert it to a keyframe if it isn't one already.
 		//Hardcoded CutOpen at the end of the blink to force the blink to stop.
 		if (blinkInstruction == "Blink") {
 	
-			if (frameArray[i + blinkDuration].startFrame != i + blinkDuration) {
+			if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].startFrame != i + blinkDuration) {
 				fl.getDocumentDOM().getTimeline().convertToKeyframes(i + blinkDuration);
 			}
 			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].actionScript = AS3_Constructor(leftEye, rightEye, blinkFrame, blinkDuration, "CutOpen");
@@ -408,7 +408,7 @@ for (var i = 0; i < sceneArray.length; i++) {
 		//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Erase your code.
 		var frameArray = fl.getDocumentDOM().getTimeline().layers[j].frames;
 	
-		for (k = 0; k < frameArray.length; k+= frameArray[k].duration - (k - frameArray[k].startFrame)) {
+		for (k = 0; k < fl.getDocumentDOM().getTimeline().layers[j].frames.length; k+= fl.getDocumentDOM().getTimeline().layers[j].frames[k].duration - (k - fl.getDocumentDOM().getTimeline().layers[j].frames[k].startFrame)) {
 			//frameArray[k].actionScript = ""
 		}
 	}
