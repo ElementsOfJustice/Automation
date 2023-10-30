@@ -1,26 +1,33 @@
 ﻿/*
-
 	CASE 3 BLINK PREVIEW
-
 */
+
 var bookmarkerTl = fl.getDocumentDOM().currentTimeline;
 var bookmarkerFrame = fl.getDocumentDOM().getTimeline().currentFrame;
 
+var symbols = ["button", "graphic", "movie clip"];
+var libItems = fl.getDocumentDOM().library.items
 var blinkDuration = 6;
-var sceneArray = [0];
-var tmpKeys = [];
+var sceneArray = [];
 
 fl.getDocumentDOM().selectNone();
 fl.showIdleMessage(false);
 fl.outputPanel.clear();
 
-//Compile timeline index of scenes, where scenes are defined as a timeline containing
-//a VECTOR_CHARACTERS folder.
-for (i = 1, total = fl.getDocumentDOM().timelines.length; i < total; i++) {
-	for (j = 0, layerCount = fl.getDocumentDOM().timelines[i].layers.length; j < layerCount; j++) {
-		if (fl.getDocumentDOM().timelines[i].layers[j].name === "VECTOR_CHARACTERS") {
-			sceneArray.push(i);
-			break;
+//We need to make a list of all scenes that contain a VECTOR_CHARACTERS layer. Because wunderbar
+//flashbacks exist, we have to have a hybrid approach of considering both all scenes and all symbols!	
+
+//Timeline handling
+for (i = 0; i < fl.getDocumentDOM().timelines.length; i++) {
+	if (fl.getDocumentDOM().timelines[i].findLayerIndex("VECTOR_CHARACTERS") != undefined) {
+		sceneArray.push(["Scene", i]);
+	}
+}
+//Symbol handling
+for (i = 0; i < libItems.length; i++) {
+	if (symbols.indexOf(libItems[i].itemType) > -1) {
+		if (libItems[i].timeline.findLayerIndex("VECTOR_CHARACTERS") != undefined) {
+			sceneArray.push(["Symbol", i]);
 		}
 	}
 }
@@ -73,7 +80,7 @@ function checkRange(arr, num1, num2) {
 		}
 	}
 
-return (num2 >= rangeStart && num2 <= rangeEnd);
+	return (num2 >= rangeStart && num2 <= rangeEnd);
 }
 
 /*
@@ -149,7 +156,7 @@ Description: Automatically apply cutOpen frame anchors to detected
 pose changes.
 */
 function autoEyeSet(layerIndex) {
-	
+
 	var xSheetCache = [];
 	var firstGraphicInstance = findFirstFrameWithSymbol(layerIndex);
 
@@ -161,7 +168,7 @@ function autoEyeSet(layerIndex) {
 	var timeline = fl.getDocumentDOM().getTimeline();
 	var layer = timeline.layers[layerIndex];
 	var frames = layer.frames;
-	
+
 	//Reference the character's xSheet we are about to consider.
 	var itemIndex = fl.getDocumentDOM().library.findItemIndex(frames[firstGraphicInstance].elements[0].libraryItem.name);
 	var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
@@ -176,7 +183,7 @@ function autoEyeSet(layerIndex) {
 
 	//For all frames on the layer we are running autoEyeSet on, automatically apply the bare minimum blink instructions.
 	for (var i = 0; i < frames.length - 1; i++) {
-
+		if (frames[i].labelType == "anchor") { continue };
 		if ((i == 0) && (!frames[i].isEmpty)) {
 			//CutOpen on the first frame of a character layer if it has content. 
 			frames[i].labelType = "anchor";
@@ -184,16 +191,15 @@ function autoEyeSet(layerIndex) {
 		}
 
 		//Next two operations check if a pre-existing anchor label exists, and if it does, does nothing. This allows human users to circumvent the automatic labelling.
-		if (frames[i].labelType == "anchor") {continue};
-
+		if (frames[i + 1].labelType == "anchor") { continue };
 		if ((frames[i].isEmpty) && (!frames[i + 1].isEmpty)) {
 			//CutOpen if we go from no content to content from one frame to the next.
 			frames[i + 1].labelType = "anchor";
 			frames[i + 1].name = "CutOpen";
 		}
 
-		if (frames[i].isEmpty) {continue};
-		
+		if (frames[i].isEmpty) { continue };
+
 		if (!frames[i + 1].isEmpty) {
 			if (!checkRange(xSheetCache, frames[i].elements[0].firstFrame, frames[i + 1].elements[0].firstFrame)) {
 				//CutOpen on pose changes.
@@ -216,27 +222,21 @@ Description: Automatically apply cutOpen frame anchors to detected
 pose changes.
 */
 function AS3_Constructor(leftEye, rightEye, blinkFrame, blinkDuration, instruction) {
-	
 	if (instruction == "Blink") {
 		return leftEye + ".gotoAndPlay(" + blinkFrame + ");\n" + rightEye + ".gotoAndPlay(" + blinkFrame + ");";
 	}
-
 	if (instruction == "AnimClose") {
 		return leftEye + ".gotoAndPlay(" + blinkFrame + ");\n" + rightEye + ".gotoAndPlay(" + blinkFrame + ");";
 	}
-
 	if (instruction == "AnimOpen") {
 		return leftEye + ".gotoAndPlay(" + (blinkFrame + (blinkDuration / 2)) + ");\n" + rightEye + ".gotoAndPlay(" + (blinkFrame + (blinkDuration / 2)) + ");";
 	}
-
 	if (instruction == "CutOpen") {
 		return leftEye + ".gotoAndStop(" + blinkFrame + ");\n" + rightEye + ".gotoAndStop(" + blinkFrame + ");";
 	}
-
 	if (instruction == "CutClosed") {
 		return leftEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");\n" + rightEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");";
 	}
-
 }
 
 /*
@@ -274,13 +274,7 @@ function runBlinking(layerIndex) {
 			xSheetCache[k] = character_xSheetEntry.name;
 		}
 	}
-	var curTime = new Date();
-	// checking for infinite loops
 	for (i = 0; i < fl.getDocumentDOM().getTimeline().layers[layerIndex].frames.length; i+= fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].duration - (i - fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].startFrame)) {
-		var newTime = new Date();
-		if (newTime - curTime > 60000) {
-			throw new Error("Infinite loop detected. Please check your timeline for any loops in the blinking code.");
-		}
 		if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].isEmpty == true) { continue };
 
 		if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].labelType != "anchor") { continue };
@@ -334,91 +328,120 @@ function runBlinking(layerIndex) {
 function syncMane(layerIndex, maneName, tailName) {
 	// TODO: search for symbol changes, and then add maneName.gotoAndPlay and tailName.gotoAndPlay
 	var previousSymbol = undefined;
-	for(var i = 0; i < fl.getDocumentDOM().getTimeline().layers[layerIndex].frameCount; i+= fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].duration) {
-		if(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].isEmpty) {
+	for (var iter = 0; iter < fl.getDocumentDOM().getTimeline().layers[layerIndex].frameCount; iter += fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].duration) {
+		if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].isEmpty) {
 			previousSymbol = undefined;
 			continue;
 		}
-		if(previousSymbol === undefined) {
-			previousSymbol = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].libraryItem.name;
+		if (previousSymbol === undefined) {
+			previousSymbol = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].elements[0].libraryItem.name;
 			continue;
 		}
-		if(previousSymbol != fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].libraryItem.name) { // symbol is... le changed!
-			fl.getDocumentDOM().getTimeline().convertToKeyframes(i - 1); // keyframe previous frame
-			tmpKeys.push([layerIndex, i-1])
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i-1].actionScript += "\nthis.maneFrame = " + maneName + ".currentFrame;\n this.tailFrame = " + tailName + ".currentFrame;";
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].actionScript += "\nthis." + maneName + ".gotoAndPlay((this.maneFrame + 1) % this." + maneName + ".totalFrames);\nthis." + tailName + ".gotoAndPlay((this.tailFrame + 1) % this." + tailName + ".totalFrames);";
+		if (previousSymbol != fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].elements[0].libraryItem.name) { // symbol is... le changed!
+			fl.getDocumentDOM().getTimeline().convertToKeyframes(iter - 1); // keyframe previous frame
+			// tmpKeys.push([layerIndex, iter - 1])
+			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter - 1].actionScript += "\nthis.maneFrame = " + maneName + ".currentFrame;\n this.tailFrame = " + tailName + ".currentFrame;";
+			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].actionScript += "\nthis." + maneName + ".gotoAndPlay((this.maneFrame + 1) % this." + maneName + ".totalFrames);\nthis." + tailName + ".gotoAndPlay((this.tailFrame + 1) % this." + tailName + ".totalFrames);";
 		}
-		previousSymbol = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].libraryItem.name;
+		previousSymbol = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[iter].elements[0].libraryItem.name;
 	}
 }
 
-//For each scene, runBlinking on each child layer of VECTOR_CHARACTERS
-for (var a = 0; a < sceneArray.length; a++) {
-	fl.getDocumentDOM().currentTimeline = sceneArray[a];
-	var currentTimeline = sceneArray[a];
-	for (var b = 0; b < fl.getDocumentDOM().timelines[currentTimeline].layerCount; b++) {
-		var parentLayerIsNull = fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer === null;
+//For each entry in sceneArray, runBlinking on each child layer of VECTOR_CHARACTERS
+for (var k = 0; k < sceneArray.length; k++) {
+	fl.trace("Write: " + k);
+	fl.trace(sceneArray[k][0])
+	if (sceneArray[k][0] == "Scene") {
+		//Consider as a scene
+		fl.getDocumentDOM().currentTimeline = sceneArray[k][1];
+		var currentTimeline = fl.getDocumentDOM().timelines[sceneArray[k][1]];
 
-		if (parentLayerIsNull) {
-			continue;
-		}
-		
-		var layerIsNotVectorCharacters = fl.getDocumentDOM().timelines[currentTimeline].layers[b].parentLayer.name !== "VECTOR_CHARACTERS";
-		var layerTypeIsNotNormal = fl.getDocumentDOM().timelines[currentTimeline].layers[b].layerType !== "normal";
-		
-		if (layerIsNotVectorCharacters || layerTypeIsNotNormal) {
-			continue;
-		}
-	
-		//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Run your code.
-		autoEyeSet(b);
-		runBlinking(b);
+		for (var j = 0; j < currentTimeline.layerCount; j++) {
+			var parentLayerIsNull = currentTimeline.layers[j].parentLayer === null;
+			if (parentLayerIsNull) { continue }
+			var layerIsNotVectorCharacters = currentTimeline.layers[j].parentLayer.name !== "VECTOR_CHARACTERS";
+			var layerTypeIsNotNormal = currentTimeline.layers[j].layerType !== "normal";
+			if (layerIsNotVectorCharacters || layerTypeIsNotNormal) { continue }
 
-		if(fl.getDocumentDOM().timelines[currentTimeline].layers[b].name.toUpperCase().indexOf("LUNA") != -1) {
-			syncMane(b, "Luna_mane", "Luna_tail");
+			autoEyeSet(j);
+			runBlinking(j);
+
+			if (currentTimeline.layers[j].name.toUpperCase().indexOf("LUNA") != -1) {
+				syncMane(j, "Luna_mane", "Luna_tail");
+			}
+			if (currentTimeline.layers[j].name.toUpperCase().indexOf("CELESTIA") != -1) {
+				syncMane(j, "Celestia_mane", "Celestia_tail");
+			}
 		}
-		if(fl.getDocumentDOM().timelines[currentTimeline].layers[b].name.toUpperCase().indexOf("CELESTIA") != -1) {
-			syncMane(b, "Celestia_mane", "Celestia_tail");
+	} else if (sceneArray[k][0] == "Symbol") {
+		//Consider as a flashback
+		fl.getDocumentDOM().library.editItem(libItems[sceneArray[k][1]].name);
+		var currentTimeline = libItems[sceneArray[k][1]].timeline
+
+		for (var j = 0; j < currentTimeline.layerCount; j++) {
+			var parentLayerIsNull = currentTimeline.layers[j].parentLayer === null;
+			if (parentLayerIsNull) { continue }
+			var layerIsNotVectorCharacters = currentTimeline.layers[j].parentLayer.name !== "VECTOR_CHARACTERS";
+			var layerTypeIsNotNormal = currentTimeline.layers[j].layerType !== "normal";
+			if (layerIsNotVectorCharacters || layerTypeIsNotNormal) { continue }
+
+			autoEyeSet(j);
+			runBlinking(j);
+
+			if (currentTimeline.layers[j].name.toUpperCase().indexOf("LUNA") != -1) {
+				syncMane(j, "Luna_mane", "Luna_tail");
+			}
+			if (currentTimeline.layers[j].name.toUpperCase().indexOf("CELESTIA") != -1) {
+				syncMane(j, "Celestia_mane", "Celestia_tail");
+			}
 		}
 	}
 }
 
 //Test movie, as opposed to test scene. This new implementation of blinking tech is resistant to testing scenes!
-//fl.getDocumentDOM().testMovie();
+// fl.getDocumentDOM().testMovie();
 
 //AS3 Cleanup
-for (var i = 0; i < sceneArray.length; i++) {
-	fl.getDocumentDOM().currentTimeline = sceneArray[i];
-	var currentTimeline = sceneArray[i];
-	for (var j = 0; j < fl.getDocumentDOM().timelines[currentTimeline].layerCount; j++) {
-		var parentLayerIsNull = fl.getDocumentDOM().timelines[currentTimeline].layers[j].parentLayer === null;
-		
-		if (parentLayerIsNull) {
-			continue;
-		}
-	
-		var layerIsNotVectorCharacters = fl.getDocumentDOM().timelines[currentTimeline].layers[j].parentLayer.name !== "VECTOR_CHARACTERS";
-		var layerTypeIsNotNormal = fl.getDocumentDOM().timelines[currentTimeline].layers[j].layerType !== "normal";
-		
-		if (layerIsNotVectorCharacters || layerTypeIsNotNormal) {
-			continue;
-		}
-	
-		//We're in a scene. You're now on a child layer of VECTOR_CHARACTERS. Erase your code.
-		var frameArray = fl.getDocumentDOM().getTimeline().layers[j].frames;
-	
-		for (k = 0; k < fl.getDocumentDOM().getTimeline().layers[j].frames.length; k+= fl.getDocumentDOM().getTimeline().layers[j].frames[k].duration - (k - fl.getDocumentDOM().getTimeline().layers[j].frames[k].startFrame)) {
-			//frameArray[k].actionScript = ""
-		}
-	}
-}
+// for (var i = 0; i < sceneArray.length; i++) {
+// 	fl.trace("Erase: " + i)
+// 	fl.trace(sceneArray[i][0])
+// 	if (sceneArray[i][0] == "Scene") {
+// 		//Consider as a scene
+// 		fl.getDocumentDOM().currentTimeline = sceneArray[i][1];
+// 		var currentTimeline = fl.getDocumentDOM().timelines[sceneArray[i][1]];
 
-//Remove all temporary keyframes we made while converting keyframes in runBlinking().
-for (var i = 0; i < tmpKeys.length; i++) {
-	//fl.getDocumentDOM().getTimeline().setSelectedLayers(tmpKeys[i][0]);
-	//fl.getDocumentDOM().getTimeline().clearKeyframes(tmpKeys[i][1], tmpKeys[i][1]);
-}
+// 		for (var j = 0; j < currentTimeline.layerCount; j++) {
+// 			var parentLayerIsNull = currentTimeline.layers[j].parentLayer === null;
+// 			if (parentLayerIsNull) { continue }
+// 			var layerIsNotVectorCharacters = currentTimeline.layers[j].parentLayer.name !== "VECTOR_CHARACTERS";
+// 			var layerTypeIsNotNormal = currentTimeline.layers[j].layerType !== "normal";
+// 			if (layerIsNotVectorCharacters || layerTypeIsNotNormal) { continue }
+
+// 			var frameArray = fl.getDocumentDOM().getTimeline().layers[j].frames;
+
+// 			for (k = 0; k < fl.getDocumentDOM().getTimeline().layers[j].frames.length; k += fl.getDocumentDOM().getTimeline().layers[j].frames[k].duration - (k - fl.getDocumentDOM().getTimeline().layers[j].frames[k].startFrame)) {
+// 				fl.getDocumentDOM().getTimeline().layers[j].frames[k].actionScript = ""
+// 			}
+// 		}
+// 	} else if (sceneArray[i][0] == "Symbol") {
+// 		//Consider as a flashback
+// 		var currentTimeline = libItems[sceneArray[i][1]].timeline
+
+// 		for (var j = 0; j < currentTimeline.layerCount; j++) {
+// 			var parentLayerIsNull = currentTimeline.layers[j].parentLayer === null;
+// 			if (parentLayerIsNull) { continue }
+// 			var layerIsNotVectorCharacters = currentTimeline.layers[j].parentLayer.name !== "VECTOR_CHARACTERS";
+// 			var layerTypeIsNotNormal = currentTimeline.layers[j].layerType !== "normal";
+// 			if (layerIsNotVectorCharacters || layerTypeIsNotNormal) { continue }
+
+// 			var frameArray = currentTimeline.layers[j].frames;
+
+// 			for (var k = 0; k < frameArray.length; k += frameArray[k].duration - (k - frameArray[k].startFrame)) {
+// 				frameArray[k].actionScript = ""
+// 			}
+// 		}
+// 	}
+// }
 
 //Put you back where you were.
 fl.getDocumentDOM().currentTimeline = bookmarkerTl;
