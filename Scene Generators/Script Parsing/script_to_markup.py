@@ -147,7 +147,7 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
             characters = line[line.index("Characters: ") + len("Characters: "):len(line) - 1].split(', ')
 
         for character in characters:
-            if (character.upper()+"\n" in line) or (character.upper() + " &" in line):
+            if (character.upper().replace(" ", "") + "\n" in line.replace(" ", "")) or (character.upper() + " &" in line.strip()):
                 flag_isSpeakertag = True
                 new_line = new_line.replace(character.upper(), "s"+str(scene)+"_"+str(cur_voice_line).zfill(3)+"_"+character.lower())
                 str_lineId = new_line.strip('\n')
@@ -205,7 +205,7 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
             #export dialogue data
             #print("dialogue" + " " + str_lineId + " "  + str_speaker + " "  + str_dialogue + " " + "(" + str_pose + ")")
             #str_dialogue = str_dialogue.replace("’", "'")
-            arr_tmpData = ["dialogue", str_lineId, str_speaker, str_dialogue, str_pose]
+            arr_tmpData = ["dialogue", str_lineId.strip(), str_speaker.strip(), str_dialogue.strip(), str_pose.strip()]
             arr_sceneData.append(arr_tmpData)
             #print("Calculated Pose\n")
 
