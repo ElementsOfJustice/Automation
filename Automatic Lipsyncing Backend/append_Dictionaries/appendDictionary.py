@@ -54,15 +54,11 @@ if not len(sys.argv) == 4:
     print("arg3: Acceptable parameters are 'append' or 'new' ")
     exit()
 
-try:
-    os.path.exists(sys.argv[1])
-except:
+if not os.path.exists(sys.argv[1]):
     print("File does not exist: " + str(sys.argv[1]) + ".")
     exit()
 
-try:
-    os.path.exists(sys.argv[2])
-except:
+if not os.path.exists(sys.argv[2]):
     print("File does not exist: " + str(sys.argv[2]) + ".")
     exit()
 
