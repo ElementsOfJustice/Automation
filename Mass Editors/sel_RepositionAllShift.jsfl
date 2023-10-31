@@ -34,26 +34,12 @@ function setup() {
 	fl.getDocumentDOM().getTimeline().layers[selLayerIndex * 1].locked = false; // unlock layer
 }
 
-/*
-Function: resetSelection
-Variables:  
-    layer [integer(or should be) index of a layer ]
-    frame [integer index of a frame]
-Description: sets selection to the desired layer and frame
-*/
-function resetSelection(layer, frame) {
-    fl.getDocumentDOM().getTimeline().currentFrame = frame;
-    // select frame on the layer and replace current selection
-    fl.getDocumentDOM().getTimeline().setSelectedFrames([layer * 1, fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + 1], true);
-}
-
 setup();
 
 var selLayer = fl.getDocumentDOM().getTimeline().currentLayer;
 var deltaX = parseFloat(prompt("Shift X:")), deltaY = parseFloat(prompt("Shift Y:"));
 
 if (deltaX !== undefined && deltaY !== undefined && !isNaN(deltaX) && !isNaN(deltaY)) {
-    resetSelection(selLayer, 0);
     var curFrame = startingFrame, numFrames = endFrame + 1;
     while (curFrame < numFrames - 1) {
         if (fl.getDocumentDOM().getTimeline().layers[selLayer].frames[curFrame].elements.length > 0) {
