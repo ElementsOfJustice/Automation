@@ -331,8 +331,12 @@ function runLipsyncingDoc(cfgFolderPath, writeLogInfo, getCurrentDate) {
 
 								var poseFrame = fl.getDocumentDOM().getTimeline().layers[j].frames[k].elements[0].firstFrame;
 								var poseStartFrame = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].startFrame;
-								var cfgPath = FLfile.platformPathToURI(cfgFolderPath + "\\" + voiceLine + ".cfg");
-
+								var cfgPath;
+								if(cfgFolderPath.substring(0,8) === "file:///") {
+									cfgPath = cfgFolderPath + "/" + voiceLine + ".cfg"	
+								} else {
+									cfgPath = FLfile.platformPathToURI(cfgFolderPath + "\\" + voiceLine + ".cfg");
+								}
 								try {
 									fl.runScript(cfgPath);
 									placeKeyframes(k, j, OFFSET_MAP, poseStartFrame);
