@@ -665,6 +665,7 @@ function addRigs(characterArray) {
             fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[0].elements[0].transformY = 0;
             fl.getDocumentDOM().getTimeline().reorderLayer(fl.getDocumentDOM().getTimeline().currentLayer, (fl.getDocumentDOM().getTimeline().findLayerIndex("VECTOR_CHARACTERS")[0] + 1));
             fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].parentLayer = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("VECTOR_CHARACTERS")[0]];
+            fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[0].elements[0].loop = "single frame";
             fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].visible = false;
         };
     };
