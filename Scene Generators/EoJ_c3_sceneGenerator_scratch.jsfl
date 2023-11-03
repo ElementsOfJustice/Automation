@@ -356,16 +356,16 @@ function inputValidation() {
             flagMissingVOX = true;
         };
     };
-
+    var continueExecution = true;
     if (flagMissingCFG && flagMissingVOX) {
         soundAlert()
-        var continueExecution = confirm("Both CFGs and Voice Lines are missing from your input data. Check the log to see which files are missing. \n\n Do you want to continue?");
+        continueExecution = confirm("Both CFGs and Voice Lines are missing from your input data. Check the log to see which files are missing. \n\n Do you want to continue?");
     } else if (flagMissingCFG) {
         soundAlert()
-        var continueExecution = confirm("CFGs are missing from your input data. Check the log to see which files are missing. \n\n Do you want to continue?");
+        continueExecution = confirm("CFGs are missing from your input data. Check the log to see which files are missing. \n\n Do you want to continue?");
     } else if (flagMissingVOX) {
         soundAlert()
-        var continueExecution = confirm("Voice Lines are missing from your input data. Check the log to see which files are missing. \n\n Do you want to continue?");
+        continueExecution = confirm("Voice Lines are missing from your input data. Check the log to see which files are missing. \n\n Do you want to continue?");
     };
 
     if (!continueExecution) {
