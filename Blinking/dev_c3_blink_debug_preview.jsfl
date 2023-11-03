@@ -39,7 +39,7 @@ Variables:
 Description: Return the frame number of the first occurance of any graphic symbol.
 */
 findFirstFrameWithSymbol = function (layerIndex) {
-	for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers[layerIndex].frames.length; i++) {
+	for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers[layerIndex].frames.length; i = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].startFrame + fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].duration) {
 		var frameHasElements = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements.length > 0;
 		if (!frameHasElements) continue;
 		var elementIsInstance = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].elementType == "instance";
@@ -141,7 +141,7 @@ function blinkFrameIndex(leftEye, rigFolder, currentFrame, layerIndex, xSheetCac
 	var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
 
 	//Return the frame there is a match in xSheet entries between BlinkLeft and the character.
-	for (var k = 0; k < objTl.frameCount; k++) {
+	for (var k = 0; k < objTl.frameCount; k = objTl.frames[k].startFrame + objTl.frames[k].duration) {
 		if ((objTl.frames[k].labelType == "name") && (k == objTl.frames[k].startFrame) && (objTl.frames[k].name == poseName)) {
 			return (k + 1);
 		}
@@ -174,7 +174,7 @@ function autoEyeSet(layerIndex) {
 	var objTl = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
 
 	//Make a cache of that character's xSheet. We reference the cache instead of loading the character many times.
-	for (var k = 0; k < objTl.frames.length; k++) {
+	for (var k = 0; k < objTl.frames.length; k = objTl.frames[k].startFrame + objTl.frames[k].duration) {
 		var objTlFrame = objTl.frames[k];
 		if (objTlFrame.labelType === "name" && k === objTlFrame.startFrame) {
 			xSheetCache.push(k);
@@ -182,29 +182,29 @@ function autoEyeSet(layerIndex) {
 	}
 
 	//For all frames on the layer we are running autoEyeSet on, automatically apply the bare minimum blink instructions.
-	for (var i = 0; i < frames.length - 1; i++) {
+	for (var i = 1; i < frames.length; i = frames[i].startFrame + frames[i].duration) {
 		if (frames[i].labelType == "anchor") { continue };
-		if ((i == 0) && (!frames[i].isEmpty)) {
+		if ((i == 1) && (!frames[i - 1].isEmpty)) {
 			//CutOpen on the first frame of a character layer if it has content. 
+			frames[i - 1].labelType = "anchor";
+			frames[i - 1].name = "CutOpen";
+		}
+
+		//Next two operations check if a pre-existing anchor label exists, and if it does, does nothing. This allows human users to circumvent the automatic labelling.
+		if (frames[i].labelType == "anchor") { continue };
+		if ((frames[i - 1].isEmpty) && (!frames[i].isEmpty)) {
+			//CutOpen if we go from no content to content from one frame to the next.
 			frames[i].labelType = "anchor";
 			frames[i].name = "CutOpen";
 		}
 
-		//Next two operations check if a pre-existing anchor label exists, and if it does, does nothing. This allows human users to circumvent the automatic labelling.
-		if (frames[i + 1].labelType == "anchor") { continue };
-		if ((frames[i].isEmpty) && (!frames[i + 1].isEmpty)) {
-			//CutOpen if we go from no content to content from one frame to the next.
-			frames[i + 1].labelType = "anchor";
-			frames[i + 1].name = "CutOpen";
-		}
+		if (frames[i - 1].isEmpty) { continue };
 
-		if (frames[i].isEmpty) { continue };
-
-		if (!frames[i + 1].isEmpty) {
-			if (!checkRange(xSheetCache, frames[i].elements[0].firstFrame, frames[i + 1].elements[0].firstFrame)) {
+		if (!frames[i].isEmpty) {
+			if (!checkRange(xSheetCache, frames[i - 1].elements[0].firstFrame, frames[i].elements[0].firstFrame)) {
 				//CutOpen on pose changes.
-				frames[i + 1].labelType = "anchor";
-				frames[i + 1].name = "CutOpen";
+				frames[i].labelType = "anchor";
+				frames[i].name = "CutOpen";
 			}
 		}
 	}
