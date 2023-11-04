@@ -257,41 +257,52 @@ if (guiPanel.dismiss == "accept") {
     pathToLines = FLfile.uriToPlatformPath(pathToLines);
 
     var writeReport = guiPanel.panel_writeReport;
-
     //You've heard of sanity checks? Here, we're checking to see if the user is insane.
     if (!skipLines && skipRigs) {
         logError("You have attempted to skip rig placement, but not skip line insertion. You are insane.");
     };
-
+    
     if (!skipLines && ((pathToCFGs == "") || (pathToLines == ""))) {
         logError("Both a path to the CFG files and voice lines are required for line placement.");
     };
-
+    
     fl.runScript(arrayPath); // load sceneData
     fl.runScript(scriptPathURI + "/config.txt"); // load configuration file
-
+    
     var check_masterInvestigationArray = getKeys(masterInvestigationArray);
     var check_masterRigArray = getKeys(masterRigArray);
-
+    
     for (var i = 0; i < sceneData.length; i++) {
         if (skipRigs) break;
         if (viewMode == "courtMode") break;
-        if (check_masterInvestigationArray.indexOf(sceneData[i][2]) === -1) {
-            logError('An entry for ' + sceneData[i][2] + "'s rig is not included in masterInvestigationArray.");
-        }
-        if (!fl.getDocumentDOM().library.itemExists(masterInvestigationArray[sceneData[i][2]][1])) {
-            logError("Library path to " + sceneData[i][2] + "'s rig does not exist.");
+        var charactersOnScreen = sceneData[i][2].split(" & ");
+        for (var j = 0; j < charactersOnScreen.length; j++) {
+            if (check_masterInvestigationArray.indexOf(charactersOnScreen[j]) === -1) {
+                logError('An entry for ' + sceneData[i][2] + "'s rig is not included in masterInvestigationArray.");
+            }
+            if(charactersOnScreen[j] == "Widget") continue;
+            if(charactersOnScreen[j].indexOf(defense) > -1) continue;
+            if (!fl.getDocumentDOM().library.itemExists(masterInvestigationArray[charactersOnScreen[j]][1])) {
+                fl.trace(masterInvestigationArray[charactersOnScreen[j]][1] + " hi");
+                logError("Library path to " + charactersOnScreen[j] + "'s rig does not exist.");
+            }
         }
     }
 
     for (var i = 0; i < sceneData.length; i++) {
         if (skipRigs) break;
         if (viewMode == "investigationMode") break;
-        if (check_masterRigArray.indexOf(sceneData[i][2]) === -1) {
-            logError('An entry for ' + sceneData[i][2] + "'s rig is not included in masterRigArray.");
-        }
-        if (!fl.getDocumentDOM().library.itemExists(masterRigArray[sceneData[i][2]][1])) {
-            logError("Library path to " + sceneData[i][2] + "'s rig does not exist.");
+        var charactersOnScreen = sceneData[i][2].split(" & ");
+        for (var j = 0; j < charactersOnScreen.length; j++) {
+            if (check_masterRigArray.indexOf(sceneData[i][2]) === -1) {
+                logError('An entry for ' + sceneData[i][2] + "'s rig is not included in masterRigArray.");
+            }
+            if(charactersOnScreen[j] == "Widget") continue;
+            if(charactersOnScreen[j].indexOf(defense) > -1) continue;
+            if (!fl.getDocumentDOM().library.itemExists(masterInvestigationArray[charactersOnScreen[j]][1])) {
+                fl.trace(masterInvestigationArray[charactersOnScreen[j]][1] + " hi");
+                logError("Library path to " + charactersOnScreen[j] + "'s rig does not exist.");
+            }
         }
     }
 } else {
@@ -480,7 +491,7 @@ function pruneEmotionEngineData() {
     var averagedEmotions = [];
 
     //Smooth out transient emotions.
-    for (var i = 1; i < sceneData.length - 1; i++) {
+    for (var i = 1; i < sceneData.length; i++) {
         // Check if the third element between the current and previous arrays are equivalent
         if (sceneData[i][2] === sceneData[i - 1][2]) {
             var avgEmotion = emotionAverage(sceneData[i - 1][4], sceneData[i][4]);
@@ -491,7 +502,7 @@ function pruneEmotionEngineData() {
     }
 
     // Update the sceneData array with the averaged emotions
-    for (var i = 1; i < sceneData.length - 1; i++) {
+    for (var i = 1; i < sceneData.length; i++) {
         if (averagedEmotions[i] !== "") {
             sceneData[i][4] = averagedEmotions[i];
         }
@@ -905,7 +916,7 @@ function addAllVoiceLines(voiceLineFolderPath) {
     allMissedLines = allMissedLines.split(",");
 
     writeLogInfo(getCurrentDate(), status01, "You missed these many voice lines: " + allMissedLines.length);
-    for (var i = 0; i < allMissedLines.length - 1; i++) {
+    for (var i = 0; i < allMissedLines.length; i++) {
         writeLogInfo(getCurrentDate(), status01, "Missed voice line: " + allMissedLines[i]);
     }
 };
