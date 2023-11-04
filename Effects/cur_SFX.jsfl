@@ -185,6 +185,7 @@ if (guiPanel.dismiss == "accept") {
 						//  convert the current frame to a key frame 
 						fl.getDocumentDOM().getTimeline().currentLayer = l;
 						fl.getDocumentDOM().getTimeline().convertToKeyframes(fl.getDocumentDOM().getTimeline().currentFrame);
+						fl.getDocumentDOM().getTimeline().layers[l].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].matrix = mat;
 					}
 					// Reset the frame to its original position to create the shake effect
 					fl.getDocumentDOM().getTimeline().layers[l].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].matrix = mat;
@@ -195,6 +196,9 @@ if (guiPanel.dismiss == "accept") {
 					fl.getDocumentDOM().getTimeline().currentFrame += 1;
 				}
 				// Reset the frame back to the starting position once more.
+				if(fl.getDocumentDOM().getTimeline().layers[l].frames[fl.getDocumentDOM().getTimeline().currentFrame].startFrame != fl.getDocumentDOM().getTimeline().currentFrame) {
+					fl.getDocumentDOM().getTimeline().convertToKeyframes(fl.getDocumentDOM().getTimeline().currentFrame);
+				}
 				fl.getDocumentDOM().getTimeline().layers[l].frames[fl.getDocumentDOM().getTimeline().currentFrame].elements[0].matrix = mat;
 
 				//Reset selection
