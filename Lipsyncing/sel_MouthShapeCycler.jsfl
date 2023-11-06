@@ -117,8 +117,10 @@ var focus = fl.getDocumentDOM().getTimeline().layers[layerNum].frames[startingFr
 
 if (focus !== undefined) {
 	if (focus.elementType == "instance") {
+		var isOnFirstPose = fl.getDocumentDOM().getElementProperty("firstFrame") < 100;
 		//todo: get selection's first frame, find mouth shape from it, then go to the next one
 		var selFirstFrameOffset = fl.getDocumentDOM().getElementProperty("firstFrame") - roundDownToHundred(fl.getDocumentDOM().getElementProperty("firstFrame") + 1);
+		if(isOnFirstPose) selFirstFrameOffset--;
 		var mouthShapeKeys = getKeys(MOUTH_SHAPE_MAP);
 		var offsetResult = undefined, lengthResult = undefined;
 		for(var i = 0; i < mouthShapeKeys.length; i++) {
@@ -131,6 +133,7 @@ if (focus !== undefined) {
 			offsetResult = roundDownToHundred(fl.getDocumentDOM().getElementProperty("firstFrame")) + OFFSET_MAP[MOUTH_SHAPE_MAP[mouthShapeKeys[0]]];
 			lengthResult = LENGTH_MAP[MOUTH_SHAPE_MAP[mouthShapeKeys[0]]];
 		}
+		if(isOnFirstPose) offsetResult++;
 		fl.getDocumentDOM().setElementProperty("firstFrame", offsetResult - 1);
 		if(focus.lastFrame !== undefined) {
 			fl.getDocumentDOM().setElementProperty("lastFrame", fl.getDocumentDOM().getElementProperty("firstFrame") + lengthResult - 1);

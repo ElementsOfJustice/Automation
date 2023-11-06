@@ -210,12 +210,15 @@ function placeKeyframes(startFrame, layer, lipsyncMap, poseStartFrame) {
 			if (!isKeyFrame) {
 				fl.getDocumentDOM().getTimeline().convertToKeyframes(curFrame);
 			}
-
-			var firstFrame = lipsyncMap[DIPHTHONG_ORDERING[diphthongMap[frame]][i]];
+			var mouthShape = DIPHTHONG_ORDERING[diphthongMap[frame]][i];
+			var firstFrame = lipsyncMap[mouthShape];
 
 			fl.getDocumentDOM().getTimeline().layers[layer].frames[curFrame].elements[0].firstFrame = poseStartFrame + firstFrame;
-			fl.getDocumentDOM().getTimeline().layers[layer].frames[curFrame].elements[0].loop = 'loop';
-
+			fl.getDocumentDOM().getTimeline().layers[layer].frames[curFrame].elements[0].lastFrame = poseStartFrame + firstFrame + LENGTH_MAP[mouthShape] - 1;
+			fl.getDocumentDOM().getTimeline().layers[layer].frames[curFrame].elements[0].loop = 'play once';
+			if (arrayContains(SINGLE_FRAME_MOUTH_SHAPES, mouthShape, isEqual)) {
+				fl.getDocumentDOM().getTimeline().layers[layer].frames[curFrame].elements[0].loop = 'single frame';
+			}	
 			mouthShapeMap[fl.getDocumentDOM().getTimeline().currentFrame] = DIPHTHONG_ORDERING[diphthongMap[frame]][i];
 		}
 	}
@@ -331,8 +334,12 @@ function runLipsyncingDoc(cfgFolderPath, writeLogInfo, getCurrentDate) {
 
 								var poseFrame = fl.getDocumentDOM().getTimeline().layers[j].frames[k].elements[0].firstFrame;
 								var poseStartFrame = characterTimeline.layers[xSheetLayerIndex].frames[poseFrame].startFrame;
-								var cfgPath = FLfile.platformPathToURI(cfgFolderPath + "\\" + voiceLine + ".cfg");
-
+								var cfgPath;
+								if(cfgFolderPath.substring(0,8) === "file:///") {
+									cfgPath = cfgFolderPath + "/" + voiceLine + ".cfg"	
+								} else {
+									cfgPath = FLfile.platformPathToURI(cfgFolderPath + "\\" + voiceLine + ".cfg");
+								}
 								try {
 									fl.runScript(cfgPath);
 									placeKeyframes(k, j, OFFSET_MAP, poseStartFrame);
