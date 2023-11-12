@@ -117,7 +117,7 @@ var focus = fl.getDocumentDOM().getTimeline().layers[layerNum].frames[startingFr
 
 if (focus !== undefined) {
 	if (focus.elementType == "instance") {
-		var isOnFirstPose = fl.getDocumentDOM().getElementProperty("firstFrame") < 100;
+		var isOnFirstPose = fl.getDocumentDOM().getElementProperty("firstFrame") < 99;
 		//todo: get selection's first frame, find mouth shape from it, then go to the next one
 		var selFirstFrameOffset = fl.getDocumentDOM().getElementProperty("firstFrame") - roundDownToHundred(fl.getDocumentDOM().getElementProperty("firstFrame") + 1);
 		if(isOnFirstPose) selFirstFrameOffset--;
