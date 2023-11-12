@@ -1,4 +1,4 @@
-/*				ELEMENTS OF JUSTICE C LIBRARY
+﻿/*				ELEMENTS OF JUSTICE C LIBRARY
 											5/10/2023
 							
 	Contains C wrapper functions that other JSFL code can refer
@@ -150,3 +150,8 @@ function getFLACLength(pathName) {
 		return eval(execString);
 	};
 };
+
+function renameFolder(oldPath, newPath) {
+	var execString = "Utils.renameFolder(" + stringToCFunctionString(oldPath + "?" + newPath) + ");";
+	return eval(execString);
+}
