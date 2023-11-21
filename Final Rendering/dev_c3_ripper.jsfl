@@ -1,9 +1,11 @@
-﻿var docURI = fl.getDocumentDOM().pathURI
+﻿var docURI = fl.getDocumentDOM().pathURI;
 var slashIndex = docURI.lastIndexOf("/");
 var docDir = docURI.substring(0, slashIndex + 1);
 var cLib = fl.configURI + "Commands/cLib.jsfl";
 
 var originalLayers = [];
+
+var CPUCount = prompt("Enter the amount of CPUs for FFMPEG to use.", "16"); 
 
 /*
 Function: beep
@@ -14,7 +16,7 @@ function beep(frequency, duration) {
 }
 
 /*
-Function: rename
+Function: renameFolder
 Description: Renames folders or files
 */
 function renameFolder(oldPath, newPath) {
@@ -23,26 +25,64 @@ function renameFolder(oldPath, newPath) {
 
 /*
 Function: exportSWF
-Variables: 
-    originalLayers	Array of layers to consider
-Description: Return the frame number that the first graphic symbol occurs on.
+Description: Exports a SWF with the provided name and scene number.
 */
 function exportSWF(name, sceneNumber) {
-	fl.getDocumentDOM().testScene()
-	fl.closeAllPlayerDocuments()
-	
+	beep(250, 250);
+	fl.getDocumentDOM().testScene();
+	fl.closeAllPlayerDocuments();
+
 	var oldPath = docDir + fl.getDocumentDOM().name.slice(0, -4) + "_" + fl.getDocumentDOM().timelines[sceneNumber].name + ".swf"
 	var newPath = docDir + fl.getDocumentDOM().name.slice(0, -4) + "_" + formatIntWithLeadingZeros(sceneNumber) + "_" + name + ".swf";
-	
+
 	//alert(oldPath + '\n' + newPath)
-	
+
 	renameFolder(FLfile.uriToPlatformPath(oldPath), FLfile.uriToPlatformPath(newPath));
 }
 
 /*
+Function: exportVideo
+Description: Return the frame number that the first graphic symbol occurs on.
+*/
+function exportVideo(name) {
+	beep(500, 500);
+	fileURI = docDir + fl.getDocumentDOM().name.slice(0, -4) + "_" + name + ".mov";
+	
+	var totalFrameCount = 0;
+	
+	for (var i = 0; i < fl.getDocumentDOM().timelines.length; i++) {
+		totalFrameCount += fl.getDocumentDOM().timelines[i].frameCount;
+	}
+
+	fl.getDocumentDOM().exportVideo(fileURI, false, true, true, totalFrameCount);
+	
+	return FLfile.uriToPlatformPath(fileURI);
+}
+
+/*
+Function: callFFMPEG
+Description: Calls FFMPEG on our MOV and converts it to an image sequence.
+*/
+function callFFMPEG(movName, threadCount, outputName) {
+	var output = outputName + '_%05d.png';
+	
+	if (!FLfile.exists(docDir+output.split("/")[0]+"/")) { 
+		FLfile.createFolder(docDir+output.split("/")[0]+"/");
+	};
+
+	
+	var cdCmd = 'cd ' + FLfile.uriToPlatformPath(docDir);
+	var ffmpegCmd = 'ffmpeg -i ' + movName + ' -vf "fps=23.976" -start_number 1 -c:v png -threads ' + threadCount + ' -pix_fmt rgba ' + output;
+	var combinedCmd = cdCmd + "&&" + ffmpegCmd;
+	
+	//alert("Created " + docDir+output.split("/")[0]+"/")
+	//alert(combinedCmd)
+	
+	FLfile.runCommandLine(combinedCmd)
+}
+
+/*
 Function: guideAll
-Variables: 
-    originalLayers	Array of layers to consider
 Description: Guide all layers provided.
 */
 function guideAll(originalLayers) {
@@ -55,8 +95,6 @@ function guideAll(originalLayers) {
 
 /*
 Function: unguideAll
-Variables: 
-    originalLayers	Array of layers to consider
 Description: Unguide all layers provided.
 */
 function unguideAll(originalLayers) {
@@ -67,6 +105,10 @@ function unguideAll(originalLayers) {
 	}
 }
 
+/*
+Function: formatIntWithLeadingZeros
+Description: Converts an int to a string with double-digit leading zeros.
+*/
 function formatIntWithLeadingZeros(num) {
 	if (num >= 0 && num <= 99) {
 		return (num < 10 ? '0' : '') + num.toString();
@@ -75,6 +117,7 @@ function formatIntWithLeadingZeros(num) {
 	}
 }
 
+//Non-Character Exports
 for (var s = 0; s < fl.getDocumentDOM().timelines.length; s++) {
 	fl.getDocumentDOM().editScene(s);
 
@@ -137,26 +180,6 @@ for (var s = 0; s < fl.getDocumentDOM().timelines.length; s++) {
 	exportSWF("JamMaskOnly", s);
 	guideAll(originalLayers)
 
-	//Export all valid layers beneath "JAM_MASK" who are not children of the AUDIO folder or "BACKGROUNDS" to "CharactersOnly"
-	for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
-		if (fl.getDocumentDOM().getTimeline().layers[i].name == "JAM_MASK") {
-			for (var j = 0; j < fl.getDocumentDOM().getTimeline().layers.length; j++) {
-				if ((j > i) && (originalLayers.indexOf(j) !== -1)) {
-					if (fl.getDocumentDOM().getTimeline().layers[j].parentLayer == null) {
-						continue
-					};
-
-					if ((fl.getDocumentDOM().getTimeline().layers[j].parentLayer.name != "AUDIO") && (fl.getDocumentDOM().getTimeline().layers[j].name != "BACKGROUNDS")) {
-						fl.getDocumentDOM().getTimeline().layers[j].layerType = "normal";
-					}
-				}
-			}
-		}
-	}
-
-	exportSWF("CharactersOnly", s);
-	guideAll(originalLayers)
-
 	//Export "BACKGROUNDS" as "BackgroundsOnly.swf"
 	for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
 		if (fl.getDocumentDOM().getTimeline().layers[i].name == "BACKGROUNDS") {
@@ -192,3 +215,38 @@ for (var s = 0; s < fl.getDocumentDOM().timelines.length; s++) {
 	unguideAll(originalLayers);
 
 }
+
+//Character-Only Export (This currently fucks up the file)
+for (var s = 0; s < fl.getDocumentDOM().timelines.length; s++) {
+	fl.getDocumentDOM().editScene(s);
+
+	//Save all normal layers into an array so we can force them to become normal later.
+	for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
+		if (fl.getDocumentDOM().getTimeline().layers[i].layerType == "normal") {
+			originalLayers.push(i);
+		}
+	}
+
+	guideAll(originalLayers);
+
+	//Export all valid layers beneath "JAM_MASK" who are not children of the AUDIO folder or "BACKGROUNDS" to "CharactersOnly"
+	for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers.length; i++) {
+		if (fl.getDocumentDOM().getTimeline().layers[i].name == "JAM_MASK") {
+			for (var j = 0; j < fl.getDocumentDOM().getTimeline().layers.length; j++) {
+				if ((j > i) && (originalLayers.indexOf(j) !== -1)) {
+					if (fl.getDocumentDOM().getTimeline().layers[j].parentLayer == null) {
+						continue
+					};
+
+					if ((fl.getDocumentDOM().getTimeline().layers[j].parentLayer.name != "AUDIO") && (fl.getDocumentDOM().getTimeline().layers[j].name != "BACKGROUNDS")) {
+						fl.getDocumentDOM().getTimeline().layers[j].layerType = "normal";
+					}
+				}
+			}
+		}
+	}
+}
+
+var movName = exportVideo("CharactersOnly");
+callFFMPEG(movName, parseInt(CPUCount, 10), "Output/Output")
+FLfile.remove(FLfile.platformPathToURI(movName))
