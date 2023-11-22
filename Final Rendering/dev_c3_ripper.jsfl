@@ -71,8 +71,8 @@ function callFFMPEG(movName, threadCount, outputName) {
 	};
 
 	
-	var cdCmd = 'cd ' + FLfile.uriToPlatformPath(docDir);
-	var ffmpegCmd = 'ffmpeg -i ' + movName + ' -vf "fps=23.976" -start_number 1 -c:v png -threads ' + threadCount + ' -pix_fmt rgba ' + output;
+	var cdCmd = 'cd "' + FLfile.uriToPlatformPath(docDir) + '"';
+	var ffmpegCmd = 'ffmpeg -i "' + movName + '" -vf "fps=23.976" -start_number 1 -c:v png -threads ' + threadCount + ' -pix_fmt rgba "' + output + '"';
 	var combinedCmd = cdCmd + "&&" + ffmpegCmd;
 	
 	//alert("Created " + docDir+output.split("/")[0]+"/")
@@ -213,7 +213,7 @@ for (var s = 0; s < fl.getDocumentDOM().timelines.length; s++) {
 
 	exportSWF("VOX_Only", s);
 	unguideAll(originalLayers);
-
+	originalLayers = [];
 }
 
 //Character-Only Export (This currently fucks up the file)
@@ -236,15 +236,16 @@ for (var s = 0; s < fl.getDocumentDOM().timelines.length; s++) {
 				if ((j > i) && (originalLayers.indexOf(j) !== -1)) {
 					if (fl.getDocumentDOM().getTimeline().layers[j].parentLayer == null) {
 						continue
-					};
-
-					if ((fl.getDocumentDOM().getTimeline().layers[j].parentLayer.name != "AUDIO") && (fl.getDocumentDOM().getTimeline().layers[j].name != "BACKGROUNDS")) {
+					}
+					
+					if ((fl.getDocumentDOM().getTimeline().layers[j].parentLayer.name != "AUDIO") && (fl.getDocumentDOM().getTimeline().layers[j].name != "BACKGROUNDS") && fl.getDocumentDOM().getTimeline().layers[j].layerType != "folder") {
 						fl.getDocumentDOM().getTimeline().layers[j].layerType = "normal";
 					}
 				}
 			}
 		}
 	}
+	originalLayers = [];
 }
 
 var movName = exportVideo("CharactersOnly");
