@@ -283,7 +283,6 @@ if (guiPanel.dismiss == "accept") {
             if(charactersOnScreen[j] == "Widget") continue;
             if(charactersOnScreen[j].indexOf(defense) > -1) continue;
             if (!fl.getDocumentDOM().library.itemExists(masterInvestigationArray[charactersOnScreen[j]][1])) {
-                fl.trace(masterInvestigationArray[charactersOnScreen[j]][1] + " hi");
                 logError("Library path to " + charactersOnScreen[j] + "'s rig does not exist.");
             }
         }
@@ -300,7 +299,6 @@ if (guiPanel.dismiss == "accept") {
             if(charactersOnScreen[j] == "Widget") continue;
             if(charactersOnScreen[j].indexOf(defense) > -1) continue;
             if (!fl.getDocumentDOM().library.itemExists(masterInvestigationArray[charactersOnScreen[j]][1])) {
-                fl.trace(masterInvestigationArray[charactersOnScreen[j]][1] + " hi");
                 logError("Library path to " + charactersOnScreen[j] + "'s rig does not exist.");
             }
         }
@@ -815,7 +813,7 @@ function jamFades() {
 
         var currentLineID = sceneData[i][1];
         var lineIndex = parseInt(currentLineID.substring(3, 6), 10);
-        var jamFadeDuration = 14;
+        var jamFadeDuration = 12;
 
         goTo(currentLineID);
 
@@ -843,11 +841,11 @@ function jamFades() {
             fl.getDocumentDOM().align("vertical center", true);
             fl.getDocumentDOM().align("horizontal center", true);
 
-            fl.getDocumentDOM().getTimeline().insertFrames(7, true);
+            fl.getDocumentDOM().getTimeline().insertFrames(jamFadeDuration / 2, true);
 
-            fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("JAM_MASK")[0]].frames[0].elements[0].firstFrame = 9;
+            fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex("JAM_MASK")[0]].frames[0].elements[0].firstFrame = jamFadeDuration / 2 + 1;
             switchActive("JAM_MASK");
-            fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(6, 6);
+            fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(jamFadeDuration / 2 - 1, jamFadeDuration / 2 - 1);
 
             writeLogInfo(getCurrentDate(), status00, currentLineID + " is the first fade in a chunk.");
         } else if ((lineIndex % chunkSize === 0) || (i == sceneData.length - 1)) {
@@ -867,7 +865,7 @@ function jamFades() {
             fl.getDocumentDOM().align("vertical center", true);
             fl.getDocumentDOM().align("horizontal center", true);
 
-            fl.getDocumentDOM().getTimeline().insertFrames(7, true);
+            fl.getDocumentDOM().getTimeline().insertFrames(jamFadeDuration / 2, true);
 
             writeLogInfo(getCurrentDate(), status00, currentLineID + " is the last fade in a chunk.");
         } else {
@@ -885,9 +883,9 @@ function jamFades() {
             fl.getDocumentDOM().align("vertical center", true);
             fl.getDocumentDOM().align("horizontal center", true);
 
-            fl.getDocumentDOM().getTimeline().insertFrames(6, true);
+            fl.getDocumentDOM().getTimeline().insertFrames(jamFadeDuration / 2 - 1, true);
             goTo(currentLineID);
-            fl.getDocumentDOM().getTimeline().insertFrames(8, true);
+            fl.getDocumentDOM().getTimeline().insertFrames(jamFadeDuration / 2 + 1, true);
             switchActive("JAM_MASK");
             fl.getDocumentDOM().getTimeline().convertToBlankKeyframes(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame);
 
