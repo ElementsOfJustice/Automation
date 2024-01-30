@@ -111,6 +111,41 @@ function soundAlert(message) {
 
 //functions go here lol
 
+/*
+Function: getAlignmentPos
+Variables: 
+    totalChars  int
+    currentChar int
+Description:
+    Intelligently spaces the position of multiple on-screen characters.
+*/
+function getAlignmentPos(totalChars, currentChar) {
+    var X = 0;
+    // case 1: even number of characters
+    if (totalChars % 2 == 0) {
+        var deltaX = fl.getDocumentDOM().width / totalChars;
+        var initialPlacement = (-1 * fl.getDocumentDOM().width / 2) + deltaX / 2;
+        // fl.trace("initalPlacement: " + initialPlacement)
+        // fl.trace("deltaX: " + deltaX)
+        // fl.trace("totalChars: " + totalChars)
+        // fl.trace("currentChar: " + currentChar)
+        X = initialPlacement + (currentChar * deltaX);
+
+    }
+    // case 2: odd number of characters
+    else {
+        // if (currentChar == (totalChars - 1) / 2) {
+        //     X = 0; // CENTER
+        // } else {
+        var deltaX = fl.getDocumentDOM().width / totalChars;
+        var initialPlacement = (-1 * fl.getDocumentDOM().width / 2) + deltaX / 2;
+        X = initialPlacement + (currentChar * deltaX);
+        // }
+    }
+    // fl.trace("X: " + X);
+    return { x: X, y: 0 };
+}
+
 function trim(inputString) {
     var length = inputString.length;
     var startIndex = 0;
@@ -244,7 +279,7 @@ if (guiPanel.dismiss == "accept") {
     var skipTypewriter = false;
     var skipLines = false;
     var skipFades = false;
-    var skipBlinks = false;
+    var skipBlinks = true;
 
     var pathToSceneData = guiPanel.panel_sceneData;
     var pathToCFGs = FLfile.platformPathToURI(guiPanel.panel_folderCFG);
@@ -786,7 +821,7 @@ function sculpt(characterArray) {
                 numChars -= (sceneData[i][2].indexOf(defense) > -1) ? 1 : 0;
                 if (numChars > 1) { // multiple characters on screen, distribute them evenly
                     fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].visible = true;
-                    fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[frameToConsider].elements[0].transformX(getAlignmentPos(numChars, characterIndex).x);
+                    fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].frames[frameToConsider].elements[0].transformX = getAlignmentPos(numChars, characterIndex).x;
                     fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().currentLayer].visible = false;
                     characterIndex++;
                 }
