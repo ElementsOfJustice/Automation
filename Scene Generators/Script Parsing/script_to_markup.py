@@ -137,21 +137,6 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
         new_line = line
         flag_isSpeakertag = False
 
-        if "SCENE " in line:
-            scene = int(line.upper()[line.upper().index("SCENE ") + len("SCENE "):len(line) - 1])
-            characters = [] # reset characters for new scene, probably redundant <= don't reset, let it build to maximize successful run if a character is undeclared by err in a later scene -S
-            cur_voice_line = 1 # reset voice line count
-
-        if "Characters: " in line:
-            # get characters of a scene
-            characters = line[line.index("Characters: ") + len("Characters: "):len(line) - 1].split(', ')
-
-        for character in characters:
-            if (character.upper().replace(" ", "") + "\n" in line.replace(" ", "")) or (character.upper() + " &" in line.strip()):
-                flag_isSpeakertag = True
-                new_line = new_line.replace(character.upper(), "s"+str(scene)+"_"+str(cur_voice_line).zfill(3)+"_"+character.lower())
-                str_lineId = new_line.strip('\n')
-
         if line.startswith("<"):
             #get stage directions
 
@@ -177,6 +162,26 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
                     print("evidence present " + line.split(' ')[3-1] + " " + line.split(" ", 3)[-1].strip('\n').strip('>'))
 
             #write SFX some other day
+            continue
+
+        
+        elif "SCENE " in line:
+            scene = int(line.upper()[line.upper().index("SCENE ") + len("SCENE "):len(line) - 1])
+            characters = [] # reset characters for new scene, probably redundant <= don't reset, let it build to maximize successful run if a character is undeclared by err in a later scene -S
+            cur_voice_line = 1 # reset voice line count
+            continue
+
+        elif "Characters: " in line:
+            # get characters of a scene
+            characters = line.strip()[line.index("Characters: ") + len("Characters: "):len(line) - 1].split(', ')
+            continue
+
+        for character in characters:
+            if (character.upper().replace(" ", "") + "\n" in line.replace(" ", "")) or (character.upper() + " &" in line.strip()):
+                flag_isSpeakertag = True
+                new_line = new_line.replace(character.upper(), "s"+str(scene)+"_"+str(cur_voice_line).zfill(3)+"_"+character.lower())
+                str_lineId = new_line.strip("\n\t").strip()
+
 
         if flag_isSpeakingLine: 
             #gets dialogue lines
@@ -211,7 +216,7 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
 
             flag_runFirst = True
 
-        to_write+=new_line
+        to_write+=new_line.strip() + "\n"
 
     try:
         dest_file = codecs.open(sys.argv[1].replace(".txt", "_ae_markup.txt"), "w", "utf-8")
