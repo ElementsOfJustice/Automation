@@ -128,7 +128,7 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
             continue
 
         for character in characters:
-            if (character.upper().replace(" ", "") + "\n" in line.replace(" ", "")) or (character.upper() + " &" in line.strip()):
+            if (character.upper().replace(" ", "").replace("	", "") + "\n" in line.replace(" ", "").replace("	", "")) or (character.upper() + " &" in line.strip()):
                 speaker_key = f"s{scene}_{cur_voice_line:03d}_{character.lower()}"
                 if speaker_key not in dialogue_data:
                     LineText = remove_square_brackets(file.readline()).strip()
