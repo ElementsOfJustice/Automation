@@ -49,3 +49,5 @@ Scene Generators/Script Parsing/302S6_Scene_Generation_S6.txt
 *.ilk
 .vs
 .vscode
+Scene Generators/Script Parsing/303Scene1.txt
+Scene Generators/Script Parsing/303Scene1_output.json
