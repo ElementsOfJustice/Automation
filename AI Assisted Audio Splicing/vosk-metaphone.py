@@ -10,11 +10,9 @@ Issues:
 
 To-Do:
 - Refactor to have support with new sceneData format!
-- Automatically apply truncate silence(?), level speech
-- ffmpeg to make 8kHz mono copy for VOSK
+- Correctly identify failed lines
 - Pick good takes via picking algorithm. If a word appears more time in transcription than it should, decrease favorability.
 - Remove out-of-order labels.
-- Optimize alignment to work on word level instead of character level
 
 ****************************************************************************** """
 
@@ -100,154 +98,106 @@ def bleu_4(reference, candidate):
     weights = (0.25, 0.25, 0.25, 0.25) #4-gram order!
     return sentence_bleu([reference], candidate, weights, smoothing_function=smoothie)
 
-def get_word_at_nth_char(string, n, offset=0):
-    words = string.split()
+def get_word_and_index_at_nth_char(words, n, offset=0):
     start = 0
     for i, word in enumerate(words):
-        end = start + len(word)
+        end = start + len(word.get_word())
         if n <= end:
-            return words[min(i + offset, len(words) - 1)]
+            return words[min(i + offset, len(words) - 1)].get_word(), min(i + offset, len(words) - 1)
         start = end + 1
-    return None
+    return None, None
 
-def find_similar_endword(haystack, end_index, needle_last_word, searchRange, metaphone_threshold=0.75):
+def find_similar_endword(haystack, end_index, end_word, search_range, metaphone_threshold=0.75):
+    for offset in range(-search_range, search_range + 1):
+        end_index = next((i for i, word in enumerate(haystack.split()) if word == end_word), -1)
+        if end_index == -1:
+            return end_index  # end_word not found
+
+
+
+def find_similar_endword(list_of_Words, end_index, needle_last_word, searchRange, metaphone_threshold=0.75):
     # Try to find an exact match within a range
     for offset in range(-searchRange, searchRange + 1):
-        word = get_word_at_nth_char(haystack, end_index + offset)
+        word, revised_end_index = get_word_and_index_at_nth_char(list_of_Words, end_index + offset)
+        calculation = end_index + offset  # Calculate the index of the first character of the word
         if word == needle_last_word:
-            calculation = end_index + offset  # Calculate the index of the first character of the word
             if complexPrint:
-                print("The exact word was found, " + get_word_at_nth_char(haystack, calculation) + " where the original word was " + get_word_at_nth_char(haystack, end_index) + " " + str(end_index) + ";" + str(calculation))
+                print("The exact word was found, " + word + " where the original word was " + get_word_and_index_at_nth_char(list_of_Words, end_index) + " " + str(end_index) + ";" + str(calculation))
             return calculation  
 
     # If no exact match, find a similar word using string similarity on metaphone representations
     for offset in range(-searchRange, searchRange + 1):
-        word = get_word_at_nth_char(haystack, end_index + offset)
+        word, revised_end_index = get_word_and_index_at_nth_char(list_of_Words, end_index + offset)
+        calculation = end_index + offset  # Calculate the index of the first character of the word
         if string_similarity(metaphone(word), metaphone(needle_last_word)) > metaphone_threshold:
-            calculation = end_index + offset  # Calculate the index of the first character of the word
             if complexPrint:
-                print("A similar word was found, " + get_word_at_nth_char(haystack, calculation) + " where the original word was " + get_word_at_nth_char(haystack, end_index) + " " + str(end_index) + ";" + str(calculation))
+                print("A similar word was found, " + word + " where the original word was " + get_word_and_index_at_nth_char(list_of_Words, end_index) + " " + str(end_index) + ";" + str(calculation))
             return calculation  
 
     return end_index
 
-def find_similar_startword(haystack, start_index, needle_start_word, searchRange, metaphone_threshold=0.75):
+def find_similar_startword(list_of_Words, start_index, needle_start_word, searchRange, metaphone_threshold=0.75):
     # Try to find an exact match within a range
     for offset in range(-searchRange, searchRange + 1):
-        word = get_word_at_nth_char(haystack, start_index + offset)
+        word, revised_start_index = get_word_and_index_at_nth_char(list_of_Words, start_index + offset)
+        calculation = start_index + offset  # Calculate the index of the first character of the word
         if word == needle_start_word:
-            calculation = start_index + offset  # Calculate the index of the first character of the word
             if complexPrint:
-                print("The exact word was found, " + get_word_at_nth_char(haystack, calculation) + " where the original word was " + get_word_at_nth_char(haystack, start_index) + " " + str(start_index) + ";" + str(calculation))
+                print("The exact word was found, " + word + " where the original word was " + get_word_and_index_at_nth_char(list_of_Words, start_index) + " " + str(start_index) + ";" + str(calculation))
             return calculation  
 
     # If no exact match, find a similar word using string similarity on metaphone representations
     for offset in range(-searchRange, searchRange + 1):
-        word = get_word_at_nth_char(haystack, start_index + offset)
+        word, revised_start_index = get_word_and_index_at_nth_char(list_of_Words, start_index + offset)
+        calculation = start_index + offset  # Calculate the index of the first character of the word
         if string_similarity(metaphone(word), metaphone(needle_start_word)) > metaphone_threshold:
-            calculation = start_index + offset  # Calculate the index of the first character of the word
             if complexPrint:
-                print("A similar word was found, " + get_word_at_nth_char(haystack, calculation) + " where the original word was " + get_word_at_nth_char(haystack, start_index) + " " + str(start_index) + ";" + str(calculation))
+                print("A similar word was found, " + word + " where the original word was " + get_word_and_index_at_nth_char(list_of_Words, start_index) + " " + str(start_index) + ";" + str(calculation))
             return calculation  
 
     return start_index
-    
-def find_matches(haystack, needle):
-    global totalSearchStartEndTime
+
+def find_matches(list_of_Words, needle):
     needle = remove_last_space(needle)
     matches = []
     match_indices = []
     needle_words = needle.split()
-    max_attempts = min(5, len(needle_words))
-    
-    # Current stable tolerances for Metaphone is 0.75, Bleu-4 is 0.65
-    for attempt in range(max_attempts):
-        for i in range(len(haystack) - len(needle_words[attempt]) + 1):
-            current_needle = " ".join(needle_words[attempt:])
-            if (string_similarity(metaphone(haystack[i:i+len(current_needle)]), metaphone(current_needle)) > 0.75 and
-                (haystack[i:i+len(current_needle)] == current_needle or bleu_4(haystack[i:i+len(current_needle)], current_needle) > 0.65)):
 
-                end_index = i + len(current_needle) # - 1
-                start_index = i + attempt
+    # Iterate through the list of words one word at a time
+    for i in range(len(list_of_Words) - len(needle_words) + 1):
+        current_window = [word.get_word() for word in list_of_Words[i:i + len(needle_words)]]
 
-                # Increase end_index until we reach a space, then go back one character.
-                # Then go back by the length of the word at that index.
-                while end_index < len(haystack) and haystack[end_index] != ' ':
-                    end_index += 1
-                if end_index >= len(haystack) or haystack[end_index-1] != ' ':
-                    while end_index < len(haystack) and haystack[end_index] != ' ':
-                        end_index += 1
-                    end_index -= 1
-                end_index - len(get_word_at_nth_char(haystack, end_index))
-                end_index+=1
+        # Check for exact word match within the window
+        if current_window == needle_words:
+            start_index = i  # Store the starting index of the word match
+            end_index = i + len(needle_words)
+            matches.append(" ".join(word.get_word() for word in list_of_Words[start_index:end_index]))
+            match_indices.append((start_index, end_index))
+            continue
 
-                # Decrease start_index until we reach a space, then go forwards one character.
-                while start_index > len(haystack) and haystack[start_index] != ' ':
-                    start_index -= 1
-                if start_index <= len(haystack) or haystack[start_index-1] != ' ':
-                    while start_index < len(haystack) and haystack[start_index] != ' ':
-                        start_index -= 1
-                    start_index += 1
+        # If not exact match, try fuzzy matching on the whole window
+        if (
+            string_similarity(
+                metaphone(" ".join(current_window)), metaphone(" ".join(needle_words))
+            )
+            > 0.75
+            and (
+                bleu_4(" ".join(current_window), " ".join(needle_words)) > 0.65
+            )
+        ):
+            start_index = i
+            end_index = i + len(needle_words)
 
-                needle_last_word = needle_words[-1]
-                needle_first_word = needle_words[0]
+            # Refine start/end indices using find_similar_startword/find_similar_endword
+            # (Assuming these functions can work with list_of_Words as well)
+            start_index = find_similar_startword(list_of_Words, start_index, current_window[0], 5)
+            end_index = find_similar_endword(list_of_Words, end_index, current_window[-1], 5)
 
-                match_start_word = get_word_at_nth_char(haystack, i + attempt).translate(str.maketrans('', '', string.punctuation))
-                match_last_word = get_word_at_nth_char(haystack, end_index).translate(str.maketrans('', '', string.punctuation))
-
-                if complexPrint:
-                    print(colored("Preprocessed String: " + haystack[start_index : end_index], 'grey', attrs=['bold']))
-
-                if (match_last_word != needle_last_word):
-                    # If the last matching word is not the needle's last word, search for surrounding exact matches, then surrounding similar sounding matches.
-                    if complexPrint:
-                        print(colored("Last Word Mismatch!", 'red', attrs=['bold']))
-                    t_Search_Start = perf_counter()
-                    end_index = find_similar_endword(haystack, end_index, needle_last_word, 25)
-                    t_Search_Stop = perf_counter()
-                    totalSearchStartEndTime += (t_Search_Stop - t_Search_Start)
-
-                if (match_start_word != needle_first_word):
-                    # Handle Start Word mismatch
-                    if complexPrint:
-                        print(colored("First Word Mismatch!", 'red', attrs=['bold']))
-                    t_Search_Start = perf_counter()
-                    start_index = find_similar_startword(haystack, start_index, needle_first_word, 25)
-                    t_Search_Stop = perf_counter()
-                    totalSearchStartEndTime += (t_Search_Stop - t_Search_Start)
-
-                if not (match_start_word != needle_first_word) and not (match_last_word != needle_last_word):
-                    # Perfect!
-                    if complexPrint:
-                        print(colored("I just met my perfect match!", 'green', attrs=['bold']))
-
-                # Increase end_index until we reach a space, then go back one character.
-                # Then go back by the length of the word at that index.
-                while end_index < len(haystack) and haystack[end_index] != ' ':
-                    end_index += 1
-                if end_index >= len(haystack) or haystack[end_index-1] != ' ':
-                    while end_index < len(haystack) and haystack[end_index] != ' ':
-                        end_index += 1
-                    end_index -= 1
-                end_index - len(get_word_at_nth_char(haystack, end_index))
-                end_index+=1
-
-                # Decrease start_index until we reach a space, then go forwards one character.
-                while start_index > len(haystack) and haystack[start_index] != ' ':
-                    start_index -= 1
-                if start_index <= len(haystack) or haystack[start_index-1] != ' ':
-                    while start_index < len(haystack) and haystack[start_index] != ' ':
-                        start_index -= 1
-                    start_index += 1
-
-                if complexPrint:
-                    print(colored("Processed String: " + haystack[start_index : end_index], 'grey', attrs=['bold']))
-                    print(str(start_index) + " " + str(end_index))
-                    
-                matches.append(haystack[start_index:(end_index)]) # The only time we ever add one to end_index
+            matches.append(" ".join(word.get_word() for word in list_of_Words[start_index:end_index]))
+            match_indices.append((start_index, end_index))
 
     return matches
-
+    
 def remove_stuttering(text):
     return re.sub(r"(\w+)-\1+", r"\1", re.sub(r"(\b\w+)\s+\1+", r"\1", text), flags=re.IGNORECASE)
 
@@ -334,11 +284,12 @@ with open(sys.argv[1], "r", encoding="utf-8") as file:
 complexPrint = False
 simplePrint = False
     
-if sys.argv[3] == "--complexPrint":
-    complexPrint = True
-    simplePrint = True
-if sys.argv[3] == "--simplePrint":
-    simplePrint = True
+if len(sys.argv) > 3:
+    if sys.argv[3] == "--complexPrint":
+        complexPrint = True
+        simplePrint = True
+    elif sys.argv[3] == "--simplePrint":
+        simplePrint = True
 
 # Need better handling to extract character and scene.
 if complexPrint:
@@ -407,7 +358,6 @@ t_Meta_start = perf_counter()
 for x, n in enumerate(needles):
 
     if needles[x][2] == activeChar:
-
         characterCount += 1
         lineID = needles[x][1]
         needle = needles[x][3]
@@ -428,7 +378,7 @@ for x, n in enumerate(needles):
 
         # Retrieve matches or else report zero matches.
         t_Match_start = perf_counter()
-        matches = find_matches(haystack, needle)
+        matches = find_matches(list_of_Words, needle)
         t_Match_stop = perf_counter()
         totalMatchTime += (t_Match_stop - t_Match_start)
 
@@ -440,22 +390,29 @@ for x, n in enumerate(needles):
                     print(colored('Haystack Match: ', 'green') + i)
 
                 if locateMatch in charIndexToWordIndex:
-                    lineSize = len(needle.split())
-
                     start_word_index = charIndexToWordIndex[locateMatch]
-                    end_word_index = start_word_index + lineSize
+                    end_word_index = start_word_index + len(i.split()) - 1
 
                     start_time = round(list_of_Words[start_word_index].get_start(), 3)
                     end_time = round(list_of_Words[end_word_index].get_end(), 3)
 
-                    print("I am getting a match, with start_word_index " + str(start_word_index))
-                    print("And end_word_index " + str(end_word_index))
-                    print("The starting word being " + str(list_of_Words[start_word_index].word) + " when it should be " + str(needle.split()[0]))
-                    print("The ending word being " + str(list_of_Words[end_word_index].word) + " when it should be " + str(needle.split()[-1]))
-                    print("Start time is " + str(start_time))
-                    print("End time is " + str(end_time))
+                    startingWord = list_of_Words[start_word_index].word
+                    endingWord = list_of_Words[end_word_index].word
+                    startCompColor = 'green'
+                    endCompColor = "green"
 
-                    allLines.append([str(start_time), str(end_time), lineID])
+                    if startingWord != needle.split()[0]:
+                        startCompColor = "red"
+                    if endingWord != needle.split()[-1]:
+                        endCompColor = "red"
+
+                    if complexPrint:
+                        print("Start;End Word Indices" + str(start_word_index) + ";" + str(end_word_index))
+                        print(colored("The starting word being '" + str(list_of_Words[start_word_index].word) + "' when it should be " + str(needle.split()[0]), startCompColor, attrs=['bold']))
+                        print(colored("The ending word being '" + str(list_of_Words[end_word_index].word) + "' when it should be " + str(needle.split()[-1]), endCompColor, attrs=['bold']))
+                        print("Start;End Times " + str(start_time) + ";"+ str(end_time))
+
+                    allLines.append([str(start_time - 0.05), str(end_time + 0.05), lineID])
 
                     if simplePrint:
                         print(colored('! Match Successful !', 'green', attrs=['bold']))
@@ -463,13 +420,10 @@ for x, n in enumerate(needles):
                     failedLines.append([needles[x][1], needle])
                     if simplePrint:
                         print(colored('X Unique Match Failed X', 'red', attrs=['bold']))
-
         else:
             if simplePrint:
                 print(colored('X No Matches X', 'red', attrs=['bold']))
-
             failedLines.append([needles[x][1], needle])
-
         t_Meta_stop = perf_counter()
 
 if simplePrint:
@@ -482,11 +436,20 @@ except:
     print("Invalid destination file, abort.")
     exit()
 
+# Remove excessively long takes 
+pruned_allLines = []
+for line in allLines:
+    start_time, end_time, label = line
+    duration = float(end_time) - float(start_time)
+    if duration <= 30:
+        pruned_allLines.append(line)
+allLines = pruned_allLines
+
 # Make matches unique— prevent multiples of the same match with same start/end time. 
 # This may make a good confidence system eventually, seeing how many times the same section matched.
-""" allLines = [list(x) for x in set(tuple(x) for x in allLines)]
+allLines = [list(x) for x in set(tuple(x) for x in allLines)]
 allLines = remove_nested_arrays(allLines)
-allLines.sort(key=lambda x: float(x[0])) """
+allLines.sort(key=lambda x: float(x[0]))
 
 #Merge labels
 """ i = 0
@@ -561,7 +524,7 @@ print("\tMetaphone Matching took: \t",
 print("\tMetaphone Seeking took: \t",
         str(round(totalSearchStartEndTime, 3)) + " seconds")
 
-print("\tFFMPEG took: \t\t",
+print("\tFFMPEG took: \t\t\t",
         str(round(totalFFMPEGTime, 3)) + " seconds")
 
 print()
