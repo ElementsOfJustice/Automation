@@ -269,9 +269,10 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
         new_line = line.strip()
 
         if "Date - Time – Location:" in line:
-                parts = line.strip().split("–")
-                intro_data["Time"] = parts[1].strip()
-                intro_data["Location"] = parts[2].strip()
+            intro_data["TypewriterIntro"] = {}
+            parts = line.split("–")
+            intro_data["TypewriterIntro"]["Time"] = parts[1].strip().replace('Location: ', '')
+            intro_data["TypewriterIntro"]["Location"] = parts[2].strip()
 
         if line.startswith("<"):
             # Handle stage directions (if needed)
@@ -292,8 +293,8 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
                 speaker_key = f"s{scene}_{cur_voice_line:03d}_{character.lower()}"
                 if speaker_key not in dialogue_data:
                     LineText = remove_square_brackets(file.readline()).strip()
-                    #Emotion = returnEmotion(LeXmo.LeXmo(LineText), LineText)
-                    Emotion = "C"
+                    Emotion = returnEmotion(LeXmo.LeXmo(LineText), LineText)
+                    #Emotion = "C"
                     dialogue_data[speaker_key] = {
                         "CharacterName": character,
                         "LineText": LineText,
@@ -307,7 +308,7 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
 output_data = {
     "Dialogue": dialogue_data,
     "SFX": sfx_data,
-    "TypewriterIntro": intro_data
+    "Typewriter": intro_data
 }
 
 PostprocessSFX(output_data)
