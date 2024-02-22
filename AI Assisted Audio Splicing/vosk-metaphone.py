@@ -28,6 +28,7 @@ import subprocess
 from time import perf_counter
 from vosk import Model, KaldiRecognizer, SetLogLevel
 from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
+import numpy as np
 
 from termcolor import colored
 import Word as custom_Word
@@ -40,6 +41,9 @@ totalChars, idx, characterCount = 0, 0, 0
 haystack = ""
 fullLine = "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
 translation_table = str.maketrans("", "", string.punctuation.replace("'", ""))
+
+def db_to_amplitude(db):
+    return 10 ** (db / 20)
 
 def metaphone(word):
     word = word.upper()
@@ -107,31 +111,25 @@ def get_word_and_index_at_nth_char(words, n, offset=0):
         start = end + 1
     return None, None
 
-def find_similar_endword(haystack, end_index, end_word, search_range, metaphone_threshold=0.75):
-    for offset in range(-search_range, search_range + 1):
-        end_index = next((i for i, word in enumerate(haystack.split()) if word == end_word), -1)
-        if end_index == -1:
-            return end_index  # end_word not found
-
-
-
 def find_similar_endword(list_of_Words, end_index, needle_last_word, searchRange, metaphone_threshold=0.75):
     # Try to find an exact match within a range
     for offset in range(-searchRange, searchRange + 1):
+        oldWord, ignore = get_word_and_index_at_nth_char(list_of_Words, end_index)
         word, revised_end_index = get_word_and_index_at_nth_char(list_of_Words, end_index + offset)
         calculation = end_index + offset  # Calculate the index of the first character of the word
         if word == needle_last_word:
             if complexPrint:
-                print("The exact word was found, " + word + " where the original word was " + get_word_and_index_at_nth_char(list_of_Words, end_index) + " " + str(end_index) + ";" + str(calculation))
+                print("The exact word was found, " + word + " where the original word was " + oldWord + " " + str(end_index) + ";" + str(calculation))
             return calculation  
 
     # If no exact match, find a similar word using string similarity on metaphone representations
     for offset in range(-searchRange, searchRange + 1):
+        oldWord, ignore = get_word_and_index_at_nth_char(list_of_Words, end_index)
         word, revised_end_index = get_word_and_index_at_nth_char(list_of_Words, end_index + offset)
         calculation = end_index + offset  # Calculate the index of the first character of the word
         if string_similarity(metaphone(word), metaphone(needle_last_word)) > metaphone_threshold:
             if complexPrint:
-                print("A similar word was found, " + word + " where the original word was " + get_word_and_index_at_nth_char(list_of_Words, end_index) + " " + str(end_index) + ";" + str(calculation))
+                print("A similar word was found, " + word + " where the original word was " + oldWord + " " + str(end_index) + ";" + str(calculation))
             return calculation  
 
     return end_index
@@ -139,20 +137,22 @@ def find_similar_endword(list_of_Words, end_index, needle_last_word, searchRange
 def find_similar_startword(list_of_Words, start_index, needle_start_word, searchRange, metaphone_threshold=0.75):
     # Try to find an exact match within a range
     for offset in range(-searchRange, searchRange + 1):
+        oldWord, ignore = get_word_and_index_at_nth_char(list_of_Words, start_index)
         word, revised_start_index = get_word_and_index_at_nth_char(list_of_Words, start_index + offset)
         calculation = start_index + offset  # Calculate the index of the first character of the word
         if word == needle_start_word:
             if complexPrint:
-                print("The exact word was found, " + word + " where the original word was " + get_word_and_index_at_nth_char(list_of_Words, start_index) + " " + str(start_index) + ";" + str(calculation))
+                print("The exact word was found, " + word + " where the original word was " + oldWord + " " + str(start_index) + ";" + str(calculation))
             return calculation  
 
     # If no exact match, find a similar word using string similarity on metaphone representations
     for offset in range(-searchRange, searchRange + 1):
+        oldWord, ignore = get_word_and_index_at_nth_char(list_of_Words, start_index)
         word, revised_start_index = get_word_and_index_at_nth_char(list_of_Words, start_index + offset)
         calculation = start_index + offset  # Calculate the index of the first character of the word
         if string_similarity(metaphone(word), metaphone(needle_start_word)) > metaphone_threshold:
             if complexPrint:
-                print("A similar word was found, " + word + " where the original word was " + get_word_and_index_at_nth_char(list_of_Words, start_index) + " " + str(start_index) + ";" + str(calculation))
+                print("A similar word was found, " + word + " where the original word was " + oldWord + " " + str(start_index) + ";" + str(calculation))
             return calculation  
 
     return start_index
@@ -257,6 +257,48 @@ def downsample_to_vosk_quick_format(input_file, output_file):
     subprocess.run(command)
     t_Downsample_Stop = perf_counter()
     totalFFMPEGTime += (t_Downsample_Stop - t_Downsample_Start)
+
+def read_wav_file(file_path):
+    with wave.open(file_path, 'rb') as wav_file:
+        frames = wav_file.readframes(-1)
+        sample_width = wav_file.getsampwidth()
+        frame_rate = wav_file.getframerate()
+        audio_data = np.frombuffer(frames, dtype=np.int16)
+    return audio_data, sample_width, frame_rate
+
+def get_volume_at_time(audio_data, frame_rate, time):
+    sample_index = int(time * frame_rate)   
+    # Get the absolute value of the audio sample
+    sample_value = np.abs(audio_data[sample_index])
+    
+    # Normalize the value to the range [0, 1]
+    max_value = np.abs(audio_data).max()
+    normalized_volume = sample_value / max_value if max_value != 0 else 0
+    
+    return normalized_volume
+
+def search_for_threshold_single(audio_data, frame_rate, time, threshold, max_search_time, direction='both'):
+    search_direction = 1 if direction == 'forwards' else -1
+    current_time = time
+    current_volume = get_volume_at_time(audio_data, frame_rate, current_time)
+    
+    while current_volume < threshold and abs(time - current_time) <= max_search_time:
+        current_time += search_direction * 0.01
+        current_volume = get_volume_at_time(audio_data, frame_rate, current_time)
+    
+    if current_volume >= threshold:
+        return True, current_time
+    else:
+        return False, None
+
+def search_for_threshold(audio_data, frame_rate, start_time, end_time, threshold, max_search_time):
+    start_found, start_match_time = search_for_threshold_single(audio_data, frame_rate, start_time, threshold, max_search_time, direction='both')
+    end_found, end_match_time = search_for_threshold_single(audio_data, frame_rate, end_time, threshold, max_search_time, direction='both')
+    
+    if start_found and end_found:
+        return True, start_match_time, end_match_time
+    else:
+        return False, None, None
 
 # INPUT
 if not len(sys.argv) > 1:
@@ -412,7 +454,7 @@ for x, n in enumerate(needles):
                         print(colored("The ending word being '" + str(list_of_Words[end_word_index].word) + "' when it should be " + str(needle.split()[-1]), endCompColor, attrs=['bold']))
                         print("Start;End Times " + str(start_time) + ";"+ str(end_time))
 
-                    allLines.append([str(start_time - 0.05), str(end_time + 0.05), lineID])
+                    allLines.append([str(start_time - 0.05), str(end_time + 0.05), lineID, i])
 
                     if simplePrint:
                         print(colored('! Match Successful !', 'green', attrs=['bold']))
@@ -436,10 +478,10 @@ except:
     print("Invalid destination file, abort.")
     exit()
 
-# Remove excessively long takes 
+# Remove excessively long takes.
 pruned_allLines = []
 for line in allLines:
-    start_time, end_time, label = line
+    start_time, end_time, label, transcription = line
     duration = float(end_time) - float(start_time)
     if duration <= 30:
         pruned_allLines.append(line)
@@ -451,48 +493,118 @@ allLines = [list(x) for x in set(tuple(x) for x in allLines)]
 allLines = remove_nested_arrays(allLines)
 allLines.sort(key=lambda x: float(x[0]))
 
-#Merge labels
-""" i = 0
+# Minimize right-overhang matching.
+i = 0
 while i < len(allLines) - 1:
     j = i + 1
     while j < len(allLines):
         if float(allLines[i][1]) > float(allLines[j][0]) and float(allLines[i][0]) < float(allLines[j][1]):
-            middle_point = (float(allLines[i][1]) + float(allLines[j][0])) / 2
-            allLines[i][1] = str(round(middle_point, 3))
-            allLines[j][0] = str(round(middle_point, 3))
+            allLines[i][1] = allLines[j][0]
             break
         j += 1
-    i += 1 """
+    i += 1
 
-#Prune False Positives
-""" label_counts = {}
+# Volume-level Alignment
+""" audio_data, sample_width, frame_rate = read_wav_file(audio_truncate_path)
+
 for line in allLines:
-    label = line[2]
-    if label in label_counts:
-        label_counts[label] += 1
-    else:
-        label_counts[label] = 1
+    start_time = float(line[0])
+    end_time = float(line[1])
+    lineID = line[2]
+    
+    found, start_match_time, end_match_time = search_for_threshold(audio_data, frame_rate, start_time, end_time, db_to_amplitude(-30), 8)
+    if found:
+        line[0] = str(start_match_time)
+        line[1] = str(end_match_time)
+        if complexPrint:
+            print("Volume aligned line " + lineID) """
 
-for label, count in label_counts.items():
-    if count >= 6: #Maximum number of takes a VA could plausibly do
-        allLines = [line for line in allLines if line[2] != label] """
+# Correct Accuracy calculator
+missing_lines = 0
+total_active_char_lines = 0
+for x in range(len(needles)):
+    if needles[x][2] == activeChar:
+        total_active_char_lines += 1
+        lineID = needles[x][1]
+        line_exists = False
+        for y in range(len(allLines)):
+            if lineID == allLines[y][2]:
+                line_exists = True
+                break
+        if not line_exists:
+            missing_lines += 1
 
-# Create a set of all unique identifiers in allLines
-""" allLinesIds = set([line[2] for line in allLines]) """
+missing_lines_percentage = (missing_lines / total_active_char_lines) * 100 if total_active_char_lines > 0 else 0
 
-# Iterate over needles and check if the identifier is in the set of allLinesIds
-""" for needle in needles:
-    if needles[2] == activeChar:
-        if needle[1] not in allLinesIds:    
-            failedLines.append([needle[1], needle[3]]) """
-
-#Failed Lines Prune Duplicates
-""" failedLines = list(set(tuple(i) for i in failedLines))
-failedLines = [list(i) for i in failedLines]
-failedLines = sorted(failedLines, key=lambda x: int(x[0].split("_")[1])) """
-
-print(colored("Accuracy is %" + str(round((((characterCount-len(failedLines))/characterCount) * 100), 2)), "white", attrs=['bold']))
+print(colored("Accuracy is " + str(round((100 - missing_lines_percentage), 2)) + "%", "white", attrs=['bold']))
 print()
+
+# Good Take Selection Algorithm
+# fuck you, this is bad, things can score the same score which is terrible
+for line in allLines:
+    lineID = line[2]
+    transcription = line[3]
+
+    for needle in needles:
+        if needle[1] == lineID:
+            points = 0
+
+            first_word_needle = needle[3].split()[0]
+            last_word_needle = needle[3].split()[-1]
+
+            first_word_transcription = transcription.split()[0]
+            last_word_transcription = transcription.split()[-1]
+
+            first_word_needle = first_word_needle.translate(translation_table).lower()
+            last_word_needle = last_word_needle.translate(translation_table).lower()
+
+            first_word_transcription = first_word_transcription.translate(translation_table).lower()
+            last_word_transcription = last_word_transcription.translate(translation_table).lower()
+
+            # Check if first word matches
+            if first_word_needle == first_word_transcription:
+                points += 2
+
+            # Check if last word matches
+            if last_word_needle == last_word_transcription:
+                points += 2
+
+            # Calculate points based on duration and number of words in the needle
+            duration = float(end_time) - float(start_time)
+            points += ((duration / len(needle[0].split())) * 5)
+
+            # Calculate Bleu-4 similarity score
+            bleu_score = bleu_4(needle[0], transcription)
+            points += (bleu_score * 3)
+
+            # Assign the points to the line in allLines
+            points = round(points, 10)
+            line.append(points)
+
+# Dictionary to store the highest scoring line for each lineID
+highest_scores = {}
+
+# Find the highest scoring line for each lineID
+for line in allLines:
+    lineID = line[2]
+    score = line[4]
+
+    if lineID in highest_scores:
+        if score > highest_scores[lineID][1]:
+            highest_scores[lineID] = (line, score)
+    else:
+        highest_scores[lineID] = (line, score)
+
+# Update lineIDs and remove transcription and score for non-highest scoring lines
+for line in allLines[:]:
+    print(line)
+    lineID = line[2]
+    if line is not highest_scores[lineID][0]:
+        line[2] += "_alt"
+        # idiot
+        #print(line)
+        line.pop()  # Remove transcription
+        line.pop()  # Remove score
 
 #Print
 for i in range(len(allLines)):
