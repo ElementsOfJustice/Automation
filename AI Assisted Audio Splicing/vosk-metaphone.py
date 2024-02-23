@@ -3,16 +3,12 @@
                         AUTOMATIC LINE SPLICING (2/19/24)
 
 Description: Automatically splices lines in an audio file given the script. Outputs
-to a label txt file to be imported in Audacity.
-
-Issues:
-- 
+a label txt file to be imported in Audacity and the individual files.
 
 To-Do:
 - Refactor to have support with new sceneData format!
-- Correctly identify failed lines
-- Pick good takes via picking algorithm. If a word appears more time in transcription than it should, decrease favorability.
-- Remove out-of-order labels.
+- Start + End word alignment is weird sometimes. Longest running code issue of my life.
+- Adjust picking algorithm. If a word appears more time in transcription than it should, decrease favorability.
 
 ****************************************************************************** """
 
@@ -41,6 +37,23 @@ totalChars, idx, characterCount = 0, 0, 0
 haystack = ""
 fullLine = "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
 translation_table = str.maketrans("", "", string.punctuation.replace("'", ""))
+
+def extract_character_name(filename):
+    # Words to remove
+    numerics = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
+    common_words = ["Case", "Episode", "Scene", "Part", "EoJ", "Elements of Justice", "Raw", "Retakes", "Lines", "Line", "Take"]
+    character_last_names = ["Wright", "Justice", "Cykes", "Reed", "Pursuit", "Dash", "Belle"]
+    va_names = ["Webshoter", "IMShadow007", "ThatCanadianDude", ]
+    
+    words_to_remove = numerics + common_words + character_last_names + va_names
+
+    # Define a regular expression pattern to match spaces, underscores, numerics, and specified words
+    pattern = r'[ \-_0-9]+|' + '|'.join(re.escape(word) for word in words_to_remove)
+
+    # Use re.sub() to replace all matches of the pattern with an empty string
+    character_name = re.sub(pattern, '', filename, flags=re.IGNORECASE)
+
+    return character_name
 
 def db_to_amplitude(db):
     return 10 ** (db / 20)
@@ -237,7 +250,7 @@ def truncate_silence(input_file, output_file):
         '-y',  # Overwrite without asking
         output_file  # Output to the new file
     ]
-    subprocess.run(command)
+    subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     t_Truncate_Stop = perf_counter()
     totalFFMPEGTime += (t_Truncate_Stop - t_Truncate_Start)
 
@@ -254,7 +267,7 @@ def downsample_to_vosk_quick_format(input_file, output_file):
         output_file
     ]
     # Run the command
-    subprocess.run(command)
+    subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     t_Downsample_Stop = perf_counter()
     totalFFMPEGTime += (t_Downsample_Stop - t_Downsample_Start)
 
@@ -277,23 +290,23 @@ def get_volume_at_time(audio_data, frame_rate, time):
     
     return normalized_volume
 
-def search_for_threshold_single(audio_data, frame_rate, time, threshold, max_search_time, direction='both'):
+def search_for_threshold_single(audio_data, frame_rate, time, threshold, max_search_time, direction='backwards'):
     search_direction = 1 if direction == 'forwards' else -1
     current_time = time
     current_volume = get_volume_at_time(audio_data, frame_rate, current_time)
-    
-    while current_volume < threshold and abs(time - current_time) <= max_search_time:
+
+    while current_volume >= threshold and abs(time - current_time) <= max_search_time:
         current_time += search_direction * 0.01
         current_volume = get_volume_at_time(audio_data, frame_rate, current_time)
     
-    if current_volume >= threshold:
+    if current_volume < threshold:
         return True, current_time
     else:
         return False, None
 
 def search_for_threshold(audio_data, frame_rate, start_time, end_time, threshold, max_search_time):
-    start_found, start_match_time = search_for_threshold_single(audio_data, frame_rate, start_time, threshold, max_search_time, direction='both')
-    end_found, end_match_time = search_for_threshold_single(audio_data, frame_rate, end_time, threshold, max_search_time, direction='both')
+    start_found, start_match_time = search_for_threshold_single(audio_data, frame_rate, start_time, threshold, max_search_time, direction='backwards')
+    end_found, end_match_time = search_for_threshold_single(audio_data, frame_rate, end_time, threshold, max_search_time, direction='forwards')
     
     if start_found and end_found:
         return True, start_match_time, end_match_time
@@ -333,19 +346,20 @@ if len(sys.argv) > 3:
     elif sys.argv[3] == "--simplePrint":
         simplePrint = True
 
-# Need better handling to extract character and scene.
-if complexPrint:
-    print(" ")
-    print("I think the active character is " + sys.argv[2].translate(str.maketrans(string.ascii_letters, string.ascii_letters, string.digits)).split('.')[0].split("\\")[-1])
-    print(" ")
-
 # SPEECH TO TEXT
 model_path = "models/vosk-model-small-en-us-0.15"
 #model_path = "models/vosk-model-en-us-0.22"
 audio_path = os.path.join(os.path.dirname(__file__), sys.argv[2])
 audio_truncate_path = os.path.join(os.path.dirname(audio_path), os.path.basename(audio_path) + "_truncated.wav")
 audio_downsample_path = os.path.join(os.path.dirname(audio_path), os.path.basename(audio_path) + "_downsample.wav")
-activeChar = sys.argv[2].translate(str.maketrans(string.ascii_letters, string.ascii_letters, string.digits)).split('.')[0].split("\\")[-1]
+activeChar = extract_character_name(sys.argv[2])
+
+# Need better handling to extract character and scene.
+if complexPrint:
+    print(" ")
+    print("I think the active character is " + activeChar)
+    print(" ")
+
 
 # Downsample & Truncate
 truncate_silence(audio_path, audio_truncate_path)
@@ -471,8 +485,9 @@ for x, n in enumerate(needles):
 if simplePrint:
     print(colored(fullLine, 'grey', attrs=['bold']))
 
+# <!> Fix this eventually to dynamically get file extension.
 try:
-    dest_file = codecs.open(sys.argv[1].replace(".txt", "_autoLabel.txt"), "w", "utf-8")
+    dest_file = codecs.open(sys.argv[2].replace(".wav", "_autoLabel.txt"), "w", "utf-8")
 
 except:
     print("Invalid destination file, abort.")
@@ -505,19 +520,19 @@ while i < len(allLines) - 1:
     i += 1
 
 # Volume-level Alignment
-""" audio_data, sample_width, frame_rate = read_wav_file(audio_truncate_path)
+audio_data, sample_width, frame_rate = read_wav_file(audio_truncate_path)
 
 for line in allLines:
     start_time = float(line[0])
     end_time = float(line[1])
     lineID = line[2]
     
-    found, start_match_time, end_match_time = search_for_threshold(audio_data, frame_rate, start_time, end_time, db_to_amplitude(-30), 8)
+    found, start_match_time, end_match_time = search_for_threshold(audio_data, frame_rate, start_time, end_time, db_to_amplitude(-45), 8)
     if found:
         line[0] = str(start_match_time)
         line[1] = str(end_match_time)
         if complexPrint:
-            print("Volume aligned line " + lineID) """
+            print("Volume aligned line " + lineID)
 
 # Correct Accuracy calculator
 missing_lines = 0
@@ -540,7 +555,6 @@ print(colored("Accuracy is " + str(round((100 - missing_lines_percentage), 2)) +
 print()
 
 # Good Take Selection Algorithm
-# fuck you, this is bad, things can score the same score which is terrible
 for line in allLines:
     lineID = line[2]
     transcription = line[3]
@@ -561,6 +575,9 @@ for line in allLines:
             first_word_transcription = first_word_transcription.translate(translation_table).lower()
             last_word_transcription = last_word_transcription.translate(translation_table).lower()
 
+            print(first_word_needle + " ... " + first_word_needle + " " + str(first_word_needle == first_word_transcription))
+            print(last_word_needle + " ... " + last_word_transcription  + " " + str(last_word_needle == last_word_transcription))
+
             # Check if first word matches
             if first_word_needle == first_word_transcription:
                 points += 2
@@ -571,11 +588,11 @@ for line in allLines:
 
             # Calculate points based on duration and number of words in the needle
             duration = float(end_time) - float(start_time)
-            points += ((duration / len(needle[0].split())) * 5)
+            points += ((duration / len(needle[0].split())) * 1)
 
             # Calculate Bleu-4 similarity score
             bleu_score = bleu_4(needle[0], transcription)
-            points += (bleu_score * 3)
+            points += (bleu_score * 1)
 
             # Assign the points to the line in allLines
             points = round(points, 10)
@@ -600,11 +617,23 @@ for line in allLines[:]:
     print(line)
     lineID = line[2]
     if line is not highest_scores[lineID][0]:
+        print(line)
         line[2] += "_alt"
-        # idiot
-        #print(line)
         line.pop()  # Remove transcription
         line.pop()  # Remove score
+
+# Export
+for line in allLines:
+    # Check if lineID contains "_alt"
+    start_time = line[0]
+    end_time = line[1]
+    lineID = line[2]
+    if "_alt" not in lineID:
+        # Use ffmpeg to export snippet
+        input_file = audio_truncate_path
+        output_file = f"{lineID}.flac"
+        ffmpeg_command = f'ffmpeg -i "{input_file}" -ss {start_time} -to {end_time} -y -c:a flac "{output_file}"'
+        subprocess.run(ffmpeg_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
 #Print
 for i in range(len(allLines)):
