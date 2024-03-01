@@ -19,12 +19,12 @@ from LeXmo import LeXmo
 import sys
 import json
 import re
-import string
+import codecs
+
+from tqdm import tqdm
 
 from typing import Dict
 from Levenshtein import distance
-
-import os.path
 
 def remove_square_brackets(text):
     return re.sub(r'\[.*?\]', '', text)
@@ -119,15 +119,12 @@ def getSFX(emotion: str, emotions_dict: Dict[str, str]) -> str:
             closest_emotion = value
     return closest_emotion
 
-def ProcessSFX(lineID, line, emotion):
+def ProcessSFX(lineID, line, emotion, sfx_data):
     line = line.replace('’', "'") #slay me
     lineIDoccurance = list(sfx_data.values()).count(lineID)
     lineNoPunct = line.replace(',', "").replace(':', "").replace('-', " ")
     words = lineNoPunct.split()
     uppercase_words = [word for word in words if word.isupper() and word != "I" and word != "A" and word != "O"]
-
-    #May want index to find n-th instance of work. (s1_153_apollo)
-    #Check s1_163_apollo
 
     #?! Permutations
     if is_only_question_or_exclamation(line):
@@ -211,7 +208,6 @@ def ProcessSFX(lineID, line, emotion):
                     "SFX": 'sfx-damage'
                 }
 
-
     # Need Objection/Hold It/Take That... Coverage
         
 def PostprocessSFX(json_data):
@@ -259,6 +255,33 @@ except:
 dialogue_data = {}
 sfx_data = {}
 intro_data = {}
+scenes_data = {}
+to_write = ""
+
+with open(sys.argv[1], "r", encoding="utf8") as file:
+    lines = file.readlines()
+    scenes = [int(line.split()[1]) for line in lines if line.startswith("SCENE")]
+    highest_scene_number = max(scenes)
+
+def count_lines_per_scene(file_path):
+    scene_line_counts = {}
+    with open(file_path, "r", encoding="utf8") as file:
+        scene = None
+        line_count = 0
+        for line in file:
+            if "SCENE " in line:
+                if scene is not None:
+                    scene_line_counts[scene] = int(line_count / 4)
+                scene = int(line.split()[1])
+                line_count = 0
+            line_count += 1
+        if scene is not None:
+            # Rough estimate lol
+            scene_line_counts[scene] = int(line_count / 4)
+    return scene_line_counts
+
+scene_line_counts = count_lines_per_scene(sys.argv[1])
+print(scene_line_counts[2])
 
 with open(sys.argv[1], "r", encoding="utf8") as file:
     cur_voice_line = 1
@@ -268,20 +291,29 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
     for line in file:
         new_line = line.strip()
 
-        if "Date - Time – Location:" in line:
-            intro_data["TypewriterIntro"] = {}
-            parts = line.split("–")
-            intro_data["TypewriterIntro"]["Time"] = parts[1].strip().replace('Location: ', '')
-            intro_data["TypewriterIntro"]["Location"] = parts[2].strip()
+        if "SCENE " in line:
+            if scene != 1:
+                # Close the progress bar for the previous scene
+                progress_bar.close()
 
-        if line.startswith("<"):
-            # Handle stage directions (if needed)
-            continue
-        
-        elif "SCENE " in line:
-            scene = int(line.upper()[line.upper().index("SCENE ") + len("SCENE "):len(line) - 1])
+                # Write the scene data to a JSON file
+                output_data = {
+                    "Dialogue": scenes_data[scene]["Dialogue"],
+                    "SFX": scenes_data[scene]["SFX"],
+                    "Typewriter": scenes_data[scene]["Typewriter"]
+                }
+                output_file_path = sys.argv[1].replace(".txt", f"_Scene_{scene}_output.json")
+                with open(output_file_path, "w", encoding="utf-8") as json_file:
+                    json.dump(output_data, json_file, indent=4, ensure_ascii=False)
+
+            scene = int(line.split()[1])
+            scenes_data[scene] = {"Dialogue": {}, "SFX": {}, "Typewriter": {}}
             characters = []
             cur_voice_line = 1
+
+            # Update total_iterations for the current scene
+            progress_bar = tqdm(total=scene_line_counts[scene], position=0, leave=True)
+            progress_bar.set_description(f"Processing Scene {scene}")
             continue
 
         elif "Characters: " in line:
@@ -291,31 +323,49 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
         for character in characters:
             if (character.upper().replace(" ", "").replace("	", "") + "\n" in line.replace(" ", "").replace("	", "")) or (character.upper() + " &" in line.strip()):
                 speaker_key = f"s{scene}_{cur_voice_line:03d}_{character.lower()}"
-                if speaker_key not in dialogue_data:
-                    LineText = remove_square_brackets(file.readline()).strip()
-                    Emotion = returnEmotion(LeXmo.LeXmo(LineText), LineText)
-                    #Emotion = "C"
-                    dialogue_data[speaker_key] = {
+                if speaker_key not in scenes_data[scene]["Dialogue"]:
+                    progress_bar.set_description(f"Processing {speaker_key}...")
+
+                    next_line = file.readline()
+                    new_line = speaker_key + "\n" + next_line
+
+                    LineText = remove_square_brackets(next_line).strip()
+                    #Emotion = returnEmotion(LeXmo.LeXmo(LineText), LineText)
+                    Emotion = "C"
+                    scenes_data[scene]["Dialogue"][speaker_key] = {
                         "CharacterName": character,
                         "LineText": LineText,
                         "Emotion": Emotion
                     }
-                    ProcessSFX(speaker_key, LineText, Emotion)
+                    ProcessSFX(speaker_key, LineText, Emotion, scenes_data[scene]["SFX"])
                 cur_voice_line += 1
+                progress_bar.update(1)
                 break
 
-# Wrap the dialogue data in a dictionary under the key "Dialogue"
-output_data = {
-    "Dialogue": dialogue_data,
-    "SFX": sfx_data,
-    "Typewriter": intro_data
-}
+        if "Date - Time – Location:" in line:
+            intro_data = {}
+            parts = line.split("–")
+            intro_data["Time"] = parts[1].strip().replace('Location: ', '')
+            intro_data["Location"] = parts[2].strip()
+            scenes_data[scene]["Typewriter"] = intro_data
 
-PostprocessSFX(output_data)
+        to_write+=new_line.strip() + "\n"
 
-# Write the JSON to a file
-output_file_path = sys.argv[1].replace(".txt", "_output.json")
-with open(output_file_path, "w", encoding="utf-8") as json_file:
-    json.dump(output_data, json_file, indent=4, ensure_ascii=False)
+# Close the progress bar for the last scene
+progress_bar.close()
 
-print("JSON generation completed successfully. Output saved to:", output_file_path)
+dest_file = codecs.open(sys.argv[1].replace(".txt", "_ae_markup.txt"), "w", "utf-8")
+dest_file.write(to_write)
+
+# Write all scene data to JSON files
+for scene_num, data in scenes_data.items():
+    output_data = {
+        "Dialogue": data["Dialogue"],
+        "SFX": data["SFX"],
+        "Typewriter": data["Typewriter"]
+    }
+    output_file_path = sys.argv[1].replace(".txt", f"_Scene_{scene_num}_output.json")
+    with open(output_file_path, "w", encoding="utf-8") as json_file:
+        json.dump(output_data, json_file, indent=4, ensure_ascii=False)
+
+print("JSON generation completed successfully.")
