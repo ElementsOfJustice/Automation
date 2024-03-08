@@ -1,18 +1,12 @@
 """ 
 SCRIPT MARKUP
 Description:
-Converts a script from Elements of Justice into an audio markup and into an array file for
-scene generation.
+Converts a script from Elements of Justice into an audio markup and JSON.
 
 Issues:
-- Export scene generation file per-scene
-- This doesn't do audio markup ahahaha
-
 - Transient emotion smoothing
-- If sfx-high is in sequence, increment second to sfx-higher
-
-- Up to three SFX in a line, no more
-- Apostrophes are weird in SFX automation
+- If fx-high is in sequence, increment second to sfx-higher
+- Apostrophes are weird in SFX automations
 """
 from LeXmo import LeXmo
 
@@ -108,6 +102,12 @@ emotions_dict = {
     '-RGF': 'sfx-damage',
     'SS': 'sfx-shocked'
 }
+
+def check_strings(strings_to_check, target_string):
+    for s in strings_to_check:
+        if s in target_string:
+            return s
+    return None
 
 def getSFX(emotion: str, emotions_dict: Dict[str, str]) -> str:
     min_distance = float('inf')
@@ -208,8 +208,18 @@ def ProcessSFX(lineID, line, emotion, sfx_data):
                     "SFX": 'sfx-damage'
                 }
 
-    # Need Objection/Hold It/Take That... Coverage
-        
+    # Objection/Hold It/Take That...
+    interjections = ["HOLD IT!", "OBJECTION!", "TAKE THAT!", "GOTCHYA!"]
+    interjection = check_strings(interjections, line)
+
+    if interjection:
+        character = lineID.split("_")[-1]  # Get the character from the lineId
+        sfx = "sfx-" + interjection.lower().replace(" ", "-").replace("!", ""   ) + "_" + character.lower().replace(" ", "_")
+        sfx_data[lineID] = {
+            "Alignment": 0,
+            "SFX": sfx
+        }
+
 def PostprocessSFX(json_data):
     consecutive_count = 0
     for key, value in json_data["SFX"].items():
@@ -349,7 +359,7 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
             intro_data["Location"] = parts[2].strip()
             scenes_data[scene]["Typewriter"] = intro_data
 
-        to_write+=new_line.strip() + "\n"
+        to_write+=new_line.strip().replace("	", "") + "\n"
 
 # Close the progress bar for the last scene
 progress_bar.close()
