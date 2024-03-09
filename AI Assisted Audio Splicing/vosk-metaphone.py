@@ -330,11 +330,10 @@ except:
     print("File does not exist: " + str(sys.argv[2]) + ".")
     exit()
 
-with open(sys.argv[1], "r", encoding="utf-8") as file:
-    for line in file:
-        if line.startswith("['dialogue',"):
-            reconArr = re.findall(r"'([^']*)'", line)
-            needles.append(reconArr)
+file_path = sys.argv[1]
+jsonData = "empty"
+with open(file_path, 'r', encoding='utf-8') as file:
+    jsonData = json.load(file)
 
 complexPrint = False
 simplePrint = False
@@ -409,78 +408,116 @@ if complexPrint:
 
 t_Vosk_stop = perf_counter()
 t_Meta_start = perf_counter()
+t_Meta_stop = 0
 
 # ONE-TO-MANY FAKED FORCED ALIGNMENT
-for x, n in enumerate(needles):
+# Iterate over each dialogue entry in the "Dialogue" dictionary
+if "Dialogue" in jsonData:
+    dialogues = jsonData["Dialogue"]
+    for dialogue_id, dialogue in dialogues.items():
+        # Extract the "LineText" property from each dialogue
+        if "LineText" in dialogue:
+            lineID = dialogue_id
+            needle = dialogue["LineText"]
 
-    if needles[x][2] == activeChar:
-        characterCount += 1
-        lineID = needles[x][1]
-        needle = needles[x][3]
+            # Break if it's an empty string like "?!" "!!" "..."
+            if not any(c.isalpha() for c in needle):
+                continue
 
-        # Break if it's an empty string like "?!" "!!" "..."
-        if not any(c.isalpha() for c in needle):
-            continue
+            # Remove stage instructions, stuttering, punctuation and leading spaces.
+            needle = re.sub(r'\[.*?\]', '', needle)
+            needle = remove_stuttering(remove_stuttering(needle)).replace("-", " ").replace("“", "").replace("”", "").replace("’", "'")
+            needle = needle.lower().translate(translation_table)
+            needle = remove_leading_space(needle)
 
-        # Remove stage instructions, stuttering, punctuation and leading spaces.
-        needle = re.sub(r'\[.*?\]', '', needle)
-        needle = remove_stuttering(remove_stuttering(needle)).replace("-", " ").replace("“", "").replace("”", "").replace("’", "'")
-        needle = needle.lower().translate(translation_table)
-        needle = remove_leading_space(needle)
-
-        if simplePrint:
-            print(colored(fullLine, 'grey', attrs=['bold']))
-            print(colored('Current Needle:\t', 'yellow') + needles[x][1] + " " + "'" + needle + "'")
-
-        # Retrieve matches or else report zero matches.
-        t_Match_start = perf_counter()
-        matches = find_matches(list_of_Words, needle)
-        t_Match_stop = perf_counter()
-        totalMatchTime += (t_Match_stop - t_Match_start)
-
-        if len(matches) > 0:
-            for i in matches:
-                locateMatch = haystack.find(i)
-
-                if simplePrint:
-                    print(colored('Haystack Match: ', 'green') + i)
-
-                if locateMatch in charIndexToWordIndex:
-                    start_word_index = charIndexToWordIndex[locateMatch]
-                    end_word_index = start_word_index + len(i.split()) - 1
-
-                    start_time = round(list_of_Words[start_word_index].get_start(), 3)
-                    end_time = round(list_of_Words[end_word_index].get_end(), 3)
-
-                    startingWord = list_of_Words[start_word_index].word
-                    endingWord = list_of_Words[end_word_index].word
-                    startCompColor = 'green'
-                    endCompColor = "green"
-
-                    if startingWord != needle.split()[0]:
-                        startCompColor = "red"
-                    if endingWord != needle.split()[-1]:
-                        endCompColor = "red"
-
-                    if complexPrint:
-                        print("Start;End Word Indices" + str(start_word_index) + ";" + str(end_word_index))
-                        print(colored("The starting word being '" + str(list_of_Words[start_word_index].word) + "' when it should be " + str(needle.split()[0]), startCompColor, attrs=['bold']))
-                        print(colored("The ending word being '" + str(list_of_Words[end_word_index].word) + "' when it should be " + str(needle.split()[-1]), endCompColor, attrs=['bold']))
-                        print("Start;End Times " + str(start_time) + ";"+ str(end_time))
-
-                    allLines.append([str(start_time - 0.05), str(end_time + 0.05), lineID, i])
-
-                    if simplePrint:
-                        print(colored('! Match Successful !', 'green', attrs=['bold']))
-                else:
-                    failedLines.append([needles[x][1], needle])
-                    if simplePrint:
-                        print(colored('X Unique Match Failed X', 'red', attrs=['bold']))
-        else:
             if simplePrint:
-                print(colored('X No Matches X', 'red', attrs=['bold']))
-            failedLines.append([needles[x][1], needle])
-        t_Meta_stop = perf_counter()
+                print(colored(fullLine, 'grey', attrs=['bold']))
+                print(colored('Current Needle:\t', 'yellow') + needle + " " + "'" + needle + "'")
+
+            # Retrieve matches or else report zero matches.
+            t_Match_start = perf_counter()
+            matches = find_matches(list_of_Words, needle)
+            t_Match_stop = perf_counter()
+            totalMatchTime += (t_Match_stop - t_Match_start)
+
+            if len(matches) > 0:
+                for i in matches:
+                    locateMatch = haystack.find(i)
+
+                    if simplePrint:
+                        print(colored('Haystack Match: ', 'green') + i)
+
+                    if locateMatch in charIndexToWordIndex:
+                        start_word_index = charIndexToWordIndex[locateMatch]
+                        end_word_index = start_word_index + len(i.split()) - 1
+
+                        start_time = round(list_of_Words[start_word_index].get_start(), 3)
+                        end_time = round(list_of_Words[end_word_index].get_end(), 3)
+
+                        startingWord = list_of_Words[start_word_index].word
+                        endingWord = list_of_Words[end_word_index].word
+
+                        startCompColor = 'green'
+                        endCompColor = "green"
+
+                        if startingWord != needle.split()[0]:
+                            startCompColor = "red"
+                        if endingWord != needle.split()[-1]:
+                            endCompColor = "red"
+
+                        if complexPrint:
+                            print("Start;End Word Indices" + str(start_word_index) + ";" + str(end_word_index))
+                            print(colored("The starting word being '" + str(list_of_Words[start_word_index].word) + "' when it should be " + str(needle.split()[0]), startCompColor, attrs=['bold']))
+                            print(colored("The ending word being '" + str(list_of_Words[end_word_index].word) + "' when it should be " + str(needle.split()[-1]), endCompColor, attrs=['bold']))
+                            print("Start;End Times " + str(start_time) + ";"+ str(end_time))
+
+                        # RATE IT RALPH (I'M GONNA RATE IT!)
+                        points = 0
+
+                        first_word_needle = needle.split()[0]
+                        last_word_needle = needle.split()[-1]
+
+                        first_word_needle = first_word_needle.translate(translation_table).lower()
+                        last_word_needle = last_word_needle.translate(translation_table).lower()
+
+                        first_word_transcription = startingWord.translate(translation_table).lower()
+                        last_word_transcription = endingWord.translate(translation_table).lower()
+
+                        #print(first_word_needle + " ... " + first_word_needle + " " + str(first_word_needle == first_word_transcription))
+                        #print(last_word_needle + " ... " + last_word_transcription  + " " + str(last_word_needle == last_word_transcription))
+
+                        # Check if first word matches
+                        if first_word_needle == first_word_transcription:
+                            points += 2
+
+                        # Check if last word matches
+                        if last_word_needle == last_word_transcription:
+                            points += 2
+
+                        # Calculate points based on duration and number of words in the needle
+                        duration = float(end_time) - float(start_time)
+                        points += ((duration / len(needle[0].split())) * 1)
+
+                        # Calculate Bleu-4 similarity score
+                        bleu_score = bleu_4(needle[0], i)
+                        points += (bleu_score * 1)
+
+                        # Assign the points to the line in allLines
+                        points = round(points, 10)
+
+                        allLines.append([str(round(start_time - 0.05, 2)), str(round(end_time + 0.05, 2)), lineID, i, points])
+
+                        if simplePrint:
+                            print(colored('! Match Successful !', 'green', attrs=['bold']))
+                    else:
+                        failedLines.append([lineID, needle])
+                        if simplePrint:
+                            print(colored('X Unique Match Failed X', 'red', attrs=['bold']))
+                else:
+                    if simplePrint:
+                        print(colored('X No Matches X', 'red', attrs=['bold']))
+                    failedLines.append([lineID, needle])
+                t_Meta_stop = perf_counter()
 
 if simplePrint:
     print(colored(fullLine, 'grey', attrs=['bold']))
@@ -496,7 +533,7 @@ except:
 # Remove excessively long takes.
 pruned_allLines = []
 for line in allLines:
-    start_time, end_time, label, transcription = line
+    start_time, end_time, label, transcription, points = line
     duration = float(end_time) - float(start_time)
     if duration <= 30:
         pruned_allLines.append(line)
@@ -554,50 +591,6 @@ missing_lines_percentage = (missing_lines / total_active_char_lines) * 100 if to
 print(colored("Accuracy is " + str(round((100 - missing_lines_percentage), 2)) + "%", "white", attrs=['bold']))
 print()
 
-# Good Take Selection Algorithm
-for line in allLines:
-    lineID = line[2]
-    transcription = line[3]
-
-    for needle in needles:
-        if needle[1] == lineID:
-            points = 0
-
-            first_word_needle = needle[3].split()[0]
-            last_word_needle = needle[3].split()[-1]
-
-            first_word_transcription = transcription.split()[0]
-            last_word_transcription = transcription.split()[-1]
-
-            first_word_needle = first_word_needle.translate(translation_table).lower()
-            last_word_needle = last_word_needle.translate(translation_table).lower()
-
-            first_word_transcription = first_word_transcription.translate(translation_table).lower()
-            last_word_transcription = last_word_transcription.translate(translation_table).lower()
-
-            print(first_word_needle + " ... " + first_word_needle + " " + str(first_word_needle == first_word_transcription))
-            print(last_word_needle + " ... " + last_word_transcription  + " " + str(last_word_needle == last_word_transcription))
-
-            # Check if first word matches
-            if first_word_needle == first_word_transcription:
-                points += 2
-
-            # Check if last word matches
-            if last_word_needle == last_word_transcription:
-                points += 2
-
-            # Calculate points based on duration and number of words in the needle
-            duration = float(end_time) - float(start_time)
-            points += ((duration / len(needle[0].split())) * 1)
-
-            # Calculate Bleu-4 similarity score
-            bleu_score = bleu_4(needle[0], transcription)
-            points += (bleu_score * 1)
-
-            # Assign the points to the line in allLines
-            points = round(points, 10)
-            line.append(points)
-
 # Dictionary to store the highest scoring line for each lineID
 highest_scores = {}
 
@@ -614,10 +607,8 @@ for line in allLines:
 
 # Update lineIDs and remove transcription and score for non-highest scoring lines
 for line in allLines[:]:
-    print(line)
     lineID = line[2]
     if line is not highest_scores[lineID][0]:
-        print(line)
         line[2] += "_alt"
         line.pop()  # Remove transcription
         line.pop()  # Remove score
