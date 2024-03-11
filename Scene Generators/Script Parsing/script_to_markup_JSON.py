@@ -265,6 +265,7 @@ except:
 dialogue_data = {}
 sfx_data = {}
 intro_data = {}
+label_data = {}
 scenes_data = {}
 to_write = ""
 
@@ -290,8 +291,10 @@ def count_lines_per_scene(file_path):
             scene_line_counts[scene] = int(line_count / 4)
     return scene_line_counts
 
+def get_mode_text(characters):
+    return "COURTROOM" if "Judge" in characters else "INVESTIGATION"
+
 scene_line_counts = count_lines_per_scene(sys.argv[1])
-print(scene_line_counts[2])
 
 with open(sys.argv[1], "r", encoding="utf8") as file:
     cur_voice_line = 1
@@ -310,14 +313,33 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
                 output_data = {
                     "Dialogue": scenes_data[scene]["Dialogue"],
                     "SFX": scenes_data[scene]["SFX"],
-                    "Typewriter": scenes_data[scene]["Typewriter"]
+                    "Typewriter": scenes_data[scene]["Typewriter"],
+                    "DataLabels": scenes_data[scene]["DataLabels"]
                 }
+                
                 output_file_path = sys.argv[1].replace(".txt", f"_Scene_{scene}_output.json")
                 with open(output_file_path, "w", encoding="utf-8") as json_file:
                     json.dump(output_data, json_file, indent=4, ensure_ascii=False)
 
             scene = int(line.split()[1])
-            scenes_data[scene] = {"Dialogue": {}, "SFX": {}, "Typewriter": {}}
+
+            # Extract the episode number from the file name
+            episode_number = sys.argv[1].split()[3].split(".")[0]
+
+            # Split the episode number into parts (assuming it's always in the format "3-3")
+            episode_parts = episode_number.split("-")
+            episode_text = " ".join(sys.argv[1].split()[0:3]) + f" ({episode_parts[0]}-{episode_parts[1]})"
+
+            scenes_data[scene] = {
+                "Dialogue": {},
+                "SFX": {},
+                "Typewriter": {},
+                "DataLabels": {
+                    "EpisodeText": episode_text,
+                    "SceneText": f"SCENE {scene}",
+                    "ModeText": get_mode_text(characters)
+                }
+            }
             characters = []
             cur_voice_line = 1
 
@@ -352,11 +374,17 @@ with open(sys.argv[1], "r", encoding="utf8") as file:
                 progress_bar.update(1)
                 break
 
-        if "Date - Time – Location:" in line:
+        # "This isn't working! Why isn't it working?!"
+        # Answer, the writers may have forgotten this new, very specific formatting scheme.
+        # Date {EN DASH} Time {EN DASH} Location: February 21 {HYPHEN} 12:35 PM {HYPHEN} Manehattan {EN DASH} Secretariat Race Course
+        # HYPHEN -
+        # EN DASH –
+        if "Date – Time – Location:" in line:
+            print("Hi")
             intro_data = {}
-            parts = line.split("–")
-            intro_data["Time"] = parts[1].strip().replace('Location: ', '')
-            intro_data["Location"] = parts[2].strip()
+            date, time, location = line.split("-")
+            intro_data["Time"] = date.strip().replace("Date – Time – Location: ", "") + " " + time.strip()
+            intro_data["Location"] = location.strip()
             scenes_data[scene]["Typewriter"] = intro_data
 
         to_write+=new_line.strip().replace("	", "") + "\n"
@@ -372,7 +400,8 @@ for scene_num, data in scenes_data.items():
     output_data = {
         "Dialogue": data["Dialogue"],
         "SFX": data["SFX"],
-        "Typewriter": data["Typewriter"]
+        "Typewriter": data["Typewriter"],
+        "DataLabels": data["DataLabels"]
     }
     output_file_path = sys.argv[1].replace(".txt", f"_Scene_{scene_num}_output.json")
     with open(output_file_path, "w", encoding="utf-8") as json_file:
