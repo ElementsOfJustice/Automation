@@ -279,16 +279,25 @@ def count_lines_per_scene(file_path):
     with open(file_path, "r", encoding="utf8") as file:
         scene = None
         line_count = 0
+        characters = ""
+
         for line in file:
             if "SCENE " in line:
                 if scene is not None:
-                    scene_line_counts[scene] = int(line_count / 4)
+                    scene_line_counts[scene] = int(line_count)
                 scene = int(line.split()[1])
                 line_count = 0
-            line_count += 1
+
+            if "Characters: " in line:
+                characters = line.strip()[line.index("Characters: ") + len("Characters: "):len(line) - 1].split(', ')
+
+            for character in characters:
+                if (character.upper().replace(" ", "").replace("	", "") + "\n" in line.replace(" ", "").replace("	", "")) or (character.upper() + " &" in line.strip()):
+                    line_count+=1
+
         if scene is not None:
-            # Rough estimate lol
-            scene_line_counts[scene] = int(line_count / 4)
+            scene_line_counts[scene] = int(line_count)
+
     return scene_line_counts
 
 def get_mode_text(characters):
