@@ -130,7 +130,7 @@ def ProcessSFX(lineID, line, emotion, sfx_data):
     if is_only_question_or_exclamation(line):
         if lineIDoccurance < 3:
             sfx_data[lineID] = {
-                "Alignment": 0,
+                "Alignment": "0",
                 "SFX": "sfx-lightbulb"
             }
     
