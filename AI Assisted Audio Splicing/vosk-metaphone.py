@@ -51,7 +51,7 @@ def extract_character_name(filename):
     pattern = r'[ \-_0-9]+|' + '|'.join(re.escape(word) for word in words_to_remove)
 
     # Use re.sub() to replace all matches of the pattern with an empty string
-    character_name = re.sub(pattern, '', filename, flags=re.IGNORECASE)
+    character_name = re.sub(pattern, '', filename, flags=re.IGNORECASE).replace(".flac", "").replace(".wav", "")
 
     return character_name
 
