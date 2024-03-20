@@ -204,6 +204,7 @@ def ProcessSFX(lineID, line, emotion, sfx_data):
     # Handle Uppercase
     for i, sfx_word in enumerate(uppercase_words[:3]):
         if i < 3:
+            if sfx_word == "AM" or sfx_word == "PM": continue
             if '?' in line:
                 sfx_data[lineID] = {
                     "Alignment": sfx_word.lower().replace("?", "").replace("!", ""),
