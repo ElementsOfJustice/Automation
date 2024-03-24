@@ -2,13 +2,13 @@
 MAKE COURTROOM SWIPE LEGACY
 Description: Create animation of swipe between characters in the courtroom
 ******************************************************************************/
-
+SCALE = fl.getDocumentDOM().width / 1280.0;
 SWIPE_LENGTH = 14; // frames in swipe from witness stand to desks and vice versa *must be even*
 BACKGROUND_LAYER_NAME = "BACKGROUNDS";
 DESKS_LAYER_NAME = "DESKS";
-WITNESS_STAND_X = 640;
-WITNESS_STAND_Y = 509;
-WITNESS_STAND_HEIGHT = 410;
+WITNESS_STAND_X = 640 * SCALE;
+WITNESS_STAND_Y = 509 * SCALE;
+WITNESS_STAND_HEIGHT = 410 * SCALE;
 WITNESS_STAND_SYMBOL_PATH = "OTHER ASSETS/DESKS/WitnessStand";
 SYMBOL_CONTENT_LAYER = 1; // IF A RIG DOES NOT HAVE THEIR ANIMATION LAYER ON THE SECOND LAYER, THIS SCRIPT WILL BREAK. This means Sonata must have the second layer in her rig swapped for the one that has her animations (the "All" symbol) on them.
 BLUR_SYMBOLS_FOLDER_NAME = "BLUR_SYMBOLS";
@@ -109,7 +109,10 @@ Description:
 */
 function createTween(sourceCharacterlayers) {
     fl.getDocumentDOM().getTimeline().insertFrames(SWIPE_LENGTH - 1, true); // insert frames to all layers
+    resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), startFrame + SWIPE_LENGTH); // select background layer at end of swipe
+    fl.getDocumentDOM().setTransformationPoint( {x: 0, y: 0});
     resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), startFrame); // go back to original selection
+    fl.getDocumentDOM().setTransformationPoint( {x: 0, y: 0});
     var backgroundX = fl.getDocumentDOM().getElementProperty("matrix").tx;
     fl.getDocumentDOM().getTimeline().insertKeyframe(); // put keyframe for start of swipe
     fl.getDocumentDOM().getTimeline().createMotionTween(); // create the CLASSIC tween 
