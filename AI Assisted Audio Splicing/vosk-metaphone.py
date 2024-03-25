@@ -6,8 +6,8 @@ Description: Automatically splices lines in an audio file given the script. Outp
 a label txt file to be imported in Audacity and the individual files.
 
 To-Do:
-- Volume-level alignment is expensive
-- Write a help section
+- Truncate silence should work through the whole file but doesn't. I am mad.
+- Volume-level alignment doesn't work
 ****************************************************************************** """
 
 import wave
@@ -20,6 +20,7 @@ import codecs
 import subprocess
 import numpy as np
 import torch
+import traceback
 import Word as custom_Word
 
 from time import perf_counter
@@ -226,7 +227,7 @@ def add_failed_lines(all_lines, failed_lines):
                 break
 
         if next_line is None:
-            to_write += ("1" + "\t" + "2" + "\t" + "[!]" + failed_line_id + "\n")
+            to_write += ("1" + "\t" + "2" + "\t" + "[!] " + failed_line_id + "\n")
         else:
             # Calculate start time as 5 seconds before the next intended lineID
             start_time = float(next_line[0]) - 5
@@ -274,7 +275,10 @@ def truncate_silence(input_file, output_file):
     command = [
         'ffmpeg',
         '-i', input_file,
-        '-af', 'silenceremove=1:0:-50dB:stop_duration=1',
+        '-af', 'silencedetect=noise=-35dB:d=0.75',
+        '-f', 'null', '-',
+        '-af', 'silenceremove=1:0:-35dB:0.75:1:-35dB',
+        '-ac', '1',
         '-c:a', 'pcm_s16le',  # Audio codec for encoding
         '-y',  # Overwrite without asking
         output_file  # Output to the new file
@@ -291,6 +295,7 @@ def downsample_to_vosk_quick_format(input_file, output_file):
         'ffmpeg',
         '-i', input_file,
         '-af', 'aresample=16000:resampler=soxr:precision=24,pan=mono|c0=c0',
+        '-ac', '1',
         '-c:a', 'pcm_s16le',
         '-y',  # Overwrite without asking
         output_file
@@ -351,17 +356,17 @@ complexPrint = False
 simplePrint = False
 doVolumeAlign = False
     
-if len(sys.argv) > 3:
-    if sys.argv[3] == "--complexPrint":
+if len(sys.argv) > 2:
+    if sys.argv[2] == "--complexPrint":
         complexPrint = True
         simplePrint = True
-    elif sys.argv[3] == "--simplePrint":
+    elif sys.argv[2] == "--simplePrint":
         simplePrint = True
-    elif sys.argv[3] == "--volumeAlign":
+    elif sys.argv[2] == "--volumeAlign":
         doVolumeAlign = True
 
-if len(sys.argv) > 4:
-    if sys.argv[4] == "--volumeAlign":
+if len(sys.argv) > 3:
+    if sys.argv[3] == "--volumeAlign":
         doVolumeAlign = True
 
 def autoAlignAudio(jsonFile, audioFile):
@@ -577,7 +582,7 @@ def autoAlignAudio(jsonFile, audioFile):
     allLines = remove_nested_arrays(allLines)
     allLines.sort(key=lambda x: float(x[0]))
 
-    # Minimize right-overhang matching.
+    # Minimize right-overhang matching
     i = 0
     while i < len(allLines) - 1:
         j = i + 1
@@ -601,8 +606,8 @@ def autoAlignAudio(jsonFile, audioFile):
             if found:
                 line[0] = str(start_match_time)
                 line[1] = str(end_match_time)
-                if complexPrint:
-                    print("Volume aligned line " + lineID)
+                print("Volume aligned line " + lineID)
+        print()
 
     # Correct accuracy calculator
     missing_lines = len(failedLines)
@@ -729,4 +734,4 @@ with ThreadPoolExecutor() as executor:
         try:
             future.result()
         except Exception as e:
-            print(f"An error occurred: {e}")
+            traceback.print_exc()
