@@ -6,9 +6,11 @@ Description: Automatically splices lines in an audio file given the script. Outp
 a label txt file to be imported in Audacity and the individual files.
 
 To-Do:
-- Refactor to have support with new sceneData format!
 - Start + End word alignment is weird sometimes. Longest running code issue of my life.
-- Adjust picking algorithm. If a word appears more time in transcription than it should, decrease favorability.
+- Mass working
+- In-between error label instead of appending to label.txt
+- Volume-level alignment is expensive
+- Write a help section
 
 ****************************************************************************** """
 
@@ -32,7 +34,7 @@ import Word as custom_Word
 totalMatchTime = 0
 totalSearchStartEndTime = 0
 totalFFMPEGTime = 0
-needles, failedLines, allLines, toWrite, charIndexToWordIndex = [], [], [], [], {}
+failedLines, allLines, toWrite, charIndexToWordIndex = [], [], [], {}
 totalChars, idx, characterCount = 0, 0, 0
 haystack = ""
 fullLine = "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
@@ -315,7 +317,7 @@ def search_for_threshold(audio_data, frame_rate, start_time, end_time, threshold
 
 # INPUT
 if not len(sys.argv) > 1:
-    print("Required arguments are sceneData.txt and audioFile.wav")
+    print("Required arguments are SceneData.json and AudioFile.wav")
     exit()
 
 try:
@@ -337,6 +339,7 @@ with open(file_path, 'r', encoding='utf-8') as file:
 
 complexPrint = False
 simplePrint = False
+doVolumeAlign = False
     
 if len(sys.argv) > 3:
     if sys.argv[3] == "--complexPrint":
@@ -344,10 +347,15 @@ if len(sys.argv) > 3:
         simplePrint = True
     elif sys.argv[3] == "--simplePrint":
         simplePrint = True
+    elif sys.argv[3] == "--volumeAlign":
+        doVolumeAlign = True
+
+if len(sys.argv) > 4:
+    if sys.argv[4] == "--volumeAlign":
+        doVolumeAlign = True
 
 # SPEECH TO TEXT
 model_path = "models/vosk-model-small-en-us-0.15"
-#model_path = "models/vosk-model-en-us-0.22"
 audio_path = os.path.join(os.path.dirname(__file__), sys.argv[2])
 audio_truncate_path = os.path.join(os.path.dirname(audio_path), os.path.basename(audio_path) + "_truncated.wav")
 audio_downsample_path = os.path.join(os.path.dirname(audio_path), os.path.basename(audio_path) + "_downsample.wav")
@@ -358,7 +366,6 @@ if complexPrint:
     print(" ")
     print("I think the active character is " + activeChar)
     print(" ")
-
 
 # Downsample & Truncate
 truncate_silence(audio_path, audio_truncate_path)
@@ -419,6 +426,10 @@ if "Dialogue" in jsonData:
         if "LineText" in dialogue:
             lineID = dialogue_id
             needle = dialogue["LineText"]
+            characterName = dialogue["CharacterName"]
+
+            # Don't process this shit, idiot
+            if characterName != activeChar: continue
 
             # Break if it's an empty string like "?!" "!!" "..."
             if not any(c.isalpha() for c in needle):
@@ -513,16 +524,15 @@ if "Dialogue" in jsonData:
                         failedLines.append([lineID, needle])
                         if simplePrint:
                             print(colored('X Unique Match Failed X', 'red', attrs=['bold']))
-                else:
-                    if simplePrint:
-                        print(colored('X No Matches X', 'red', attrs=['bold']))
-                    failedLines.append([lineID, needle])
+            else:
+                if simplePrint:
+                    print(colored('X No Matches X', 'red', attrs=['bold']))
+                failedLines.append([lineID, needle])
                 t_Meta_stop = perf_counter()
 
 if simplePrint:
     print(colored(fullLine, 'grey', attrs=['bold']))
 
-# <!> Fix this eventually to dynamically get file extension.
 try:
     dest_file = codecs.open(sys.argv[2].replace(".wav", "_autoLabel.txt"), "w", "utf-8")
 
@@ -556,35 +566,32 @@ while i < len(allLines) - 1:
         j += 1
     i += 1
 
-# Volume-level Alignment
-audio_data, sample_width, frame_rate = read_wav_file(audio_truncate_path)
+# Volume-level alignment
+if doVolumeAlign:
+    audio_data, sample_width, frame_rate = read_wav_file(audio_truncate_path)
 
-for line in allLines:
-    start_time = float(line[0])
-    end_time = float(line[1])
-    lineID = line[2]
-    
-    found, start_match_time, end_match_time = search_for_threshold(audio_data, frame_rate, start_time, end_time, db_to_amplitude(-45), 8)
-    if found:
-        line[0] = str(start_match_time)
-        line[1] = str(end_match_time)
-        if complexPrint:
-            print("Volume aligned line " + lineID)
+    for line in allLines:
+        start_time = float(line[0])
+        end_time = float(line[1])
+        lineID = line[2]
+        
+        found, start_match_time, end_match_time = search_for_threshold(audio_data, frame_rate, start_time, end_time, db_to_amplitude(-45), 8)
+        if found:
+            line[0] = str(start_match_time)
+            line[1] = str(end_match_time)
+            if complexPrint:
+                print("Volume aligned line " + lineID)
 
-# Correct Accuracy calculator
-missing_lines = 0
+# Correct accuracy calculator
+missing_lines = len(failedLines)
 total_active_char_lines = 0
-for x in range(len(needles)):
-    if needles[x][2] == activeChar:
-        total_active_char_lines += 1
-        lineID = needles[x][1]
-        line_exists = False
-        for y in range(len(allLines)):
-            if lineID == allLines[y][2]:
-                line_exists = True
-                break
-        if not line_exists:
-            missing_lines += 1
+if "Dialogue" in jsonData:
+    dialogues = jsonData["Dialogue"]
+    for dialogue_id, dialogue in dialogues.items():
+        if "LineText" in dialogue:
+            characterName = dialogue["CharacterName"]
+            if characterName != activeChar: continue
+            total_active_char_lines += 1
 
 missing_lines_percentage = (missing_lines / total_active_char_lines) * 100 if total_active_char_lines > 0 else 0
 
@@ -613,18 +620,19 @@ for line in allLines[:]:
         line.pop()  # Remove transcription
         line.pop()  # Remove score
 
-# Export
-for line in allLines:
-    # Check if lineID contains "_alt"
-    start_time = line[0]
-    end_time = line[1]
-    lineID = line[2]
-    if "_alt" not in lineID:
-        # Use ffmpeg to export snippet
-        input_file = audio_truncate_path
-        output_file = f"{lineID}.flac"
-        ffmpeg_command = f'ffmpeg -i "{input_file}" -ss {start_time} -to {end_time} -y -c:a flac "{output_file}"'
-        subprocess.run(ffmpeg_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+# This is some code to mass export takes straight from the script. I'm keeping it because it's cool,
+# but I've realized we need a human breakpoint to review before exporting, so this sucks.
+        
+# for line in allLines:
+#     # Check if lineID contains "_alt"
+#     start_time = line[0]
+#     end_time = line[1]
+#     lineID = line[2]
+#     if "_alt" not in lineID:
+#         input_file = audio_truncate_path
+#         output_file = f"{lineID}.flac"
+#         ffmpeg_command = f'ffmpeg -i "{input_file}" -ss {start_time} -to {end_time} -y -c:a flac "{output_file}"'
+#         subprocess.run(ffmpeg_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
 #Print
 for i in range(len(allLines)):
