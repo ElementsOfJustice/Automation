@@ -6,7 +6,6 @@ Description: Automatically splices lines in an audio file given the script. Outp
 a label txt file to be imported in Audacity and the individual files.
 
 To-Do:
-- Truncate silence should work through the whole file but doesn't. I am mad.
 - Volume-level alignment doesn't work
 ****************************************************************************** """
 
@@ -41,16 +40,16 @@ def extract_character_name(filename):
     # Words to remove
     numerics = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "\\"]
     common_words = ["Case", "Episode", "Scene", "Part", "EoJ", "Elements of Justice", "Raw", "Retakes", "Lines", "Line", "Take"]
-    character_last_names = ["Wright", "Justice", "Cykes", "Reed", "Pursuit", "Dash", "Belle"]
-    va_names = ["Webshoter", "IMShadow007", "ThatCanadianDude"]
     
-    words_to_remove = numerics + common_words + character_last_names + va_names
+    words_to_remove = numerics + common_words
 
     # Define a regular expression pattern to match spaces, underscores, numerics, and specified words
-    pattern = r'[ \-_0-9]+|' + '|'.join(re.escape(word) for word in words_to_remove)
+    pattern = r'[ \_0-9]+|' + '|'.join(re.escape(word) for word in words_to_remove)
 
     # Use re.sub() to replace all matches of the pattern with an empty string
     character_name = re.sub(pattern, '', filename, flags=re.IGNORECASE).replace(".flac", "").replace(".wav", "")
+
+    character_name = character_name.replace("-", " ")
 
     return character_name
 
@@ -232,7 +231,7 @@ def add_failed_lines(all_lines, failed_lines):
             # Calculate start time as 5 seconds before the next intended lineID
             start_time = float(next_line[0]) - 5
             end_time = start_time + 1
-            to_write += (str(start_time) + "\t" + str(end_time) + "\t" + "[!]" + failed_line_id + "\n")
+            to_write += (str(start_time) + "\t" + str(end_time) + "\t" + "[!] " + failed_line_id + "\n")
 
     return to_write
     
@@ -275,15 +274,17 @@ def truncate_silence(input_file, output_file):
     command = [
         'ffmpeg',
         '-i', input_file,
-        '-af', 'silencedetect=noise=-35dB:d=0.75',
         '-f', 'null', '-',
-        '-af', 'silenceremove=1:0:-35dB:0.75:1:-35dB',
+        '-af', 'loudnorm=I=-24:LRA=10:TP=-3, silenceremove=start_periods=1:stop_periods=-1:stop_duration=1:stop_threshold=-45dB',
         '-ac', '1',
         '-c:a', 'pcm_s16le',  # Audio codec for encoding
         '-y',  # Overwrite without asking
-        output_file  # Output to the new file
+        output_file
     ]
-    subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    try:
+        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+    except subprocess.CalledProcessError as e:
+        print("FFMPEG Error:", e.stderr.decode())
     t_Truncate_Stop = perf_counter()
     totalFFMPEGTime += (t_Truncate_Stop - t_Truncate_Start)
 
@@ -301,7 +302,10 @@ def downsample_to_vosk_quick_format(input_file, output_file):
         output_file
     ]
     # Run the command
-    subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    try:
+        subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+    except subprocess.CalledProcessError as e:
+        print("FFMPEG Error:", e.stderr.decode())
     t_Downsample_Stop = perf_counter()
     totalFFMPEGTime += (t_Downsample_Stop - t_Downsample_Start)
 
