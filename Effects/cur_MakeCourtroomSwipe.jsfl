@@ -396,6 +396,7 @@ if (!halfCourt) {
     var witnessCharacterLayerNames = prompt("Enter the witness characters LAYER NAMES, separated by a comma (no spaces)", fl.getDocumentDOM().getDataFromDocument("witnessLayerNames"));
     var witnessCharacterLayers = [];
     // for each layer name provided...
+    if(witnessCharacterLayerNames == null || witnessCharacterLayerNames == "0") witnessCharacterLayerNames = "";
     for (var i = 0; i < witnessCharacterLayerNames.split(',').length; i++) {
         if(witnessCharacterLayerNames == "") break;
         // if the name is valid
