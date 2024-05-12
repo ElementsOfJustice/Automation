@@ -267,60 +267,67 @@ function runBlinking(layerIndex) {
 	//Make a cache of our character's xSheet. We reference the cache instead of loading the character many times.
 	var itemIndex = fl.getDocumentDOM().library.findItemIndex(rigPath);
 	var character_xSheet = fl.getDocumentDOM().library.items[itemIndex].timeline.layers[0];
-
+	// time cache
 	for (var k = 0; k < character_xSheet.frames.length; k += character_xSheet.frames[k].duration - (k - character_xSheet.frames[k].startFrame)) {
 		var character_xSheetEntry = character_xSheet.frames[k];
 		if (character_xSheetEntry.labelType === "name" && k === character_xSheetEntry.startFrame) {
 			xSheetCache[k] = character_xSheetEntry.name;
 		}
 	}
-	for (i = 0; i < fl.getDocumentDOM().getTimeline().layers[layerIndex].frames.length; i+= fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].duration - (i - fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].startFrame)) {
-		if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].isEmpty == true) { continue };
+	var curFrame = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[0];
+	for (i = 0; i < fl.getDocumentDOM().getTimeline().layers[layerIndex].frames.length; i+= curFrame.duration - (i - curFrame.startFrame)) {
+		curFrame = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i];
+		if (curFrame.isEmpty == true) { continue };
 
-		if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].labelType != "anchor") { continue };
+		if (curFrame.labelType != "anchor") { continue };
 
-		if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) { continue };
+		if (curFrame.elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) { continue };
 		var blinkFrame = blinkFrameIndex(leftEye, rigPath, i, layerIndex, xSheetCache);
-		var blinkInstruction = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].name;
+		var blinkInstruction = curFrame.name;
 
 		//The first frame of any blinkInstruction receives its AS3 here. The only instructions we have to do extra
 		//code with are instructions that require us to go ahead, place another keyframe, and write more AS3.
 		var AS3toWrite = AS3_Constructor(leftEye, rightEye, blinkFrame, blinkDuration, blinkInstruction);
-		fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].actionScript = AS3toWrite;
-		if(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration / 2)].isEmpty) continue;
-		if(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration/2)].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) continue;
+		curFrame.actionScript = AS3toWrite;
+		var curFramePlusHalf = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration / 2)];
+		if(curFramePlusHalf.isEmpty) continue;
+		if(curFramePlusHalf.elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) continue;
 		//ANIMATION OF EYES CLOSING
 		//AS3 for first frame has been written. Iterate to frame [i + blinkDuration / 2] to end the animation. We convert this frame to
 		//a keyframe if it isn't already, and if we convert it, we also mark it for deletion.
 		//Hardcoded AS3 at the ending frame, we don't use AS3_Constructor because we're dealing with half a blink duration.
+		var curFramePlusFull = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration];
 		if (blinkInstruction == "AnimClose") {
-			if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].startFrame != i + (blinkDuration / 2)) {
+			if (curFramePlusFull.startFrame != i + (blinkDuration / 2)) {
 				fl.getDocumentDOM().getTimeline().convertToKeyframes(i + (blinkDuration / 2));
+				curFramePlusHalf = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration / 2)];
 			}
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration / 2)].actionScript = leftEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");\n" + rightEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");";
+			curFramePlusHalf.actionScript = leftEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");\n" + rightEye + ".gotoAndStop(" + (blinkFrame + (blinkDuration / 2)) + ");";
 		}
 		
 		//ANIMATION OF EYES OPENING
 		//AS3 for first frame has been written. Iterate to frame [i + blinkDuration / 2] to end the animation. We convert this frame to
 		//a keyframe if it isn't already, and if we convert it, we also mark it for deletion.
 		//Hardcoded AS3 at the ending frame, we don't use AS3_Constructor because we're dealing with half a blink duration.
-		if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i].name == "AnimOpen") {
-			if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].startFrame != i + (blinkDuration / 2)) {
+		if (curFrame.name == "AnimOpen") {
+			if (curFramePlusFull.startFrame != i + (blinkDuration / 2)) {
 				fl.getDocumentDOM().getTimeline().convertToKeyframes(i + (blinkDuration / 2));
+				curFramePlusHalf = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration / 2)];
 			}
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + (blinkDuration / 2)].actionScript = leftEye + ".gotoAndStop(" + blinkFrame + ");\n" + rightEye + ".gotoAndStop(" + blinkFrame + ");";
+			curFramePlusHalf.actionScript = leftEye + ".gotoAndStop(" + blinkFrame + ");\n" + rightEye + ".gotoAndStop(" + blinkFrame + ");";
 		}
-		if(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].isEmpty) continue;
-		if(fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) continue;
+		if(curFramePlusFull.isEmpty) continue;
+		if(curFramePlusFull.elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) continue;
 		//BLINK
 		//AS3 for first frame has been written. Iterate to frame [i + blinkDuration], convert it to a keyframe if it isn't one already.
 		//Hardcoded CutOpen at the end of the blink to force the blink to stop.
 		if (blinkInstruction == "Blink") {
 	
-			if (fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].startFrame != i + blinkDuration) {
+			if (curFramePlusFull.startFrame != i + blinkDuration) {
 				fl.getDocumentDOM().getTimeline().convertToKeyframes(i + blinkDuration);
+				curFramePlusFull = fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration];
 			}
-			fl.getDocumentDOM().getTimeline().layers[layerIndex].frames[i + blinkDuration].actionScript = AS3_Constructor(leftEye, rightEye, blinkFrame, blinkDuration, "CutOpen");
+			curFramePlusFull.actionScript = AS3_Constructor(leftEye, rightEye, blinkFrame, blinkDuration, "CutOpen");
 		}
 	}
 }
@@ -384,7 +391,6 @@ for (var k = 0; k < sceneArray.length; k++) {
 			var layerIsNotVectorCharacters = currentTimeline.layers[j].parentLayer.name !== "VECTOR_CHARACTERS";
 			var layerTypeIsNotNormal = currentTimeline.layers[j].layerType !== "normal";
 			if (layerIsNotVectorCharacters || layerTypeIsNotNormal) { continue }
-
 			autoEyeSet(j);
 			runBlinking(j);
 
