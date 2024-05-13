@@ -50,7 +50,7 @@ function typewriterFormat() {
 	fl.getDocumentDOM().setElementTextAttr("letterSpacing", 2);
 	fl.getDocumentDOM().setElementTextAttr("lineSpacing", 1);
 	fl.getDocumentDOM().setElementTextAttr("alignment", "left");
-	fl.getDocumentDOM().setElementProperty('textType', 'static');
+	fl.getDocumentDOM().setElementProperty('textType', 'dynamic');
 	// fl.getDocumentDOM().setElementProperty('lineType', 'multiline');
 	fl.getDocumentDOM().distribute("horizontal center", true);
 }

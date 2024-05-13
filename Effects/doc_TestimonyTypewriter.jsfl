@@ -8,7 +8,7 @@ TYPEWRITER_SFX_NAME = "AUDIO/SFX/sfx-typewriter.wav";
 AVERAGE_CHARACTER_WIDTH = 20;
 SCALE = fl.getDocumentDOM().width / 1280.0;
 
-var bounding = { left: 69 * SCALE, top: 560 * SCALE, right: 420 * SCALE, bottom: 620 * SCALE };	// L 435 R 845
+var initBounding = { left: 69 * SCALE, top: 560 * SCALE, right: 420 * SCALE, bottom: 620 * SCALE };	// L 435 R 845
 
 /*
 Function: resetSelection
@@ -50,7 +50,7 @@ function typewriterFormat() {
     fl.getDocumentDOM().setElementTextAttr("letterSpacing", 2);
     fl.getDocumentDOM().setElementTextAttr("lineSpacing", 1);
     fl.getDocumentDOM().setElementTextAttr("alignment", "left");
-    fl.getDocumentDOM().setElementProperty('textType', 'static');
+    fl.getDocumentDOM().setElementProperty('textType', 'dynamic');
     // fl.getDocumentDOM().setElementProperty('lineType', 'multiline');
     fl.getDocumentDOM().distribute("horizontal center", true);
 }
@@ -77,5 +77,7 @@ function makeTestimonyText(text, bounding, layer, startFrame) {
 // MAIN
 var input1 = prompt("Enter testimony name.");
 if(input1 != null) {
-    makeTestimonyText(input1, bounding, fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame);
+    var newBounding = getAlignment(input1, initBounding.top, initBounding.bottom);
+    fl.trace(newBounding.left + " " + newBounding.right + " " + newBounding.top + " " + newBounding.bottom);
+    makeTestimonyText(input1, newBounding, fl.getDocumentDOM().getTimeline().currentLayer, fl.getDocumentDOM().getTimeline().currentFrame);
 }
