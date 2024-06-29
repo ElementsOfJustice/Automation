@@ -316,7 +316,7 @@ function runBlinking(layerIndex) {
 			}
 			curFramePlusHalf.actionScript = leftEye + ".gotoAndStop(" + blinkFrame + ");\n" + rightEye + ".gotoAndStop(" + blinkFrame + ");";
 		}
-		if(curFramePlusFull.isEmpty) continue;
+		if(curFramePlusFull == undefined || curFramePlusFull.isEmpty) continue;
 		if(curFramePlusFull.elements[0].libraryItem.name.toLowerCase().indexOf("pose") == -1) continue;
 		//BLINK
 		//AS3 for first frame has been written. Iterate to frame [i + blinkDuration], convert it to a keyframe if it isn't one already.
