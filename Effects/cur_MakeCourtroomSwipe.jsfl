@@ -110,9 +110,9 @@ Description:
 function createTween(sourceCharacterlayers) {
     fl.getDocumentDOM().getTimeline().insertFrames(SWIPE_LENGTH - 1, true); // insert frames to all layers
     resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), startFrame + SWIPE_LENGTH); // select background layer at end of swipe
-    fl.getDocumentDOM().setTransformationPoint( {x: 0, y: 0});
+    fl.getDocumentDOM().setTransformationPoint({ x: 0, y: 0 });
     resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME), startFrame); // go back to original selection
-    fl.getDocumentDOM().setTransformationPoint( {x: 0, y: 0});
+    fl.getDocumentDOM().setTransformationPoint({ x: 0, y: 0 });
     var backgroundX = fl.getDocumentDOM().getElementProperty("matrix").tx;
     fl.getDocumentDOM().getTimeline().insertKeyframe(); // put keyframe for start of swipe
     fl.getDocumentDOM().getTimeline().createMotionTween(); // create the CLASSIC tween 
@@ -123,7 +123,8 @@ function createTween(sourceCharacterlayers) {
     for (var i = 0; i < sourceCharacterlayers.length; i++) {
         alignStartToBackground(backgroundX, sourceCharacterLayers[i], startFrame, SWIPE_LENGTH / 2);
     }
-    alignStartToBackground(backgroundX, fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME), startFrame, SWIPE_LENGTH / 2);
+    if (fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME) != undefined)
+        alignStartToBackground(backgroundX, fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME), startFrame, SWIPE_LENGTH / 2);
 }
 
 /*
@@ -152,8 +153,10 @@ Variables:
 Description: 
 */
 function handleDesksAndParentDestinationCharactersFullSwipe(destinationCharacterLayers) {
-    resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME), startFrame + (SWIPE_LENGTH / 2)); // select desks layer in the middle of the tween
-    fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME) * 1].locked = false;
+    if (fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME) != undefined) {
+        resetSelection(fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME), startFrame + (SWIPE_LENGTH / 2)); // select desks layer in the middle of the tween
+        fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME) * 1].locked = false;
+    }
     var backgroundX = fl.getDocumentDOM().getTimeline().layers[fl.getDocumentDOM().getTimeline().findLayerIndex(BACKGROUND_LAYER_NAME)].frames[startFrame + SWIPE_LENGTH].elements[0].matrix.tx;
     fl.getDocumentDOM().getTimeline().removeFrames(fl.getDocumentDOM().getTimeline().currentFrame, fl.getDocumentDOM().getTimeline().currentFrame + (SWIPE_LENGTH / 2)); // remove half the length in frames (get non-empty keyframes at the playhead)
     fl.getDocumentDOM().getTimeline().insertFrames((SWIPE_LENGTH / 2)); // put the frames back (this mimicks a resize span)
@@ -163,7 +166,8 @@ function handleDesksAndParentDestinationCharactersFullSwipe(destinationCharacter
         resetSelection(fl.getDocumentDOM().getTimeline().getSelectedLayers(), fl.getDocumentDOM().getTimeline().currentFrame);
         fl.getDocumentDOM().deleteSelection();
     }
-    alignEndToBackground(backgroundX, fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME), startFrame + (SWIPE_LENGTH / 2), SWIPE_LENGTH / 2);
+    if (fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME) != undefined)
+        alignEndToBackground(backgroundX, fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME), startFrame + (SWIPE_LENGTH / 2), SWIPE_LENGTH / 2);
 }
 
 
@@ -280,8 +284,8 @@ function handleMidCrossCourtSwipe(witnessStandCharacterLayers) { // handle the f
 
 // go backwards from a frame to find the most recent non-empty keyframe
 function findNonEmptyGraphicKeyframe(layer) {
-    for(var i = 0; i < fl.getDocumentDOM().getTimeline().layers[layer].frameCount; i+= fl.getDocumentDOM().getTimeline().layers[layer].frames[i].duration) {
-        if(!fl.getDocumentDOM().getTimeline().layers[layer].frames[i].isEmpty && fl.getDocumentDOM().getTimeline().layers[layer].frames[i].elements[0].symbolType == "graphic") {
+    for (var i = 0; i < fl.getDocumentDOM().getTimeline().layers[layer].frameCount; i += fl.getDocumentDOM().getTimeline().layers[layer].frames[i].duration) {
+        if (!fl.getDocumentDOM().getTimeline().layers[layer].frames[i].isEmpty && fl.getDocumentDOM().getTimeline().layers[layer].frames[i].elements[0].symbolType == "graphic") {
             return i;
         }
     }
@@ -292,7 +296,7 @@ function pushCharacterData(layers) { // just push entries to masterRigArray
     for (var i = 0; i < layers.length; i++) {
         var layer = fl.getDocumentDOM().getTimeline().layers[layers[i]];
         var contentFrame = findNonEmptyGraphicKeyframe(layers[i]);
-        if(contentFrame == -1) {
+        if (contentFrame == -1) {
             throw new Error("Error: No instance of character on layer: " + layer.name);
         }
         var toPush = [layer.frames[contentFrame].elements[0].libraryItem.name, layer.frames[contentFrame].elements[0].x, layer.frames[contentFrame].elements[0].y];
@@ -322,7 +326,7 @@ Variables:
 Description: 
 */
 function makeCrossCourtSwipe(sourceCharacterLayer, destinationCharacterLayer, witnessStandCharacterLayers) {
-    pushCharacterData(witnessStandCharacterLayers); 
+    pushCharacterData(witnessStandCharacterLayers);
     createTween(sourceCharacterLayer);
     handleCharacters(sourceCharacterLayer, destinationCharacterLayer);
     handleDesksAndParentDestinationCharactersFullSwipe(destinationCharacterLayer);
@@ -333,7 +337,8 @@ function makeCrossCourtSwipeEmptyStand(sourceCharacterLayer, destinationCharacte
     createTween(sourceCharacterLayer);
     handleCharacters(sourceCharacterLayer, destinationCharacterLayer);
     handleDesksAndParentDestinationCharactersFullSwipe(destinationCharacterLayer);
-    handleMidCrossCourtSwipe([]);
+    if (fl.getDocumentDOM().getTimeline().findLayerIndex(DESKS_LAYER_NAME) != undefined)
+        handleMidCrossCourtSwipe([]);
 }
 
 /*
@@ -396,9 +401,9 @@ if (!halfCourt) {
     var witnessCharacterLayerNames = prompt("Enter the witness characters LAYER NAMES, separated by a comma (no spaces)", fl.getDocumentDOM().getDataFromDocument("witnessLayerNames"));
     var witnessCharacterLayers = [];
     // for each layer name provided...
-    if(witnessCharacterLayerNames == null || witnessCharacterLayerNames == "0") witnessCharacterLayerNames = "";
+    if (witnessCharacterLayerNames == null || witnessCharacterLayerNames == "0") witnessCharacterLayerNames = "";
     for (var i = 0; i < witnessCharacterLayerNames.split(',').length; i++) {
-        if(witnessCharacterLayerNames == "") break;
+        if (witnessCharacterLayerNames == "") break;
         // if the name is valid
         if (fl.getDocumentDOM().getTimeline().findLayerIndex(witnessCharacterLayerNames.split(',')[i]) != undefined) {
             // add the layer index to the array
@@ -411,7 +416,7 @@ if (!halfCourt) {
 // if we've got ourselves a half courtroom swipe
 if (halfCourt) {
     makeWitnessStandToDeskSwipe(sourceCharacterLayers, destinationCharacterLayers);
-} else if(witnessCharacterLayerNames != "") {
+} else if (witnessCharacterLayerNames != "") {
     makeCrossCourtSwipe(sourceCharacterLayers, destinationCharacterLayers, witnessCharacterLayers);
 } else {
     makeCrossCourtSwipeEmptyStand(sourceCharacterLayers, destinationCharacterLayers);
